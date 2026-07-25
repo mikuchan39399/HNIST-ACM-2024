@@ -5,19 +5,20 @@
 using namespace std;
 const int N = 1e5 + 10, M = 2e5 + 10, INF = 0x3f3f3f3f;
 typedef long long LL;
-typedef pair<LL, LL> PII;
+typedef pair<LL, LL> PLL;
 struct Compare 
 {
-    bool operator()(PII& a, PII& b) 
+    bool operator()(PLL& a, PLL& b) 
     {
         return a.second > b.second;
     }
 };
+
 int n, m, s;
-vector<PII> edges[N];
+vector<PLL> edges[N];
 bool st[N];//标记已经确认最短路的点
 LL dist[N];
-priority_queue<PII, vector<PII>, Compare> heap;
+priority_queue<PLL, vector<PLL>, Compare> heap;
 void dijkstra()
 {
     memset(dist, 0x3f, sizeof(dist));
