@@ -16,13 +16,13 @@ struct TreeDiameterDP
     VLL w;
     LL ans;
 
-    TreeDiameterDP(int _n, int _m)
+    TreeDiameterDP(int max_n)
     {
-        int max_edges = (_n - 1) * 2;
-        head.assign(_n + 10, 0);
-        to.assign(_m + 10, 0);
-        nxt.assign(_m + 10, 0);
-        w.assign(_m + 10, 0);
+        int max_edges = (max_n - 1) * 2;
+        head.assign(max_n + 10, 0);
+        to.assign(max_edges + 10, 0);
+        nxt.assign(max_edges + 10, 0);
+        w.assign(max_edges + 10, 0);
     }
 
     void init(int _n)
@@ -36,11 +36,11 @@ struct TreeDiameterDP
         }
     }
 
-    void add_edge(int u, int v, LL w = 1)
+    void add_edge(int u, int v, LL weight = 1)
     {
         edge_cnt++;
         to[edge_cnt] = v;
-        w[edge_cnt] = w;
+        w[edge_cnt] = weight;
         nxt[edge_cnt] = head[u];
         head[u] = edge_cnt;
     }

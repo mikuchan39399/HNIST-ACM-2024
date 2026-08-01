@@ -7,6 +7,12 @@ using namespace std;
 using VI = vector<int>;
 using VVI = vector<vector<int>>;
 
+template<typename... Cs>
+void z_fill_n(int n, int val, Cs&... containers) 
+{
+    (fill(containers.begin(), containers.begin() + min((size_t)(n + 10), containers.size()), val), ...);
+}
+
 // 记得对边去重
 struct EBCC
 {
@@ -16,6 +22,7 @@ struct EBCC
         int v;
         int id;
     };
+    
     int n, m;
     int dfn_idx, ebcc_cnt, edge_cnt, t_edge_cnt;
     
@@ -23,44 +30,28 @@ struct EBCC
     VI t_head, t_to, t_nxt;
     VI dfn, low, bel, sta;
     
-    VVI ans;
-    vector<vector<Edge>> ebcc_edges;
+    VVI ebcc_points;                    // ebcc 中的原图点集合                                      
+    vector<vector<Edge>> ebcc_edges;    // ebcc 中的原图边集合
 
-    EBCC(int _n, int _m) : n(_n), m(_m)
+    EBCC(int _n, int _m) : n(_n), m(_m), 
+        head(n + 10, 0), to(m + 10, 0), nxt(m + 10, 0), 
+        t_head(n + 10, 0), t_to(m + 10, 0), t_nxt(m + 10, 0), 
+        dfn(n + 10, 0), low(n + 10, 0), bel(n + 10, 0), 
+        ebcc_points(1, VI{}), ebcc_edges(1, vector<Edge>{})
     {
-        head.assign(n + 10, 0);
-        to.assign(m * 2 + 10, 0);
-        nxt.assign(m * 2 + 10, 0);
-        
-        t_head.assign(n + 10, 0);
-        t_to.assign(m * 2 + 10, 0);
-        t_nxt.assign(m * 2 + 10, 0);
-        
-        dfn.assign(n + 10, 0);
-        low.assign(n + 10, 0);
-        bel.assign(n + 10, 0);
-        
         dfn_idx = ebcc_cnt = t_edge_cnt = 0;
         edge_cnt = 1;
-        
-        ans.assign(1, VI{});
-        ebcc_edges.assign(1, vector<Edge>{});
     }
 
     void init(int _n)
     {
         n = _n;
-        fill(head.begin(), head.begin() + n + 10, 0);
-        fill(t_head.begin(), t_head.begin() + n + 10, 0);
-        fill(dfn.begin(), dfn.begin() + n + 10, 0);
-        fill(low.begin(), low.begin() + n + 10, 0);
-        fill(bel.begin(), bel.begin() + n + 10, 0);
-        
+        z_fill_n(n, 0, head, t_head, dfn, low, bel);
         dfn_idx = ebcc_cnt = t_edge_cnt = 0;
         edge_cnt = 1;
         
         sta.clear();
-        ans.assign(1, VI{});
+        ebcc_points.assign(1, VI{});
         ebcc_edges.assign(1, vector<Edge>{});
     }
     
@@ -109,7 +100,7 @@ struct EBCC
         if (low[u] == dfn[u])
         {
             ebcc_cnt++;
-            ans.push_back(VI{});
+            ebcc_points.push_back(VI{});
             ebcc_edges.push_back(vector<Edge>{});
             
             int t;
@@ -118,13 +109,18 @@ struct EBCC
                 t = sta.back(); 
                 sta.pop_back();
                 bel[t] = ebcc_cnt;
-                ans[ebcc_cnt].push_back(t);
+                ebcc_points[ebcc_cnt].push_back(t);
             } while (t != u);
         }
     }
 
-    void build()
+    void build(int root = -1)
     {
+        if (root != -1)
+        {
+            tarjan(root, 0);
+            return;
+        }
         for (int i = 1; i <= n; i++)
         {
             if (!dfn[i])
@@ -171,18 +167,17 @@ struct EBCC
     }
 };
 
-
-
 // Usage:
 /*
 const int MAXN = 500005;
 const int MAXM = 1000005;
 
-EBCC graph(MAXN, MAXM);
+EBCC graph(MAXN, MAXM * 2); // 用户控制 无向边 / 有向边
 
-void dfs_tree(int u, int fa)
+void dfs_tree(int u, int fa, VI& vis)
 {
-    int point_cnt = graph.ans[u].size();
+    vis[u] = 1;
+    int point_cnt = graph.ebcc_points[u].size();
     
     // 直接通过结构体成员访问
     for (int i = 0; i < graph.ebcc_edges[u].size(); i++)
@@ -200,7 +195,7 @@ void dfs_tree(int u, int fa)
         {
             continue;
         }
-        dfs_tree(v, u);
+        dfs_tree(v, u, vis);
     }
 }
 
@@ -229,7 +224,7 @@ void solve()
     {
         if (!vis[i])
         {
-            dfs_tree(i, 0);
+            dfs_tree(i, 0, vis);
         }
     }
 }

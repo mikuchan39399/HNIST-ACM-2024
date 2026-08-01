@@ -4,8 +4,6 @@
 using namespace std;
 
 using VI = vector<int>;
-using VVI = vector<vector<int>>;
-
 const int inf = 0x3f3f3f3f;
 
 struct LCA
@@ -15,8 +13,8 @@ struct LCA
     const VI& head;  
     const VI& to; 
     const VI& nxt;
-    VI dep, dfn, fa, rt; // rt 数组记录所在连通块的根节点，用来判断森林情况的 LCA 合法性
-    VVI rmq;
+    VI dep, dfn, fa, rt;    // rt 数组记录所在连通块的根节点，用来判断森林情况的 LCA 合法性
+    vector<array<int, 20>> rmq;
     
     LCA(int _n, const VI& _head, const VI& _to, const VI& _nxt) : n(_n), 
         head(_head), to(_to), nxt(_nxt)
@@ -25,7 +23,7 @@ struct LCA
         dfn.assign(n + 10, 0);
         fa.assign(n + 10, 0);
         rt.assign(n + 10, 0); 
-        rmq.assign(n + 10, VI((!n ? 0 : __lg(n)) + 10, 0));
+        rmq.assign(n + 10, array<int, 20>{});
     }
     
     void dfs(int u, int p, int root)
@@ -49,7 +47,7 @@ struct LCA
         idx = 0;
         for (int i = 1; i <= n; i++)
         {
-            if (!fa[i]) 
+            if (!dfn[i]) 
             {
                 dfs(i, 0, i);
             }
@@ -83,5 +81,38 @@ struct LCA
         int v_node = rmq[r - (1 << k) + 1][k];
         int w = dep[u_node] < dep[v_node] ? u_node : v_node;
         return fa[w];
+    }
+
+    int lca(const VI& nodes)
+    {
+        if (nodes.empty()) 
+        {
+            return 0; 
+        }
+        
+        int min_node = nodes[0];
+        int max_node = nodes[0];
+        
+        for (int i = 1; i < nodes.size(); i++)
+        {
+            int u = nodes[i];
+            if (dfn[u] < dfn[min_node]) 
+            {
+                min_node = u;
+            }
+            if (dfn[u] > dfn[max_node]) 
+            {
+                max_node = u;
+            }
+        }
+        return lca(min_node, max_node);
+    }
+
+    template <typename... Args>
+    int lca(int u, int v, Args... rest)
+    {
+        int res = lca(u, v);
+        ((res = lca(res, rest)), ...);
+        return res;
     }
 };

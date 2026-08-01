@@ -23,7 +23,7 @@ struct TreeDiameter
     VI path;
     vector<bool> in_path;
     VLL max_d;
-
+    int len, com_len;
     TreeDiameter(int max_n)
     {
         int max_edges = (max_n - 1) * 2;
@@ -97,7 +97,7 @@ struct TreeDiameter
         return md;
     }
 
-    pair<LL, int> build()
+    void build()
     {
         max_dist = -1;
         dfs(1, 0, 0);
@@ -111,8 +111,8 @@ struct TreeDiameter
         int cur = B;
         while (cur != 0)
         {
-            path.push_back(curr);
-            cur = pre[curr];
+            path.push_back(cur);
+            cur = pre[cur];
         }
         reverse(path.begin(), path.end()); 
         int k = path.size();
@@ -126,7 +126,7 @@ struct TreeDiameter
         {
             dist_A[i] = dist_A[i - 1] + pre_w[path[i]];
         }
-        LL len = dist_A[k - 1];
+        len = dist_A[k - 1];
 
         for (int i = 0; i < k; i++)
         {
@@ -151,9 +151,14 @@ struct TreeDiameter
                 R = i;
             }
         }
-
-        int com_edges = max(0, R - L);
-        return {len, com_edges};
+        if (R > L)
+        {
+            com_len = dist_A[R] - dist_A[L];
+        }
+        else
+        {
+            com_len = 0;
+        }
     }
 };
 
@@ -174,8 +179,8 @@ struct TreeDiameter
         * tree.add_edge(u, v, w);
         * tree.add_edge(v, u, w);
     * }
-    * pair<LL, int> ans = tree.build();
-    * cout << ans.first << endl;
-    * cout << ans.second << endl;
+    * tree.build();
+    * cout << tree.len << endl;
+    * cout << tree.com_len << endl;
  * }
  */
