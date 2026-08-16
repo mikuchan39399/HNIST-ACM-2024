@@ -90,11 +90,47 @@ struct SegTree
         pushdown(p);
         int mid = (l + r) >> 1;
         return query(lc, l, mid, x, y) + query(rc, mid + 1, r, x, y);
-    } 
+    }
+    template<class Pred>
+    int find_first(int p, int l, int r, int start, Pred pred)
+    {
+        if (r < start || !pred(info[p])) return -1;
+        if (l == r) return l;
+        pushdown(p);
+        int mid = (l + r) >> 1;
+        int res = find_first(lc, l, mid, start, pred);
+        if (res == -1)
+            res = find_first(rc, mid + 1, r, start, pred);
+        return res;
+    }
+    template<class Pred>
+    int find_last(int p, int l, int r, int end, Pred pred)
+    {
+        if (l > end || !pred(info[p])) return -1;
+        if (l == r) return l;
+        pushdown(p);
+        int mid = (l + r) >> 1;
+        int res = find_last(rc, mid + 1, r, end, pred);
+        if (res == -1)
+            res = find_last(lc, l, mid, end, pred);
+        return res;
+    }
     // 对外接口
     void modify(int x, int y, const Tag& v) { modify(1, 1, n, x, y, v); }
     Info query(int x, int y) { return query(1, 1, n, x, y); }
-    void build(const vector<Info>& a) { n = a.size() - 1; build(1, 1, n, a); }
+    void build(const vector<Info>& a) { build(1, 1, n, a); }
+    template<class Pred>
+    int find_first(int start, Pred pred)
+    {
+        if (start < 1 || start > n) return -1;
+        return find_first(1, 1, n, start, pred);
+    }
+    template<class Pred>
+    int find_last(int end, Pred pred)
+    {
+        if (end < 1 || end > n) return -1;
+        return find_last(1, 1, n, end, pred);
+    }
 };
 
 // ==================== 示例 1：区间加法区间求和 ====================

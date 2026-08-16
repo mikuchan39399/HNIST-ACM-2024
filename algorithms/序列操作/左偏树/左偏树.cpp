@@ -11,6 +11,30 @@ using VI = vector<int>;
 
 // T: 节点权值类型(需支持 + 、* 、与 T()/T(1) 的相等判断)
 // Comp: 默认 less<T> 为小根堆, 传 greater<T> 为大根堆
+#include <vector>
+#include <algorithm>
+#include <set>
+#include <iostream>
+#include <functional>
+#include <cassert>
+
+using namespace std;
+using LL = long long;
+using VI = vector<int>;
+
+// T: 节点权值类型(需支持 + 、* 、与 T()/T(1) 的相等判断)
+// Comp: 默认 less<T> 为小根堆, 传 greater<T> 为大根堆
+//
+// 仿射懒标记约定(加法/乘法统一) 
+//   每个物理节点挂 (tmul, tadd), 语义: 孩子的真实值 = tmul * val[孩子] + tadd (堆内坐标)
+//   - val[p] 恒已含自身 tag; 堆根无严格祖先 → 真实值 = val[根], 免 push 直读
+//   - 非根真实值 = 严格祖先的 tag 由浅到深复合后作用于 val[] (mode-1 军规:
+//     heap_add/heap_mul 后对非堆顶点的 get_val/add_val/set_val/erase 的数值读取受限)
+//   - heap_add(x,k) ≡ 仿射 (1,k);  heap_mul(x,m) ≡ 仿射 (m,0), m 必须 > 0(保堆序前提)
+//     一般 v->m*v+a ≡ heap_mul 后紧跟 heap_add, 组合律自动复合成 (m,a)
+//   - 组合律(父盖子外): (m2,a2)∘(m1,a1) = (m2*m1, m2*a1 + a2)
+//   - hsum 线性可分解: hsum' = m*hsum + a*sz, 全程 O(1) 精确
+//   gadd: 全局加偏移(纯加), 叠加在一切堆坐标之上, 查询出口统一补偿
 template <class T = LL, class Comp = less<T>>
 struct LeftistTree
 {
@@ -22,12 +46,13 @@ struct LeftistTree
     vector<T> hsum;      // hsum[当前物理堆根] = 该堆存活元素真实值之和(堆内坐标, 只在根上增量)
     vector<T> tmul;
     vector<T> tadd;
-    T gadd;
+    T gadd;              // 全局加偏移
     vector<bool> deleted;
     VI roots;
     VI root_idx;
     multiset<T> root_vals; // 所有堆顶的值(不含 gadd); 懒更新 + 全局查询场景必须启用
-    T root_sum;
+    T root_sum;           // 全部堆顶之和(不含 gadd)
+
     // max_n: 逻辑元素数上限, max_ops: 单测试点内 set_val/add_val 调用总次数上限
     LeftistTree(int max_n = 0, int max_ops = 0) : n(0), tot(0),
         pos(max_n + 10, 0), id(max_n + max_ops + 10, 0),
@@ -35,13 +60,14 @@ struct LeftistTree
         dist(max_n + max_ops + 10, -1), fa_dsu(max_n + max_ops + 10, 0),
         sz(max_n + max_ops + 10, 0), val(max_n + max_ops + 10, T()),
         hsum(max_n + max_ops + 10, T()),
-        tmul(max_n + max_ops + 10, T(1)), tadd(max_n + max_ops + 10, T()),
+        tmul(max_n + max_ops + 10, T(1)), tadd(max_n + max_ops + 10, T()),  // ★ 恒等元起步
         gadd(T()),
         deleted(max_n + max_ops + 10, false), root_idx(max_n + max_ops + 10, -1),
         root_sum(T())
     {
         roots.reserve(max_n + max_ops + 10);
     }
+
     void init(int _n, const vector<T>& init_vals = {}) // init_vals 1-base
     {
         n = tot = _n;
@@ -67,6 +93,7 @@ struct LeftistTree
         }
         for (int i = 1; i <= n; i++) { add_root(i); }
     }
+
 private:
     // 以下全部操作物理编号
     int find_root(int p)
@@ -94,6 +121,7 @@ private:
         }
         tmul[p] = T(1); tadd[p] = T();
     }
+
     void add_root(int p)
     {
         if (!p || deleted[p]) return;
@@ -128,7 +156,7 @@ private:
     {
         while (p && deleted[p])
         {
-            pushdown(p); 
+            pushdown(p);
             int nrt = merge_trees(lc[p], rc[p]);
             if (nrt)
             {
@@ -253,7 +281,7 @@ public:
     }
     int heap_mul(int x, T m)
     {
-        // assert(m > 0);
+        assert(m > 0);
         int p = pos[x];
         if (!p || deleted[p]) return -1;
         int rt = find_root(p);
