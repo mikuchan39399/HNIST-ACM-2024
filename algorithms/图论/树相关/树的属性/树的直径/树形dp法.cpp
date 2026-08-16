@@ -71,12 +71,13 @@ struct TreeDiameterDP
 };
 
 /*
- * 使用示例：
+ * Usage: 
  * void solve()
  * {
     * int n;
     * cin >> n;
-    * TreeDiameterDP tree(n); 
+    * TreeDiameterDP tree(n);
+    * tree.init(n);
     * for (int i = 1; i < n; i++) 
     * {
         * int u, v, w;
