@@ -1,6 +1,7 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <cassert>
 
 using namespace std;
 
@@ -35,7 +36,7 @@ struct Graph
     }
     void clear() // O(used) 擦除, 多测复用
     {
-        for (int i = 0; i < used.size(); i++)
+        for (size_t i = 0; i < used.size(); i++)
         {
             int u = used[i];
             head[u] = -1;
@@ -68,7 +69,7 @@ struct Graph
         else in_deg[v]++;
         return idx;
     }
-    int count() const { return used.size(); } 
+    int node_cnt() const { return used.size(); } // 触碰过的点数 
     int edge_cnt() const { return (int)edges.size() / (Dir ? 1 : 2); } // 逻辑边数
     int rev(int i) const { return i ^ 1; } // 无向半边 i 的对偶半边 ( Dir = true 时无意义)
     int id(const Edge& e) const { return &e - edges.data(); } // 只能对遍历中的活引用调用
@@ -95,7 +96,7 @@ struct Graph
 template<typename... CS>
 void z_fill_n(int n, int val, CS&... cs) 
 {
-    assert(((int)cs.size() >= n && ...));
+    assert(((((int)cs.size()) >= n) && ...));
     (fill(cs.begin(), cs.begin() + min((size_t)(n + 10), cs.size()), val), ...);
 }
 #endif

@@ -1,63 +1,26 @@
-#include <iostream>
-#include <string>
-
-using namespace std;
-
-typedef __int128_t i128;
-
-istream& operator>>(istream& is, i128& x)
+#ifndef Z_OI_I128
+#define Z_OI_I128
+using i128 = __int128_t;
+using u128 = __uint128_t;
+inline istream& operator>>(istream& is, i128& x)
 {
-    x = 0;
     string s;
-    is >> s;
-    int f = 1;
-    int i = 0;
-    if (s[i] == '-')
-    {
-        f = -1;
-        i++;
-    }
-    while (i < s.length())
-    {
-        x = x * 10 + (s[i] - '0');
-        i++;
-    }
-    x *= f;
+    if (!(is >> s)) return is;                  
+    bool neg = (s[0] == '-');
+    size_t i = (s[0] == '-') || (s[0] == '+');
+    x = 0;
+    for (; i < s.size(); i++) x = x * 10 + (s[i] - '0');
+    if (neg) x = -x;
     return is;
 }
-
-ostream& operator<<(ostream& os, i128 x)
+inline ostream& operator<<(ostream& os, i128 x)
 {
-    if (x == 0) return os << 0;
-    __uint128_t ux = x;
-    if (x < 0)
-    {
-        os << '-';
-        ux = -x;
-    }
-    int stk[40];
-    int top = 0;
-    while (ux > 0)
-    {
-        stk[top] = ux % 10;
-        top++;
-        ux /= 10;
-    }
-    while (top > 0)
-    {
-        top--;
-        os << stk[top];
-    }
+    if (x < 0) os << '-';
+    u128 v = x < 0 ? (u128)(-(x + 1)) + 1 : (u128)x; 
+    char buf[45];
+    int n = 0;
+    do { buf[n++] = char('0' + int(v % 10)); } while (v /= 10);
+    while (n) os << buf[--n];
     return os;
 }
-
-int main()
-{
-    i128 a;
-    i128 b;
-    while (cin >> a >> b)
-    {
-        cout << a + b << '\n';
-    }
-    return 0;
-}
+#endif

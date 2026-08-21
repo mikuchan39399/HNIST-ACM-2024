@@ -31,7 +31,7 @@ struct Graph
     }
     void clear() // O(used) 擦除, 多测复用
     {
-        for (int i = 0; i < used.size(); i++)
+        for (size_t i = 0; i < used.size(); i++)
         {
             int u = used[i];
             head[u] = -1;
@@ -64,7 +64,7 @@ struct Graph
         else in_deg[v]++;
         return idx;
     }
-    int count() const { return used.size(); } 
+    int node_cnt() const { return used.size(); } // 触碰过的点数 
     int edge_cnt() const { return (int)edges.size() / (Dir ? 1 : 2); } // 逻辑边数
     int rev(int i) const { return i ^ 1; } // 无向半边 i 的对偶半边 ( Dir = true 时无意义)
     int id(const Edge& e) const { return &e - edges.data(); } // 只能对遍历中的活引用调用
@@ -128,7 +128,7 @@ struct VirtualTree
             }
             stk.push_back(u);
         }
-        for (int i = 0; i < stk.size() - 1; i++) 
+        for (size_t i = 0; i + 1 < stk.size(); i++) 
         {
             tree.add(stk[i], stk[i + 1], lca.dist(stk[i], stk[i + 1]));
         }

@@ -5,7 +5,7 @@
 template<typename... CS>
 void z_fill_n(int n, int val, CS&... cs) 
 {
-    assert(((int)cs.size() >= n && ...));
+    assert(((((int)cs.size()) >= n) && ...));
     (fill(cs.begin(), cs.begin() + min((size_t)(n + 10), cs.size()), val), ...);
 }
 #endif

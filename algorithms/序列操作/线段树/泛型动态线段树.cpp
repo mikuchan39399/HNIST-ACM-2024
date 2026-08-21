@@ -1,8 +1,8 @@
 #include <cassert>
 #include <vector>
 using namespace std;
-
-// 操作数 * log(值域大小)  -- M * logV
+using LL = long long;
+// 操作数 * logN  -- M * logN
 template<class Info, class Tag>
 struct DySegTree
 {
@@ -16,23 +16,19 @@ struct DySegTree
     int root;
     int idx;
     vector<Node> tr;
-    DySegTree(LL _n = 1e9, int max_nodes = 3000010) 
+    int budget = 0;
+    // 兼容 256MB 限制, 禁止中途扩容
+    DySegTree(LL _n = 1e9, int _budget = 4000010) : n(_n), root(0), idx(0), budget(_budget) 
     {
-        n = _n;
-        root = 0;
-        idx = 0;
-        tr.resize(max_nodes);
+        tr.reserve(budget + 1);
+        tr.push_back(Node{});
     }
-    void clear() 
-    {
-        for (int i = 0; i <= idx; i++) tr[i] = Node{};
-        root = 0;
-        idx = 0;
-    }
-    void set_range(LL _n) { n = _n; }
     int new_node(LL len) 
     {
-        tr[++idx].info.len = len;
+        assert(idx + 1 <= budget && "max_nodes 开小了");
+        tr.push_back(Node{});
+        ++idx;
+        tr[idx].info.len = len;
         return idx;
     }
     Info get_info(int p, LL l, LL r) 
@@ -71,20 +67,18 @@ struct DySegTree
     {
         if (l == r || !tr[p].tag.has_tag()) return;
         LL mid = l + (r - l) / 2;
-        int& lc = tr[p].lc;
-        int& rc = tr[p].rc;
-        if (!lc) lc = new_node(mid - l + 1);
-        if (!rc) rc = new_node(r - mid);
-        if constexpr (requires { tr[p].info.split_tag(tr[p].tag, tr[lc].info, tr[rc].info); }) 
+        if (!tr[p].lc) tr[p].lc = new_node(mid - l + 1);
+        if (!tr[p].rc) tr[p].rc = new_node(r - mid);
+        if constexpr (requires { tr[p].info.split_tag(tr[p].tag, tr[tr[p].lc].info, tr[tr[p].rc].info); }) 
         {
-            auto [tl, tr_tag] = tr[p].info.split_tag(tr[p].tag, tr[lc].info, tr[rc].info);
-            lazy(lc, l, mid, tl);
-            lazy(rc, mid + 1, r, tr_tag);
+            auto [tl, tr_tag] = tr[p].info.split_tag(tr[p].tag, tr[tr[p].lc].info, tr[tr[p].rc].info);
+            lazy(tr[p].lc, l, mid, tl);
+            lazy(tr[p].rc, mid + 1, r, tr_tag);
         }
         else 
         {
-            lazy(lc, l, mid, tr[p].tag);
-            lazy(rc, mid + 1, r, tr[p].tag);
+            lazy(tr[p].lc, l, mid, tr[p].tag);
+            lazy(tr[p].rc, mid + 1, r, tr[p].tag);
         }
         tr[p].tag.clear();
     }
@@ -115,10 +109,46 @@ struct DySegTree
         LL mid = l + (r - l) / 2;
         return query(tr[p].lc, l, mid, x, y) + query(tr[p].rc, mid + 1, r, x, y);
     }
+    template<class Pred>
+    LL find_first(int p, LL l, LL r, LL start, Pred pred)
+    {
+        if (r < start || !pred(get_info(p, l, r))) return -1;
+        if (l == r) return l;
+        if (p) pushdown(p, l, r);
+        LL mid = l + (r - l) / 2;
+        LL res = find_first(tr[p].lc, l, mid, start, pred);
+        if (res == -1)
+            res = find_first(tr[p].rc, mid + 1, r, start, pred);
+        return res;
+    }
+    template<class Pred>
+    LL find_last(int p, LL l, LL r, LL end, Pred pred)
+    {
+        if (l > end || !pred(get_info(p, l, r))) return -1;
+        if (l == r) return l;
+        if (p) pushdown(p, l, r);
+        LL mid = l + (r - l) / 2;
+        LL res = find_last(tr[p].rc, mid + 1, r, end, pred);
+        if (res == -1)
+            res = find_last(tr[p].lc, l, mid, end, pred);
+        return res;
+    }
     // 对外接口
     void modify(LL x, LL y, const Tag& v) { modify(root, 1, n, x, y, v); }
     Info query(LL x, LL y) { return query(root, 1, n, x, y); }
     void build(const vector<Info>& a) { n = a.size() - 1; build(root, 1, n, a); }
+    template<class Pred>
+    LL find_first(LL start, Pred pred)
+    {
+        if (start < 1 || start > n) return -1;
+        return find_first(root, 1, n, start, pred);
+    }
+    template<class Pred>
+    LL find_last(LL end, Pred pred)
+    {
+        if (end < 1 || end > n) return -1;
+        return find_last(root, 1, n, end, pred);
+    }
 };
 
 // 区间加法区间和（未改动）
@@ -142,11 +172,11 @@ struct Info
 {
     LL len = 0;
     LL sum = 0;
-    bool break_cond(const Tag& t) 
+    bool break_cond(const Tag&) 
     { 
         return false; 
     }
-    bool tag_cond(const Tag& t) 
+    bool tag_cond(const Tag&) 
     { 
         return true; 
     }

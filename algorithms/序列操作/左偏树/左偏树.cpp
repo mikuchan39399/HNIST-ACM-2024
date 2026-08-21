@@ -9,32 +9,14 @@ using namespace std;
 using LL = long long;
 using VI = vector<int>;
 
-// T: 节点权值类型(需支持 + 、* 、与 T()/T(1) 的相等判断)
-// Comp: 默认 less<T> 为小根堆, 传 greater<T> 为大根堆
-#include <vector>
-#include <algorithm>
-#include <set>
-#include <iostream>
-#include <functional>
-#include <cassert>
-
-using namespace std;
-using LL = long long;
-using VI = vector<int>;
-
-// T: 节点权值类型(需支持 + 、* 、与 T()/T(1) 的相等判断)
-// Comp: 默认 less<T> 为小根堆, 传 greater<T> 为大根堆
-//
-// 仿射懒标记约定(加法/乘法统一) 
-//   每个物理节点挂 (tmul, tadd), 语义: 孩子的真实值 = tmul * val[孩子] + tadd (堆内坐标)
-//   - val[p] 恒已含自身 tag; 堆根无严格祖先 → 真实值 = val[根], 免 push 直读
-//   - 非根真实值 = 严格祖先的 tag 由浅到深复合后作用于 val[] (mode-1 军规:
-//     heap_add/heap_mul 后对非堆顶点的 get_val/add_val/set_val/erase 的数值读取受限)
-//   - heap_add(x,k) ≡ 仿射 (1,k);  heap_mul(x,m) ≡ 仿射 (m,0), m 必须 > 0(保堆序前提)
-//     一般 v->m*v+a ≡ heap_mul 后紧跟 heap_add, 组合律自动复合成 (m,a)
-//   - 组合律(父盖子外): (m2,a2)∘(m1,a1) = (m2*m1, m2*a1 + a2)
-//   - hsum 线性可分解: hsum' = m*hsum + a*sz, 全程 O(1) 精确
-//   gadd: 全局加偏移(纯加), 叠加在一切堆坐标之上, 查询出口统一补偿
+// ============ 左偏树 (支持懒标记、单点修删) ============
+// 核心机制:
+//   1. 逻辑映射: 内部维护 pos (逻辑->物理) 和 id (物理->逻辑)，实现单点修删。单点修改本质是废弃旧点并开新点。
+//   2. 懒惰删除: 单点修删时旧点标 deleted，待浮至堆顶时由 normalize 统一清理。
+//   3. 懒标记: 仅下放不上传，单点查询非堆顶可能读到未下放的历史值。
+//   4. 内存估算: max_n = 初始点 + 纯新增点, max_ops = set_val/add_val 调用次数。
+// 警告: 使用 heap_add/heap_mul 后，非堆顶单点的 get_val/add_val/set_val/erase 均会错乱
+//      如需带整堆修改的精确单点反查，必须在外部挂载带权并查集
 template <class T = LL, class Comp = less<T>>
 struct LeftistTree
 {
@@ -43,32 +25,30 @@ struct LeftistTree
     VI id;               // 物理节点 -> 逻辑节点
     VI lc, rc, dist, fa_dsu, sz;
     vector<T> val;
-    vector<T> hsum;      // hsum[当前物理堆根] = 该堆存活元素真实值之和(堆内坐标, 只在根上增量)
-    vector<T> tmul;
-    vector<T> tadd;
+    vector<T> hsum;      // hsum[堆根] = 该堆存活元素值之和, 只在根上维护
+    vector<T> tmul;      // 仿射标记: 乘
+    vector<T> tadd;      // 仿射标记: 加
     T gadd;              // 全局加偏移
     vector<bool> deleted;
-    VI roots;
-    VI root_idx;
-    multiset<T> root_vals; // 所有堆顶的值(不含 gadd); 懒更新 + 全局查询场景必须启用
-    T root_sum;           // 全部堆顶之和(不含 gadd)
-
-    // max_n: 逻辑元素数上限, max_ops: 单测试点内 set_val/add_val 调用总次数上限
+    VI roots;            // 所有堆的物理堆顶序列
+    VI root_idx;         // 物理点在 roots 里的下标, -1 = 非堆顶
+    multiset<T> root_vals;  // 所有堆顶的值(不含 gadd)   [RV] 需全局查询时解封
+    T root_sum;             // 全部堆顶之和(不含 gadd)   [RV] 需全局查询时解封
+    // max_n = n + insert; max_ops = set_val + add_val + insert 
     LeftistTree(int max_n = 0, int max_ops = 0) : n(0), tot(0),
         pos(max_n + 10, 0), id(max_n + max_ops + 10, 0),
         lc(max_n + max_ops + 10, 0), rc(max_n + max_ops + 10, 0),
         dist(max_n + max_ops + 10, -1), fa_dsu(max_n + max_ops + 10, 0),
         sz(max_n + max_ops + 10, 0), val(max_n + max_ops + 10, T()),
         hsum(max_n + max_ops + 10, T()),
-        tmul(max_n + max_ops + 10, T(1)), tadd(max_n + max_ops + 10, T()),  // ★ 恒等元起步
+        tmul(max_n + max_ops + 10, T(1)), tadd(max_n + max_ops + 10, T()),
         gadd(T()),
         deleted(max_n + max_ops + 10, false), root_idx(max_n + max_ops + 10, -1),
         root_sum(T())
     {
         roots.reserve(max_n + max_ops + 10);
     }
-
-    void init(int _n, const vector<T>& init_vals = {}) // init_vals 1-base
+    void init(int _n, const vector<T>& init_vals = {}) 
     {
         n = tot = _n;
         roots.clear();
@@ -93,9 +73,7 @@ struct LeftistTree
         }
         for (int i = 1; i <= n; i++) { add_root(i); }
     }
-
 private:
-    // 以下全部操作物理编号
     int find_root(int p)
     {
         if (!p || fa_dsu[p] == p) return p;
@@ -121,13 +99,12 @@ private:
         }
         tmul[p] = T(1); tadd[p] = T();
     }
-
     void add_root(int p)
     {
         if (!p || deleted[p]) return;
         root_idx[p] = roots.size();
         roots.push_back(p);
-        // root_vals.insert(val[p]);   // [RV] 卡常, 需F全局堆顶查询时恢复
+        // root_vals.insert(val[p]);   // [RV]
         // root_sum += val[p];         // [RV]
     }
     void remove_root(int p)
@@ -169,11 +146,18 @@ private:
         return p;
     }
 public:
-    // 入参一律逻辑编号; 返回值约定: 逻辑编号 ∈ [1,n], -1 = 操作非法, 0 = 堆被删空
+    // ===== 外部接口传参皆为逻辑节点 =====
+    // --- 状态判定 API ---
+    // 查询逻辑点 x 是否存活
+    // 时间: O(1) | 空间: O(1)
     bool alive(int x) { int p = pos[x]; return p && !deleted[p]; }
+    // 查询 x, y 是否存活且同堆
+    // 时间: O(α(N)) | 空间: O(1)
     bool same(int x, int y) { return alive(x) && alive(y) && find_root(pos[x]) == find_root(pos[y]); }
-
-    int merge(int x, int y)
+    // --- 结构变更 API ---
+    // 合并 x, y 所在堆，返回新堆顶逻辑编号
+    // 时间: O(log N) | 空间: O(1)
+    int merge(int x, int y) 
     {
         int px = pos[x], py = pos[y];
         if (!px || !py || deleted[px] || deleted[py]) return -1;
@@ -187,7 +171,40 @@ public:
         add_root(rt);
         return to_logical(rt);
     }
-    int erase(int x)
+    // 往 x 所在堆插入值为 v 的新节点，返回新节点逻辑编号(x 失效则独立成堆)
+    // 时间: O(log N) | 空间: O(1)
+    int insert(int x, T v)
+    {
+        assert(n + 1 < (int)pos.size() && "max_n 需覆盖 insert 总次数");
+        v -= gadd;
+        int nid = ++n;
+        int q = pos[x];
+        int rt = (q && !deleted[q]) ? find_root(q) : 0;
+        if (rt) remove_root(rt);
+        int new_p = ++tot;
+        assert(tot < (int)val.size() && "max_ops 需覆盖 insert 次数");
+        lc[new_p] = rc[new_p] = dist[new_p] = 0;
+        deleted[new_p] = false;
+        fa_dsu[new_p] = new_p;
+        sz[new_p] = 1;
+        val[new_p] = v;  hsum[new_p] = v;
+        tmul[new_p] = T(1); tadd[new_p] = T();
+        root_idx[new_p] = -1;
+        pos[nid] = new_p;  id[new_p] = nid;
+        if (rt) 
+        {
+            int nrt = merge_trees(rt, new_p);
+            fa_dsu[rt] = fa_dsu[new_p] = nrt;
+            sz[nrt] = sz[rt] + 1;
+            hsum[nrt] = hsum[rt] + v;
+            add_root(nrt);
+        }
+        else add_root(new_p);
+        return nid;
+    }
+    // 删除 x (懒惰删除, 死点清理由后续操作分摊)
+    // 时间: 均摊 O(log N) | 空间: O(1)
+    int erase(int x) 
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
@@ -205,7 +222,9 @@ public:
         if (rt) add_root(rt);
         return to_logical(rt);
     }
-    int pop(int x)
+    // 删除 x 所在堆的堆顶 (死点清理由后续操作分摊)
+    // 时间: 均摊 O(log N) | 空间: O(1)
+    int pop(int x) 
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
@@ -218,7 +237,9 @@ public:
         if (nrt) { sz[nrt] = sz[rt]; hsum[nrt] = hsum[rt]; add_root(nrt); }
         return to_logical(nrt);
     }
-    int set_val(int x, T v)
+    // 覆盖修改 x 的真实值 (废弃旧点开新点, 死点清理由后续操作分摊)
+    // 时间: 均摊 O(log N) | 空间: O(1)
+    int set_val(int x, T v) 
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
@@ -235,7 +256,7 @@ public:
         }
         else hsum[rt] -= old;
         int new_p = ++tot;
-        assert(tot < (int)val.size() && "max_ops 估计不足");
+        assert(tot < (int)val.size() && "max_ops 估算不足");
         lc[new_p] = rc[new_p] = dist[new_p] = 0;
         deleted[new_p] = false;
         fa_dsu[new_p] = new_p;
@@ -261,13 +282,18 @@ public:
             return to_logical(new_p);
         }
     }
-    int add_val(int x, T k)
+    // 点 x 增加 k
+    // 时间: 均摊 O(log N) | 空间: O(1)
+    int add_val(int x, T k) 
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
         return set_val(x, val[p] + gadd + k);
     }
-    int heap_add(int x, T k)
+    // --- 懒标记 API ---
+    // 点 x 所在整堆 + k
+    // 时间: O(α(N)) | 空间: O(1)
+    int heap_add(int x, T k) 
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
@@ -279,100 +305,76 @@ public:
         add_root(rt);
         return to_logical(rt);
     }
-    int heap_mul(int x, T m)
+    // 逻辑点 x 所在整堆真实值 * m (m > 0)
+    // 时间: O(α(N)) | 空间: O(1)
+    int heap_mul(int x, T m) 
     {
         assert(m > 0);
         int p = pos[x];
         if (!p || deleted[p]) return -1;
         int rt = find_root(p);
         remove_root(rt);
-        val[rt] *= m;
+        T c = (m - T(1)) * gadd;
+        val[rt]  = m * val[rt] + c;
         tmul[rt] *= m;
-        tadd[rt] *= m;
-        hsum[rt] *= m;
+        tadd[rt]  = m * tadd[rt] + c;
+        hsum[rt]  = m * hsum[rt] + c * (T)sz[rt];
         add_root(rt);
         return to_logical(rt);
     }
-    void add_all(T k) { gadd += k; }
-    // 查询接口(入参逻辑编号, 已删点返回哨兵; 出口统一为真实值)
-    int get_top_id(int x) { int p = pos[x]; return (!p || deleted[p]) ? -1 : id[find_root(p)]; }
-    T get_top_val(int x)  { int p = pos[x]; if (!p || deleted[p]) return T(); return val[find_root(p)] + gadd; }
-    T get_val(int x)      { int p = pos[x]; return (!p || deleted[p]) ? T() : val[p] + gadd; }
-    int get_size(int x)   { int p = pos[x]; return (!p || deleted[p]) ? 0 : sz[find_root(p)]; }
+    // 全体存活堆 + k
+    // 时间: O(1) | 空间: O(1)
+    void add_all(T k) { gadd += k; } 
+    // --- 查询 API (入参全为逻辑编号，出口全为含全局偏移的真实值) ---
+    int get_top_id(int x)  { int p = pos[x]; return (!p || deleted[p]) ? -1 : id[find_root(p)]; }
+    T   get_top_val(int x) { int p = pos[x]; return (!p || deleted[p]) ? T() : val[find_root(p)] + gadd; }
+    T   get_val(int x)     { int p = pos[x]; return (!p || deleted[p]) ? T() : val[p] + gadd; }
+    int get_size(int x)    { int p = pos[x]; return (!p || deleted[p]) ? 0 : sz[find_root(p)]; }
     int get_heap_count() const { return (int)roots.size(); }
-    T get_heap_sum(int x)
+    T get_heap_sum(int x) 
     {
         int p = pos[x];
         if (!p || deleted[p]) return T();
         int r = find_root(p);
         return hsum[r] + gadd * (T)sz[r];
     }
-    VI get_roots_id() const
+    VI get_roots_id() const 
     {
         VI res; res.reserve(roots.size());
         for (int p : roots) res.push_back(id[p]);
         return res;
     }
+    // --- 全局最值查询 API ---
     // T get_max_top() const { return root_vals.empty() ? T() : *root_vals.rbegin() + gadd; }   // [RV]
     // T get_min_top() const { return root_vals.empty() ? T() : *root_vals.begin() + gadd; }    // [RV]
     // T get_sum_tops() const { return root_sum + gadd * (T)roots.size(); }                     // [RV]
 };
-
-
-/**
+/*
  * Usage:
+ * // 1. 初始化
+ * LeftistTree<LL, greater<LL>> lt(N, Q); // 例: 大根堆
+ * lt.init(n, a); // a 为 1-base 的 vector，初始赋值 a[1] ~ a[n]
  * 
- * // max_n: 逻辑点数上限, max_ops: 单测内 set_val+add_val 总调用次数
- * // 多测换 init 即复位; 大根堆传 greater<LL>
- * LeftistTree<LL> lt(n, 2 * q);
- * vector<LL> w(n + 1);
- * lt.init(n, w);                            // 1-base, 先于一切操作
+ * // 2. 核心操作 (x, y 均为初始生成的逻辑编号 1~n)
+ * lt.merge(x, y);       // 合并逻辑点 x 和 y 所在的堆
+ * lt.pop(x);            // 弹出逻辑点 x 所在堆的堆顶
+ * lt.erase(x);          // 删除逻辑点 x (将懒惰删除, 并在到根时清理)
+ * lt.set_val(x, v);     // 单点覆盖: 将逻辑点 x 的值设为 v (开新物理节点)
+ * lt.add_val(x, k);     // 单点修改: 将逻辑点 x 的值增加 k
  * 
- * // 返回值: >=1 新堆顶编号, 0 堆已空, -1 非法(点已删/同堆)
- * lt.merge(x, y);                           // 合 x,y 所在堆
- * lt.pop(x);                                // 删堆顶, 注意删的不是 x
- * lt.erase(x);                              // 删 x 本身
- * lt.set_val(x, v);                         // v 传真实值
- * lt.add_val(x, k);
- * lt.heap_add(x, k);                        // 整堆加
- * lt.heap_mul(x, m);                        // 整堆乘, 只许 m > 0
- * lt.add_all(k);                            // 全体堆加
+ * // 3. 懒标记操作 (注意: 调用后，非堆顶元素的单点 get_val 会失效)
+ * lt.heap_add(x, k);    // x 所在堆的所有元素 +k
+ * lt.heap_mul(x, m);    // x 所在堆的所有元素 *m (m必须为正数)
+ * lt.add_all(k);        // 全局所有堆的所有元素 +k
  * 
- * lt.alive(x); lt.same(x, y);
- * lt.get_top_id(x); lt.get_top_val(x);      // 查询出口一律真实值
- * lt.get_val(x);   lt.get_size(x);          lt.get_heap_sum(x);
- * lt.get_heap_count(); lt.get_roots_id();
+ * // 4. 查询操作
+ * bool ok = lt.alive(x) && lt.same(x, y); // 判断 x 是否存活且与 y 同堆
+ * int rt_id = lt.get_top_id(x);           // 获取 x 所在堆顶的逻辑编号
+ * LL rt_val = lt.get_top_val(x);          // 获取 x 所在堆顶的最值
+ * LL h_sum = lt.get_heap_sum(x);          // 获取 x 所在堆的元素总和
+ * int h_sz = lt.get_size(x);              // 获取 x 所在堆的存活节点数
  * 
- * // P3377 罗马游戏
- * if (op == 'M') lt.merge(x, y);
- * else 
- * {
- *     if (!lt.alive(x)) puts("0");
- *     else { cout << lt.get_top_val(x) << endl; lt.pop(x); }
- * }
- * 
- * // P1456 猴王, 大根堆
- * ll a = lt.get_top_val(x), b = lt.get_top_val(y);
- * lt.set_val(x, a / 2); lt.set_val(y, b / 2);
- * lt.merge(x, y);
- * 
- * // BZOJ4003 城池攻占: 骑士是逻辑点, rt[u] 记每城代表骑士(-1 无)
- * // 建树时逐城 merge, 后序 dfs 三步:
- * for (int v : son[u])
- *     if (rt[v] != -1) rt[u] = (rt[u] == -1 ? rt[v] : lt.merge(rt[u], rt[v]));
- * while (rt[u] != -1 && lt.get_top_val(rt[u]) < def[u]) 
- * {
- *     ans[u]++;
- *     int t = lt.pop(rt[u]);
- *     rt[u] = t ? t : -1;
- * }
- * if (rt[u] != -1)
- *     opt[u] == 1 ? lt.heap_add(rt[u], c[u]) : lt.heap_mul(rt[u], c[u]);
- * 
- * // 注:
- * // 堆顶类查询/规模/结构操作永远精确;
- * // heap_add/heap_mul/add_all 之后对非堆顶点的 get_val/add_val/erase 会漂移,
- * // 全程只碰堆顶就没事, 城池攻占正是这种
- * // 乘加连打等于 v -> m*v+a, 乘法注意 m*val 溢出
- * // 要查全体堆顶最值/和时解开模板里的 [RV] 行
+ * // 5. 全局查最值 (P3273 棘手的操作)
+ * // 需在模板中解封含有 [RV] 的代码行。卡常时需将 root_vals 改为对顶优先队列。
+ * // cout << lt.get_max_top() << endl;
  */
