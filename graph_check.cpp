@@ -1,0 +1,304 @@
+// ============ 图论家族回归套件 ============
+// 覆盖: LCA×2(DFN_LCA/HLD_LCA) | 拓扑排序 | 直径×2(两次DFS/树形dp) | 重心
+// 纪律: 改动上述任一模板或 Graph 母版, 必重跑本套件
+// 跑法: g++ -std=c++20 -Wall -Wextra -O2 graph_check.cpp -o graph_check && ./graph_check
+#include <algorithm>
+#include <cassert>
+#include <functional>
+#include <iostream>
+#include <limits>
+#include <random>
+#include <utility>
+#include <vector>
+#include "algorithms/图论/图的存储/Graph.cpp"
+#include "algorithms/图论/拓扑排序/拓扑排序.cpp"
+#include "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp"
+#include "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp"
+#include "algorithms/图论/树上问题/树的直径/两次dfs.cpp"
+#include "algorithms/图论/树上问题/树的直径/树形dp法.cpp"
+#include "algorithms/图论/树上问题/树的重心/树的重心.cpp"
+using namespace std;
+using LL = long long;
+using VI = vector<int>;
+using PII = pair<int, int>;
+
+// ============ 段 1: LCA 双引擎 vs 爬父暴力 ============
+
+// 独立暴力: 显式父表爬链
+struct BruteLca
+{
+    int n;
+    VI par, dep, root;
+    BruteLca(int _n) : n(_n), par(_n + 10, 0), dep(_n + 10, 0), root(_n + 10, 0) {}
+    void add(int v, int p) // p == 0 表示 v 为根
+    {
+        par[v] = p;
+        root[v] = p ? root[p] : v;
+        dep[v] = p ? dep[p] + 1 : 1;
+    }
+    int lca(int u, int v) const
+    {
+        if (root[u] != root[v]) return -1;
+        while (dep[u] > dep[v]) u = par[u];
+        while (dep[v] > dep[u]) v = par[v];
+        while (u != v) { u = par[u]; v = par[v]; }
+        return u;
+    }
+    int climb(int u, int k) const
+    {
+        while (k--) u = par[u];
+        return u;
+    }
+    int sub_sz(int u) const
+    {
+        int s = 1;
+        for (int v = 1; v <= n; v++)
+            if (par[v] == u) s += sub_sz(v);
+        return s;
+    }
+    LL dist(int u, int v) const
+    {
+        int l = lca(u, v);
+        if (l == -1) return -1;
+        return (LL)dep[u] + dep[v] - 2 * dep[l];
+    }
+    int jump(int u, int v, int k) const
+    {
+        if (k <= 0) return u;
+        int l = lca(u, v);
+        if (l == -1) return -1;
+        int du = dep[u] - dep[l], dv = dep[v] - dep[l];
+        if (du + dv < k) return v;
+        if (k <= du) return climb(u, k);
+        return climb(v, du + dv - k);
+    }
+};
+
+void test_lca_engines()
+{
+    mt19937 rng(42);
+    static Graph<false> g(60, 60);
+    static HLD_LCA hl(60);    // static + init 复用, 覆盖多测路径
+    static LCA dfn(60);
+    for (int tc = 0; tc < 300; tc++)
+    {
+        int n = 1 + rng() % 50;
+        g.clear();
+        BruteLca br(n);
+        hl.init(n);
+        dfn.init(n);
+        for (int v = 1; v <= n; v++)
+        {
+            int p = 0;
+            if (v > 1 && rng() % 100 >= 15) p = 1 + rng() % (v - 1); // 15% 成根, 制造森林
+            br.add(v, p);
+            if (p) g.add(p, v);
+        }
+        hl.build(g);
+        dfn.build(g);
+        for (int u = 1; u <= n; u++) assert(dfn.sz[u] == br.sub_sz(u));
+        for (int t = 0; t < 40; t++)
+        {
+            int u = 1 + rng() % n, v = 1 + rng() % n;
+            int bl = br.lca(u, v);
+            assert(hl.lca(u, v) == bl);
+            assert(dfn.lca(u, v) == bl);
+            assert(hl.dist(u, v) == br.dist(u, v));
+            assert(dfn.dist(u, v) == br.dist(u, v));
+            int k = (int)(rng() % (2 * n + 4)) - 2; // 覆盖 k<=0 / 恰好 / 超路长
+            assert(dfn.jump(u, v, k) == br.jump(u, v, k));
+        }
+        int cnt = 1 + rng() % 6;
+        VI nodes;
+        for (int j = 0; j < cnt; j++) nodes.push_back(1 + rng() % n);
+        int bm = br.lca(nodes[0], nodes[1 % cnt]);
+        for (int j = 1; j < cnt && bm != -1; j++) bm = br.lca(bm, nodes[j]);
+        assert(hl.lca(nodes) == bm);
+        assert(dfn.lca(nodes) == bm);
+    }
+}
+// ============ 段 2: 拓扑排序 vs 三色 DFS 判环 ============
+
+// 独立暴力: 三色 DFS 判有环
+bool brute_has_cycle(int n, const vector<PII>& es)
+{
+    vector<VI> adj(n + 1);
+    for (auto& [u, v] : es) adj[u].push_back(v);
+    VI color(n + 1, 0); // 0 = 白 1 = 灰 2 = 黑
+    function<bool(int)> dfs = [&](int u) -> bool
+    {
+        color[u] = 1;
+        for (int v : adj[u])
+        {
+            if (color[v] == 1) return true;
+            if (color[v] == 0 && dfs(v)) return true;
+        }
+        color[u] = 2;
+        return false;
+    };
+    for (int u = 1; u <= n; u++)
+        if (color[u] == 0 && dfs(u)) return true;
+    return false;
+}
+
+void test_topo_sort()
+{
+    mt19937 rng(42);
+    static Graph<true> g(60, 240);      // static + clear 复用, 覆盖多测路径
+    static TopoSort<Graph<true>> ts;
+    for (int tc = 0; tc < 300; tc++)
+    {
+        int n = 1 + rng() % 40;
+        int m = rng() % 121;
+        g.clear();
+        vector<PII> es(m);
+        for (int i = 0; i < m; i++)
+        {
+            int u = 1 + rng() % n, v = 1 + rng() % n;
+            es[i] = {u, v};
+            g.add(u, v);
+        }
+        VI in_backup = g.in_deg;
+        bool dag = ts.build(g, n);
+        assert(g.in_deg == in_backup);  // 契约: 不动原图
+        assert(dag == !brute_has_cycle(n, es));
+        if (dag)
+        {
+            VI& ord = ts.get();
+            assert((int)ord.size() == n);
+            VI pos(n + 1, 0);
+            for (int i = 0; i < n; i++)
+            {
+                assert(ord[i] >= 1 && ord[i] <= n);
+                assert(pos[ord[i]] == 0);  // 每点恰一次
+                pos[ord[i]] = i + 1;
+            }
+            for (auto& [u, v] : es)
+                assert(pos[u] < pos[v]);   // 边方向与序一致
+        }
+        else
+        {
+            assert((int)ts.get().size() < n);  // 有环时收不满
+        }
+    }
+}
+// ============ 段 3: 直径×2 + 重心 vs 父表 O(n^2) 暴力 ============
+
+// 独立暴力: 父表 O(n^2)
+struct BruteTree
+{
+    int n;
+    VI par;
+    vector<LL> pw, pt; // 父边权 / 点权
+    BruteTree(int _n) : n(_n), par(_n + 10, 0), pw(_n + 10, 0), pt(_n + 10, 1) {}
+    LL max_dist(int u, int p, LL d) const
+    {
+        LL mx = d;
+        for (int v = 1; v <= n; v++)
+            if (v != p && (par[v] == u || par[u] == v))
+                mx = max(mx, max_dist(v, u, d + (par[v] == u ? pw[v] : pw[u])));
+        return mx;
+    }
+    LL diameter() const
+    {
+        LL ans = 0;
+        for (int u = 1; u <= n; u++) ans = max(ans, max_dist(u, 0, 0));
+        return ans;
+    }
+    LL sub_sz(int u) const
+    {
+        LL s = pt[u];
+        for (int v = 1; v <= n; v++)
+            if (par[v] == u) s += sub_sz(v);
+        return s;
+    }
+    LL max_part(int x) const
+    {
+        LL tot = 0;
+        for (int i = 1; i <= n; i++) tot += pt[i];
+        LL mx = tot - sub_sz(x);
+        for (int v = 1; v <= n; v++)
+            if (par[v] == x) mx = max(mx, sub_sz(v));
+        return mx;
+    }
+    pair<VI, LL> centroids() const
+    {
+        VI res;
+        LL best = numeric_limits<LL>::max();
+        for (int x = 1; x <= n; x++)
+        {
+            LL mp = max_part(x);
+            if (mp < best) best = mp, res = {x};
+            else if (mp == best) res.push_back(x);
+        }
+        return {res, best};
+    }
+};
+
+void test_tree_basic()
+{
+    mt19937 rng(42);
+    static Graph<false> gu(60, 60);
+    static Graph<false, LL> gw(60, 60);
+    static TreeDiameter<Graph<false>> du;
+    static TreeDiameter<Graph<false, LL>> dw;
+    static TreeDiameterDP<Graph<false>> pu;
+    static TreeDiameterDP<Graph<false, LL>> pw;
+    static TreeCentroid<Graph<false>> tc(60);
+    for (int tcas = 0; tcas < 300; tcas++)
+    {
+        int n = 1 + rng() % 50;
+        BruteTree bt(n);
+        gu.clear();
+        gw.clear();
+        bool nonneg = tcas % 3 != 1; // 三分之一用例带负边权, 只验 dp 版
+        for (int v = 2; v <= n; v++)
+        {
+            int p = 1 + rng() % (v - 1);
+            LL w = nonneg ? (LL)(rng() % 7) : (LL)(rng() % 11) - 5;
+            bt.par[v] = p;
+            bt.pw[v] = w;
+            gu.add(p, v);
+            gw.add(p, v, w);
+        }
+        for (int i = 1; i <= n; i++) bt.pt[i] = rng() % 9 - 2; // 含零/负点权
+
+        assert(pw.build(gw, n) == bt.diameter());
+        if (nonneg)
+        {
+            dw.build(gw, n);
+            assert(dw.len == bt.diameter());
+            assert((int)dw.path.size() >= 1);
+            assert(dw.path.front() == dw.end_u && dw.path.back() == dw.end_v);
+            LL acc = 0;
+            for (size_t i = 1; i < dw.path.size(); i++)
+            {
+                int a = dw.path[i - 1], b = dw.path[i];
+                assert(bt.par[a] == b || bt.par[b] == a); // 相邻
+                acc += bt.par[b] == a ? bt.pw[b] : bt.pw[a];
+            }
+            assert(acc == dw.len); // 路径权和 = 直径
+            du.build(gu, n);
+            BruteTree bu = bt;
+            for (int i = 1; i <= n + 9; i++) bu.pw[i] = 1;
+            assert(du.len == bu.diameter());
+            assert(pu.build(gu, n) == bu.diameter());
+        }
+
+        tc.init(n); // 多测复位点权
+        for (int i = 1; i <= n; i++) tc.pt[i] = bt.pt[i];
+        tc.build(gu, n);
+        auto [bc, bmp] = bt.centroids();
+        assert(tc.centroids == bc);
+        assert(tc.min_max_part == bmp);
+    }
+}
+
+int main()
+{
+    test_lca_engines();
+    test_topo_sort();
+    test_tree_basic();
+    cout << "All tests passed flawlessly!\n";
+    return 0;
+}
