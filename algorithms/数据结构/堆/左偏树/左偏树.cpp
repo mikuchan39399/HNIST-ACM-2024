@@ -1,22 +1,16 @@
+#ifndef Z_OI_LEFTIST_TREE
+#define Z_OI_LEFTIST_TREE
+
 #include <vector>
 #include <algorithm>
 #include <set>
 #include <iostream>
 #include <functional>
 #include <cassert>
+#include "../../../杂项/utils/utils.cpp"
 
 using namespace std;
-using LL = long long;
-using VI = vector<int>;
 
-// ============ 左偏树 (支持懒标记、单点修删) ============
-// 核心机制:
-//   1. 逻辑映射: 内部维护 pos (逻辑->物理) 和 id (物理->逻辑)，实现单点修删。单点修改本质是废弃旧点并开新点。
-//   2. 懒惰删除: 单点修删时旧点标 deleted，待浮至堆顶时由 normalize 统一清理。
-//   3. 懒标记: 仅下放不上传，单点查询非堆顶可能读到未下放的历史值。
-//   4. 内存估算: max_n = 初始点 + 纯新增点, max_ops = set_val/add_val 调用次数。
-// 警告: 使用 heap_add/heap_mul 后，非堆顶单点的 get_val/add_val/set_val/erase 均会错乱
-//      如需带整堆修改的精确单点反查，必须在外部挂载带权并查集
 template <class T = LL, class Comp = less<T>>
 struct LeftistTree
 {
@@ -34,7 +28,7 @@ struct LeftistTree
     VI root_idx;         // 物理点在 roots 里的下标, -1 = 非堆顶
     multiset<T> root_vals;  // 所有堆顶的值(不含 gadd)   [RV] 需全局查询时解封
     T root_sum;             // 全部堆顶之和(不含 gadd)   [RV] 需全局查询时解封
-    // max_n = n + insert; max_ops = set_val + add_val + insert 
+    // max_n = n + insert; max_ops = set_val + add_val + insert
     LeftistTree(int max_n = 0, int max_ops = 0) : n(0), tot(0),
         pos(max_n + 10, 0), id(max_n + max_ops + 10, 0),
         lc(max_n + max_ops + 10, 0), rc(max_n + max_ops + 10, 0),
@@ -48,7 +42,7 @@ struct LeftistTree
     {
         roots.reserve(max_n + max_ops + 10);
     }
-    void init(int _n, const vector<T>& init_vals = {}) 
+    void init(int _n, const vector<T>& init_vals = {})
     {
         n = tot = _n;
         roots.clear();
@@ -157,7 +151,7 @@ public:
     // --- 结构变更 API ---
     // 合并 x, y 所在堆，返回新堆顶逻辑编号
     // 时间: O(log N) | 空间: O(1)
-    int merge(int x, int y) 
+    int merge(int x, int y)
     {
         int px = pos[x], py = pos[y];
         if (!px || !py || deleted[px] || deleted[py]) return -1;
@@ -191,7 +185,7 @@ public:
         tmul[new_p] = T(1); tadd[new_p] = T();
         root_idx[new_p] = -1;
         pos[nid] = new_p;  id[new_p] = nid;
-        if (rt) 
+        if (rt)
         {
             int nrt = merge_trees(rt, new_p);
             fa_dsu[rt] = fa_dsu[new_p] = nrt;
@@ -204,7 +198,7 @@ public:
     }
     // 删除 x (懒惰删除, 死点清理由后续操作分摊)
     // 时间: 均摊 O(log N) | 空间: O(1)
-    int erase(int x) 
+    int erase(int x)
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
@@ -224,7 +218,7 @@ public:
     }
     // 删除 x 所在堆的堆顶 (死点清理由后续操作分摊)
     // 时间: 均摊 O(log N) | 空间: O(1)
-    int pop(int x) 
+    int pop(int x)
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
@@ -239,7 +233,7 @@ public:
     }
     // 覆盖修改 x 的真实值 (废弃旧点开新点, 死点清理由后续操作分摊)
     // 时间: 均摊 O(log N) | 空间: O(1)
-    int set_val(int x, T v) 
+    int set_val(int x, T v)
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
@@ -284,7 +278,7 @@ public:
     }
     // 点 x 增加 k
     // 时间: 均摊 O(log N) | 空间: O(1)
-    int add_val(int x, T k) 
+    int add_val(int x, T k)
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
@@ -293,7 +287,7 @@ public:
     // --- 懒标记 API ---
     // 点 x 所在整堆 + k
     // 时间: O(α(N)) | 空间: O(1)
-    int heap_add(int x, T k) 
+    int heap_add(int x, T k)
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
@@ -307,7 +301,7 @@ public:
     }
     // 逻辑点 x 所在整堆真实值 * m (m > 0)
     // 时间: O(α(N)) | 空间: O(1)
-    int heap_mul(int x, T m) 
+    int heap_mul(int x, T m)
     {
         assert(m > 0);
         int p = pos[x];
@@ -324,21 +318,21 @@ public:
     }
     // 全体存活堆 + k
     // 时间: O(1) | 空间: O(1)
-    void add_all(T k) { gadd += k; } 
+    void add_all(T k) { gadd += k; }
     // --- 查询 API (入参全为逻辑编号，出口全为含全局偏移的真实值) ---
     int get_top_id(int x)  { int p = pos[x]; return (!p || deleted[p]) ? -1 : id[find_root(p)]; }
     T   get_top_val(int x) { int p = pos[x]; return (!p || deleted[p]) ? T() : val[find_root(p)] + gadd; }
     T   get_val(int x)     { int p = pos[x]; return (!p || deleted[p]) ? T() : val[p] + gadd; }
     int get_size(int x)    { int p = pos[x]; return (!p || deleted[p]) ? 0 : sz[find_root(p)]; }
     int get_heap_count() const { return (int)roots.size(); }
-    T get_heap_sum(int x) 
+    T get_heap_sum(int x)
     {
         int p = pos[x];
         if (!p || deleted[p]) return T();
         int r = find_root(p);
         return hsum[r] + gadd * (T)sz[r];
     }
-    VI get_roots_id() const 
+    VI get_roots_id() const
     {
         VI res; res.reserve(roots.size());
         for (int p : roots) res.push_back(id[p]);
@@ -349,31 +343,32 @@ public:
     // T get_min_top() const { return root_vals.empty() ? T() : *root_vals.begin() + gadd; }    // [RV]
     // T get_sum_tops() const { return root_sum + gadd * (T)roots.size(); }                     // [RV]
 };
+#endif
 /*
  * Usage:
  * // 1. 初始化
  * LeftistTree<LL, greater<LL>> lt(N, Q); // 例: 大根堆
  * lt.init(n, a); // a 为 1-base 的 vector，初始赋值 a[1] ~ a[n]
- * 
+ *
  * // 2. 核心操作 (x, y 均为初始生成的逻辑编号 1~n)
  * lt.merge(x, y);       // 合并逻辑点 x 和 y 所在的堆
  * lt.pop(x);            // 弹出逻辑点 x 所在堆的堆顶
  * lt.erase(x);          // 删除逻辑点 x (将懒惰删除, 并在到根时清理)
  * lt.set_val(x, v);     // 单点覆盖: 将逻辑点 x 的值设为 v (开新物理节点)
  * lt.add_val(x, k);     // 单点修改: 将逻辑点 x 的值增加 k
- * 
+ *
  * // 3. 懒标记操作 (注意: 调用后，非堆顶元素的单点 get_val 会失效)
  * lt.heap_add(x, k);    // x 所在堆的所有元素 +k
  * lt.heap_mul(x, m);    // x 所在堆的所有元素 *m (m必须为正数)
  * lt.add_all(k);        // 全局所有堆的所有元素 +k
- * 
+ *
  * // 4. 查询操作
  * bool ok = lt.alive(x) && lt.same(x, y); // 判断 x 是否存活且与 y 同堆
  * int rt_id = lt.get_top_id(x);           // 获取 x 所在堆顶的逻辑编号
  * LL rt_val = lt.get_top_val(x);          // 获取 x 所在堆顶的最值
  * LL h_sum = lt.get_heap_sum(x);          // 获取 x 所在堆的元素总和
  * int h_sz = lt.get_size(x);              // 获取 x 所在堆的存活节点数
- * 
+ *
  * // 5. 全局查最值 (P3273 棘手的操作)
  * // 需在模板中解封含有 [RV] 的代码行。卡常时需将 root_vals 改为对顶优先队列。
  * // cout << lt.get_max_top() << endl;

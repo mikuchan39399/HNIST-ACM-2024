@@ -1,12 +1,16 @@
+#ifndef Z_OI_DSU
+#define Z_OI_DSU
+
 #include <vector>
+#include "../../杂项/utils/utils.cpp"
+
 using namespace std;
-using VI = vector<int>;
 
 struct DSU
 {
     int n;
     VI fa, sz;
-    DSU(int max_n = 0) : 
+    DSU(int max_n = 0) :
         n(max_n), fa(max_n + 10), sz(max_n + 10, 1)
     {
         for (int i = 0; i <= n; i++)
@@ -40,3 +44,4 @@ struct DSU
     bool same(int u, int v) { return find(u) == find(v); }
     int size(int x) { return sz[find(x)]; }
 };
+#endif

@@ -1,22 +1,15 @@
+#ifndef Z_OI_VBCC
+#define Z_OI_VBCC
+
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <cassert>
+#include <cassert>
 #include "../图的存储/Graph.cpp"
+#include "../../杂项/utils/utils.cpp"
 
 using namespace std;
-using VI = vector<int>;
-using VVI = vector<vector<int>>;
 
-#ifndef Z_OI_ZFILLN
-#define Z_OI_ZFILLN
-template<typename... CS>
-void z_fill_n(int n, int val, CS&... cs) 
-{
-    assert(((((int)cs.size()) >= n) && ...));
-    (fill(cs.begin(), cs.begin() + min((size_t)(n + 10), cs.size()), val), ...);
-}
-#endif
 struct VBCC
 {
     int n;
@@ -25,9 +18,9 @@ struct VBCC
     Graph<false, Empty> tree;   // 圆方树
     VI dfn, low, sta, cut;
     VVI vbcc_cir;               // 存储每个 VBCC 所包含的所有圆点
-    VBCC(int max_n = 0, int max_m = 0) : n(max_n), dfn_idx(0), vbcc_cnt(0), 
+    VBCC(int max_n = 0, int max_m = 0) : n(max_n), dfn_idx(0), vbcc_cnt(0),
         g(max_n, max_m), tree(max_n * 2, max_n * 2),
-        dfn(max_n + 10, 0), low(max_n + 10, 0), cut(max_n + 10, 0), 
+        dfn(max_n + 10, 0), low(max_n + 10, 0), cut(max_n + 10, 0),
         vbcc_cir(1, VI{})
     {
         sta.reserve(max_n + 10);
@@ -59,17 +52,17 @@ struct VBCC
                 low[u] = min(low[u], low[v]);
                 if (low[v] >= dfn[u])
                 {
-                    if (u != root) cut[u] = 1; 
+                    if (u != root) cut[u] = 1;
                     vbcc_cnt++;
                     vbcc_cir.push_back(VI{});
                     int t;
                     do
                     {
-                        t = sta.back(); 
+                        t = sta.back();
                         sta.pop_back();
                         vbcc_cir[vbcc_cnt].push_back(t);
-                    } while (t != v); 
-                    vbcc_cir[vbcc_cnt].push_back(u); 
+                    } while (t != v);
+                    vbcc_cir[vbcc_cnt].push_back(u);
                 }
             }
             else low[u] = min(low[u], dfn[v]);
@@ -126,7 +119,7 @@ struct VBCC
     {
         VI res;
         if (i < 1 || i > vbcc_cnt) return res;
-        for (int v : vbcc_cir[i]) 
+        for (int v : vbcc_cir[i])
         {
             if (cut[v]) res.push_back(v);
         }
@@ -134,6 +127,8 @@ struct VBCC
     }
 };
 
+
+#endif
 // Usage:
 /*
 const int N = 5e5 + 10;
@@ -156,12 +151,12 @@ void dfs_tree(int u, int fa, VI& vis)
 void solve()
 {
     int n, m; cin >> n >> m;
-    graph.init(n); 
+    graph.init(n);
     for (int i = 1; i <= m; i++)
     {
-        int u, v; 
+        int u, v;
         cin >> u >> v;
-        if (u == v) continue; 
+        if (u == v) continue;
         // 外部只需要加一次，Graph<false> 会自动搞定无向边
         graph.add_edge(u, v);
     }

@@ -1,25 +1,28 @@
-#include <vector>
-#include "../../图的存储/Graph.cpp"
-using namespace std;
-using VI = vector<int>;
-using LL = long long;
+#ifndef Z_OI_VT_STACK
+#define Z_OI_VT_STACK
 
-struct VirtualTree
+#include <vector>
+#include "../../图的存储/Graph.cpp"
+#include "../../../杂项/utils/utils.cpp"
+
+using namespace std;
+
+struct VirtualTreeStack
 {
     Graph<false, LL> tree;
     VI stk;
-    VirtualTree(int max_n = 0) : tree(max_n, max_n)
+    VirtualTreeStack(int max_n = 0) : tree(max_n, max_n)
     {
         stk.reserve(max_n + 10);
     }
-    void clear() 
+    void clear()
     {
         tree.clear();
         stk.clear();
     }
     // 传入关键点 VI 与 对原图建好的 DFN_LCA
     template<typename LCA>
-    void build(VI& nodes, LCA& lca, int root = 1) 
+    void build(VI& nodes, LCA& lca, int root = 1)
     {
         clear();
         if (nodes.empty()) return;
@@ -46,10 +49,11 @@ struct VirtualTree
             }
             stk.push_back(u);
         }
-        for (size_t i = 0; i + 1 < stk.size(); i++) 
+        for (size_t i = 0; i + 1 < stk.size(); i++)
         {
             tree.add(stk[i], stk[i + 1], lca.dist(stk[i], stk[i + 1]));
         }
     }
 };
+#endif
 

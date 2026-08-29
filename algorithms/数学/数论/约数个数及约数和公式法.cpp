@@ -28,6 +28,6 @@ void deprime(int x) // 质因数分解
     if(x > 1)
     {
         cnt *= 1 + 1;
-        ret *= x + 1;
+        sum *= x + 1;
     }
 }

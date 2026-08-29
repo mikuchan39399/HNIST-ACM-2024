@@ -1,10 +1,12 @@
-#include <vector>
-#include "../图的存储/Graph.cpp"
-using namespace std;
-using VI = vector<int>;
-
 #ifndef Z_OI_TOPO_SORT
 #define Z_OI_TOPO_SORT
+
+#include <vector>
+#include "../图的存储/Graph.cpp"
+#include "../../杂项/utils/utils.cpp"
+
+using namespace std;
+
 // ============ 拓扑排序 (Kahn) ============
 // 仅接受有向图 Graph<true, ...>;
 // build 返回 false = 有环; true = DAG, 无任何环,
@@ -32,7 +34,7 @@ struct TopoSort
     // 时间: O(1) | 空间: O(1)
     VI& get() { return ord; }
 };
-#endif 
+#endif
 
 /*
  * Usage:

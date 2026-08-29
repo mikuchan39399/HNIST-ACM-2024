@@ -1,15 +1,17 @@
-/**
- * n -- 图的顶点数
- * m -- 图的边数
- * N -- 顶点数上限
- * M -- 边数上限
- * edges[N] -- VI邻接表,存储 邻居
- * ans -- VI欧拉路径点序列
- */
+#include <vector>
 
+using namespace std;
+using VI = vector<int>;
+
+// 组装: edges[u] 存邻居; 1-based 加边后 dfs(起点), ans 逆序即欧拉路径点序列
+vector<VI> edges;
+VI ans;
+
+// 回溯式剥边求有向图欧拉路径点序列 (Hierholzer)
+// 时间: O(n + m) | 空间: O(n + m)
 void dfs(int u)
 {
-    while(edges[u].size())
+    while (edges[u].size())
     {
         int v = edges[u].back();
         edges[u].pop_back();
@@ -18,8 +20,4 @@ void dfs(int u)
     ans.push_back(u);
 }
 
-
-/**
- * 如果想要字典序，则需要对edges[1~n]每个VI按编号从大到小排序
- * 序列答案需要逆序
- */
+/* 要字典序: 每个 edges[u] 按邻居编号从大到小排序; ans 逆序输出 */

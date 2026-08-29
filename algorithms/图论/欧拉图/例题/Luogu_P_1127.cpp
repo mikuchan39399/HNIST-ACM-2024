@@ -138,16 +138,16 @@ void solve()
         if(edges[i].size()) sort(edges[i].begin(), edges[i].end(), greater<PSI>());
     }
     dfs(s);
-    if(ans.size() != n)
+    if((int)ans.size() != n)
     {
         cout << "***" << endl;
         return;
     }
     reverse(ans.begin(), ans.end());
-    for(int i = 0; i < ans.size(); i++)
+    for(int i = 0; i < (int)ans.size(); i++)
     {
         cout << ans[i];
-        if(i != ans.size() - 1)
+        if(i != (int)ans.size() - 1)
         {
             cout << '.';
         }

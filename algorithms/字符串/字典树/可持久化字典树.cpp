@@ -1,23 +1,26 @@
+#ifndef Z_OI_PERS_TRIE
+#define Z_OI_PERS_TRIE
+
 #include <array>
 #include <cassert>
 #include <string>
 #include <vector>
-using namespace std;
-using LL = long long;
-using VI = vector<int>;
+#include "../../杂项/utils/utils.cpp"
 
-#ifndef Z_OI_PERS_TRIE
-#define Z_OI_PERS_TRIE
+using namespace std;
+
 // ==========================================
 // 模板参数 K:
 //   - K = 2  : 01-Trie
 //   - K = 26 : 小写字母字符串
 //   - K = 62 : 大小写字母 + 数字
+// 模板参数 HB: 整数位深(最高位下标), 默认 63;
+//   值 < 2^31 时传 30, 结点数与 cap 近似减半
 // max_nodes 开多大:
-//   - 存整数时: 插入次数 * 64 + 10(如果数字 <= 1e9，可把源码里的 63 改成 30 进一步省空间)
+//   - 存整数时: 插入次数 * (HB + 2) + 10
 //   - 存字符串时: 所有字符串的最大长度和 + 10
 // ==========================================
-template <int K = 2>
+template <int K = 2, int HB = 63>
 struct PersTrie
 {
     struct Node
@@ -82,24 +85,24 @@ private:
     }
 public:
     // 在版本 rt 上插入非负整数 x, 返回新版本根句柄 —— 仅 K ∈ [2, 10] 编译
-    // 时间: O(64) | 空间: 至多 64 个新结点
+    // 时间: O(HB + 1) | 空间: 至多 HB + 1 个新结点
     int insert(int rt, LL x)
     {
-        static_assert(K >= 2 && K <= 10, "insert(数值) 仅数字字符集(K<=10)可用");
-        return insert(rt, x, 63);
+        static_assert(K >= 2 && K <= 10, "insert(数值) 仅 K <= 10 可用");
+        return insert(rt, x, HB);
     }
     // 在版本 rt 上插入单词 s, 返回新版本根句柄
     // 时间: O(|s|) | 空间: 至多 |s| 个新结点
     int insert(int rt, const string& s) { return insert(rt, s, 0); }
     // 版本 rt 中与 x 异或的最大值; 空版本返回 -1
-    // 时间: O(64) | 空间: O(1)
+    // 时间: O(HB + 1) | 空间: O(1)
     LL max_xor(int rt, LL x) const
     {
-        static_assert(K >= 2 && K <= 10, "max_xor 仅数字字符集(K<=10)可用");
+        static_assert(K >= 2 && K <= 10, "max_xor 仅 K <= 10 可用");
         if (!tr[rt].cnt) return -1;
         LL res = 0;
         int p = rt;
-        for (int i = 63; i >= 0; i--)
+        for (int i = HB; i >= 0; i--)
         {
             int want = ((x >> i) & 1) ^ 1;
             int nxt = tr[p].ch[want];
@@ -109,16 +112,16 @@ public:
         return res;
     }
     // 版本差集 (Σplus 并集 − Σminus 并集) 中与 x 异或的最大值; 空差集返回 -1
-    // 时间: O((|plus|+|minus|) * 64) | 空间: O(|plus|+|minus|)
+    // 时间: O((|plus|+|minus|) * (HB + 1)) | 空间: O(|plus|+|minus|)
     LL max_xor(VI plus, VI minus, LL x) const
     {
-        static_assert(K >= 2 && K <= 10, "max_xor 仅数字字符集(K<=10)可用");
+        static_assert(K >= 2 && K <= 10, "max_xor 仅 K <= 10 可用");
         int total = 0;
         for (int p : plus) total += tr[p].cnt;
         for (int p : minus) total -= tr[p].cnt;
         if (total == 0) return -1;
         LL res = 0;
-        for (int i = 63; i >= 0; i--)
+        for (int i = HB; i >= 0; i--)
         {
             int want = ((x >> i) & 1) ^ 1;
             int cw = 0;
@@ -128,6 +131,37 @@ public:
             if (d == want) res |= 1LL << i;
             for (int& p : plus) p = tr[p].ch[d];
             for (int& p : minus) p = tr[p].ch[d];
+        }
+        return res;
+    }
+    // 版本差集 (p − q) 中, {xs 每个值与差集全体数的异或值} 的第 k 大(含重复);
+    // 差集空 / xs 空 / k 越界返回 -1 —— 仅 K ∈ [2, 10] 编译
+    // 时间: O(|xs| * (HB + 1)) | 空间: O(|xs|)
+    LL kth_xor(int p, int q, const VLL& xs, LL k) const
+    {
+        static_assert(K >= 2 && K <= 10, "kth_xor 仅 K <= 10 可用");
+        int n = (int)xs.size();
+        LL total = (LL)tr[p].cnt - tr[q].cnt;
+        if (n == 0 || k < 1 || k > total * n) return -1;
+        VI cp(n, p), cq(n, q);
+        LL res = 0;
+        for (int i = HB; i >= 0; i--)
+        {
+            LL one = 0;
+            for (int t = 0; t < n; t++)
+            {
+                int want = (int)((xs[t] >> i) & 1) ^ 1;
+                one += tr[tr[cp[t]].ch[want]].cnt - tr[tr[cq[t]].ch[want]].cnt;
+            }
+            int d = one >= k;
+            if (d) res |= 1LL << i;
+            else k -= one;
+            for (int t = 0; t < n; t++)
+            {
+                int dir = (int)((xs[t] >> i) & 1) ^ d;
+                cp[t] = tr[cp[t]].ch[dir];
+                cq[t] = tr[cq[t]].ch[dir];
+            }
         }
         return res;
     }
@@ -187,7 +221,7 @@ public:
  * Usage: PersTrie
  * ---------------------------------------------------------
  * [1] 01-Trie: 区间最大异或和
- * static PersTrie pt(64 * (n + Q) + 10); // cap: 插入次数*64+10
+ * static PersTrie pt(64 * (n + Q) + 10); // cap: 插入次数*(HB+2)+10
  * VI rt(n + 1, 0);
  * for (int i = 1; i <= n; i++) rt[i] = pt.insert(rt[i - 1], a[i]);
  * pt.max_xor(rt[i], y);                  // 前i个数与y的最大异或, 空树返回-1
@@ -204,4 +238,11 @@ public:
  * [3] Tree-Path: 树上路径查询
  * // rt[u]为根到节点u建出的版本, 路径u->v查差集: (u+v)-(lca+fa_lca)
  * pt.max_xor({rt[u], rt[v]}, {rt[lca], rt[fa_lca]}, x);
+ * ---------------------------------------------------------
+ * [4] 01-Trie: 子矩阵异或第 k 大 (P5795)
+ * static PersTrie<2, 30> pt(32 * (m + 1) + 10); // 值 < 2^31: HB=30, cap 减半
+ * VI rt(m + 1, 0);
+ * for (int j = 1; j <= m; j++) rt[j] = pt.insert(rt[j - 1], y[j]);
+ * vector<LL> xs(x + u, x + d + 1);             // 行切片 x[u..d] (x 为 LL 数组)
+ * pt.kth_xor(rt[r], rt[l - 1], xs, k);         // {x_i ^ y_j} 全体第 k 大
  */

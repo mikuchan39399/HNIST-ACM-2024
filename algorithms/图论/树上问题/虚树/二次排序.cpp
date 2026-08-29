@@ -1,9 +1,12 @@
+#ifndef Z_OI_VT_SORT
+#define Z_OI_VT_SORT
+
 #include <vector>
-#include <algorithm>
+#include <algorithm>
 #include "../../图的存储/Graph.cpp"
+#include "../../../杂项/utils/utils.cpp"
+
 using namespace std;
-using VI = vector<int>;
-using LL = long long;
 
 struct VirtualTree
 {
@@ -11,9 +14,9 @@ struct VirtualTree
     VirtualTree(int max_n = 0) : tree(max_n, max_n * 2) {}
     void clear() { tree.clear(); }
     template<typename LCA>
-    void build(VI& nodes, LCA& lca, int root = 1) 
+    void build(VI& nodes, LCA& lca, int root = 1)
     {
-        clear(); 
+        clear();
         if (nodes.empty()) return;
         for (int x : nodes)
             if (lca.rt[x] != lca.rt[root]) return;
@@ -38,3 +41,4 @@ struct VirtualTree
         }
     }
 };
+#endif

@@ -8,15 +8,16 @@
 #include <iostream>
 #include <limits>
 #include <random>
+#include <set>
 #include <utility>
 #include <vector>
-#include "algorithms/图论/图的存储/Graph.cpp"
-#include "algorithms/图论/拓扑排序/拓扑排序.cpp"
-#include "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp"
-#include "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp"
-#include "algorithms/图论/树上问题/树的直径/两次dfs.cpp"
-#include "algorithms/图论/树上问题/树的直径/树形dp法.cpp"
-#include "algorithms/图论/树上问题/树的重心/树的重心.cpp"
+#include "../图的存储/Graph.cpp"
+#include "../拓扑排序/拓扑排序.cpp"
+#include "../树上问题/最近公共祖先/HLD_LCA.cpp"
+#include "../树上问题/最近公共祖先/DFN_LCA.cpp"
+#include "../树上问题/树的直径/两次dfs.cpp"
+#include "../树上问题/树的直径/树形dp法.cpp"
+#include "../树上问题/树的重心/树的重心.cpp"
 using namespace std;
 using LL = long long;
 using VI = vector<int>;
@@ -294,11 +295,87 @@ void test_tree_basic()
     }
 }
 
+// ============ 段 5: Graph 本体 vs 逐边账本 ============
+static void test_graph_core()
+{
+    mt19937 rng(777);
+    for (int tc = 0; tc < 300; tc++)
+    {
+        int n = 1 + rng() % 10;
+        int m = rng() % 16;
+        Graph<true, Empty> dg(n, 40);
+        Graph<false, Empty> ug(n, 40);
+        vector<PII> de, ue;
+        VI din(n + 1, 0), dout(n + 1, 0), udeg(n + 1, 0);
+        for (int i = 0; i < m; i++)
+        {
+            int u = 1 + rng() % n, v = 1 + rng() % n;   // 允许自环/重边
+            dg.add(u, v);
+            de.push_back({u, v});
+            dout[u]++;
+            din[v]++;
+            ug.add(u, v);
+            ue.push_back({u, v});
+            udeg[u]++;
+            udeg[v]++;
+        }
+        assert(dg.edge_cnt() == (int)de.size());
+        assert(ug.edge_cnt() == (int)ue.size());
+        set<int> dtouch, utouch;
+        for (auto& [u, v] : de)
+        {
+            dtouch.insert(u);
+            dtouch.insert(v);
+        }
+        for (auto& [u, v] : ue)
+        {
+            utouch.insert(u);
+            utouch.insert(v);
+        }
+        assert(dg.node_cnt() == (int)dtouch.size());
+        assert(ug.node_cnt() == (int)utouch.size());
+        for (int v = 1; v <= n; v++)
+        {
+            assert(dg.deg[v] == dout[v]);
+            assert(dg.in_deg[v] == din[v]);
+            assert(ug.deg[v] == udeg[v]);
+        }
+        // 邻接迭代 vs 账本 (无向图含双向半边)
+        vector<PII> dgot, ugot, uexp;
+        for (int v = 1; v <= n; v++)
+        {
+            for (auto& e : dg[v]) dgot.push_back({v, e.v});
+            for (auto& e : ug[v]) ugot.push_back({v, e.v});
+        }
+        for (auto& [u, v] : ue)
+        {
+            uexp.push_back({u, v});
+            uexp.push_back({v, u});
+        }
+        sort(de.begin(), de.end());
+        sort(dgot.begin(), dgot.end());
+        assert(dgot == de);
+        sort(ue.begin(), ue.end());
+        sort(ugot.begin(), ugot.end());
+        sort(uexp.begin(), uexp.end());
+        assert(ugot == uexp);
+        // clear 复用: 账本清零后重建
+        dg.clear();
+        ug.clear();
+        assert(dg.edge_cnt() == 0 && ug.edge_cnt() == 0 && dg.node_cnt() == 0);
+        dg.add(1, 2);
+        ug.add(1, 2);
+        assert(dg.edge_cnt() == 1 && ug.edge_cnt() == 1);
+        assert(dg.deg[1] == 1 && ug.deg[1] == 1 && ug.deg[2] == 1);
+    }
+}
+
 int main()
 {
     test_lca_engines();
     test_topo_sort();
     test_tree_basic();
+    test_graph_core();
     cout << "All tests passed flawlessly!\n";
     return 0;
 }

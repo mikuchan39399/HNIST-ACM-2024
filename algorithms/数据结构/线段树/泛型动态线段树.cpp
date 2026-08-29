@@ -1,3 +1,6 @@
+#ifndef Z_OI_DYSEG
+#define Z_OI_DYSEG
+
 #include <cassert>
 #include <vector>
 using namespace std;
@@ -6,24 +9,24 @@ using LL = long long;
 template<class Info, class Tag>
 struct DySegTree
 {
-    struct Node 
+    struct Node
     {
         int lc = 0, rc = 0;
         Info info;
         Tag tag;
     };
-    LL n; 
+    LL n;
     int root;
     int idx;
     vector<Node> tr;
     int budget = 0;
     // 兼容 256MB 限制, 禁止中途扩容
-    DySegTree(LL _n = 1e9, int _budget = 4000010) : n(_n), root(0), idx(0), budget(_budget) 
+    DySegTree(LL _n = 1e9, int _budget = 4000010) : n(_n), root(0), idx(0), budget(_budget)
     {
         tr.reserve(budget + 1);
         tr.push_back(Node{});
     }
-    int new_node(LL len) 
+    int new_node(LL len)
     {
         assert(idx + 1 <= budget && "max_nodes 开小了");
         tr.push_back(Node{});
@@ -31,22 +34,22 @@ struct DySegTree
         tr[idx].info.len = len;
         return idx;
     }
-    Info get_info(int p, LL l, LL r) 
+    Info get_info(int p, LL l, LL r)
     {
         if (p) return tr[p].info;
         Info ret;
         ret.len = r - l + 1;
         return ret;
     }
-    void pushup(int p, LL l, LL r) 
+    void pushup(int p, LL l, LL r)
     {
         LL mid = l + (r - l) / 2;
         tr[p].info = get_info(tr[p].lc, l, mid) + get_info(tr[p].rc, mid + 1, r);
     }
-    void build(int& p, LL l, LL r, const vector<Info>& a) 
+    void build(int& p, LL l, LL r, const vector<Info>& a)
     {
         p = new_node(r - l + 1);
-        if (l == r) 
+        if (l == r)
         {
             tr[p].info = a[l];
             tr[p].info.len = 1;
@@ -57,41 +60,41 @@ struct DySegTree
         build(tr[p].rc, mid + 1, r, a);
         pushup(p, l, r);
     }
-    void lazy(int& p, LL l, LL r, const Tag& v) 
+    void lazy(int& p, LL l, LL r, const Tag& v)
     {
         if (!p) p = new_node(r - l + 1);
         tr[p].info.apply(v);
         tr[p].tag.apply(v);
     }
-    void pushdown(int p, LL l, LL r) 
+    void pushdown(int p, LL l, LL r)
     {
         if (l == r || !tr[p].tag.has_tag()) return;
         LL mid = l + (r - l) / 2;
         if (!tr[p].lc) tr[p].lc = new_node(mid - l + 1);
         if (!tr[p].rc) tr[p].rc = new_node(r - mid);
-        if constexpr (requires { tr[p].info.split_tag(tr[p].tag, tr[tr[p].lc].info, tr[tr[p].rc].info); }) 
+        if constexpr (requires { tr[p].info.split_tag(tr[p].tag, tr[tr[p].lc].info, tr[tr[p].rc].info); })
         {
             auto [tl, tr_tag] = tr[p].info.split_tag(tr[p].tag, tr[tr[p].lc].info, tr[tr[p].rc].info);
             lazy(tr[p].lc, l, mid, tl);
             lazy(tr[p].rc, mid + 1, r, tr_tag);
         }
-        else 
+        else
         {
             lazy(tr[p].lc, l, mid, tr[p].tag);
             lazy(tr[p].rc, mid + 1, r, tr[p].tag);
         }
         tr[p].tag.clear();
     }
-    void modify(int& p, LL l, LL r, LL x, LL y, const Tag& v) 
+    void modify(int& p, LL l, LL r, LL x, LL y, const Tag& v)
     {
         if (l > y || r < x) return;
         if (!p) p = new_node(r - l + 1);
         if (tr[p].info.break_cond(v)) return;
-        if (l >= x && r <= y && tr[p].info.tag_cond(v)) 
+        if (l >= x && r <= y && tr[p].info.tag_cond(v))
         {
-            if constexpr (requires { tr[p].info.get_real_tag(v); }) 
+            if constexpr (requires { tr[p].info.get_real_tag(v); })
                 lazy(p, l, r, tr[p].info.get_real_tag(v));
-            else 
+            else
                 lazy(p, l, r, v);
             return;
         }
@@ -101,9 +104,9 @@ struct DySegTree
         if (y > mid) modify(tr[p].rc, mid + 1, r, x, y, v);
         pushup(p, l, r);
     }
-    Info query(int p, LL l, LL r, LL x, LL y) 
+    Info query(int p, LL l, LL r, LL x, LL y)
     {
-        if (l > y || r < x) return Info{}; 
+        if (l > y || r < x) return Info{};
         if (l >= x && r <= y) return get_info(p, l, r);
         if (p) pushdown(p, l, r);
         LL mid = l + (r - l) / 2;
@@ -151,37 +154,41 @@ struct DySegTree
     }
 };
 
-// 区间加法区间和（未改动）
+// 区间加法区间和 (示例 Info/Tag, 守卫隔离; 与 泛型线段树.cpp 示例共守卫, 同场先到者胜)
+#endif
+
+#ifndef Z_OI_SEG_DEMO
+#define Z_OI_SEG_DEMO
 struct Tag
 {
     LL add = 0;
-    void apply(const Tag& t) 
-    { 
+    void apply(const Tag& t)
+    {
         add += t.add;
     }
-    void clear() 
-    { 
+    void clear()
+    {
         add = 0;
     }
-    bool has_tag() const 
-    { 
-        return add != 0; 
+    bool has_tag() const
+    {
+        return add != 0;
     }
 };
 struct Info
 {
     LL len = 0;
     LL sum = 0;
-    bool break_cond(const Tag&) 
-    { 
-        return false; 
+    bool break_cond(const Tag&)
+    {
+        return false;
     }
-    bool tag_cond(const Tag&) 
-    { 
-        return true; 
+    bool tag_cond(const Tag&)
+    {
+        return true;
     }
-    void apply(const Tag& t) 
-    { 
+    void apply(const Tag& t)
+    {
         sum += len * t.add;
     }
     friend Info operator+(const Info& a, const Info& b)
@@ -194,3 +201,4 @@ struct Info
         return c;
     }
 };
+#endif

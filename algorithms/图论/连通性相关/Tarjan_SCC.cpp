@@ -1,24 +1,15 @@
+#ifndef Z_OI_SCC
+#define Z_OI_SCC
+
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <cassert>
+#include <cassert>
 #include "../图的存储/Graph.cpp"
+#include "../../杂项/utils/utils.cpp"
 
 using namespace std;
-using VI = vector<int>;
-using VVI = vector<vector<int>>;
-using PII = pair<int, int>;
-using VPII = vector<PII>;
 
-#ifndef Z_OI_ZFILLN
-#define Z_OI_ZFILLN
-template<typename... CS>
-void z_fill_n(int n, int val, CS&... cs) 
-{
-    assert(((((int)cs.size()) >= n) && ...));
-    (fill(cs.begin(), cs.begin() + min((size_t)(n + 10), cs.size()), val), ...);
-}
-#endif
 struct SCC
 {
     int n;
@@ -26,9 +17,9 @@ struct SCC
     Graph<true, Empty> g;      // 原有向图
     Graph<true, Empty> dag;    // 缩点后的 DAG
     VI dfn, low, bel, in_stk, sta;
-    SCC(int max_n = 0, int max_m = 0) : n(max_n), dfn_idx(0), scc_cnt(0), 
+    SCC(int max_n = 0, int max_m = 0) : n(max_n), dfn_idx(0), scc_cnt(0),
         g(max_n, max_m), dag(max_n, max_m),
-        dfn(max_n + 10, 0), low(max_n + 10, 0), 
+        dfn(max_n + 10, 0), low(max_n + 10, 0),
         bel(max_n + 10, 0), in_stk(max_n + 10, 0)
     {
         sta.reserve(max_n + 10);
@@ -108,56 +99,58 @@ struct SCC
     }
 };
 
-// Usage: 
+
+#endif
+// Usage:
 /*
 const int MAXN = 500005;
 const int MAXM = 1000005;
 SCC graph(MAXN, MAXM);
 
-int scc_val[MAXN]; 
+int scc_val[MAXN];
 int dp[MAXN]; // 记录到达每个 SCC 的最大权值和
 
 void solve()
 {
     int n, m;
     cin >> n >> m;
-    
+
     graph.init(n);
-    
+
     VI val(n + 1);
     for (int i = 1; i <= n; i++)
     {
         cin >> val[i];
-        scc_val[i] = 0; 
+        scc_val[i] = 0;
         dp[i] = 0;
     }
-    
+
     for (int i = 1; i <= m; i++)
     {
         int u, v;
         cin >> u >> v;
         graph.add_edge(u, v);
     }
-    
+
     // 1. 跑 Tarjan 找 SCC
     graph.build();
-    
+
     // 2. 将原图权值累加到对应的 SCC 新节点上
     for (int i = 1; i <= n; i++)
     {
         scc_val[graph.bel[i]] += val[i];
     }
-    
+
     // 3. 构建 DAG
     graph.build_dag();
-    
+
     // 4. DAG 上 DP (利用 Tarjan 自带的拓扑序)
     // 初始化 DP 数组为当前点权
     for (int i = 1; i <= graph.scc_cnt; i++)
     {
         dp[i] = scc_val[i];
     }
-    
+
     // Tarjan 的编号(scc_cnt)越大，在拓扑序中越靠前(靠近源点)
     // 逆序遍历 scc_cnt，等价于正向拓扑排序遍历
     for (int u = graph.scc_cnt; u >= 1; u--)
@@ -168,7 +161,7 @@ void solve()
             dp[v] = max(dp[v], dp[u] + scc_val[v]);
         }
     }
-    
+
     // 统计整张图的最长路
     int ans = 0;
     for (int i = 1; i <= graph.scc_cnt; i++)

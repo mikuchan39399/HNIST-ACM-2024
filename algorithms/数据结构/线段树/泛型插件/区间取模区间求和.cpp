@@ -6,7 +6,7 @@ using LL = long long;
 struct Tag
 {
     LL op_mod = 0;
-    void apply(const Tag& t)        // 只在叶子节点应用懒标记，永远不会叠加
+    void apply(const Tag&)          // 只在叶子节点应用懒标记，永远不会叠加
     {}     
     void clear() 
     {}                              // 不下放就不会清空
@@ -26,7 +26,7 @@ struct Info
     {
         return max_val < t.op_mod;
     }
-    bool tag_cond(const Tag& t) const        
+    bool tag_cond(const Tag&) const        
     {
         return len == 1; 
     }

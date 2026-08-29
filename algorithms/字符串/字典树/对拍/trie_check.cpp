@@ -4,8 +4,8 @@
 #include <random>
 #include <string>
 #include <vector>
-#include "字典树.cpp"
-#include "可持久化字典树.cpp"
+#include "../字典树.cpp"
+#include "../可持久化字典树.cpp"
 using namespace std;
 
 // 独立暴力: 扫描串表逐个比对
@@ -236,6 +236,65 @@ void test_pers_trie_str()
     }
 }
 
+// 独立暴力: 全部异或值排序取第 k 大
+template <class PT>
+void run_kth(PT& pt, int pick, mt19937& rng)
+{
+    pt.clear();
+    auto rnd_val = [&]() -> LL
+    {
+        if (pick == 0) return rng() % (1LL << 11);   // HB=10 值域
+        if (pick == 1) return rng() % (1LL << 31);   // HB=30 值域
+        return ((LL)rng() << 31) + rng();            // 默认 63 全域
+    };
+    int n = 1 + rng() % 40;
+    vector<LL> a(n + 1);
+    VI rt(n + 1, 0);
+    for (int i = 1; i <= n; i++)
+    {
+        if (i > 1 && rng() % 3 == 0) a[i] = a[1 + rng() % (i - 1)]; // 重复值
+        else a[i] = rnd_val();
+        rt[i] = pt.insert(rt[i - 1], a[i]);
+    }
+    vector<LL> all;
+    for (int q = 0; q < 40; q++)
+    {
+        int l = 1 + rng() % n, r = l + rng() % (n - l + 1);
+        int u = 1 + rng() % n, d = min(n, u + (int)(rng() % 5)); // 多 x 并行(1~5 行)
+        vector<LL> xs;
+        for (int i = u; i <= d; i++)
+            xs.push_back((rng() % 3 == 0) ? a[1 + rng() % n] : rnd_val());
+        assert(pt.kth_xor(rt[r], rt[r], xs, 1) == -1);        // 空差集哨兵
+        assert(pt.kth_xor(rt[r], rt[l - 1], xs, 0) == -1);    // k=0 哨兵
+        vector<LL> es;
+        assert(pt.kth_xor(rt[n], 0, es, 1) == -1);            // xs 空哨兵
+        all.clear();
+        for (int i = u; i <= d; i++)
+            for (int j = l; j <= r; j++) all.push_back(xs[i - u] ^ a[j]);
+        sort(all.begin(), all.end());
+        int kmax = (int)all.size();
+        assert(pt.kth_xor(rt[r], rt[l - 1], xs, kmax) == all[0]);      // k=max 即最小
+        int k = 1 + rng() % kmax;
+        assert(pt.kth_xor(rt[r], rt[l - 1], xs, k) == all[kmax - k]);
+        assert(pt.kth_xor(rt[r], rt[l - 1], xs, kmax + 1) == -1);      // k 越界哨兵
+    }
+}
+
+void test_pers_trie_kth()
+{
+    mt19937 rng(42);
+    static PersTrie<2, 10> p10(300 * 40 * 12 + 100);
+    static PersTrie<2, 30> p30(300 * 40 * 32 + 100);
+    static PersTrie<> p63(300 * 40 * 64 + 100);
+    for (int tc = 0; tc < 300; tc++)
+    {
+        int pick = tc % 3;                    // 三种位深各 100 组
+        if (pick == 0) run_kth(p10, 0, rng);
+        else if (pick == 1) run_kth(p30, 1, rng);
+        else run_kth(p63, 2, rng);
+    }
+}
+
 int main()
 {
     test_trie();
@@ -243,5 +302,6 @@ int main()
     test_pers_trie();
     test_pers_trie_range();
     test_pers_trie_str();
+    test_pers_trie_kth();
     return 0;
 }

@@ -1,8 +1,14 @@
+// ============ pst_check PersSegTree 回归套件 ============
+// 覆盖: 静态区间第k小(static 单实例+clear 多测复用) | 区间加历史版本随机回访 |
+//       find_first/find_last 二分 | 区点修改混用
+// 纪律: 改动 PersSegTree 模板, 必重跑本套件; SegTree/DySegTree 聚合于 seg_check.cpp
+// 跑法: g++ -std=c++20 -Wall -Wextra -O2 pst_check.cpp -o pst_check && ./pst_check
 #include <iostream>
 #include <vector>
 #include <cassert>
 #include <algorithm>
 #include <random>
+#include "../可持久化线段树/主席树.cpp"
 
 using namespace std;
 using LL = long long;

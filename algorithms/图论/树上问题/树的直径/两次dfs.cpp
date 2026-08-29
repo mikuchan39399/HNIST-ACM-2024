@@ -1,14 +1,14 @@
+#ifndef Z_OI_TREE_DIAMETER
+#define Z_OI_TREE_DIAMETER
+
 #include <vector>
 #include <algorithm>
 #include <type_traits>
 #include "../../图的存储/Graph.cpp"
+#include "../../../杂项/utils/utils.cpp"
 
 using namespace std;
-using LL = long long;
-using VI = vector<int>;
 
-#ifndef Z_OI_TREE_DIAMETER
-#define Z_OI_TREE_DIAMETER
 // ============ 树的直径 (两次 DFS, 提供端点与路径) ============
 // 仅支持非负边权, 可负边权请用 dp 版(树形dp法.cpp)
 // W 为 Empty 时按 1 计权; 森林仅算节点 1 所在的树
@@ -23,7 +23,7 @@ struct TreeDiameter
     LL len;
 private:
     VI cur_far;
-    vector<LL> cur_d;
+    VLL cur_d;
     template <class E>
     static LL w_of(const E& e)
     {

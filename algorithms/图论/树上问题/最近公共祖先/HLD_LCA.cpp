@@ -1,55 +1,45 @@
+#ifndef Z_OI_HLD_LCA
+#define Z_OI_HLD_LCA
+
 #include <vector>
 #include <algorithm>
 #include <cassert>
 #include <type_traits>
+#include "../../../杂项/utils/utils.cpp"
 
 using namespace std;
-using LL = long long;
-using VI = vector<int>;
-using VLL  = vector<LL>;
 
 #ifndef Z_OI_EMPTY
 #define Z_OI_EMPTY
 struct Empty {};
 #endif
 
-#ifndef Z_OI_ZFILLN
-#define Z_OI_ZFILLN
-template<typename... CS>
-void z_fill_n(int n, int val, CS&... cs) 
-{
-    assert(((((int)cs.size()) >= n) && ...));
-    (fill(cs.begin(), cs.begin() + min((size_t)(n + 10), cs.size()), val), ...);
-}
-#endif
-#ifndef Z_OI_HLD_LCA
-#define Z_OI_HLD_LCA
-struct HLD_LCA 
+struct HLD_LCA
 {
     int n, dfn_idx;
     VI fa, dep, sz, son, top, dfn, rt;
     VLL dis;
     // 内存: 36 B/点(DFN_LCA 约 196 B/点), 轻量版
     HLD_LCA(int max_n = 0) : n(max_n), dfn_idx(0),
-        fa(max_n + 10, 0), dep(max_n + 10, 0), sz(max_n + 10, 0), 
+        fa(max_n + 10, 0), dep(max_n + 10, 0), sz(max_n + 10, 0),
         son(max_n + 10, 0), top(max_n + 10, 0), dfn(max_n + 10, 0),
         rt(max_n + 10, 0), dis(max_n + 10, 0)
     {}
-    void init(int _n) 
+    void init(int _n)
     {
         n = _n;
         dfn_idx = 0;
         z_fill_n(n, 0, fa, dep, sz, son, top, dfn, rt, dis);
     }
     template <class G>
-    void dfs1(int u, int f, int root, G& g) 
+    void dfs1(int u, int f, int root, G& g)
     {
         fa[u] = f;
         rt[u] = root;
         dep[u] = dep[f] + 1;
         sz[u] = 1;
         son[u] = 0;
-        for (auto& e : g[u]) 
+        for (auto& e : g[u])
         {
             int v = e.v;
             if (v == f) continue;
@@ -67,20 +57,20 @@ struct HLD_LCA
         }
     }
     template <class G>
-    void dfs2(int u, int t, G& g) 
+    void dfs2(int u, int t, G& g)
     {
         top[u] = t;
         dfn[u] = ++dfn_idx;
         if (son[u]) dfs2(son[u], t, g);
-        for (auto& e : g[u]) 
+        for (auto& e : g[u])
         {
             int v = e.v;
             if (v == fa[u] || v == son[u]) continue;
-            dfs2(v, v, g); 
+            dfs2(v, v, g);
         }
     }
     template <class G>
-    void build(G& g, int root = -1) 
+    void build(G& g, int root = -1)
     {
         if (root != -1)
         {
@@ -111,7 +101,7 @@ struct HLD_LCA
     }
     int lca(const VI& nodes)
     {
-        if (nodes.empty()) return -1; 
+        if (nodes.empty()) return -1;
         int min_node = nodes[0];
         int max_node = nodes[0];
         for (int i = 1; i < (int)nodes.size(); i++)

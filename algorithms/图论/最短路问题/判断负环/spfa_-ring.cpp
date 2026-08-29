@@ -41,7 +41,7 @@ int main()
     int t; cin >> t;
     while(t--)
     {
-        memset(edges, 0, sizeof(edges));
+        for (auto& e : edges) e.clear();
         cin >> n >> m;
         for(int i = 1; i <= m; i++)
         {

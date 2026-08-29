@@ -1,18 +1,21 @@
-#include <vector>
+#ifndef Z_OI_HLD
+#define Z_OI_HLD
+
 #include <algorithm>
-#include <iostream>
+#include "../../图的存储/Graph.cpp"
+#include "../../../杂项/utils/utils.cpp"
 
 using namespace std;
-using VI = vector<int>;
-using LL = long long;
 
-template<typename... CS>
-void z_fill_n(int n, int val, CS&... cs) 
-{
-    (fill(cs.begin(), cs.begin() + min((size_t)(n + 10), cs.size()), val), ...);
-}
-#define lc (p << 1)
-#define rc (p << 1 | 1)
+// ============ HLD 重链剖分 + 树链线段树 ============
+// 1-based, 与 图的存储/Graph.cpp 配套(无向加边, g[u] 邻接迭代)
+// 功能: 两遍 dfs 剖链 O(n); 路径/子树 加与求和 O(log^2 n)/O(log n)
+// 约定: 点编号 [1, n]; build(g) 扫全森林(dfn==0 起剖), build(g, root)
+//   单树; SegTree 按剖出的 dfn 序建树: build(1, 1, n, a, hld.seg),
+//   a 为 1-based 原点权, seg 为 dfn->原编号映射
+// 内存账: HLD 七个 int 数组 28B/n + SegTree 结点 24B × 4n ≈ 124B/n,
+//   n = 1e5 约 13MB
+// 注意: dfs1/dfs2 为递归, 深链退化 O(n) 栈深, 小栈环境需改迭代
 struct SegTree
 {
     struct Node
@@ -21,129 +24,128 @@ struct SegTree
         LL add, sum;
     };
     vector<Node> tr;
-    SegTree(int max_n = 0) : 
+    // 构造: 预算 max_n 规模的 4n 结点
+    // 时间: O(n) | 空间: 24B × 4n (账目见类头)
+    SegTree(int max_n = 0) :
         tr((max_n + 10) << 2, {0, 0, 0, 0})
     {}
     void push_up(int p)
     {
-        tr[p].sum = tr[lc].sum + tr[rc].sum;
-    }
-    // a 为原数组, seg 为 dfn 到 原节点编号的映射
-    void build(int p, int l, int r, const VI& a, const VI& seg)
-    {
-        tr[p] = {l, r, 0, 0};
-        if(l == r)
-        {
-            tr[p].sum = a[seg[l]]; // 叶子节点的值来自映射后的原数组
-            return;
-        }
-        int mid = (l + r) >> 1;
-        build(lc, l, mid, a, seg);
-        build(rc, mid + 1, r, a, seg);
-        push_up(p);
+        tr[p].sum = tr[p << 1].sum + tr[p << 1 | 1].sum;
     }
     void lazy(int p, LL add)
     {
-        int l = tr[p].l, r = tr[p].r;
         tr[p].add += add;
-        tr[p].sum += add * (r - l + 1);
+        tr[p].sum += add * (tr[p].r - tr[p].l + 1);
     }
     void push_down(int p)
     {
-        if (tr[p].add == 0 || tr[p].l == tr[p].r) 
-        {
-            return;
-        }
-        lazy(lc, tr[p].add);
-        lazy(rc, tr[p].add);
+        if (tr[p].add == 0 || tr[p].l == tr[p].r) return;
+        lazy(p << 1, tr[p].add);
+        lazy(p << 1 | 1, tr[p].add);
         tr[p].add = 0;
     }
+    // 从 a[1..n] 按 dfn->seg 映射建树 (a 1-based 原点权, seg 为 hld.seg)
+    // 时间: O(n) | 空间: O(1)
+    void build(int p, int l, int r, const VI& a, const VI& seg)
+    {
+        tr[p] = {l, r, 0, 0};
+        if (l == r)
+        {
+            tr[p].sum = a[seg[l]];
+            return;
+        }
+        int mid = (l + r) >> 1;
+        build(p << 1, l, mid, a, seg);
+        build(p << 1 | 1, mid + 1, r, a, seg);
+        push_up(p);
+    }
+    // 区间 [x, y] 整体加 k
+    // 时间: O(log n) | 空间: O(1)
     void modify(int p, int x, int y, LL k)
     {
         int l = tr[p].l, r = tr[p].r;
-        if(l >= x && r <= y)
+        if (l >= x && r <= y)
         {
             lazy(p, k);
             return;
         }
         push_down(p);
         int mid = (l + r) >> 1;
-        if(x <= mid) modify(lc, x, y, k);
-        if(y > mid) modify(rc, x, y, k);
+        if (x <= mid) modify(p << 1, x, y, k);
+        if (y > mid) modify(p << 1 | 1, x, y, k);
         push_up(p);
     }
+    // 区间 [x, y] 求和
+    // 时间: O(log n) | 空间: O(1)
     LL query(int p, int x, int y)
     {
         int l = tr[p].l, r = tr[p].r;
-        if(l >= x && r <= y)
-        {
-            return tr[p].sum;
-        }
+        if (l >= x && r <= y) return tr[p].sum;
         push_down(p);
         LL sum = 0;
         int mid = (l + r) >> 1;
-        if(x <= mid) sum += query(lc, x, y);
-        if(y > mid) sum += query(rc, x, y);
+        if (x <= mid) sum += query(p << 1, x, y);
+        if (y > mid) sum += query(p << 1 | 1, x, y);
         return sum;
     }
 };
 
-struct HLD 
+struct HLD
 {
     int n, dfn_idx;
     VI fa, dep, sz, son, top, dfn, seg;
-    HLD(int max_n = 0) : n(max_n), dfn_idx(0), 
-        fa(max_n + 10, 0), dep(max_n + 10, 0), sz(max_n + 10, 0), 
-        son(max_n + 10, 0), top(max_n + 10, 0), 
-        dfn(max_n + 10, 0), seg(max_n + 10, 0) 
+    // 构造: 预算 max_n 的七个剖链数组
+    // 时间: O(n) | 空间: 28B/n (账目见类头)
+    HLD(int max_n = 0) : n(max_n), dfn_idx(0),
+        fa(max_n + 10, 0), dep(max_n + 10, 0), sz(max_n + 10, 0),
+        son(max_n + 10, 0), top(max_n + 10, 0),
+        dfn(max_n + 10, 0), seg(max_n + 10, 0)
     {}
-    void init(int _n) 
+    // 多测复位: 七个数组清零, n 更新为 _n
+    // 时间: O(n) | 空间: O(1)
+    void init(int _n)
     {
         n = _n;
         dfn_idx = 0;
         z_fill_n(n, 0, fa, dep, sz, son, top, dfn, seg);
     }
+private:
     template <class G>
-    void dfs1(int u, int f, G& g) 
+    void dfs1(int u, int f, G& g)
     {
         fa[u] = f;
         dep[u] = dep[f] + 1;
         sz[u] = 1;
         son[u] = 0;
-        
-        for (auto& e : g[u]) 
+        for (auto& e : g[u])
         {
             int v = e.v;
             if (v == f) continue;
             dfs1(v, u, g);
             sz[u] += sz[v];
-            if (sz[v] > sz[son[u]]) 
-            {
-                son[u] = v;
-            }
+            if (sz[v] > sz[son[u]]) son[u] = v;
         }
     }
     template <class G>
-    void dfs2(int u, int t, G& g) 
+    void dfs2(int u, int t, G& g)
     {
         top[u] = t;
-        dfn_idx++;
-        dfn[u] = dfn_idx;
+        dfn[u] = ++dfn_idx;
         seg[dfn_idx] = u;
-        
-        if (son[u]) 
-        {
-            dfs2(son[u], t, g); 
-        }
-        for (auto& e : g[u]) 
+        if (son[u]) dfs2(son[u], t, g);
+        for (auto& e : g[u])
         {
             int v = e.v;
             if (v == fa[u] || v == son[u]) continue;
-            dfs2(v, v, g); 
+            dfs2(v, v, g);
         }
     }
+public:
+    // 跑剖链: root 指定则单树, 默认扫全森林(dfn==0 起剖)
+    // 时间: O(n) | 空间: O(1)
     template <class G>
-    void build(G& g, int root = -1) 
+    void build(G& g, int root = -1)
     {
         if (root != -1)
         {
@@ -162,66 +164,64 @@ struct HLD
     }
 };
 
-const int N = 1e5 + 10;
-Graph<false, Empty> g{N, N};
-HLD hld{N};
-SegTree tr{N}; 
-VI a(N); // a[N] -- 原始数组，存初始点权
-
-// 树上两点路径加法
-void modify_path(int u, int v, LL k) 
+// 树上 u-v 路径整体加 k
+// 时间: O(log^2 n) | 空间: O(1)
+void modify_path(HLD& h, SegTree& t, int u, int v, LL k)
 {
-    while (hld.top[u] != hld.top[v]) 
+    while (h.top[u] != h.top[v])
     {
-        if (hld.dep[hld.top[u]] < hld.dep[hld.top[v]]) swap(u, v);
-        tr.modify(1, hld.dfn[hld.top[u]], hld.dfn[u], k);
-        u = hld.fa[hld.top[u]];
+        if (h.dep[h.top[u]] < h.dep[h.top[v]]) swap(u, v);
+        t.modify(1, h.dfn[h.top[u]], h.dfn[u], k);
+        u = h.fa[h.top[u]];
     }
-    if (hld.dep[u] > hld.dep[v]) swap(u, v);
-    tr.modify(1, hld.dfn[u], hld.dfn[v], k);
+    if (h.dep[u] > h.dep[v]) swap(u, v);
+    t.modify(1, h.dfn[u], h.dfn[v], k);
 }
-// 查询树上两点路径上和
-LL query_path(int u, int v) 
+
+// 树上 u-v 路径和
+// 时间: O(log^2 n) | 空间: O(1)
+LL query_path(HLD& h, SegTree& t, int u, int v)
 {
     LL res = 0;
-    while (hld.top[u] != hld.top[v]) 
+    while (h.top[u] != h.top[v])
     {
-        if (hld.dep[hld.top[u]] < hld.dep[hld.top[v]]) swap(u, v);
-        res += tr.query(1, hld.dfn[hld.top[u]], hld.dfn[u]);
-        u = hld.fa[hld.top[u]];
+        if (h.dep[h.top[u]] < h.dep[h.top[v]]) swap(u, v);
+        res += t.query(1, h.dfn[h.top[u]], h.dfn[u]);
+        u = h.fa[h.top[u]];
     }
-    if (hld.dep[u] > hld.dep[v]) swap(u, v);
-    res += tr.query(1, hld.dfn[u], hld.dfn[v]);
+    if (h.dep[u] > h.dep[v]) swap(u, v);
+    res += t.query(1, h.dfn[u], h.dfn[v]);
     return res;
 }
-// 子树加法
-void modify_subtree(int u, LL k)
+
+// u 的子树整体加 k
+// 时间: O(log n) | 空间: O(1)
+void modify_subtree(HLD& h, SegTree& t, int u, LL k)
 {
-    tr.modify(1, hld.dfn[u], hld.dfn[u] + hld.sz[u] - 1, k);
-}
-// 子树求和
-LL query_subtree(int u)
-{
-    return tr.query(1, hld.dfn[u], hld.dfn[u] + hld.sz[u] - 1);
+    t.modify(1, h.dfn[u], h.dfn[u] + h.sz[u] - 1, k);
 }
 
-/* Usage: 
-void solve() 
+// u 的子树和
+// 时间: O(log n) | 空间: O(1)
+LL query_subtree(HLD& h, SegTree& t, int u)
 {
-    int n, m, root, mod; // 例: 求和并取模
-    cin >> n >> m >> root >> mod;
-    g.clear();
+    return t.query(1, h.dfn[u], h.dfn[u] + h.sz[u] - 1);
+}
+#endif
+/* Usage:
+    int n, m; cin >> n >> m;
+    Graph<false, Empty> g{n, n};
+    HLD hld{n};
+    SegTree tr{n};
+    VI a(n + 1);                     // 1-based 原点权
     hld.init(n);
     for (int i = 1; i <= n; i++) cin >> a[i];
-    for (int i = 1; i < n; i++) 
-    {
-        int u, v; cin >> u >> v;
-        g.add(u, v);
-    }
-    // 跑树链剖分
-    hld.build(g);
-    // 建立线段树。注意传入 a 和 seg
-    tr.build(1, 1, n, a, hld.seg);
-    // 后续根据题目要求直接调用 modify_path / query_path 即可
-}
+    for (int i = 1; i < n; i++) { int u, v; cin >> u >> v; g.add(u, v); }
+    hld.build(g);                    // 剖链(森林全扫; 单树传 hld.build(g, root))
+    tr.build(1, 1, n, a, hld.seg);   // 按 dfn 序建线段树
+    modify_path(hld, tr, u, v, k);   // 路径加
+    query_path(hld, tr, u, v);       // 路径和
+    modify_subtree(hld, tr, u, k);   // 子树加
+    query_subtree(hld, tr, u);       // 子树和
+    // 多测: g.clear(); hld.init(n); 重跑 build
 */

@@ -1,3 +1,6 @@
+#ifndef Z_OI_BIGINT
+#define Z_OI_BIGINT
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,48 +10,16 @@
 #include <algorithm>
 #include <type_traits>
 #include <compare>
+#include "../../杂项/128位整数/128int.cpp"
+#include "../../杂项/utils/utils.cpp"
 
 using namespace std;
-using LL = long long;
-
-// =====================================================================
-// Z_OI_I128: __int128 IO (BigInt 唯一依赖, 需先装配)
-// =====================================================================
-#ifndef Z_OI_I128
-#define Z_OI_I128
-using i128 = __int128_t;
-using u128 = __uint128_t;
-inline istream& operator>>(istream& is, i128& x)
-{
-    string s;
-    if (!(is >> s)) return is;
-    bool neg = (s[0] == '-');
-    size_t i = (s[0] == '-') || (s[0] == '+');
-    x = 0;
-    for (; i < s.size(); i++) x = x * 10 + (s[i] - '0');
-    if (neg) x = -x;
-    return is;
-}
-inline ostream& operator<<(ostream& os, i128 x)
-{
-    if (x < 0) os << '-';
-    u128 v = x < 0 ? (u128)(-(x + 1)) + 1 : (u128)x;
-    char buf[45];
-    int n = 0;
-    do { buf[n++] = char('0' + int(v % 10)); } while (v /= 10);
-    while (n) os << buf[--n];
-    return os;
-}
-#endif
 
 
-#ifndef Z_OI_BIGINT
-#define Z_OI_BIGINT
-
-using u64 = unsigned long long; 
+using u64 = unsigned long long;
 
 template <class T>
-concept Intable = is_integral_v<T> && (sizeof(T) <= 8 || is_same_v<T, i128>);
+concept Intable = (is_integral_v<T> && sizeof(T) <= 8) || is_same_v<T, i128>;
 
 class BigInt
 {
@@ -182,7 +153,7 @@ class BigInt
         add_at(z0, z1, h);
         add_at(z0, z2, 2 * h);
         trim(z0);
-        return move(z0);
+        return z0;
     }
     static constexpr pair<vector<limb>, vector<limb>> divmod_mag(const vector<limb>& X, const vector<limb>& Y)
     {
@@ -197,8 +168,8 @@ class BigInt
         limb s = B / (Y.back() + 1);
         vector<limb> u = mul_small(X, s);
         if (u.size() == X.size()) u.push_back(0);
-        vector<limb> v = mul_small(Y, s); 
-        size_t n = v.size(), m = u.size() - n; 
+        vector<limb> v = mul_small(Y, s);
+        size_t n = v.size(), m = u.size() - n;
         vector<limb> q(m);
         for (size_t j = m; j-- > 0; )
         {
@@ -303,7 +274,7 @@ public:
         if (neg == r.neg) { a = add_mag(a, r.a); return *this; }
         int c = cmp_mag(a, r.a);
         if (c == 0) { a.clear(); neg = false; }
-        else if (c > 0) a = sub_mag(a, r.a);     
+        else if (c > 0) a = sub_mag(a, r.a);
         else { a = sub_mag(r.a, a); neg = r.neg; }
         return *this;
     }
@@ -359,9 +330,23 @@ public:
     {
         assert(!neg && "sqrt(): 负数无整数平方根");
         if (a.empty()) return {};
+        size_t L = a.size();
         BigInt x;
-        x.a.assign(a.size() / 2 + 1, 0);
-        x.a.back() = 1;
+        if (L <= 2)
+        {
+            u128 v = (u128)a[0];
+            if (L == 2) v += (u128)a[1] * B;
+            u128 r = isqrt_u128(v);
+            if (r) x.a.push_back((limb)r);
+            return x;
+        }
+        u128 T = (u128)a[L - 1] * B + a[L - 2];
+        u128 t = ((L - 2) % 2 == 0) ? T : T * B;
+        u128 k = isqrt_u128(t) + 2;
+        size_t h = (L - 2) / 2;
+        x.a.assign(h, 0);
+        x.a.push_back((limb)(k % B));
+        if (k / B) x.a.push_back((limb)(k / B));
         while (true)
         {
             BigInt y = *this / x + x;
@@ -381,9 +366,11 @@ public:
     friend constexpr BigInt lcm(const BigInt& a, const BigInt& b)
     {
         if (a.a.empty() || b.a.empty()) return {};
-        return a / gcd(a, b) * b;
+        BigInt r = a / gcd(a, b) * b;
+        r.neg = false;
+        return r;
     }
-    constexpr LL mod(LL m) const 
+    constexpr LL mod(LL m) const
     {
         assert(m >= 1 && "mod(): 模数需 >= 1");
         i128 r = 0;
@@ -415,7 +402,7 @@ public:
         if (neg) s.push_back('-');
         s += to_string(a.back());
         char buf[BW];
-        for (size_t i = a.size() - 1; i-- > 0; ) 
+        for (size_t i = a.size() - 1; i-- > 0; )
         {
             limb t = a[i];
             for (int k = BW - 1; k >= 0; k--) { buf[k] = char('0' + t % 10); t /= 10; }
@@ -436,6 +423,20 @@ public:
         return n < 2 ? BigInt(1) : prod_range(2, n);
     }
 private:
+    static constexpr u128 isqrt_u128(u128 v)
+    {
+        if (v == 0) return 0;
+        u128 r = 1;
+        while (r * r <= v) r <<= 1;
+        while (true)
+        {
+            u128 t = (r + v / r) / 2;
+            if (t >= r) break;
+            r = t;
+        }
+        while (r * r > v) r--;
+        return r;
+    }
     static constexpr BigInt prod_range(u64 lo, u64 hi)
     {
         if (hi - lo <= 64)
@@ -452,9 +453,6 @@ private:
 
 /* Usage:
  * =====================================================================
- * 依赖装配: 需在前面放置 Z_OI_I128 块 (支持 i128 读写)。与 ModLL 顺序无关。
- * 性能基准: 乘法搭载 Karatsuba, 除法搭载 Knuth D
- * =====================================================================
  * 1. 构造与赋值 (通吃所有类型)
  * =====================================================================
  *   BigInt a;                               // 默认构造为 0
@@ -466,16 +464,16 @@ private:
  * =====================================================================
  * 2. 基础算术与比较 (完美融入 C++ 运算符)
  * =====================================================================
- *   a = b + c;  a += b;                     
+ *   a = b + c;  a += b;
  *   a = b - c;  a -= b;
  *   a = b * c;  a *= 2;                     // 整数放右侧直接混算
  *   a = 100 - b;                            // 整数放左侧直接混算
- *   
+ *
  *   // 极其好用的强三路比较 (基于 C++20 <=>)
  *   if (a < b) ...;  if (a >= 0) ...;  if (a == "100000") ...;
  *
- *   // 带余除法 (绝技：一次运算同时拿走商和余数，性能翻倍)
- *   auto [q, r] = a.divmod(b);              
+ *   // 带余除法
+ *   auto [q, r] = a.divmod(b);
  *   a = b / c;  a /= b;                     // 截断除法 (商向零取整)
  *   a = b % c;  a %= b;                     // 余数符号永远与被除数(b)一致
  *
@@ -483,9 +481,9 @@ private:
  * 3. 高级数学运算
  * =====================================================================
  *   BigInt p = BigInt(2).pow(1000);         // 快速幂, 指数支持 i128/LL, 0^0 = 1
- *   BigInt s = a.sqrt();                    // 下取整平方根 (牛顿迭代实现)
+ *   BigInt s = a.sqrt();                    // 下取整平方根; ≤2e4 位毫秒级, 1e5 位≈秒级 (牛顿步数=位数对数级)
  *   BigInt g = gcd(a, b);                   // 最大公约数 (内置辗转相除)
- *   BigInt l = lcm(a, b);                   // 最小公倍数
+ *   BigInt l = lcm(a, b);                   // 最小公倍数 (恒非负, 对齐标准库 lcm)
  *   BigInt f = BigInt::factorial(100000);   // 阶乘 (乘积树算法, 算10万阶乘仅需几秒!)
  *
  * =====================================================================
@@ -508,18 +506,18 @@ private:
  *   LL val = a.mod(998244353);              // [重要] 获取大数对某 LL 取模的值
  *   i128 v = a.to_i128();                   // 强转 i128 (若溢出会触发 assert)
  *   LL v2  = a.to_LL();                     // 强转 LL   (若溢出会触发 assert)
- *   
- *   // 桥梁 2: 注入 ModLL (mint)
+ *
+ *   // 桥梁 2: 注入 ModLL
  *   mint m = mint(a.mod(MOD));              // 先用 mod() 降维, 再无缝塞给 mint
- * 
- *   // 桥梁 3: 注入图论模板 (Graph)
+ *
+ *   // 桥梁 3: 注入 Graph
  *   Graph<false, BigInt> g(n, m);           // 将边权直接设为 BigInt，跑大数最短路！
- * 
+ *
  * =====================================================================
  * 6. 编译期元编程 (C++20 Constexpr)
  * =====================================================================
- *   // 只要 GCC >= 12, 你可以直接在编译期算高精度，运行时耗时为 0！
- *   constexpr BigInt MAGIC = BigInt(114514).pow(100); 
+ *   // 只要 GCC >= 12, 你可以直接在编译期算高精度
+ *   constexpr BigInt MAGIC = BigInt(114514).pow(100);
  *   static_assert(MAGIC % 10 == 6);
  * =====================================================================
  */

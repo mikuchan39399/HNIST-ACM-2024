@@ -3,32 +3,33 @@
 
 using namespace std;
 using LL = long long;
+using VLL = vector<LL>;
 
 struct MonotonicQueue
 {
     vector<LL> q;
-    
+
     MonotonicQueue(int max_n)
     {
-        q.resize(max_n + 10, 0); 
+        q.resize(max_n + 10, 0);
     }
-    
+
     void init()
     {
         q.clear();
     }
 
-    vector<int> get_min(VLL& a, int n, int k)
+    vector<LL> get_min(VLL& a, int n, int k)
     {
-        vector<int> res;
+        vector<LL> res;
         if (n >= k)
         {
-            res.reserve(n - k + 1); 
+            res.reserve(n - k + 1);
         }
-        
+
         int head = 1;
         int tail = 0;
-        
+
         for (int i = 1; i <= n; i++)
         {
             while (head <= tail && q[head] <= i - k)
@@ -41,7 +42,7 @@ struct MonotonicQueue
             }
             tail++;
             q[tail] = i;
-            
+
             if (i >= k)
             {
                 res.push_back(a[q[head]]);
@@ -50,17 +51,17 @@ struct MonotonicQueue
         return res;
     }
 
-    vector<int> get_max(VLL& a, int n, int k)
+    vector<LL> get_max(VLL& a, int n, int k)
     {
-        vector<int> res;
+        vector<LL> res;
         if (n >= k)
         {
             res.reserve(n - k + 1);
         }
-        
+
         int head = 1;
         int tail = 0;
-        
+
         for (int i = 1; i <= n; i++)
         {
             while (head <= tail && q[head] <= i - k)
@@ -73,7 +74,7 @@ struct MonotonicQueue
             }
             tail++;
             q[tail] = i;
-            
+
             if (i >= k)
             {
                 res.push_back(a[q[head]]);
@@ -84,29 +85,10 @@ struct MonotonicQueue
 };
 
 /*
- * 使用示例：
- * const int MAXN = 1000005; // 根据题目要求设定极限值
- * MonotonicQueue mq(MAXN);
- * void solve()
- * {
-    * int n, k;
-    * cin >> n >> k;
-    * mq.init(n, k);
-    * for (int i = 1; i <= n; i++)
-    * {
-        * cin >> mq.a[i]; 
-    * }
-    * vector<int> min_ans = mq.get_min();
-    * for (int i = 0; i < min_ans.size(); i++)
-    * {
-        * cout << min_ans[i] << (i == min_ans.size() - 1 ? "" : " ");
-    * }
-    * cout << "\n";
-    * vector<int> max_ans = mq.get_max();
-    * for (int i = 0; i < max_ans.size(); i++)
-    * {
-        * cout << max_ans[i] << (i == max_ans.size() - 1 ? "" : " ");
-    * }
-    * cout << "\n";
- * }
+ * 使用示例:
+ * MonotonicQueue mq(n + 1);        // 预算 n + 1
+ * VLL a(n + 1);                    // 1-based 原数组
+ * vector<LL> mn = mq.get_min(a, n, k);   // 滑窗最小
+ * vector<LL> mx = mq.get_max(a, n, k);   // 滑窗最大
+ * 多测: mq.init() 复用
  */

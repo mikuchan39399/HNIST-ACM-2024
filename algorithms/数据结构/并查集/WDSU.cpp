@@ -1,29 +1,29 @@
+#ifndef Z_OI_WDSU
+#define Z_OI_WDSU
+
 #include <vector>
 #include <numeric>
 #include <cassert>
+#include "../../杂项/utils/utils.cpp"
 
-using LL = long long;
-using VI = std::vector<int>;
-using VLL = std::vector<LL>;
+using namespace std;
 
-#ifndef Z_OI_WDSU
-#define Z_OI_WDSU
-struct WDSU 
+struct WDSU
 {
     static constexpr LL INF = 0x3f3f3f3f3f3f3f3fLL;
     LL mod;
     VI fa;
     VLL d;
-    WDSU(int n = 0, LL mod_ = 0) : mod(mod_), fa(n + 1), d(n + 1, 0) 
+    WDSU(int n = 0, LL mod_ = 0) : mod(mod_), fa(n + 1), d(n + 1, 0)
     {
         assert(mod >= 0);
-        std::iota(fa.begin(), fa.end(), 0);
+        iota(fa.begin(), fa.end(), 0);
     }
     LL norm(LL v) const { return mod ? (v % mod + mod) % mod : v; }
     // 查找 x 所在集合的根，并压缩路径，维护 x 到根的有向距离 d(x -> root)
     // 返回值: 根节点编号
     // 时间: 均摊 O(log n) | 空间: O(递归深度)
-    int find(int x) 
+    int find(int x)
     {
         if (fa[x] == x) return x;
         int root = find(fa[x]);
@@ -45,7 +45,7 @@ struct WDSU
     // 查询有向距离 d(x -> y)
     // 返回值: 连通时返回距离值，未连通时返回 INF
     // 时间: 均摊 O(log n) | 空间: O(1)
-    LL query(int x, int y) 
+    LL query(int x, int y)
     {
         if (find(x) != find(y)) return INF;
         return norm(d[x] - d[y]);
@@ -58,11 +58,11 @@ struct WDSU
 Usage:
 ================================================================================
 一、 初始化模式选择：
-  1. 真实距离模式: 
+  1. 真实距离模式:
      WDSU ds(n) 或 WDSU ds(n, 0)
      - 适用场景：链合并、距离累加等（如：银河英雄传说）。
      - 注意：累加距离的绝对值上限为 Σ|w|，需确保不会超出 long long 范围。
-  2. 逻辑归一模式: 
+  2. 逻辑归一模式:
      WDSU ds(n, mod)
      - 适用场景：种类并查集、奇偶校验等（如：食物链选 mod=3，关押罪犯选 mod=2）。
      - 注意：距离会被自动约束在 [0, mod) 内，可直接读取 ds.d[i] 作为分类编号使用

@@ -1,39 +1,28 @@
+#ifndef Z_OI_LCA
+#define Z_OI_LCA
+
 #include <vector>
 #include <algorithm>
 #include <cassert>
 #include <type_traits>
+#include "../../../杂项/utils/utils.cpp"
+
 using namespace std;
-using LL = long long;
-using VI = vector<int>;
-using VVI = vector<vector<int>>;
 
 #ifndef Z_OI_EMPTY
 #define Z_OI_EMPTY
 struct Empty {};
 #endif
 
-
-#ifndef Z_OI_ZFILLN
-#define Z_OI_ZFILLN
-template<typename... CS>
-void z_fill_n(int n, int val, CS&... cs) 
-{
-    assert(((((int)cs.size()) >= n) && ...));
-    (fill(cs.begin(), cs.begin() + min((size_t)(n + 10), cs.size()), val), ...);
-}
-#endif
-
-#ifndef Z_OI_LCA
-#define Z_OI_LCA
 struct LCA
 {
     int n;
     int idx;
     int max_bit;
-    int LOG;           
+    int LOG;
     VI dep, dfn, rnk, rt, sz;
-    vector<LL> dis;     // 真实距离
-    VVI rmq, fa; 
+    VLL dis;     // 真实距离
+    VVI rmq, fa;
     // 内存: (8*LOG + 28) B/点, n=1e6 约 196MB
     LCA(int max_n = 0) : n(max_n), idx(0),
         max_bit(max_n == 0 ? 0 : __lg(max_n)),
@@ -66,7 +55,7 @@ struct LCA
             int v = e.v;
             if (v == p) continue;
             if constexpr (is_same_v<decltype(e.w), Empty>)
-                dis[v] = dis[u] + 1;  
+                dis[v] = dis[u] + 1;
             else
                 dis[v] = dis[u] + e.w;  // 自定义边权请修改此处
             dfs(v, u, root, g);
@@ -84,7 +73,7 @@ struct LCA
             {
                 int u = rmq[k - 1][i];
                 int v = rmq[k - 1][i + (1 << (k - 1))];
-                rmq[k][i] = dep[u] < dep[v] ? u : v; 
+                rmq[k][i] = dep[u] < dep[v] ? u : v;
             }
         }
         for (int k = 1; k <= max_bit; k++)

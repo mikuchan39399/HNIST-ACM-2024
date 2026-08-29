@@ -26,7 +26,7 @@ VI majority_element_k(const VI& nums, int k)
             }
         }
         if (matched) continue;
-        if (cands.size() < k - 1)
+        if ((int)cands.size() < k - 1)
         {
             cands.push_back({x, 1});
             continue;

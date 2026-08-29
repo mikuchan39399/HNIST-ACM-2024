@@ -1,3 +1,11 @@
+#ifndef Z_OI_HASH
+#define Z_OI_HASH
+
+#include <cstdint>
+#include <chrono>
+
+using namespace std;
+
 struct custom_hash
 {
     static uint64_t splitmix64(uint64_t x)
@@ -14,3 +22,4 @@ struct custom_hash
         return splitmix64(x + FIXED_RANDOM);
     }
 };
+#endif

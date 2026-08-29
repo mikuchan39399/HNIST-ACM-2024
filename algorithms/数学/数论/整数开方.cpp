@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 using LL = long long;
 
 LL floor_isqrt(LL x)

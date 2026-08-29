@@ -38,11 +38,11 @@ struct Info
     LL pre1 = 0, suf1 = 0;
     LL mx0 = 0, mx1 = 0;
     int len = 0;
-    bool break_cond(const Tag& t) 
+    bool break_cond(const Tag&)
     { 
         return false; 
     }
-    bool tag_cond(const Tag& t) 
+    bool tag_cond(const Tag&)
     { 
         return true; 
     }

@@ -1,14 +1,14 @@
+#ifndef Z_OI_TREE_CENTROID
+#define Z_OI_TREE_CENTROID
+
 #include <vector>
 #include <algorithm>
 #include <limits>
 #include "../../图的存储/Graph.cpp"
+#include "../../../杂项/utils/utils.cpp"
 
 using namespace std;
-using LL = long long;
-using VI = vector<int>;
 
-#ifndef Z_OI_TREE_CENTROID
-#define Z_OI_TREE_CENTROID
 // ============ 树的重心 (带点权) ============
 // 重心 = 删除后最大连通块权最小的点; 最多 2 个
 // 支持零/负点权; 森林仅算节点 1 所在的树
@@ -16,8 +16,8 @@ template <class G>
 struct TreeCentroid
 {
     int n;
-    vector<LL> pt;   // 点权, 默认 1, 建树前直填
-    vector<LL> sz;   // 子树权和, build 后有效
+    VLL pt;   // 点权, 默认 1, 建树前直填
+    VLL sz;   // 子树权和, build 后有效
     VI centroids;    // 全体重心, 升序
     LL min_max_part; // 删重心后最大连通块的权
 private:

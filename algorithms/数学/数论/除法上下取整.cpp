@@ -1,3 +1,5 @@
+using LL = long long;
+
 inline LL floor_div(LL a, LL b)
 {
     LL res = a / b;

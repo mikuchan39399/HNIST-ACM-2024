@@ -112,7 +112,6 @@ void solve()
             d[u]++;
             d[v]++;
         }
-        int cnt{0};
         for(int i = 1; i <= n; i++)
         {
             if(d[i] % 2 == 1)
@@ -131,7 +130,7 @@ void solve()
             }
         }
         dfs(s);
-        if(ans.size() != m)
+        if((int)ans.size() != m)
         {
             cout << "NO" << endl;
             return;
@@ -171,7 +170,7 @@ void solve()
             }
         }
         dfs(s);
-        if(ans.size() != m)
+        if((int)ans.size() != m)
         {
             cout << "NO" << endl;
             return;

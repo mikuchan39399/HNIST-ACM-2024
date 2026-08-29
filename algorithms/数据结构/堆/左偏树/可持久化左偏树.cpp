@@ -1,18 +1,18 @@
+#ifndef Z_OI_LEFTIST
+#define Z_OI_LEFTIST
+
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include "../../../杂项/utils/utils.cpp"
 
 using namespace std;
-using LL = long long;
-using VI = vector<int>;
 
-#ifndef Z_OI_LEFTIST
-#define Z_OI_LEFTIST
 // ============ 可持久化左偏树(函数式) ============
 // 核心性质:
 //   1. 节点只增不改，所有写操作(merge/insert/pop)均生成新版本，旧根句柄永久有效。
 //   2. 外部无任何懒标记或并查集，完全依赖调用方自己维护版本根节点数组。
-//   3. 内存池大小估算: max_nodes = 初始节点数 + 操作次数 * 40 
+//   3. 内存池大小估算: max_nodes = 初始节点数 + 操作次数 * 40
 template <class T = LL, class Comp = less<T>, class Pay = int>
 struct PersistentLeftist
 {
@@ -24,9 +24,9 @@ struct PersistentLeftist
         lc(max_nodes + 10), rc(max_nodes + 10), dist(max_nodes + 10, -1),
         sz(max_nodes + 10), val(max_nodes + 10), hsum(max_nodes + 10),
         pay(max_nodes + 10)
-    { 
-        sz[0] = 0; 
-        hsum[0] = T(); 
+    {
+        sz[0] = 0;
+        hsum[0] = T();
     }
     void init() { tot = 0; }
 private:
@@ -51,7 +51,7 @@ public:
     }
     // 合并堆 x 和 y，返回新版本堆根编号
     // 时间: O(log N) | 空间: O(log N)
-    int merge(int x, int y) 
+    int merge(int x, int y)
     {
         if (!x || !y) return x | y;
         if (Comp()(val[y], val[x])) swap(x, y);
@@ -96,14 +96,14 @@ public:
  * // 1. 初始化 (例: M次操作, 小根堆)
  * PersistentLeftist<LL> lt(M * 40);
  * VI rt(M + 1, 0); // 版本中心: rt[i] 存第 i 版的堆根
- * 
+ *
  * // 2. 状态转移
  * rt[1] = lt.insert(rt[0], 5);     // 插入: 0版插5 -> 新版1
  * rt[2] = lt.merge(rt[1], rt[x]);  // 合并: 1版并x版 -> 新版2
  * rt[3] = lt.pop(rt[2]);           // 弹出: 弹2版顶 -> 新版3
- * 
+ *
  * // 3. 查询
- * if (!lt.empty(rt[i])) 
+ * if (!lt.empty(rt[i]))
  * {
  *     cout << lt.top(rt[i]) << endl;
  * }

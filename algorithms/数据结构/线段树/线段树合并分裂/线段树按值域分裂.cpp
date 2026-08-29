@@ -128,11 +128,11 @@ void example_usage()
     split(root[1], 1, max_val, root[id], 1, 7);
     
     // 3. 区间查询：查询第 2 棵树中范围 [1, 10] 的数字总数
-    LL sum = query_sum(root[2], 1, max_val, 1, 10);
+    query_sum(root[2], 1, max_val, 1, 10);
     
     // 4. 合并：将第 2 棵树合并回第 1 棵树
     root[1] = merge(root[1], root[2], 1, max_val);
     
     // 5. 第 K 小查询：查询第 1 棵树中第 4 小的元素
-    LL kth_val = query_kth(root[1], 1, max_val, 4);
+    query_kth(root[1], 1, max_val, 4);
 }

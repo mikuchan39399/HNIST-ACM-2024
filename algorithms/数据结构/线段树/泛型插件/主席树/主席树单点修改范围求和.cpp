@@ -1,3 +1,9 @@
+#include <algorithm>
+
+using namespace std;
+using LL = long long;
+const LL INF = 0x3f3f3f3f3f3f3f3f;
+
 struct Tag 
 { 
     LL ow = -INF; 

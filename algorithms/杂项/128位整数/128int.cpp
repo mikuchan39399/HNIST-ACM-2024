@@ -1,3 +1,9 @@
+#include <istream>
+#include <ostream>
+#include <string>
+
+using namespace std;
+
 #ifndef Z_OI_I128
 #define Z_OI_I128
 using i128 = __int128_t;

@@ -1,12 +1,14 @@
+#ifndef Z_OI_TRIE
+#define Z_OI_TRIE
+
 #include <array>
 #include <cassert>
 #include <string>
 #include <vector>
-using namespace std;
-using LL = long long;
+#include "../../杂项/utils/utils.cpp"
 
-#ifndef Z_OI_TRIE
-#define Z_OI_TRIE
+using namespace std;
+
 // ============ 字典树 (前缀计数 + 单词计数) ============
 // 字符集 K: 26 = 小写 | 62 = a-z A-Z 0-9 | <=10 = 数字(含 01-Trie)
 // 内存: 每结点 (4K + 8) 字节; max_nodes = 结点总数上限(含根) = 插入串总长 + 1
