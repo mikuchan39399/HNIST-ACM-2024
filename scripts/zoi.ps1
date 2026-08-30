@@ -87,6 +87,11 @@ if ($Action -eq 'expand') {
     $sink = New-Object 'System.Collections.Generic.List[string]'
     Expand-File $src $sink
     [IO.File]::WriteAllText($src, ($sink -join "`n") + "`n", $enc)
+    # auto-copy the expanded source to clipboard: paste straight into the OJ
+    # (recurring per-problem cost cut; Luogu has no CLI submit, clipboard is
+    #  the honest bridge; headless hosts without a clipboard degrade silently)
+    try { Set-Clipboard -Value ([IO.File]::ReadAllText($src, $enc)); Write-Host '[OK] expanded source is on the clipboard' }
+    catch { Write-Host '[WARN] clipboard unavailable, skip copy' }
     # sync temp mtime to the freshly written base: otherwise the backup keeps
     # the pre-expand timestamp and restore's conflict check would fire on
     # EVERY pair (base is rewritten after the copy, so it is always newer);

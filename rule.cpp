@@ -237,7 +237,10 @@
 //   Graph 为引用制(相对路径 #include), 母版修复即全库生效, 无副本同步义务
 // 回归入口纪律: 日常改模板只跑定点 scripts\run_checks.ps1 -Filter <家族名>(oset/
 //   conn/vt/leftist/dsu/seg/...); 里程碑与赛前跑无参全量; 多条回归命令严禁
-//   并行(共用 %TEMP% 下同名 exe, 互相锁死出假 COMPILE FAIL)
+//   并行(共用 %TEMP% 下同名 exe, 互相锁死出假 COMPILE FAIL); 每次回归自带
+//   脚手架同步预检五查(目标存在/跳板已生成/无孤儿跳板/豁免不空挂/引擎全覆盖
+//   ——新模板没配跳板必被 [UNCOVERED] 点名: 要么补 catalog 要么 ! 豁免留痕,
+//   无法静默漏网; 破损即整体 fail fast)
 // run_checks.ps1 纪律: 文件纯 ASCII(PS5.1 对无 BOM 文件按 ANSI 读, CJK 注
 //   释乱码可吞行——$root 失效教训); param() 必须绝对首行, 否则参数绑定失效
 // 赛前 CI: 与评测机同版 GCC 全库 -Wall -Wextra 编译, 零警告零错误为过
@@ -293,8 +296,9 @@
 //      工作区文件; 已推 commit 的删除要 force push, 同样只听明令
 //      (实测教训: §12 入宪未经授权 add/commit/push 三连, 用户明令封堵)
 // 12.6 commit 信息去 AI 味: 像人写的一行短语, 禁破折号轰炸/禁分条罗列/
-//      禁中英混排装饰; 例: "补终端执行规范" 对, "rule: §12 终端执行规范
-//      ——禁交互式命令/git --no-pager/..." 错
+//      禁中英混排装饰/禁自造压缩术语与营销腔("五查""直达"类词是 AI 发明的,
+//      人只说动词+对象: "加xx检查""修xx"); 例: "补终端执行规范" 对,
+//      "rule: §12 终端执行规范——禁交互式命令/git --no-pager/..." 错
 // ---------------------------------------------------------------------------
 // 13. 刷题工作流 (zoi 脚手架, 已建成并全链路验证)
 // ---------------------------------------------------------------------------
@@ -304,9 +308,13 @@
 // zoi\ 跳板层: 短 ASCII 名 stub(一行 #include 指向真身), 映射表
 //   zoi\_catalog.txt; 新引擎入库 = catalog 加一行 + 重跑 scripts\make_stubs.ps1;
 //   题文件写 #include "graph.h" 即用——中文路径只在维护 catalog 时出现一次;
-//   跳板后缀 .h (实测 .cpp 不进 cpptools 的 include 补全候选, .h 进)
+//   跳板后缀 .h (实测 .cpp 不进 cpptools 的 include 补全候选, .h 进);
+//   catalog 另支持 ! 通配豁免行(例题/插件/弃置件不配跳板的决策留痕,
+//   同步预检据此做引擎全覆盖校验)
 // scripts\zoi.ps1 (make 式双向, 原地展开不产出旁路 bundle):
-//   expand <file>   备份 A.cpp→同路径 A.zoi.cpp, 展开结果原地写回 A.cpp
+//   expand <file>   备份 A.cpp→同路径 A.zoi.cpp, 展开结果原地写回 A.cpp,
+//                   写毕自动复制展开态全文到剪贴板(切 OJ 直接 Ctrl+V; 洛谷
+//                   无 CLI 提交通道, 剪贴板是诚实桥; 无剪贴板环境降级跳过)
 //   restore <dir>   递归批量回溯: *.zoi.cpp 覆写回 .cpp + 删临时件
 //   status <dir>    干跑清单 + mtime 冲突标记
 // 接口: Ctrl+Shift+B = zoi-expand(用户级默认 build task, 展开当前文件) |

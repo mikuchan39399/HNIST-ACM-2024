@@ -11,7 +11,7 @@ $lines = [IO.File]::ReadAllLines($cat, $enc)
 $n = 0
 foreach ($l in $lines) {
     $t = $l.Trim()
-    if ($t -eq '' -or $t.StartsWith('#')) { continue }
+    if ($t -eq '' -or $t.StartsWith('#') -or $t.StartsWith('!')) { continue }
     $parts = $t -split "`t", 2
     if ($parts.Count -ne 2) { Write-Host ('[SKIP] bad line: ' + $t); continue }
     $name = $parts[0].Trim()
