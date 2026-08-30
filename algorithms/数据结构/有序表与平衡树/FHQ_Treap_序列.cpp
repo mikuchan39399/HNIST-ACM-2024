@@ -1,3 +1,4 @@
+// zoi: fhqSeq
 #ifndef Z_OI_FHQ_SEQ
 #define Z_OI_FHQ_SEQ
 

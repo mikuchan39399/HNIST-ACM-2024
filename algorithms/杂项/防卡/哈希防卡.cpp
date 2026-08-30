@@ -1,3 +1,4 @@
+// zoi: customHash
 #ifndef Z_OI_HASH
 #define Z_OI_HASH
 

@@ -1,3 +1,4 @@
+// zoi: scapegoat
 #ifndef Z_OI_SGT
 #define Z_OI_SGT
 

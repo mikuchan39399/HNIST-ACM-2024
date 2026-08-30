@@ -1,3 +1,4 @@
+// zoi: persistentSeg
 #ifndef Z_OI_PERS_SEG_TREE
 #define Z_OI_PERS_SEG_TREE
 

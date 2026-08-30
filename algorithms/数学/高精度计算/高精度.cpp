@@ -1,3 +1,4 @@
+// zoi: bigint
 #ifndef Z_OI_BIGINT
 #define Z_OI_BIGINT
 

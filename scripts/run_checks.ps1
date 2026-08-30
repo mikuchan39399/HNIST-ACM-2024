@@ -48,6 +48,14 @@ if (Test-Path -LiteralPath $cat) {
         }
         $relN = $rel.Replace('\', '/')
         $targets[$relN] = $true
+        # 7th check data: engine first line must be '// zoi: <name>' (stamp)
+        $engFirst = ''
+        $engPath = Join-Path $root ($rel.Replace('\', '/'))
+        $engFirst = ([IO.File]::ReadAllLines($engPath, $enc2) | Select-Object -First 1)
+        if ($engFirst -ne ('// zoi: ' + $name)) {
+            Write-Host ('[STUB MISMATCH] engine stamp wrong or missing (rerun make_stubs): ' + $rel + ' -> ' + $name) -ForegroundColor Red
+            $bad++
+        }
     }
     foreach ($h in Get-ChildItem -LiteralPath (Join-Path $root 'zoi') -Filter '*.h') {
         if (-not $names.ContainsKey($h.BaseName)) {

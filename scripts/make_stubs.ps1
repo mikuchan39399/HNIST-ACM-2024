@@ -21,6 +21,25 @@ foreach ($l in $lines) {
     $stub = Join-Path (Join-Path $Root 'zoi') ($name + '.h')
     $body = '// zoi stub -> ' + $target + "`n" + '#include "../' + $target + '"' + "`n"
     [IO.File]::WriteAllText($stub, $body, $enc)
+    # stamp the engine file's first line with its stub name (reverse lookup:
+    # reading the engine directly tells you how to include it). Idempotent:
+    # replace an existing stamp, otherwise prepend. Keeps original newlines.
+    $eng = Join-Path $Root ($target.Replace('/', '\'))
+    if (Test-Path -LiteralPath $eng) {
+        $raw = [IO.File]::ReadAllText($eng, $enc)
+        $nl = if ($raw.Contains("`r`n")) { "`r`n" } else { "`n" }
+        $stamp = '// zoi: ' + $name
+        $first = ($raw -split "`r?`n")[0]
+        if ($first -like '// zoi: *') {
+            if ($first -ne $stamp) {
+                $rest = ($raw -split "`r?`n", 2)[1]
+                [IO.File]::WriteAllText($eng, $stamp + $nl + $rest, $enc)
+            }
+        }
+        else {
+            [IO.File]::WriteAllText($eng, $stamp + $nl + $raw, $enc)
+        }
+    }
     $n++
 }
 # self-clean: drop .h stubs no longer named in the catalog (renames leave

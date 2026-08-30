@@ -1,3 +1,4 @@
+// zoi: discrete
 #include <vector>
 #include <algorithm>
 #include <cassert>

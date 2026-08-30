@@ -1,3 +1,4 @@
+// zoi: rnd
 #include <random>
 #include <chrono>
 #include <cassert>
