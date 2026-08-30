@@ -87,16 +87,18 @@ if ($Action -eq 'expand') {
     $sink = New-Object 'System.Collections.Generic.List[string]'
     Expand-File $src $sink
     [IO.File]::WriteAllText($src, ($sink -join "`n") + "`n", $enc)
+    # fingerprint the expanded content into a sidecar (<name>.zoi.sha): restore
+    # compares CONTENT, not mtime -- cph auto-saves before testing and editors
+    # touch files without changing them, which falsely tripped the old guard
+    $shaFile = $src.Substring(0, $src.Length - 4) + '.zoi.sha'
+    [IO.File]::WriteAllText($shaFile, (Get-FileHash -LiteralPath $src -Algorithm SHA1).Hash + "`n", $enc)
     # auto-copy the expanded source to clipboard: paste straight into the OJ
     # (recurring per-problem cost cut; Luogu has no CLI submit, clipboard is
     #  the honest bridge; headless hosts without a clipboard degrade silently)
     try { Set-Clipboard -Value ([IO.File]::ReadAllText($src, $enc)); Write-Host '[OK] expanded source is on the clipboard' }
     catch { Write-Host '[WARN] clipboard unavailable, skip copy' }
-    # sync temp mtime to the freshly written base: otherwise the backup keeps
-    # the pre-expand timestamp and restore's conflict check would fire on
-    # EVERY pair (base is rewritten after the copy, so it is always newer);
-    # with mtimes equal at expansion time, "base newer" means exactly
-    # "base was edited after expand", which is what we want to protect
+    # legacy mtime sync (fallback for pre-sidecar temps): keep base/temp
+    # timestamps equal at expansion time so "base newer" == "base edited"
     (Get-Item -LiteralPath $bak).LastWriteTime = (Get-Item -LiteralPath $src).LastWriteTime
     Write-Host ('[OK] expanded in place: ' + (Get-Item -LiteralPath $src).Name +
         ' (' + $sink.Count.ToString() + ' lines, ' + $script:seen.Count.ToString() +
@@ -113,23 +115,33 @@ if ($Action -eq 'restore' -or $Action -eq 'status') {
     foreach ($t in $temps) {
         # base name: strip trailing ".zoi.cpp" (8 chars) and re-attach ".cpp"
         $base = $t.FullName.Substring(0, $t.FullName.Length - 8) + '.cpp'
+        $shaFile = $t.FullName.Substring(0, $t.FullName.Length - 8) + '.zoi.sha'
         $conflict = $false
-        if (Test-Path -LiteralPath $base) {
+        if (Test-Path -LiteralPath $shaFile) {
+            # content fingerprint guard: identical content = no real edits,
+            # no matter how often cph/editors touched the file
+            $expected = ([IO.File]::ReadAllText($shaFile, $enc)).Trim()
+            $actual = (Get-FileHash -LiteralPath $base -Algorithm SHA1).Hash
+            if ($expected -ne $actual) { $conflict = $true }
+        }
+        elseif (Test-Path -LiteralPath $base) {
+            # legacy fallback (pre-sidecar temps): mtime comparison
             if ((Get-Item -LiteralPath $base).LastWriteTime -gt $t.LastWriteTime) { $conflict = $true }
         }
         if ($Action -eq 'status') {
             $tag = ''
-            if ($conflict) { $tag = '  [CONFLICT: base edited after expand]'; $skipped++ }
+            if ($conflict) { $tag = '  [CONFLICT: content differs from expand snapshot]'; $skipped++ }
             Write-Host ('  ' + $t.FullName + $tag)
             continue
         }
         if ($conflict -and -not $Force) {
-            Write-Host ('[SKIP] base newer than temp, edits would be lost: ' + $base + '  (use -Force)')
+            Write-Host ('[SKIP] expanded file was really edited, restore would lose it: ' + $base + '  (use -Force to discard)')
             $skipped++
             continue
         }
         Copy-Item -LiteralPath $t.FullName -Destination $base -Force
         Remove-Item -LiteralPath $t.FullName
+        if (Test-Path -LiteralPath $shaFile) { Remove-Item -LiteralPath $shaFile }
         Write-Host ('[OK] restored: ' + $base)
     }
     if ($skipped -gt 0) { exit 1 }

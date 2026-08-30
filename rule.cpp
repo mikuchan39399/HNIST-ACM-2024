@@ -337,12 +337,14 @@
 //   C_Cpp.default.includePath 含 zoi), 成员补全/悬停注释/F12 穿透跳板直达
 //   引擎源码/include 名补全均可用(跳板必须 .h, .cpp 不进补全候选——前车之鉴:
 //   曾为掩盖解析失败把 errorSquiggles 关了, 修 includePath 后已恢复)
-// 安全轨: 备份已存在拒二次展开 | 无本地 include 时 no-op 不留备份 | 回溯时
-//   base mtime 新于 temp = 展开后改过 → 跳过+警告, -Force 才覆盖 | 编辑器有
-//   未存改动先 Ctrl+S(任务跑的是磁盘版)
-// zoi 坑: expand 先备份(Copy-Item 保留旧 mtime)后改写 base(新 mtime), base
-//   永远新 → 冲突检测必中误拦; 修复 = 写完 base 后同步 temp 的
-//   LastWriteTime = base 的, 使"base 更新"严格等价"展开后用户改过"
+// 安全轨: 备份已存在拒二次展开 | 无本地 include 时 no-op 不留备份 | 回溯判据
+//   是内容指纹: expand 落 <名>.zoi.sha 旁车, restore 比对 SHA1——cph 测试前
+//   自动保存/编辑器 touch 只改 mtime 不改内容, 纯 mtime 判据在正常流程
+//   (展开→测→回溯)每轮假阳性(实测踩中); 无旁车的老 temp 走 mtime 兜底;
+//   内容真变 = 真改过 → 跳过+警告, -Force 才丢弃 | 编辑器有未存改动先
+//   Ctrl+S(任务跑的是磁盘版)
+// zoi 坑史(两代演进): ①纯 mtime 判据先备份后改写使 base 永远新, 同步
+//   temp mtime 修复; ②touch 不改内容仍触发保护, 内容指纹旁车根治
 // 设计动机: cph 爬样例挂 .prob 于 A.cpp, 展开态写入 A.cpp ⇒ 被测工件 ==
 //   提交工件且零依赖库路径(换机可用); 紧凑备份保证赛后仍可模板视角续改
 // 迁移 runbook(换机照单接线, ~30 分钟; 唯一绝对路径活在用户配置里,
