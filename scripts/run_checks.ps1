@@ -78,6 +78,28 @@ if (Test-Path -LiteralPath $cat) {
             $bad++
         }
     }
+    # sixth check (WARN level, not a gate): stubbed engines whose basename is
+    # not directly included by any *_check.cpp. Exact basename match only --
+    # no substring matching (rule: grep hit != code call). Light pieces may
+    # legitimately lack a suite, so this is a dashboard, not a failure.
+    $covered = @{}
+    foreach ($cf in Get-ChildItem -LiteralPath (Join-Path $root 'algorithms') -Recurse -Filter '*_check.cpp') {
+        foreach ($cl in [IO.File]::ReadAllLines($cf.FullName, $enc2)) {
+            if ($cl -match '^\s*#\s*include\s*"([^"]+)"') {
+                $covered[[IO.Path]::GetFileName($Matches[1])] = $true
+            }
+        }
+    }
+    $gaps = 0
+    foreach ($tv in $targets.Keys) {
+        if (-not $covered.ContainsKey([IO.Path]::GetFileName($tv))) {
+            Write-Host ('[TEST GAP] stubbed engine not covered by any check: ' + $tv) -ForegroundColor Yellow
+            $gaps++
+        }
+    }
+    if ($gaps -gt 0) {
+        Write-Host ('[NOTE] ' + $gaps.ToString() + ' stubbed engines lack a stress suite (warn only; light pieces need none per rule)') -ForegroundColor Yellow
+    }
     if ($bad -gt 0) { Write-Host ('scaffold sync failed: ' + $bad + ' problem(s)'); exit 1 }
     Write-Host ('[OK] scaffold sync: ' + $targets.Count.ToString() + ' stubs, ' + $exempt.Count.ToString() + ' exemptions, full coverage')
 }
