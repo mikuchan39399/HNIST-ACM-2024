@@ -4,10 +4,13 @@
 // 若对话未附带本文件: 先向用户索要, 不要凭空猜测其码风
 // v4 变更: 定点回归纪律 | 同名共存守卫 | 预算双口径 | vector 口径 | 契约域
 //   覆盖项 | 测试坑位表扩充 | 现役套件清单刷新(12 件) | utils 工具箱升格
-//   (别名/最值常量/快读快写/debug/方向数组引用制, 禁内嵌副本) | 全库禁 std::
+//   (别名/最值常量/debug/方向数组引用制, 禁内嵌副本) | 全库禁 std::
 //   | 全库守卫置顶 | z_fill_n 归一 utils | §3.5 高耦合引擎封装策略(LCT/SAM/
 //   网络流/莫队分档, 不用 CRTP) | 对拍暴力哲学(独立构造+数学本质参照系)
-//   | §3 设计目标校准(耦合场景人出错率最低, 非单算法最优)
+//   | §3 设计目标校准(耦合场景人出错率最低, 非单算法最优) | §12 终端执行
+//   规范(禁交互式命令/git --no-pager/非交互读文件/PS 连接符按宿主选) |
+//   §13 刷题工作流(scripts 收敛+zoi 跳板层+expand/restore/status) |
+//   快读快写独立成件(utils 瘦身去 128 传递依赖) | grep 命中须核原文
 // ============================================================================
 
 // ---------------------------------------------------------------------------
@@ -51,13 +54,15 @@
 //   勿再各文件重复定义; MOD 按题意
 // - 每份模板: #ifndef Z_OI_XXX 头保护 + 尾部 Usage 块; 公共小件(Empty/
 //   z_fill_n)靠头保护跨文件幂等; Graph 由各引擎相对路径 #include 引用
-//   (内嵌副本制已废弃, 母版修复自动传播; 提交 OJ 时把 Graph 组装进单文件)
+//   (内嵌副本制已废弃, 母版修复自动传播; 提交 OJ 用 zoi expand 原地组装, 见 §13)
 // - 同名共存: 同 TU 多套引擎或示例代数层(虚树双实现/历史最值三套 Tag)必须
 //   守卫化, 必要时改名共存(VirtualTreeStack/TagA/TagB); 禁裸放同名 struct,
 //   同场 include 即重定义(BCT 内嵌 VBCC 教训)
-// - 工具箱引用制: 用到任一组件(别名 LL/VI/VLL/PII/PLL/PIL/PLI/.../ULL、
-//   最值常量、fast_io、快读快写 read/write、debug 宏、方向数组)的文件一律
-//   相对路径 #include 杂项\utils\utils.cpp, 禁内嵌副本(与 Graph 同制)
+// - 工具箱引用制: utils 母版(杂项\utils\utils.cpp)供 别名 LL/VI/VLL/PII/PLL/
+//   PIL/PLI/.../ULL、最值常量、fast_io 关同步、debug 宏、方向数组; 快读快写
+//   已独立成件(杂项\快读快写\快读快写.cpp: fread/fwrite 缓冲 read/write 全家,
+//   自包含不依赖 utils/128int, 库内引擎零使用)——谁用谁 include, 均禁内嵌副本
+//   (与 Graph 同制)
 // - 全库禁 std:: 前缀: 文件头 using namespace std; 纪律, 别名母版已自带
 // - Usage 排版: 只教"怎么用"——组装代码为主线 + 行尾短注释标语义/边界;
 //   内存/预算账目归构造函数或类头注释, 禁止独立注释行混入 Usage;
@@ -105,7 +110,7 @@
 // 4. 引擎清单与红线 (已裁决事项, 翻案需新证据)
 // ---------------------------------------------------------------------------
 // 现役: SegTree(静态,含势能接口) | DySegTree(动态开点) | PersSegTree(主席树)
-//       PersistentLeftist(可持久化左偏树, 母版=序列操作\左偏树\可持久化左偏树.cpp)
+//       PersistentLeftist(可持久化左偏树, 母版=数据结构\堆\左偏树\可持久化左偏树.cpp)
 //       Graph | 连通性三件套 SCC/EBCC/VBCC | BCT(圆方树) | LCA(DFN_LCA 主力,
 //       HLD_LCA/倍增备查) | HLD(树剖) | VirtualTree(二次排序/单调栈双实现)
 //       有序表与平衡树家族: SkipList/AVL/Treap/FHQ_Treap(按值)/SGTree(替罪
@@ -213,27 +218,30 @@
 //   | 暴力值口径: 全局偏移引擎(gadd 类)的 insert/set_val/乘法一律存裸值,
 //   勿混真值 | 暴力重标循环先缓存 from/to, 循环内改 lab[v] 污染匹配条件
 //   | n=1 时 v=u%n+1 重采样自环死循环 | 割点判定是 cv>c0 而非 c0-1
-//   | 同名 struct 报重定义, 先查守卫再怀疑引擎
+//   | 同名 struct 报重定义, 先查守卫再怀疑引擎 | grep 正则命中≠代码调用:
+//   注释/Usage 示例同样命中(// LL read() 惨案误报 11 个调用方), 任何
+//   grep 结论必须抽行核对原文再定爆炸半径
+
 // 覆盖项: 多测 clear 复用路径(static 单实例+每测 init/clear) | 持久化结构的
 // 历史版本随机回访 | 单点/范围混用 | 退化边界(n=1, 全同值, l==r)
 //   | 契约域分离(FHQ_Seq: maxsum 非空段且加/乘后失效, RMQ 全域恒有效; 左偏
 //   树懒标记域仅堆级+堆顶查询)——测试只断言契约承诺的部分, 契约外不测不断言
 // 回归资产: 回归件一律置于所在目录的 对拍\ 子文件夹, 命名 X_check.cpp(与源码
-//   分离, 相对引用 ../ 指向模板); 总入口 库根 run_checks.ps1; 现役 12 件:
+//   分离, 相对引用 ../ 指向模板); 总入口 scripts\run_checks.ps1; 现役 12 件:
 //   图论\graph_check(LCA×2/拓扑/直径×2/重心/Graph 本体) | 连通性相关\
 //   conn_check(SCC/EBCC/VBCC/BCT) | 虚树\vt_check(双实现互拍) | 左偏树\
 //   leftist_check(双域+持久化版本链) | 并查集\dsu_check(DSU/WDSU 多 mod) |
-//   线段树\ pst_check+seg_check | 有序表\oset_check(家族六件+FHQ_Seq 双域)
+//   线段树\对拍 pst_check+seg_check | 有序表\oset_check(家族六件+FHQ_Seq 双域)
 //   | 字典树\trie_check | 数论\mint_check | 高精度\bigint_check | 随机数\
 //   rnd_check;
 //   Graph 为引用制(相对路径 #include), 母版修复即全库生效, 无副本同步义务
-// 回归入口纪律: 日常改模板只跑定点 run_checks.ps1 -Filter <家族名>(oset/
+// 回归入口纪律: 日常改模板只跑定点 scripts\run_checks.ps1 -Filter <家族名>(oset/
 //   conn/vt/leftist/dsu/seg/...); 里程碑与赛前跑无参全量; 多条回归命令严禁
 //   并行(共用 %TEMP% 下同名 exe, 互相锁死出假 COMPILE FAIL)
 // run_checks.ps1 纪律: 文件纯 ASCII(PS5.1 对无 BOM 文件按 ANSI 读, CJK 注
 //   释乱码可吞行——$root 失效教训); param() 必须绝对首行, 否则参数绑定失效
 // 赛前 CI: 与评测机同版 GCC 全库 -Wall -Wextra 编译, 零警告零错误为过
-//   (全库 82 件已达成一轮基线, 冒烟伤员明细见 对拍清单.md; 其后新入库件
+//   (引擎 82 件+对拍 12 件已达成一轮基线, 冒烟伤员明细见 对拍清单.md; 其后新入库件
 //   随套件自动覆盖编译)
 //   (GCC15 曾把 z_fill_n 旧折叠写法升为硬错误, "没编译过的模板"是真实风险)
 // OJ 纪律: 贴线 AC = 半个 TLE, 最慢点 > 时限 80% 就主动想常数;
@@ -242,10 +250,13 @@
 // ---------------------------------------------------------------------------
 // 10. 常用底座 (题目代码的地基, 不随题改动)
 // ---------------------------------------------------------------------------
-// 底座核心 = utils 母版(杂项\utils\utils.cpp): fast_io 关同步 + 快读快写
-// read/write(fread/fwrite 缓冲, 析构自动冲刷) + debug/debug_array(LOCAL 包裹)
-// + 方向数组(inline, 刻意非 const) + 全部类型别名与最值常量
+// 底座核心 = utils 母版(杂项\utils\utils.cpp): fast_io 关同步 + debug/
+//   debug_array(LOCAL 包裹) + 方向数组(inline, 刻意非 const) + 全部类型别名
+//   与最值常量; 快读快写独立件(杂项\快读快写\快读快写.cpp): fread/fwrite 缓冲
+//   read/write 全家(析构自动冲刷, utils_int 含 __int128), 库内引擎零使用,
+//   刷题时题文件按需 include(zoi 跳板名 rw)
 // 其余散件: custom_hash(splitmix64 抗 hack, 杂项\防卡) | floor_div/ceil_div(数学\数论)
+//   | i128 别名与流运算符(杂项\128位整数, 已脱离 utils 链, 按需 include)
 // 多测入口: main → while(t--) solve(); 位运算 mid 用 (l+r)>>1 或 l+(r-l)/2
 // z_fill_n 坑: 折叠表达式的模式只能是 cast-expression, 二元比较必须整体加括
 //   assert(((((int)cs.size()) >= n) && ...)); 旧写法在新版 GCC 直接编译错误
@@ -254,8 +265,60 @@
 // 11. 已知缺口与赛前清单 (库未完备, 勿按"全家桶已齐"行事)
 // ---------------------------------------------------------------------------
 // 缺口按优先级: 网络流 Dinic/MCMF(最高, 直接吃 Graph::rev 红利) | 字符串
-//   (ACAM/SAM/SA) | 计算几何 | 数学/DP 偏薄(数学 6 件 DP 2 件)
-// 赛前清单: ①同版 GCC 全库冒烟编译(-std=c++20, 现为 82 件零警告基线)
+//   (ACAM/SAM/SA) | 计算几何 | 数学/DP 偏薄(数学 10 件 DP 2 件)
+// 赛前清单: ①同版 GCC 全库冒烟编译(-std=c++20, 现为引擎 82 件零警告基线)
 //   ②run_checks.ps1 全量回归(现役 12 套件) ③确认评测机 GCC 版本与栈宽/
 //   内存限制 ④按题复核默认预算口径(累计插入 4e6 / 峰值存活 1e6)是否够用
+
+// ---------------------------------------------------------------------------
+// 12. 终端执行规范 (AI 协作与自动化环境的硬约束, 违者锁死会话)
+// ---------------------------------------------------------------------------
+// 12.1 绝对禁止交互式命令: 严禁执行任何需要人类按键交互才能退出的命令或
+//      分页器(less/more/vim/nano/top 等); AI 会话的 shell 无 stdin 可喂,
+//      进入交互态 = 终端永久锁死, 只能人工杀进程
+// 12.2 Git 强制禁用分页: git log/diff/show/branch 等可能长输出的命令,
+//      必须写成 git --no-pager <sub>(如 git --no-pager log -3); git 环境
+//      不保证 core.pager 配置, 默认 pager 弹出即锁死(本库已实际踩过)
+// 12.3 非交互式文件读取: 查看文件内容一律 cat/head -n/tail -n 或专用
+//      读文件工具; 绝对不用会接管终端的编辑器/查看器
+// 12.4 Windows 环境兼容: 多命令连接符按宿主选——cmd/PS7+ 用 && (失败即停),
+//      PS 5.1 的 && 是语法错误(实测 ParserError), 只能 ; 顺序或拆多次调用,
+//      禁在不明确宿主版本时盲写 &&; 路径含空格/中文一律双引号包裹
+//      (F:\c++\my_code\... 无引号必被空格截断) | PS5.1 禁 < 重定向(保留字,
+//      stdin 喂文件须 cmd /c 包裹) | PS5.1 对 native exe 的 > 重定向默认
+//      UTF-16LE+BOM+CRLF, 回喂程序读必炸(\0 切断数字, i128 对拍假故障教训:
+//      -1 读成 0/长数读成单数字, 一度冤枉模板库)——字节保真的出入重定向
+//      一律 cmd /c "exe < in > out" 包裹, 勿让 PS 经手 native 字节流
+// 12.5 git 写操作需显式授权: add/commit/push 一律等用户明令, AI 只改
+//      工作区文件; 已推 commit 的删除要 force push, 同样只听明令
+//      (实测教训: §12 入宪未经授权 add/commit/push 三连, 用户明令封堵)
+// 12.6 commit 信息去 AI 味: 像人写的一行短语, 禁破折号轰炸/禁分条罗列/
+//      禁中英混排装饰; 例: "补终端执行规范" 对, "rule: §12 终端执行规范
+//      ——禁交互式命令/git --no-pager/..." 错
+// ---------------------------------------------------------------------------
+// 13. 刷题工作流 (zoi 脚手架, 已建成并全链路验证)
+// ---------------------------------------------------------------------------
+// scripts\ 收敛: 全部脚本归位 scripts\(run_checks/make_stubs/zoi), 根目录
+//   只留 rule/清单/README/.gitignore; 脚本内库根锚定一律
+//   Split-Path -Parent $PSScriptRoot (脚本在子目录, $PSScriptRoot 不再是库根)
+// zoi\ 跳板层: 短 ASCII 名 stub(一行 #include 指向真身), 映射表
+//   zoi\_catalog.txt; 新引擎入库 = catalog 加一行 + 重跑 scripts\make_stubs.ps1;
+//   题文件写 #include "graph.h" 即用——中文路径只在维护 catalog 时出现一次;
+//   跳板后缀 .h (实测 .cpp 不进 cpptools 的 include 补全候选, .h 进)
+// scripts\zoi.ps1 (make 式双向, 原地展开不产出旁路 bundle):
+//   expand <file>   备份 A.cpp→同路径 A.zoi.cpp, 展开结果原地写回 A.cpp
+//   restore <dir>   递归批量回溯: *.zoi.cpp 覆写回 .cpp + 删临时件
+//   status <dir>    干跑清单 + mtime 冲突标记
+// 接口: Ctrl+Shift+B = zoi-expand(用户级默认 build task, 展开当前文件) |
+//   Ctrl+Shift+P → Tasks: Run Task → zoi-restore(工作区批量回溯) |
+//   cph 的 cpp Args 已加 -I<库根>\zoi(user settings), 原题文件直编与展开态
+//   共用同一套短 include
+// 安全轨: 备份已存在拒二次展开 | 无本地 include 时 no-op 不留备份 | 回溯时
+//   base mtime 新于 temp = 展开后改过 → 跳过+警告, -Force 才覆盖 | 编辑器有
+//   未存改动先 Ctrl+S(任务跑的是磁盘版)
+// zoi 坑: expand 先备份(Copy-Item 保留旧 mtime)后改写 base(新 mtime), base
+//   永远新 → 冲突检测必中误拦; 修复 = 写完 base 后同步 temp 的
+//   LastWriteTime = base 的, 使"base 更新"严格等价"展开后用户改过"
+// 设计动机: cph 爬样例挂 .prob 于 A.cpp, 展开态写入 A.cpp ⇒ 被测工件 ==
+//   提交工件且零依赖库路径(换机可用); 紧凑备份保证赛后仍可模板视角续改
 // ============================================================================

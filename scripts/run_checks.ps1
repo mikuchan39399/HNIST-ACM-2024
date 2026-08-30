@@ -4,7 +4,7 @@ param([string]$Filter = '')
 #        powershell -ExecutionPolicy Bypass -File run_checks.ps1 -Filter oset -> scoped (name contains 'oset')
 # NOTE: keep this file ASCII-only; PS 5.1 reads no-BOM files as ANSI and CJK
 #       comments can corrupt line structure.
-$root = $PSScriptRoot
+$root = Split-Path -Parent $PSScriptRoot   # scripts/ -> library root
 $pattern = '*_check.cpp'
 if ($Filter -ne '') { $pattern = '*' + $Filter + '*_check.cpp' }
 $checks = Get-ChildItem (Join-Path $root 'algorithms') -Recurse -Filter $pattern | Sort-Object FullName
