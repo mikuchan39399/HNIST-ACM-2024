@@ -1,4 +1,3 @@
-# HNIST-ACM-2024
-# *filled with determination
+# 骨架空目录
 
-超时问题解决：https://blog.csdn.net/weixin_44223180/article/details/133059575
+本目录暂无入库文件。学习与入库路线见所在家族 README(数学 / 图论 / 字符串 / 数据结构\分块 / 计算几何)。
