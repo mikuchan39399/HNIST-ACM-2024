@@ -30,16 +30,6 @@ struct PersistentLeftist
         hsum[0] = T();
     }
     void init() { tot = 0; }
-private:
-    int clone(int p)
-    {
-        int q = ++tot;
-        assert(q < (int)val.size() && "max_nodes 估算不足");
-        lc[q] = lc[p]; rc[q] = rc[p]; dist[q] = dist[p];
-        sz[q] = sz[p]; val[q] = val[p]; hsum[q] = hsum[p]; pay[q] = pay[p];
-        return q;
-    }
-public:
     // 生成一个只含单点的新堆，返回物理节点编号
     // 时间: O(1) | 空间: O(1)
     int new_node(T v, Pay p = Pay())
@@ -90,6 +80,15 @@ public:
     T    top    (int rt) const { return val[rt]; }
     T    sum    (int rt) const { return hsum[rt]; }
     Pay  top_pay(int rt) const { return pay[rt]; }
+private:
+    int clone(int p)
+    {
+        int q = ++tot;
+        assert(q < (int)val.size() && "max_nodes 估算不足");
+        lc[q] = lc[p]; rc[q] = rc[p]; dist[q] = dist[p];
+        sz[q] = sz[p]; val[q] = val[p]; hsum[q] = hsum[p]; pay[q] = pay[p];
+        return q;
+    }
 };
 
 /*

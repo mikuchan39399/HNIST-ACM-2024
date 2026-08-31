@@ -37,19 +37,6 @@ struct PersTrie
         tr.reserve(max_nodes);
         tr.push_back(Node{});
     }
-    static int to_id(char c)
-    {
-        if constexpr (K == 62)
-        {
-            if (c >= '0' && c <= '9') return c - '0' + 52;
-            if (c >= 'A' && c <= 'Z') return c - 'A' + 26;
-            return c - 'a';
-        }
-        else if constexpr (K <= 10)
-            return c - '0';
-        else
-            return c - 'a';
-    }
     // 多测清空, 复用已分配内存
     // 时间: O(1) | 空间: O(1)
     void clear()
@@ -58,33 +45,6 @@ struct PersTrie
         tr.clear();
         tr.push_back(Node{});
     }
-private:
-    int fork(int p)
-    {
-        assert(tot + 1 <= cap && "max_nodes 开小了");
-        Node tmp = tr[p];
-        tr.push_back(tmp);
-        return ++tot;
-    }
-    int insert(int p, LL x, int i)
-    {
-        p = fork(p);
-        tr[p].cnt++;
-        if (i < 0) return p;
-        int id = (x >> i) & 1;
-        tr[p].ch[id] = insert(tr[p].ch[id], x, i - 1);
-        return p;
-    }
-    int insert(int p, const string& s, size_t i)
-    {
-        p = fork(p);
-        tr[p].cnt++;
-        if (i == s.size()) return p;
-        int id = to_id(s[i]);
-        tr[p].ch[id] = insert(tr[p].ch[id], s, i + 1);
-        return p;
-    }
-public:
     // 在版本 rt 上插入非负整数 x, 返回新版本根句柄 —— 仅 K ∈ [2, 10] 编译
     // 时间: O(HB + 1) | 空间: 至多 HB + 1 个新结点
     int insert(int rt, LL x)
@@ -215,6 +175,45 @@ public:
     // 版本 rt 中的整数个数
     // 时间: O(1) | 空间: O(1)
     int size(int rt) const { return tr[rt].cnt; }
+private:
+    static int to_id(char c)
+    {
+        if constexpr (K == 62)
+        {
+            if (c >= '0' && c <= '9') return c - '0' + 52;
+            if (c >= 'A' && c <= 'Z') return c - 'A' + 26;
+            return c - 'a';
+        }
+        else if constexpr (K <= 10)
+            return c - '0';
+        else
+            return c - 'a';
+    }
+    int fork(int p)
+    {
+        assert(tot + 1 <= cap && "max_nodes 开小了");
+        Node tmp = tr[p];
+        tr.push_back(tmp);
+        return ++tot;
+    }
+    int insert(int p, LL x, int i)
+    {
+        p = fork(p);
+        tr[p].cnt++;
+        if (i < 0) return p;
+        int id = (x >> i) & 1;
+        tr[p].ch[id] = insert(tr[p].ch[id], x, i - 1);
+        return p;
+    }
+    int insert(int p, const string& s, size_t i)
+    {
+        p = fork(p);
+        tr[p].cnt++;
+        if (i == s.size()) return p;
+        int id = to_id(s[i]);
+        tr[p].ch[id] = insert(tr[p].ch[id], s, i + 1);
+        return p;
+    }
 };
 #endif
 

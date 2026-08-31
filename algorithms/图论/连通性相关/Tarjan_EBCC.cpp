@@ -39,6 +39,34 @@ struct EBCC
         ebcc_points.assign(1, VI());
     }
     void add_edge(int u, int v, int eid) { g.add(u, v, {eid}); }
+    void build()
+    {
+        for (int i = 1; i <= n; i++)
+            if (!dfn[i]) tarjan(i, -1);
+    }
+    // 缩点建树
+    void build_tree()
+    {
+        // 遍历所有正向边
+        for (size_t i = 0; i < g.edges.size(); i += 2)
+        {
+            int u = g.edges[g.rev(i)].v; // 利用反向边的终点，O(1) 获取当前边的起点
+            int v = g.edges[i].v;
+            if (bel[u] != bel[v]) tree.add(bel[u], bel[v]);
+        }
+    }
+    VI get_bridges() // 获取所有割边的逻辑编号
+    {
+        VI bridges;
+        for (size_t i = 0; i < g.edges.size(); i += 2)
+        {
+            int u = g.edges[g.rev(i)].v;
+            int v = g.edges[i].v;
+            if (bel[u] != bel[v]) bridges.push_back(g.edges[i].w.id);
+        }
+        return bridges;
+    }
+private:
     void tarjan(int u, int in_edge)
     {
         dfn_idx++;
@@ -69,33 +97,6 @@ struct EBCC
                 ebcc_points[ebcc_cnt].push_back(t);
             } while (t != u);
         }
-    }
-    void build()
-    {
-        for (int i = 1; i <= n; i++)
-            if (!dfn[i]) tarjan(i, -1);
-    }
-    // 缩点建树
-    void build_tree()
-    {
-        // 遍历所有正向边
-        for (size_t i = 0; i < g.edges.size(); i += 2)
-        {
-            int u = g.edges[g.rev(i)].v; // 利用反向边的终点，O(1) 获取当前边的起点
-            int v = g.edges[i].v;
-            if (bel[u] != bel[v]) tree.add(bel[u], bel[v]);
-        }
-    }
-    VI get_bridges() // 获取所有割边的逻辑编号
-    {
-        VI bridges;
-        for (size_t i = 0; i < g.edges.size(); i += 2)
-        {
-            int u = g.edges[g.rev(i)].v;
-            int v = g.edges[i].v;
-            if (bel[u] != bel[v]) bridges.push_back(g.edges[i].w.id);
-        }
-        return bridges;
     }
 };
 

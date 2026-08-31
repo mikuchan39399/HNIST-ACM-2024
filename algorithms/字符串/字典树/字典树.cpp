@@ -29,25 +29,8 @@ struct Trie
         tr.reserve(max_nodes);
         tr.push_back(Node{});
     }
-    static int to_id(char c)
-    {
-        if constexpr (K == 62)
-        {
-            if (c >= '0' && c <= '9') return c - '0' + 52;
-            if (c >= 'A' && c <= 'Z') return c - 'A' + 26;
-            return c - 'a';
-        }
-        else if constexpr (K <= 10)
-            return c - '0';
-        else
-            return c - 'a';
-    }
-    int new_node()
-    {
-        assert((int)tr.size() + 1 <= cap && "max_nodes 开小了");
-        tr.push_back(Node{});
-        return (int)tr.size() - 1;
-    }
+    // 走字符串 s 对应的结点, 返回结点号; 中途断链返回 -1
+    // 时间: O(|s|) | 空间: O(1)
     int walk(const string& s)
     {
         int cur = 0;
@@ -58,7 +41,6 @@ struct Trie
         }
         return cur;
     }
-public:
     // 插入单词 s
     // 时间: O(|s|) | 空间: 至多 |s| 个新结点
     void insert(const string& s)
@@ -81,21 +63,6 @@ public:
         static_assert(K >= 2 && K <= 10, "insert_num 仅数字字符集(K<=10)可用");
         insert_walk(x);
     }
-private:
-    void insert_walk(LL x)
-    {
-        tr[0].p_cnt++;
-        int cur = 0;
-        for (int i = 63; i >= 0; i--)
-        {
-            int id = (x >> i) & 1;
-            if (!tr[cur].ch[id]) tr[cur].ch[id] = new_node();
-            cur = tr[cur].ch[id];
-            tr[cur].p_cnt++;
-        }
-        tr[cur].w_cnt++;
-    }
-public:
     // 查询以 s 为前缀的已插入单词个数
     // 时间: O(|s|) | 空间: O(1)
     int count_prefix(const string& s)
@@ -133,6 +100,39 @@ public:
         for (auto& nd : tr) nd = Node{};
         tr.resize(1);
     }
+private:
+    static int to_id(char c)
+    {
+        if constexpr (K == 62)
+        {
+            if (c >= '0' && c <= '9') return c - '0' + 52;
+            if (c >= 'A' && c <= 'Z') return c - 'A' + 26;
+            return c - 'a';
+        }
+        else if constexpr (K <= 10)
+            return c - '0';
+        else
+            return c - 'a';
+    }
+    int new_node()
+    {
+        assert((int)tr.size() + 1 <= cap && "max_nodes 开小了");
+        tr.push_back(Node{});
+        return (int)tr.size() - 1;
+    }
+    void insert_walk(LL x)
+    {
+        tr[0].p_cnt++;
+        int cur = 0;
+        for (int i = 63; i >= 0; i--)
+        {
+            int id = (x >> i) & 1;
+            if (!tr[cur].ch[id]) tr[cur].ch[id] = new_node();
+            cur = tr[cur].ch[id];
+            tr[cur].p_cnt++;
+        }
+        tr[cur].w_cnt++;
+    }
 };
 #endif
 
@@ -146,6 +146,7 @@ public:
  *     trie.clear();                    // 多测清空
  *     for (int i = 1; i <= n; i++) { string s; cin >> s; trie.insert(s); }
  *     while (q--) { string s; cin >> s; cout << trie.count_prefix(s) << '\n'; }
+ *     trie.walk(s);                     // s 对应结点号(断链 -1), 直读 tr[u] 计数
  * }
  * static Trie<2> bt(64 * N + 10);      // 01-Trie: 预算 = 个数 * 64
  * bt.insert_num(x);

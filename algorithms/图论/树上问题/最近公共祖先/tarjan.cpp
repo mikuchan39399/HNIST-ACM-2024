@@ -69,6 +69,17 @@ struct TarjanLCA
         q_head[u] = q_cnt;
     }
 
+    void build()
+    {
+        for (int i = 1; i <= n; i++)
+        {
+            if (!vis[i])
+            {
+                tarjan(i);
+            }
+        }
+    }
+private:
     int find(int x)
     {
         if (fa[x] == x) 
@@ -101,17 +112,6 @@ struct TarjanLCA
             }
         }
     }
-
-    void build()
-    {
-        for (int i = 1; i <= n; i++)
-        {
-            if (!vis[i])
-            {
-                tarjan(i);
-            }
-        }
-    }
 };
 
 /* 
@@ -139,7 +139,7 @@ void solve()
         lca.add_query(v, u, i);
     }
     
-    lca.tarjan(root);
+    lca.build();
     
     for (int i = 1; i <= m; i++)
     {

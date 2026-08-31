@@ -18,8 +18,18 @@ struct TreeDiameterDP
 {
     int n;
     LL len;
-private:
     VLL down;
+    // 对 1..n 的树 g 树形 dp 并返回直径长度; 多测直接重跑即可全量自复位
+    // 时间: O(n) | 空间: O(n)
+    LL build(G& g, int _n)
+    {
+        n = _n;
+        down.assign(n + 10, 0);
+        len = 0;
+        dfs(1, 0, g);
+        return len;
+    }
+private:
     template <class E>
     static LL w_of(const E& e)
     {
@@ -40,17 +50,6 @@ private:
         }
         down[u] = top1;
         len = max(len, top1 + top2);
-    }
-public:
-    // 对 1..n 的树 g 树形 dp 并返回直径长度; 多测直接重跑即可全量自复位
-    // 时间: O(n) | 空间: O(n)
-    LL build(G& g, int _n)
-    {
-        n = _n;
-        down.assign(n + 10, 0);
-        len = 0;
-        dfs(1, 0, g);
-        return len;
     }
 };
 #endif

@@ -42,28 +42,6 @@ struct LCA
         z_fill_n(n, 0, dep, dfn, rt, sz, dis);
     }
     template <class G>
-    void dfs(int u, int p, int root, G& g)
-    {
-        fa[0][u] = p;
-        rt[u] = root;
-        dep[u] = dep[p] + 1;
-        dfn[u] = ++idx;
-        rnk[idx] = u;
-        rmq[0][idx] = u;
-        sz[u] = 1;
-        for (auto& e : g[u])
-        {
-            int v = e.v;
-            if (v == p) continue;
-            if constexpr (is_same_v<decltype(e.w), Empty>)
-                dis[v] = dis[u] + 1;
-            else
-                dis[v] = dis[u] + e.w;  // 自定义边权请修改此处
-            dfs(v, u, root, g);
-            sz[u] += sz[v];
-        }
-    }
-    template <class G>
     void build(G& g)
     {
         for (int i = 1; i <= n; i++)
@@ -154,6 +132,29 @@ struct LCA
                 }
             }
             return x;
+        }
+    }
+private:
+    template <class G>
+    void dfs(int u, int p, int root, G& g)
+    {
+        fa[0][u] = p;
+        rt[u] = root;
+        dep[u] = dep[p] + 1;
+        dfn[u] = ++idx;
+        rnk[idx] = u;
+        rmq[0][idx] = u;
+        sz[u] = 1;
+        for (auto& e : g[u])
+        {
+            int v = e.v;
+            if (v == p) continue;
+            if constexpr (is_same_v<decltype(e.w), Empty>)
+                dis[v] = dis[u] + 1;
+            else
+                dis[v] = dis[u] + e.w;  // 自定义边权请修改此处
+            dfs(v, u, root, g);
+            sz[u] += sz[v];
         }
     }
 };

@@ -25,96 +25,10 @@ struct SGTree
         int lc = 0, rc = 0, sz = 0;
         LL val = 0;
     };
-private:
     vector<node> tr;
     VI seq;
     VI rub;
     int idx, root, budget;
-    int newnode(LL v)
-    {
-        int id;
-        if (!rub.empty())
-        {
-            id = rub.back();
-            rub.pop_back();
-            tr[id] = node();
-        }
-        else
-        {
-            assert(idx < budget);
-            tr.push_back(node());
-            id = ++idx;
-        }
-        tr[id].sz = 1;
-        tr[id].val = v;
-        return id;
-    }
-    void pushup(int x)
-    {
-        tr[x].sz = tr[tr[x].lc].sz + tr[tr[x].rc].sz + 1;
-    }
-    bool imbalanced(int x)
-    {
-        int mx = max(tr[tr[x].lc].sz, tr[tr[x].rc].sz);
-        return 4 * mx > 3 * tr[x].sz;
-    }
-    void collect(int x)
-    {
-        if (!x) return;
-        collect(tr[x].lc);
-        seq.push_back(x);
-        collect(tr[x].rc);
-    }
-    int rebuild_range(int l, int r)
-    {
-        if (l > r) return 0;
-        int mid = (l + r) >> 1;
-        int p = seq[mid];
-        tr[p].lc = rebuild_range(l, mid - 1);
-        tr[p].rc = rebuild_range(mid + 1, r);
-        pushup(p);
-        return p;
-    }
-    int rebuild(int p)
-    {
-        seq.clear();
-        collect(p);
-        return rebuild_range(0, (int)seq.size() - 1);
-    }
-    int insert_at(int p, LL v)
-    {
-        if (!p) return newnode(v);
-        if (v < tr[p].val) tr[p].lc = insert_at(tr[p].lc, v);
-        else tr[p].rc = insert_at(tr[p].rc, v);
-        pushup(p);
-        if (imbalanced(p)) return rebuild(p);
-        return p;
-    }
-    int erase_at(int p, LL v, bool& removed)
-    {
-        if (!p) return 0;
-        if (v < tr[p].val) tr[p].lc = erase_at(tr[p].lc, v, removed);
-        else if (v > tr[p].val) tr[p].rc = erase_at(tr[p].rc, v, removed);
-        else
-        {
-            removed = true;
-            if (!tr[p].lc || !tr[p].rc)
-            {
-                int ret = tr[p].lc + tr[p].rc;
-                rub.push_back(p);
-                return ret;
-            }
-            int q = tr[p].rc;               // 两子: 后继值顶替, 右子树删后继
-            while (tr[q].lc) q = tr[q].lc;
-            tr[p].val = tr[q].val;
-            bool dummy = false;
-            tr[p].rc = erase_at(tr[p].rc, tr[q].val, dummy);
-        }
-        pushup(p);
-        if (imbalanced(p)) return rebuild(p);
-        return p;
-    }
-public:
     // 构造: 预算 max_nodes 结点(按峰值存活计), 哨兵 0 号就位
     // 时间: O(1) | 空间: O(预算) (账目见类头)
     SGTree(int max_nodes = 1000010) : idx(0), root(0), budget(max_nodes)
@@ -215,6 +129,91 @@ public:
         tr.push_back(node());
         seq.clear();
         rub.clear();
+    }
+private:
+    int newnode(LL v)
+    {
+        int id;
+        if (!rub.empty())
+        {
+            id = rub.back();
+            rub.pop_back();
+            tr[id] = node();
+        }
+        else
+        {
+            assert(idx < budget);
+            tr.push_back(node());
+            id = ++idx;
+        }
+        tr[id].sz = 1;
+        tr[id].val = v;
+        return id;
+    }
+    void pushup(int x)
+    {
+        tr[x].sz = tr[tr[x].lc].sz + tr[tr[x].rc].sz + 1;
+    }
+    bool imbalanced(int x)
+    {
+        int mx = max(tr[tr[x].lc].sz, tr[tr[x].rc].sz);
+        return 4 * mx > 3 * tr[x].sz;
+    }
+    void collect(int x)
+    {
+        if (!x) return;
+        collect(tr[x].lc);
+        seq.push_back(x);
+        collect(tr[x].rc);
+    }
+    int rebuild_range(int l, int r)
+    {
+        if (l > r) return 0;
+        int mid = (l + r) >> 1;
+        int p = seq[mid];
+        tr[p].lc = rebuild_range(l, mid - 1);
+        tr[p].rc = rebuild_range(mid + 1, r);
+        pushup(p);
+        return p;
+    }
+    int rebuild(int p)
+    {
+        seq.clear();
+        collect(p);
+        return rebuild_range(0, (int)seq.size() - 1);
+    }
+    int insert_at(int p, LL v)
+    {
+        if (!p) return newnode(v);
+        if (v < tr[p].val) tr[p].lc = insert_at(tr[p].lc, v);
+        else tr[p].rc = insert_at(tr[p].rc, v);
+        pushup(p);
+        if (imbalanced(p)) return rebuild(p);
+        return p;
+    }
+    int erase_at(int p, LL v, bool& removed)
+    {
+        if (!p) return 0;
+        if (v < tr[p].val) tr[p].lc = erase_at(tr[p].lc, v, removed);
+        else if (v > tr[p].val) tr[p].rc = erase_at(tr[p].rc, v, removed);
+        else
+        {
+            removed = true;
+            if (!tr[p].lc || !tr[p].rc)
+            {
+                int ret = tr[p].lc + tr[p].rc;
+                rub.push_back(p);
+                return ret;
+            }
+            int q = tr[p].rc;               // 两子: 后继值顶替, 右子树删后继
+            while (tr[q].lc) q = tr[q].lc;
+            tr[p].val = tr[q].val;
+            bool dummy = false;
+            tr[p].rc = erase_at(tr[p].rc, tr[q].val, dummy);
+        }
+        pushup(p);
+        if (imbalanced(p)) return rebuild(p);
+        return p;
     }
 };
 #endif

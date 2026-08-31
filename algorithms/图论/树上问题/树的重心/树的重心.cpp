@@ -21,25 +21,7 @@ struct TreeCentroid
     VLL sz;   // 子树权和, build 后有效
     VI centroids;    // 全体重心, 升序
     LL min_max_part; // 删重心后最大连通块的权
-private:
     LL total;
-    void dfs(int u, int p, G& g)
-    {
-        sz[u] = pt[u];
-        LL mx = 0;
-        for (auto& e : g[u])
-        {
-            int v = e.v;
-            if (v == p) continue;
-            dfs(v, u, g);
-            sz[u] += sz[v];
-            mx = max(mx, sz[v]);
-        }
-        mx = max(mx, total - sz[u]);
-        if (mx < min_max_part) min_max_part = mx, centroids = {u};
-        else if (mx == min_max_part) centroids.push_back(u);
-    }
-public:
     TreeCentroid(int max_n = 0) { init(max_n); }
     // 多测复位点权为 1 (其余 build 自复位)
     // 时间: O(n) | 空间: O(n)
@@ -62,6 +44,23 @@ public:
         min_max_part = numeric_limits<LL>::max();
         dfs(1, 0, g);
         sort(centroids.begin(), centroids.end());
+    }
+private:
+    void dfs(int u, int p, G& g)
+    {
+        sz[u] = pt[u];
+        LL mx = 0;
+        for (auto& e : g[u])
+        {
+            int v = e.v;
+            if (v == p) continue;
+            dfs(v, u, g);
+            sz[u] += sz[v];
+            mx = max(mx, sz[v]);
+        }
+        mx = max(mx, total - sz[u]);
+        if (mx < min_max_part) min_max_part = mx, centroids = {u};
+        else if (mx == min_max_part) centroids.push_back(u);
     }
 };
 #endif

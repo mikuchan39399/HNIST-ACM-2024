@@ -37,45 +37,6 @@ struct VBCC
         vbcc_cir.assign(1, VI{});
     }
     void add_edge(int u, int v) { g.add(u, v); }
-    void tarjan(int u, int root)
-    {
-        dfn_idx++;
-        dfn[u] = low[u] = dfn_idx;
-        sta.push_back(u);
-        int child_cnt = 0;
-        for (auto& e : g[u])
-        {
-            int v = e.v;
-            if (!dfn[v])
-            {
-                child_cnt++;
-                tarjan(v, root);
-                low[u] = min(low[u], low[v]);
-                if (low[v] >= dfn[u])
-                {
-                    if (u != root) cut[u] = 1;
-                    vbcc_cnt++;
-                    vbcc_cir.push_back(VI{});
-                    int t;
-                    do
-                    {
-                        t = sta.back();
-                        sta.pop_back();
-                        vbcc_cir[vbcc_cnt].push_back(t);
-                    } while (t != v);
-                    vbcc_cir[vbcc_cnt].push_back(u);
-                }
-            }
-            else low[u] = min(low[u], dfn[v]);
-        }
-        if (u == root && child_cnt >= 2) cut[u] = 1;
-        // 处理没有任何子节点的根节点（孤立点 / 单点自环）
-        if (u == root && child_cnt == 0)
-        {
-            vbcc_cnt++;
-            vbcc_cir.push_back(VI{u});
-        }
-    }
     void build(int root = -1)
     {
         if (root != -1)
@@ -125,6 +86,46 @@ struct VBCC
             if (cut[v]) res.push_back(v);
         }
         return res;
+    }
+private:
+    void tarjan(int u, int root)
+    {
+        dfn_idx++;
+        dfn[u] = low[u] = dfn_idx;
+        sta.push_back(u);
+        int child_cnt = 0;
+        for (auto& e : g[u])
+        {
+            int v = e.v;
+            if (!dfn[v])
+            {
+                child_cnt++;
+                tarjan(v, root);
+                low[u] = min(low[u], low[v]);
+                if (low[v] >= dfn[u])
+                {
+                    if (u != root) cut[u] = 1;
+                    vbcc_cnt++;
+                    vbcc_cir.push_back(VI{});
+                    int t;
+                    do
+                    {
+                        t = sta.back();
+                        sta.pop_back();
+                        vbcc_cir[vbcc_cnt].push_back(t);
+                    } while (t != v);
+                    vbcc_cir[vbcc_cnt].push_back(u);
+                }
+            }
+            else low[u] = min(low[u], dfn[v]);
+        }
+        if (u == root && child_cnt >= 2) cut[u] = 1;
+        // 处理没有任何子节点的根节点（孤立点 / 单点自环）
+        if (u == root && child_cnt == 0)
+        {
+            vbcc_cnt++;
+            vbcc_cir.push_back(VI{u});
+        }
     }
 };
 

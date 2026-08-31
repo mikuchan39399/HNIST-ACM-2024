@@ -20,7 +20,6 @@ struct WDSU
         assert(mod >= 0);
         iota(fa.begin(), fa.end(), 0);
     }
-    LL norm(LL v) const { return mod ? (v % mod + mod) % mod : v; }
     // 查找 x 所在集合的根，并压缩路径，维护 x 到根的有向距离 d(x -> root)
     // 返回值: 根节点编号
     // 时间: 均摊 O(log n) | 空间: O(递归深度)
@@ -51,6 +50,8 @@ struct WDSU
         if (find(x) != find(y)) return INF;
         return norm(d[x] - d[y]);
     }
+private:
+    LL norm(LL v) const { return mod ? (v % mod + mod) % mod : v; }
 };
 #endif
 

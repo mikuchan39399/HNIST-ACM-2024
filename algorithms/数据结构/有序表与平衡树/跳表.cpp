@@ -31,28 +31,11 @@ struct SkipList
             span.fill(0);
         }
     };
-private:
     vector<node> buf;
     VI rub;
     int tot;
     int n;
     int budget;
-    int new_node(LL v)
-    {
-        int lvl = 1;
-        while (lvl < K && z_rnd(1)) lvl++;
-        if (rub.size())
-        {
-            int id = rub.back(); rub.pop_back();
-            buf[id] = node(v, lvl);
-            return id;
-        }
-        assert(tot < budget);
-        tot++;
-        buf.push_back(node(v, lvl));
-        return tot;
-    }
-public:
     // 构造: 预算 max_nodes 结点(回收复用), 哨兵 0 号就位
     // 时间: O(1) | 空间: O(预算) (账目见类头)
     SkipList(int max_nodes = 1000010) : tot(0), n(0), budget(max_nodes)
@@ -191,6 +174,22 @@ public:
         rub.clear();
         buf.clear();
         buf.push_back(node(-INF, K));
+    }
+private:
+    int new_node(LL v)
+    {
+        int lvl = 1;
+        while (lvl < K && z_rnd(1)) lvl++;
+        if (rub.size())
+        {
+            int id = rub.back(); rub.pop_back();
+            buf[id] = node(v, lvl);
+            return id;
+        }
+        assert(tot < budget);
+        tot++;
+        buf.push_back(node(v, lvl));
+        return tot;
     }
 };
 #endif

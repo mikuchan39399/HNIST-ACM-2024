@@ -17,7 +17,7 @@ using namespace std;
 // [操作限制与有效性]
 // - 最大子段和：区间加/乘会破坏其正确性，直到该子树再次被覆盖 (assign) 方可恢复。
 //               其余操作 (覆盖/翻转/插删/建树) 下恒正确。全负序列返回最大负值。
-// - 最值(mx/mn)：对所有操作 (含加/乘) 始终有效。
+// - 最值(mx/mn)：对所有操作始终有效。
 // - 区间覆盖：底层复用乘法 Tag (即乘 0 视为覆盖)。
 // [接口约定]
 // - 入参格式：build 传入 1-based 数组 a[1..m]；insert 等其余接口传 0-based vector。
@@ -40,81 +40,11 @@ struct FHQ_Seq
         LL tm = 1, ta = 0;
         bool rev = 0;
     };
-private:
     vector<node> tr;
     VI rub;
     int idx, root, budget;
-    int newnode(LL v)
-    {
-        int id;
-        if (!rub.empty())
-        {
-            id = rub.back();
-            rub.pop_back();
-            tr[id] = node();
-        }
-        else
-        {
-            assert(idx < budget);
-            tr.push_back(node());
-            id = ++idx;
-        }
-        tr[id].sz = 1;
-        tr[id].sum = tr[id].val = v;
-        tr[id].lmax = tr[id].rmax = tr[id].tmax = v;
-        tr[id].mx = tr[id].mn = v;
-        tr[id].rd = z_rnd(INT_MAX);
-        return id;
-    }
-    void aff(int x, LL m, LL a)
-    {
-        if (!x) return;
-        tr[x].val = tr[x].val * m + a;
-        tr[x].sum = tr[x].sum * m + a * tr[x].sz;
-        LL hi = tr[x].mx * m + a, lo = tr[x].mn * m + a;
-        tr[x].mx = max(hi, lo);
-        tr[x].mn = min(hi, lo);
-        if (m == 0) // 常数段: 非空最优 = max(a, a*sz)
-            tr[x].lmax = tr[x].rmax = tr[x].tmax = a > 0 ? a * tr[x].sz : a;
-        tr[x].ta = tr[x].ta * m + a;
-        tr[x].tm = tr[x].tm * m;
-    }
-    void rev_tag(int x)
-    {
-        if (!x) return;
-        swap(tr[x].lc, tr[x].rc);
-        swap(tr[x].lmax, tr[x].rmax);
-        tr[x].rev ^= 1;
-    }
-    void pushdown(int x)
-    {
-        if (tr[x].rev)
-        {
-            rev_tag(tr[x].lc);
-            rev_tag(tr[x].rc);
-            tr[x].rev = 0;
-        }
-        if (tr[x].tm != 1 || tr[x].ta != 0)
-        {
-            aff(tr[x].lc, tr[x].tm, tr[x].ta);
-            aff(tr[x].rc, tr[x].tm, tr[x].ta);
-            tr[x].tm = 1;
-            tr[x].ta = 0;
-        }
-    }
-    void pushup(int x)
-    {
-        node& u = tr[x];
-        node& L = tr[u.lc];
-        node& R = tr[u.rc];
-        u.sz = L.sz + R.sz + 1;
-        u.sum = L.sum + R.sum + u.val;
-        u.mx = max(max(L.mx, R.mx), u.val);
-        u.mn = min(min(L.mn, R.mn), u.val);
-        u.lmax = max(L.lmax, L.sum + u.val + max(0LL, R.lmax));
-        u.rmax = max(R.rmax, R.sum + u.val + max(0LL, L.rmax));
-        u.tmax = max(max(L.tmax, R.tmax), max(0LL, L.rmax) + u.val + max(0LL, R.lmax));
-    }
+    // 把以 p 为根的子树按位置分裂, 中序前 k 个结点分给 x, 其余分给 y
+    // 时间: 期望 O(log n) | 空间: O(log n)
     void split_rank(int p, int k, int& x, int& y)
     {
         if (!p)
@@ -135,6 +65,8 @@ private:
         }
         pushup(p);
     }
+    // 把子树 x 和 y 合并成一棵并返回新根, 要求 x 的结点都在 y 前面(与值无关)
+    // 时间: 期望 O(log n) | 空间: O(log n)
     int merge(int x, int y)
     {
         if (!x || !y) return x + y;
@@ -150,35 +82,7 @@ private:
         pushup(y);
         return y;
     }
-    void finish(int x)
-    {
-        if (!x) return;
-        finish(tr[x].lc);
-        finish(tr[x].rc);
-        pushup(x);
-    }
-    int build_sub(const VLL& a, int lo, int hi)
-    {
-        int m = hi - lo + 1;
-        VI stk;
-        stk.reserve(m + 1);
-        for (int i = lo; i <= hi; i++)
-        {
-            int cur = newnode(a[i]);
-            int last = 0;
-            while (!stk.empty() && tr[stk.back()].rd > tr[cur].rd)
-            {
-                last = stk.back();
-                stk.pop_back();
-            }
-            tr[cur].lc = last;
-            if (!stk.empty()) tr[stk.back()].rc = cur;
-            stk.push_back(cur);
-        }
-        int r = stk.empty() ? 0 : stk[0];
-        finish(r);
-        return r;
-    }
+    // 中序遍历以 x 为根的子树, 把值依次追加到 out (时间 O(子树大小))
     void walk(int x, VLL& out)
     {
         if (!x) return;
@@ -187,14 +91,6 @@ private:
         out.push_back(tr[x].val);
         walk(tr[x].rc, out);
     }
-    void recycle(int x)
-    {
-        if (!x) return;
-        recycle(tr[x].lc);
-        recycle(tr[x].rc);
-        rub.push_back(x);
-    }
-public:
     // 构造: 预算 max_nodes 结点(按峰值存活计, 回收复用), 空序列
     // 时间: O(1) | 空间: O(预算) (账目见类头)
     FHQ_Seq(int max_nodes = 1000010) : idx(0), root(0), budget(max_nodes)
@@ -357,6 +253,114 @@ public:
         tr.clear();
         tr.push_back(node());
     }
+private:
+    int newnode(LL v)
+    {
+        int id;
+        if (!rub.empty())
+        {
+            id = rub.back();
+            rub.pop_back();
+            tr[id] = node();
+        }
+        else
+        {
+            assert(idx < budget);
+            tr.push_back(node());
+            id = ++idx;
+        }
+        tr[id].sz = 1;
+        tr[id].sum = tr[id].val = v;
+        tr[id].lmax = tr[id].rmax = tr[id].tmax = v;
+        tr[id].mx = tr[id].mn = v;
+        tr[id].rd = z_rnd(INT_MAX);
+        return id;
+    }
+    void aff(int x, LL m, LL a)
+    {
+        if (!x) return;
+        tr[x].val = tr[x].val * m + a;
+        tr[x].sum = tr[x].sum * m + a * tr[x].sz;
+        LL hi = tr[x].mx * m + a, lo = tr[x].mn * m + a;
+        tr[x].mx = max(hi, lo);
+        tr[x].mn = min(hi, lo);
+        if (m == 0) // 常数段: 非空最优 = max(a, a*sz)
+            tr[x].lmax = tr[x].rmax = tr[x].tmax = a > 0 ? a * tr[x].sz : a;
+        tr[x].ta = tr[x].ta * m + a;
+        tr[x].tm = tr[x].tm * m;
+    }
+    void rev_tag(int x)
+    {
+        if (!x) return;
+        swap(tr[x].lc, tr[x].rc);
+        swap(tr[x].lmax, tr[x].rmax);
+        tr[x].rev ^= 1;
+    }
+    void pushdown(int x)
+    {
+        if (tr[x].rev)
+        {
+            rev_tag(tr[x].lc);
+            rev_tag(tr[x].rc);
+            tr[x].rev = 0;
+        }
+        if (tr[x].tm != 1 || tr[x].ta != 0)
+        {
+            aff(tr[x].lc, tr[x].tm, tr[x].ta);
+            aff(tr[x].rc, tr[x].tm, tr[x].ta);
+            tr[x].tm = 1;
+            tr[x].ta = 0;
+        }
+    }
+    void pushup(int x)
+    {
+        node& u = tr[x];
+        node& L = tr[u.lc];
+        node& R = tr[u.rc];
+        u.sz = L.sz + R.sz + 1;
+        u.sum = L.sum + R.sum + u.val;
+        u.mx = max(max(L.mx, R.mx), u.val);
+        u.mn = min(min(L.mn, R.mn), u.val);
+        u.lmax = max(L.lmax, L.sum + u.val + max(0LL, R.lmax));
+        u.rmax = max(R.rmax, R.sum + u.val + max(0LL, L.rmax));
+        u.tmax = max(max(L.tmax, R.tmax), max(0LL, L.rmax) + u.val + max(0LL, R.lmax));
+    }
+    void finish(int x)
+    {
+        if (!x) return;
+        finish(tr[x].lc);
+        finish(tr[x].rc);
+        pushup(x);
+    }
+    int build_sub(const VLL& a, int lo, int hi)
+    {
+        int m = hi - lo + 1;
+        VI stk;
+        stk.reserve(m + 1);
+        for (int i = lo; i <= hi; i++)
+        {
+            int cur = newnode(a[i]);
+            int last = 0;
+            while (!stk.empty() && tr[stk.back()].rd > tr[cur].rd)
+            {
+                last = stk.back();
+                stk.pop_back();
+            }
+            tr[cur].lc = last;
+            if (!stk.empty()) tr[stk.back()].rc = cur;
+            stk.push_back(cur);
+        }
+        int r = stk.empty() ? 0 : stk[0];
+        finish(r);
+        return r;
+    }
+    void recycle(int x)
+    {
+        if (!x) return;
+        recycle(tr[x].lc);
+        recycle(tr[x].rc);
+        rub.push_back(x);
+    }
 };
 #endif
 /* Usage:
@@ -380,4 +384,8 @@ public:
     s.collect(out);                // O(n) 全序收集(追加到 out)
     s.size();                      // 序列长度
     s.clear();                     // 多测复位, 容量保留
+    // 底层接口(结点句柄进出, 直接可用):
+    // int a, b; s.split_rank(p, k, a, b); // 分裂 p: 前 k 个给 a, 其余给 b
+    // p = s.merge(a, b);                  // 合并, 要求 a 都在 b 前面
+    // s.walk(p, out);                     // 中序收集 p 子树, 追加到 out
 */

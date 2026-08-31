@@ -31,6 +31,28 @@ struct SegTree
             tag[i] = Tag{};
         }
     }
+    // --- 外部 API ---
+    // 区间 [x, y] 应用标记 v
+    void modify(int x, int y, const Tag& v) { modify(1, 1, n, x, y, v); }
+    // 查询区间 [x, y] 的信息
+    Info query(int x, int y) { return query(1, 1, n, x, y); }
+    // 根据 a 数组构建线段树 (a 为 1-base)
+    void build(const vector<Info>& a) { build(1, 1, n, a); }
+    // 查找下标 >= start 且满足 pred 条件的第一个位置
+    template<class Pred>
+    int find_first(int start, Pred pred)
+    {
+        if (start < 1 || start > n) return -1;
+        return find_first(1, 1, n, start, pred);
+    }
+    // 查找下标 <= end 且满足 pred 条件的最后一个位置
+    template<class Pred>
+    int find_last(int end, Pred pred)
+    {
+        if (end < 1 || end > n) return -1;
+        return find_last(1, 1, n, end, pred);
+    }
+private:
     void pushup(int p) { info[p] = info[p << 1] + info[p << 1 | 1]; }
     void lazy(int p, const Tag& v)
     {
@@ -120,27 +142,6 @@ struct SegTree
         if (res == -1)
             res = find_last(p << 1, l, mid, end, pred);
         return res;
-    }
-    // --- 外部 API ---
-    // 区间 [x, y] 应用标记 v
-    void modify(int x, int y, const Tag& v) { modify(1, 1, n, x, y, v); }
-    // 查询区间 [x, y] 的信息
-    Info query(int x, int y) { return query(1, 1, n, x, y); }
-    // 根据 a 数组构建线段树 (a 为 1-base)
-    void build(const vector<Info>& a) { build(1, 1, n, a); }
-    // 查找下标 >= start 且满足 pred 条件的第一个位置
-    template<class Pred>
-    int find_first(int start, Pred pred)
-    {
-        if (start < 1 || start > n) return -1;
-        return find_first(1, 1, n, start, pred);
-    }
-    // 查找下标 <= end 且满足 pred 条件的最后一个位置
-    template<class Pred>
-    int find_last(int end, Pred pred)
-    {
-        if (end < 1 || end > n) return -1;
-        return find_last(1, 1, n, end, pred);
     }
 };
 // ==================== 区间加法区间求和 (示例 Info/Tag, 守卫隔离) ====================

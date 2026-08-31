@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// ============ FHQ_Treap 无旋 Treap (可重复集合) ============
+// ============ FHQ_Treap (可重复集合) ============
 // 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继期望 O(log n)
 // 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
 // 内存账: 每结点 32B, 默认预算 4000010 结点(按累计插入计, 删除不回收)
@@ -23,29 +23,10 @@ struct FHQ_Treap
         int lc = 0, rc = 0, sz = 0, rd = 0;
         LL val = 0;
     };
-private:
     vector<node> tr;
     int idx, root, budget;
-    int newnode(LL v)
-    {
-        assert(idx < budget);
-        tr.push_back(node());
-        tr[++idx].sz = 1;
-        tr[idx].val = v;
-        tr[idx].rd = z_rnd(INT_MAX);
-        return idx;
-    }
-    void pushup(int x)
-    {
-        tr[x].sz = tr[tr[x].lc].sz + tr[tr[x].rc].sz + 1;
-    }
-    void finish(int x)
-    {
-        if (!x) return;
-        finish(tr[x].lc);
-        finish(tr[x].rc);
-        pushup(x);
-    }
+    // 把以 p 为根的子树按值分裂, 值 <= v 的结点分给 x, 值 > v 的分给 y
+    // 时间: 期望 O(log n) | 空间: O(log n)
     void split(int p, LL v, int& x, int& y)
     {
         if (!p)
@@ -65,6 +46,8 @@ private:
         }
         pushup(p);
     }
+    // 把子树 x 和 y 合并成一棵并返回新根, 要求 x 中所有值 <= y 中所有值
+    // 时间: 期望 O(log n) | 空间: O(log n)
     int merge(int x, int y)
     {
         if (!x || !y) return x + y;
@@ -78,13 +61,13 @@ private:
         pushup(y);
         return y;
     }
+    // 返回以 x 为根的子树中第 k 小的值 (时间期望 O(log n))
     LL kth_of(int x, int k)
     {
         if (tr[tr[x].lc].sz >= k) return kth_of(tr[x].lc, k);
         if (tr[tr[x].lc].sz + 1 == k) return tr[x].val;
         return kth_of(tr[x].rc, k - tr[tr[x].lc].sz - 1);
     }
-public:
     // 构造: 预算 max_nodes 结点(按累计插入计, 删除不回收), 哨兵 0 号就位
     // 时间: O(1) | 空间: O(预算) (账目见类头)
     FHQ_Treap(int max_nodes = 4000010) : idx(0), root(0), budget(max_nodes)
@@ -177,10 +160,7 @@ public:
     }
     // 返回元素个数 (含重复)
     // 时间: O(1) | 空间: O(1)
-    int size()
-    {
-        return tr[root].sz;
-    }
+    int size() { return tr[root].sz; }
     // 多测复位: 清全部元素, 容量保留
     // 时间: O(1) | 空间: O(1)
     void clear()
@@ -189,6 +169,27 @@ public:
         root = 0;
         tr.clear();
         tr.push_back(node());
+    }
+private:
+    int newnode(LL v)
+    {
+        assert(idx < budget);
+        tr.push_back(node());
+        tr[++idx].sz = 1;
+        tr[idx].val = v;
+        tr[idx].rd = z_rnd(INT_MAX);
+        return idx;
+    }
+    void pushup(int x)
+    {
+        tr[x].sz = tr[tr[x].lc].sz + tr[tr[x].rc].sz + 1;
+    }
+    void finish(int x)
+    {
+        if (!x) return;
+        finish(tr[x].lc);
+        finish(tr[x].rc);
+        pushup(x);
     }
 };
 #endif
@@ -203,4 +204,8 @@ public:
     fhq.get_suf(x);                // 严格后继, 无则 INF
     fhq.size();                    // 元素个数(含重复)
     fhq.clear();                   // 多测复位, 容量保留
+    // 底层接口(结点句柄进出, 直接可用):
+    // int a, b; fhq.split(p, v, a, b);  // 分裂 p: <= v 给 a, > v 给 b
+    // p = fhq.merge(a, b);              // 合并, 要求 a 的值都 <= b 的值
+    // LL ret = fhq.kth_of(p, k);        // 查 p 子树第 k 小(配 split 句柄用)
 */

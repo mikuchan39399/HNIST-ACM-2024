@@ -23,22 +23,6 @@ struct LCA
         pre.assign(n + 1, 0);
         rmq.assign(2 * n + 1, VI(floor(log2(2 * n)) + 10, 0));
     }
-    void dfs(int u, int fa)
-    {
-        dep[u] = dep[fa] + 1;
-        idx++;
-        rmq[idx][0] = u;
-        pre[u] = idx;
-        for (int i = head[u]; i; i = nxt[i])
-        {
-            int v = to[i];
-            if (v == fa) continue;
-            dfs(v, u);
-            idx++;
-            rmq[idx][0] = u;
-        }
-    }
-
     void build(int root = 1)
     {
         idx = 0;
@@ -63,5 +47,21 @@ struct LCA
         u = rmq[l][k];
         v = rmq[r - (1 << k) + 1][k];
         return dep[u] < dep[v] ? u : v;
+    }
+private:
+    void dfs(int u, int fa)
+    {
+        dep[u] = dep[fa] + 1;
+        idx++;
+        rmq[idx][0] = u;
+        pre[u] = idx;
+        for (int i = head[u]; i; i = nxt[i])
+        {
+            int v = to[i];
+            if (v == fa) continue;
+            dfs(v, u);
+            idx++;
+            rmq[idx][0] = u;
+        }
     }
 };

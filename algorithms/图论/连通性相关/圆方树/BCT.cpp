@@ -37,6 +37,44 @@ struct VBCC
         vbcc_cir.assign(1, VI{});
     }
     void add_edge(int u, int v) { g.add(u, v); }
+    void build(int root = -1)
+    {
+        if (root != -1)
+        {
+            tarjan(root, root);
+            return;
+        }
+        for (int i = 1; i <= n; i++)
+            if (!dfn[i]) tarjan(i, i);
+    }
+    // 构建圆方树
+    void build_tree()
+    {
+        for (int i = 1; i <= vbcc_cnt; i++)
+        {
+            int u = n + i;
+            for (int v : vbcc_cir[i])
+                tree.add(u, v);
+        }
+    }
+    // 返回单个割点参与的 VBCC 列表
+    VI get_bel_vbccs(int u)
+    {
+        VI res;
+        for (auto& e : tree[u])
+            res.push_back(e.v - n);
+        return res;
+    }
+    // 返回单个 VBCC 包含的割点列表
+    VI get_cuts_vbcc(int i)
+    {
+        VI res;
+        if (i < 1 || i > vbcc_cnt) return res;
+        for (int v : vbcc_cir[i])
+            if (cut[v]) res.push_back(v);
+        return res;
+    }
+private:
     void tarjan(int u, int root)
     {
         dfn_idx++;
@@ -74,43 +112,6 @@ struct VBCC
             vbcc_cnt++;
             vbcc_cir.push_back(VI{u});
         }
-    }
-    void build(int root = -1)
-    {
-        if (root != -1)
-        {
-            tarjan(root, root);
-            return;
-        }
-        for (int i = 1; i <= n; i++)
-            if (!dfn[i]) tarjan(i, i);
-    }
-    // 构建圆方树
-    void build_tree()
-    {
-        for (int i = 1; i <= vbcc_cnt; i++)
-        {
-            int u = n + i;
-            for (int v : vbcc_cir[i])
-                tree.add(u, v);
-        }
-    }
-    // 返回单个割点参与的 VBCC 列表
-    VI get_bel_vbccs(int u)
-    {
-        VI res;
-        for (auto& e : tree[u])
-            res.push_back(e.v - n);
-        return res;
-    }
-    // 返回单个 VBCC 包含的割点列表
-    VI get_cuts_vbcc(int i)
-    {
-        VI res;
-        if (i < 1 || i > vbcc_cnt) return res;
-        for (int v : vbcc_cir[i])
-            if (cut[v]) res.push_back(v);
-        return res;
     }
 };
 #endif

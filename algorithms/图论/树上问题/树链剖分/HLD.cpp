@@ -30,22 +30,6 @@ struct SegTree
     SegTree(int max_n = 0) :
         tr((max_n + 10) << 2, {0, 0, 0, 0})
     {}
-    void push_up(int p)
-    {
-        tr[p].sum = tr[p << 1].sum + tr[p << 1 | 1].sum;
-    }
-    void lazy(int p, LL add)
-    {
-        tr[p].add += add;
-        tr[p].sum += add * (tr[p].r - tr[p].l + 1);
-    }
-    void push_down(int p)
-    {
-        if (tr[p].add == 0 || tr[p].l == tr[p].r) return;
-        lazy(p << 1, tr[p].add);
-        lazy(p << 1 | 1, tr[p].add);
-        tr[p].add = 0;
-    }
     // 从 a[1..n] 按 dfn->seg 映射建树 (a 1-based 原点权, seg 为 hld.seg)
     // 时间: O(n) | 空间: O(1)
     void build(int p, int l, int r, const VI& a, const VI& seg)
@@ -90,6 +74,23 @@ struct SegTree
         if (y > mid) sum += query(p << 1 | 1, x, y);
         return sum;
     }
+private:
+    void push_up(int p)
+    {
+        tr[p].sum = tr[p << 1].sum + tr[p << 1 | 1].sum;
+    }
+    void lazy(int p, LL add)
+    {
+        tr[p].add += add;
+        tr[p].sum += add * (tr[p].r - tr[p].l + 1);
+    }
+    void push_down(int p)
+    {
+        if (tr[p].add == 0 || tr[p].l == tr[p].r) return;
+        lazy(p << 1, tr[p].add);
+        lazy(p << 1 | 1, tr[p].add);
+        tr[p].add = 0;
+    }
 };
 
 struct HLD
@@ -110,6 +111,27 @@ struct HLD
         n = _n;
         dfn_idx = 0;
         z_fill_n(n, 0, fa, dep, sz, son, top, dfn, seg);
+    }
+public:
+    // 跑剖链: root 指定则单树, 默认扫全森林(dfn==0 起剖)
+    // 时间: O(n) | 空间: O(1)
+    template <class G>
+    void build(G& g, int root = -1)
+    {
+        if (root != -1)
+        {
+            dfs1(root, 0, g);
+            dfs2(root, root, g);
+            return;
+        }
+        for (int i = 1; i <= n; i++)
+        {
+            if (!dfn[i])
+            {
+                dfs1(i, 0, g);
+                dfs2(i, i, g);
+            }
+        }
     }
 private:
     template <class G>
@@ -140,27 +162,6 @@ private:
             int v = e.v;
             if (v == fa[u] || v == son[u]) continue;
             dfs2(v, v, g);
-        }
-    }
-public:
-    // 跑剖链: root 指定则单树, 默认扫全森林(dfn==0 起剖)
-    // 时间: O(n) | 空间: O(1)
-    template <class G>
-    void build(G& g, int root = -1)
-    {
-        if (root != -1)
-        {
-            dfs1(root, 0, g);
-            dfs2(root, root, g);
-            return;
-        }
-        for (int i = 1; i <= n; i++)
-        {
-            if (!dfn[i])
-            {
-                dfs1(i, 0, g);
-                dfs2(i, i, g);
-            }
         }
     }
 };

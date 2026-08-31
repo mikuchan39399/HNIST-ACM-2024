@@ -23,9 +23,88 @@ struct Treap
         int lc = 0, rc = 0, cnt = 0, sz = 0, rd = 0;
         LL val = 0;
     };
-private:
     vector<node> tr;
     int idx, root, budget;
+    // 构造: 预算 max_nodes 结点(按累计插入计, 删除不回收), 哨兵 0 号就位
+    // 时间: O(1) | 空间: O(预算) (账目见类头)
+    Treap(int max_nodes = 4000010) : idx(0), root(0), budget(max_nodes)
+    {
+        tr.reserve(budget + 1);
+        tr.push_back(node());
+    }
+    // 从升序 a[1..m] 笛卡尔树(右脊栈)线性建树, 替换现有集合 (a.size() = m + 1)
+    // 契约: a[1..m] 已升序(允许重复, 相邻等值合并进 cnt), 违约触发 assert
+    // 时间: O(m) | 空间: 右脊栈, 期望 O(log m)
+    void build(const VLL& a)
+    {
+        clear();
+        int m = (int)a.size() - 1;
+        for (int i = 2; i <= m; i++) assert(a[i - 1] <= a[i]);
+        VI stk;
+        stk.reserve(m + 1);
+        int last_node = 0;
+        for (int i = 1; i <= m; i++)
+        {
+            if (last_node && tr[last_node].val == a[i])
+            {
+                tr[last_node].cnt++;
+                continue;
+            }
+            int cur = newnode(a[i]);
+            int last = 0;
+            while (!stk.empty() && tr[stk.back()].rd > tr[cur].rd)
+            {
+                last = stk.back();
+                stk.pop_back();
+            }
+            tr[cur].lc = last;
+            if (!stk.empty()) tr[stk.back()].rc = cur;
+            stk.push_back(cur);
+            last_node = cur;
+        }
+        root = stk.empty() ? 0 : stk[0];
+        finish(root);
+    }
+    // 插入 v (允许重复)
+    // 时间: 期望 O(log n) | 空间: O(1)
+    void insert(LL v) { insert(root, v); }
+    // 删除一个 v, 返回是否存在并删除
+    // 时间: 期望 O(log n) | 空间: O(1)
+    bool erase(LL v)
+    {
+        int b = tr[root].sz;
+        erase(root, v);
+        return tr[root].sz < b;
+    }
+    // 返回 < v 的元素个数 (含重复)
+    // 时间: 期望 O(log n) | 空间: O(1)
+    int get_rank(LL v) { return rank_of(root, v); }
+    // 返回第 k 小 (1-based 含重复), k 越界返回 INF
+    // 时间: 期望 O(log n) | 空间: O(1)
+    LL get_kth(int k)
+    {
+        if (k < 1 || k > tr[root].sz) return INF;
+        return kth_of(root, k);
+    }
+    // 返回 < v 的最大值, 无前驱返回 -INF
+    // 时间: 期望 O(log n) | 空间: O(1)
+    LL get_pre(LL v) { return pre_of(root, v); }
+    // 返回 > v 的最小值, 无后继返回 INF
+    // 时间: 期望 O(log n) | 空间: O(1)
+    LL get_suf(LL v) { return suf_of(root, v); }
+    // 返回元素个数 (含重复)
+    // 时间: O(1) | 空间: O(1)
+    int size() { return tr[root].sz; }
+    // 多测复位: 清全部元素, 容量保留
+    // 时间: O(1) | 空间: O(1)
+    void clear()
+    {
+        idx = 0;
+        root = 0;
+        tr.clear();
+        tr.push_back(node());
+    }
+private:
     int newnode(LL v)
     {
         assert(idx < budget);
@@ -133,86 +212,6 @@ private:
         if (!x) return INF;
         if (tr[x].val <= v) return suf_of(tr[x].rc, v);
         return min(tr[x].val, suf_of(tr[x].lc, v));
-    }
-public:
-    // 构造: 预算 max_nodes 结点(按累计插入计, 删除不回收), 哨兵 0 号就位
-    // 时间: O(1) | 空间: O(预算) (账目见类头)
-    Treap(int max_nodes = 4000010) : idx(0), root(0), budget(max_nodes)
-    {
-        tr.reserve(budget + 1);
-        tr.push_back(node());
-    }
-    // 从升序 a[1..m] 笛卡尔树(右脊栈)线性建树, 替换现有集合 (a.size() = m + 1)
-    // 契约: a[1..m] 已升序(允许重复, 相邻等值合并进 cnt), 违约触发 assert
-    // 时间: O(m) | 空间: 右脊栈, 期望 O(log m)
-    void build(const VLL& a)
-    {
-        clear();
-        int m = (int)a.size() - 1;
-        for (int i = 2; i <= m; i++) assert(a[i - 1] <= a[i]);
-        VI stk;
-        stk.reserve(m + 1);
-        int last_node = 0;
-        for (int i = 1; i <= m; i++)
-        {
-            if (last_node && tr[last_node].val == a[i])
-            {
-                tr[last_node].cnt++;
-                continue;
-            }
-            int cur = newnode(a[i]);
-            int last = 0;
-            while (!stk.empty() && tr[stk.back()].rd > tr[cur].rd)
-            {
-                last = stk.back();
-                stk.pop_back();
-            }
-            tr[cur].lc = last;
-            if (!stk.empty()) tr[stk.back()].rc = cur;
-            stk.push_back(cur);
-            last_node = cur;
-        }
-        root = stk.empty() ? 0 : stk[0];
-        finish(root);
-    }
-    // 插入 v (允许重复)
-    // 时间: 期望 O(log n) | 空间: O(1)
-    void insert(LL v) { insert(root, v); }
-    // 删除一个 v, 返回是否存在并删除
-    // 时间: 期望 O(log n) | 空间: O(1)
-    bool erase(LL v)
-    {
-        int b = tr[root].sz;
-        erase(root, v);
-        return tr[root].sz < b;
-    }
-    // 返回 < v 的元素个数 (含重复)
-    // 时间: 期望 O(log n) | 空间: O(1)
-    int get_rank(LL v) { return rank_of(root, v); }
-    // 返回第 k 小 (1-based 含重复), k 越界返回 INF
-    // 时间: 期望 O(log n) | 空间: O(1)
-    LL get_kth(int k)
-    {
-        if (k < 1 || k > tr[root].sz) return INF;
-        return kth_of(root, k);
-    }
-    // 返回 < v 的最大值, 无前驱返回 -INF
-    // 时间: 期望 O(log n) | 空间: O(1)
-    LL get_pre(LL v) { return pre_of(root, v); }
-    // 返回 > v 的最小值, 无后继返回 INF
-    // 时间: 期望 O(log n) | 空间: O(1)
-    LL get_suf(LL v) { return suf_of(root, v); }
-    // 返回元素个数 (含重复)
-    // 时间: O(1) | 空间: O(1)
-    int size() { return tr[root].sz; }
-    // 多测复位: 清全部元素, 容量保留
-    // 时间: O(1) | 空间: O(1)
-    void clear()
-    {
-        idx = 0;
-        root = 0;
-        tr.clear();
-        tr.push_back(node());
     }
 };
 #endif

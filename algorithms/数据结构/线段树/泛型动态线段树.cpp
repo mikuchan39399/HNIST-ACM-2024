@@ -27,6 +27,23 @@ struct DySegTree
         tr.reserve(budget + 1);
         tr.push_back(Node{});
     }
+    // 对外接口
+    void modify(LL x, LL y, const Tag& v) { modify(root, 1, n, x, y, v); }
+    Info query(LL x, LL y) { return query(root, 1, n, x, y); }
+    void build(const vector<Info>& a) { n = a.size() - 1; build(root, 1, n, a); }
+    template<class Pred>
+    LL find_first(LL start, Pred pred)
+    {
+        if (start < 1 || start > n) return -1;
+        return find_first(root, 1, n, start, pred);
+    }
+    template<class Pred>
+    LL find_last(LL end, Pred pred)
+    {
+        if (end < 1 || end > n) return -1;
+        return find_last(root, 1, n, end, pred);
+    }
+private:
     int new_node(LL len)
     {
         assert(idx + 1 <= budget && "max_nodes 开小了");
@@ -136,22 +153,6 @@ struct DySegTree
         if (res == -1)
             res = find_last(tr[p].lc, l, mid, end, pred);
         return res;
-    }
-    // 对外接口
-    void modify(LL x, LL y, const Tag& v) { modify(root, 1, n, x, y, v); }
-    Info query(LL x, LL y) { return query(root, 1, n, x, y); }
-    void build(const vector<Info>& a) { n = a.size() - 1; build(root, 1, n, a); }
-    template<class Pred>
-    LL find_first(LL start, Pred pred)
-    {
-        if (start < 1 || start > n) return -1;
-        return find_first(root, 1, n, start, pred);
-    }
-    template<class Pred>
-    LL find_last(LL end, Pred pred)
-    {
-        if (end < 1 || end > n) return -1;
-        return find_last(root, 1, n, end, pred);
     }
 };
 

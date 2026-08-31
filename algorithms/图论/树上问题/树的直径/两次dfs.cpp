@@ -22,27 +22,8 @@ struct TreeDiameter
     VI path;   // 直径路径 end_u -> end_v
     int end_u, end_v;
     LL len;
-private:
     VI cur_far;
     VLL cur_d;
-    template <class E>
-    static LL w_of(const E& e)
-    {
-        if constexpr (is_same_v<decltype(e.w), Empty>) return 1;
-        else return e.w;
-    }
-    void dfs(int u, int p, LL d, G& g)
-    {
-        if (d > cur_d[0]) cur_d[0] = d, cur_far[0] = u;
-        for (auto& e : g[u])
-        {
-            int v = e.v;
-            if (v == p) continue;
-            pre[v] = u;
-            dfs(v, u, d + w_of(e), g);
-        }
-    }
-public:
     // 对 1..n 的树 g 两次 DFS; 多测直接重跑即可全量自复位
     // 时间: O(n) | 空间: O(n)
     void build(G& g, int _n)
@@ -62,6 +43,24 @@ public:
         path.clear();
         for (int u = end_v; u; u = pre[u]) path.push_back(u);
         reverse(path.begin(), path.end());
+    }
+private:
+    template <class E>
+    static LL w_of(const E& e)
+    {
+        if constexpr (is_same_v<decltype(e.w), Empty>) return 1;
+        else return e.w;
+    }
+    void dfs(int u, int p, LL d, G& g)
+    {
+        if (d > cur_d[0]) cur_d[0] = d, cur_far[0] = u;
+        for (auto& e : g[u])
+        {
+            int v = e.v;
+            if (v == p) continue;
+            pre[v] = u;
+            dfs(v, u, d + w_of(e), g);
+        }
     }
 };
 #endif

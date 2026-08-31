@@ -33,44 +33,6 @@ struct HLD_LCA
         z_fill_n(n, 0, fa, dep, sz, son, top, dfn, rt, dis);
     }
     template <class G>
-    void dfs1(int u, int f, int root, G& g)
-    {
-        fa[u] = f;
-        rt[u] = root;
-        dep[u] = dep[f] + 1;
-        sz[u] = 1;
-        son[u] = 0;
-        for (auto& e : g[u])
-        {
-            int v = e.v;
-            if (v == f) continue;
-            if constexpr (is_same_v<decltype(e.w), Empty>)
-            {
-                dis[v] = dis[u] + 1;
-            }
-            else
-            {
-                dis[v] = dis[u] + e.w;      // 针对自定义边权请修改这里
-            }
-            dfs1(v, u, root, g);
-            sz[u] += sz[v];
-            if (sz[v] > sz[son[u]]) son[u] = v;
-        }
-    }
-    template <class G>
-    void dfs2(int u, int t, G& g)
-    {
-        top[u] = t;
-        dfn[u] = ++dfn_idx;
-        if (son[u]) dfs2(son[u], t, g);
-        for (auto& e : g[u])
-        {
-            int v = e.v;
-            if (v == fa[u] || v == son[u]) continue;
-            dfs2(v, v, g);
-        }
-    }
-    template <class G>
     void build(G& g, int root = -1)
     {
         if (root != -1)
@@ -119,6 +81,45 @@ struct HLD_LCA
         int l = lca(u, v);
         if (l == -1) return -1;
         return dis[u] + dis[v] - 2 * dis[l];
+    }
+private:
+    template <class G>
+    void dfs1(int u, int f, int root, G& g)
+    {
+        fa[u] = f;
+        rt[u] = root;
+        dep[u] = dep[f] + 1;
+        sz[u] = 1;
+        son[u] = 0;
+        for (auto& e : g[u])
+        {
+            int v = e.v;
+            if (v == f) continue;
+            if constexpr (is_same_v<decltype(e.w), Empty>)
+            {
+                dis[v] = dis[u] + 1;
+            }
+            else
+            {
+                dis[v] = dis[u] + e.w;      // 针对自定义边权请修改这里
+            }
+            dfs1(v, u, root, g);
+            sz[u] += sz[v];
+            if (sz[v] > sz[son[u]]) son[u] = v;
+        }
+    }
+    template <class G>
+    void dfs2(int u, int t, G& g)
+    {
+        top[u] = t;
+        dfn[u] = ++dfn_idx;
+        if (son[u]) dfs2(son[u], t, g);
+        for (auto& e : g[u])
+        {
+            int v = e.v;
+            if (v == fa[u] || v == son[u]) continue;
+            dfs2(v, v, g);
+        }
     }
 };
 #endif

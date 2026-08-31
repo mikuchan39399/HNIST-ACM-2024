@@ -37,6 +37,75 @@ struct PersSegTree
         tr.push_back(Node{});
     }
     void set_n(LL _n) { n = _n; }
+public:
+    // 由一维数组 a[1..n] 直接生成版本 0 的根结点
+    // 返回值: 生成的新版本根结点编号
+    // 时间: O(n) | 空间: O(n)
+    int build(const vector<Info>& a)
+    {
+        assert((int)a.size() >= 2);
+        n = (LL)a.size() - 1;
+        return build(1, n, a);
+    }
+    // 在版本 rt 的区间 [x, y] 应用增量 v (Tag), 单点修改令 x == y 即可
+    // 基于 Tag 永久化, 范围修改仅支持同时满足交换律与结合律的操作
+    // 返回值: 生成的新版本根结点编号
+    // 时间: O(log V) | 空间: O(log V)
+    int modify(int rt, LL x, LL y, const Tag& v)
+    {
+        assert(1 <= x && x <= y && y <= n);
+        return modify(rt, 1, n, x, y, v);
+    }
+    // 查询版本 rt 中区间 [x, y] 的聚合信息, 单点查询令 x == y 即可, 不能查最值
+    // 返回值: 区间聚合后的 Info
+    // 时间: O(log V) | 空间: O(log V)
+    Info query(int rt, LL x, LL y) { return query(rt, 1, n, x, y, Tag{}); }
+    // 在版本 rt 中寻找 >= start 且满足谓词 pred 的第一个叶子位置, pred 必须具备单调性
+    // 返回值: 符合条件的位置，无解返回 -1
+    // 时间: O(log V) | 空间: O(log V) 递归栈，零结点分配
+    template<class Pred>
+    LL find_first(int rt, LL start, Pred pred)
+    {
+        if (start < 1 || start > n) return -1;
+        return find_first(rt, 1, n, start, Tag{}, pred);
+    }
+    // 在版本 rt 中寻找 <= end 且满足谓词 pred 的最后一个叶子位置
+    // 返回值: 符合条件的位置，无解返回 -1
+    // 时间: O(log V) | 空间: O(log V)
+    template<class Pred>
+    LL find_last(int rt, LL end, Pred pred)
+    {
+        if (end < 1 || end > n) return -1;
+        return find_last(rt, 1, n, end, Tag{}, pred);
+    }
+    // 在 Σplus − Σminus 的线段树叠加结构上定位第 k 小, 返回值域下标。
+    // 要求: Info 结构体中包含 cnt 字段，且 k ∈ [1, 总计数]
+    // 限制: 仅用于点修改 (x == y) 构建的版本, 范围修改与第 k 小不要混用
+    // 时间: O((|plus|+|minus|) * log V) | 空间: O(|plus|+|minus|)
+    LL find_kth(VI plus, VI minus, LL k)
+    {
+        LL l = 1, r = n;
+        while (l < r)
+        {
+            LL mid = l + (r - l) / 2, cntL = 0;
+            for (int p : plus)  cntL += get_info(tr[p].lc, l, mid).cnt;
+            for (int p : minus) cntL -= get_info(tr[p].lc, l, mid).cnt;
+            if (k <= cntL)
+            {
+                r = mid;
+                for (int &p : plus)  p = tr[p].lc;
+                for (int &p : minus) p = tr[p].lc;
+            }
+            else
+            {
+                k -= cntL;
+                l = mid + 1;
+                for (int &p : plus)  p = tr[p].rc;
+                for (int &p : minus) p = tr[p].rc;
+            }
+        }
+        return l;
+    }
 private:
     int fork(int p, LL len)
     {
@@ -140,75 +209,6 @@ private:
         tr[p].rc = build(mid + 1, r, a);
         pushup(p, l, r);
         return p;
-    }
-public:
-    // 由一维数组 a[1..n] 直接生成版本 0 的根结点
-    // 返回值: 生成的新版本根结点编号
-    // 时间: O(n) | 空间: O(n)
-    int build(const vector<Info>& a)
-    {
-        assert((int)a.size() >= 2);
-        n = (LL)a.size() - 1;
-        return build(1, n, a);
-    }
-    // 在版本 rt 的区间 [x, y] 应用增量 v (Tag), 单点修改令 x == y 即可
-    // 基于 Tag 永久化, 范围修改仅支持同时满足交换律与结合律的操作
-    // 返回值: 生成的新版本根结点编号
-    // 时间: O(log V) | 空间: O(log V)
-    int modify(int rt, LL x, LL y, const Tag& v)
-    {
-        assert(1 <= x && x <= y && y <= n);
-        return modify(rt, 1, n, x, y, v);
-    }
-    // 查询版本 rt 中区间 [x, y] 的聚合信息, 单点查询令 x == y 即可, 不能查最值
-    // 返回值: 区间聚合后的 Info
-    // 时间: O(log V) | 空间: O(log V)
-    Info query(int rt, LL x, LL y) { return query(rt, 1, n, x, y, Tag{}); }
-    // 在版本 rt 中寻找 >= start 且满足谓词 pred 的第一个叶子位置, pred 必须具备单调性
-    // 返回值: 符合条件的位置，无解返回 -1
-    // 时间: O(log V) | 空间: O(log V) 递归栈，零结点分配
-    template<class Pred>
-    LL find_first(int rt, LL start, Pred pred)
-    {
-        if (start < 1 || start > n) return -1;
-        return find_first(rt, 1, n, start, Tag{}, pred);
-    }
-    // 在版本 rt 中寻找 <= end 且满足谓词 pred 的最后一个叶子位置
-    // 返回值: 符合条件的位置，无解返回 -1
-    // 时间: O(log V) | 空间: O(log V)
-    template<class Pred>
-    LL find_last(int rt, LL end, Pred pred)
-    {
-        if (end < 1 || end > n) return -1;
-        return find_last(rt, 1, n, end, Tag{}, pred);
-    }
-    // 在 Σplus − Σminus 的线段树叠加结构上定位第 k 小, 返回值域下标。
-    // 要求: Info 结构体中包含 cnt 字段，且 k ∈ [1, 总计数]
-    // 限制: 仅用于点修改 (x == y) 构建的版本, 范围修改与第 k 小不要混用
-    // 时间: O((|plus|+|minus|) * log V) | 空间: O(|plus|+|minus|)
-    LL find_kth(VI plus, VI minus, LL k)
-    {
-        LL l = 1, r = n;
-        while (l < r)
-        {
-            LL mid = l + (r - l) / 2, cntL = 0;
-            for (int p : plus)  cntL += get_info(tr[p].lc, l, mid).cnt;
-            for (int p : minus) cntL -= get_info(tr[p].lc, l, mid).cnt;
-            if (k <= cntL)
-            {
-                r = mid;
-                for (int &p : plus)  p = tr[p].lc;
-                for (int &p : minus) p = tr[p].lc;
-            }
-            else
-            {
-                k -= cntL;
-                l = mid + 1;
-                for (int &p : plus)  p = tr[p].rc;
-                for (int &p : minus) p = tr[p].rc;
-            }
-        }
-        return l;
     }
 };
 #endif

@@ -35,35 +35,6 @@ struct SCC
         sta.clear();
     }
     void add_edge(int u, int v) { g.add(u, v); }
-    void tarjan(int u)
-    {
-        dfn_idx++;
-        low[u] = dfn[u] = dfn_idx;
-        sta.push_back(u);
-        in_stk[u] = 1;
-        for (auto& e : g[u])
-        {
-            int v = e.v;
-            if (!dfn[v])
-            {
-                tarjan(v);
-                low[u] = min(low[u], low[v]);
-            }
-            else if (in_stk[v]) low[u] = min(low[u], dfn[v]);
-        }
-        if (low[u] == dfn[u])
-        {
-            scc_cnt++;
-            int t;
-            do
-            {
-                t = sta.back();
-                sta.pop_back();
-                in_stk[t] = 0;
-                bel[t] = scc_cnt;
-            } while (t != u);
-        }
-    }
     void build()
     {
         for (int i = 1; i <= n; i++)
@@ -97,6 +68,36 @@ struct SCC
         edges.erase(unique(edges.begin(), edges.end()), edges.end());
         for (auto& edge : edges)
             dag.add(edge.first, edge.second);
+    }
+private:
+    void tarjan(int u)
+    {
+        dfn_idx++;
+        low[u] = dfn[u] = dfn_idx;
+        sta.push_back(u);
+        in_stk[u] = 1;
+        for (auto& e : g[u])
+        {
+            int v = e.v;
+            if (!dfn[v])
+            {
+                tarjan(v);
+                low[u] = min(low[u], low[v]);
+            }
+            else if (in_stk[v]) low[u] = min(low[u], dfn[v]);
+        }
+        if (low[u] == dfn[u])
+        {
+            scc_cnt++;
+            int t;
+            do
+            {
+                t = sta.back();
+                sta.pop_back();
+                in_stk[t] = 0;
+                bel[t] = scc_cnt;
+            } while (t != u);
+        }
     }
 };
 

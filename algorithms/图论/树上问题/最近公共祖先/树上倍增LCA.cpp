@@ -26,25 +26,6 @@ struct LCA
         rt.assign(n + 10, 0);
     }
     
-    void dfs(int u, int p, int root)
-    {
-        f[u][0] = p;
-        dep[u] = dep[p] + 1;
-        rt[u] = root;
-        
-        for (int i = 1; i <= 20; i++)
-        {
-            f[u][i] = f[f[u][i - 1]][i - 1];
-        }
-        
-        for (int i = head[u]; i; i = nxt[i])
-        {
-            int v = to[i];
-            if (v == p) continue;
-            dfs(v, u, root);
-        }
-    }
-    
     void build()
     {
         for (int i = 1; i <= n; i++)
@@ -84,5 +65,24 @@ struct LCA
             }
         }
         return f[u][0];
+    }
+private:
+    void dfs(int u, int p, int root)
+    {
+        f[u][0] = p;
+        dep[u] = dep[p] + 1;
+        rt[u] = root;
+        
+        for (int i = 1; i <= 20; i++)
+        {
+            f[u][i] = f[f[u][i - 1]][i - 1];
+        }
+        
+        for (int i = head[u]; i; i = nxt[i])
+        {
+            int v = to[i];
+            if (v == p) continue;
+            dfs(v, u, root);
+        }
     }
 };

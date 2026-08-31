@@ -68,78 +68,6 @@ struct LeftistTree
         }
         for (int i = 1; i <= n; i++) { add_root(i); }
     }
-private:
-    int find_root(int p)
-    {
-        if (!p || fa_dsu[p] == p) return p;
-        return fa_dsu[p] = find_root(fa_dsu[p]);
-    }
-    int to_logical(int p) const { return p ? id[p] : 0; }
-    void pushdown(int p)
-    {
-        if (!p) return;
-        T m = tmul[p], a = tadd[p];
-        if (m == T(1) && a == T()) return;
-        if (lc[p])
-        {
-            val[lc[p]] = m * val[lc[p]] + a;
-            tmul[lc[p]] *= m;
-            tadd[lc[p]] = m * tadd[lc[p]] + a;
-        }
-        if (rc[p])
-        {
-            val[rc[p]] = m * val[rc[p]] + a;
-            tmul[rc[p]] *= m;
-            tadd[rc[p]] = m * tadd[rc[p]] + a;
-        }
-        tmul[p] = T(1); tadd[p] = T();
-    }
-    void add_root(int p)
-    {
-        if (!p || deleted[p]) return;
-        root_idx[p] = roots.size();
-        roots.push_back(p);
-        // root_vals.insert(val[p]);   // [RV]
-        // root_sum += val[p];         // [RV]
-    }
-    void remove_root(int p)
-    {
-        if (!p || root_idx[p] == -1) return;
-        int idx = root_idx[p];
-        int last_p = roots.back();
-        roots[idx] = last_p;
-        root_idx[last_p] = idx;
-        roots.pop_back();
-        root_idx[p] = -1;
-        // root_vals.erase(root_vals.find(val[p]));     // [RV]
-        // root_sum -= val[p];                          // [RV]
-    }
-    int merge_trees(int x, int y)
-    {
-        if (!x || !y) return x | y;
-        if (Comp()(val[y], val[x]) || (val[x] == val[y] && id[x] > id[y])) swap(x, y);
-        pushdown(x);
-        rc[x] = merge_trees(rc[x], y);
-        if (dist[rc[x]] > dist[lc[x]]) swap(lc[x], rc[x]);
-        dist[x] = dist[rc[x]] + 1;
-        return x;
-    }
-    int normalize(int p)
-    {
-        while (p && deleted[p])
-        {
-            pushdown(p);
-            int nrt = merge_trees(lc[p], rc[p]);
-            if (nrt)
-            {
-                fa_dsu[nrt] = nrt;
-                fa_dsu[p] = nrt;
-                p = nrt;
-            }
-            else p = 0;
-        }
-        return p;
-    }
 public:
     // ===== 外部接口传参皆为逻辑节点 =====
     // --- 状态判定 API ---
@@ -343,6 +271,78 @@ public:
     // T get_max_top() const { return root_vals.empty() ? T() : *root_vals.rbegin() + gadd; }   // [RV]
     // T get_min_top() const { return root_vals.empty() ? T() : *root_vals.begin() + gadd; }    // [RV]
     // T get_sum_tops() const { return root_sum + gadd * (T)roots.size(); }                     // [RV]
+private:
+    int find_root(int p)
+    {
+        if (!p || fa_dsu[p] == p) return p;
+        return fa_dsu[p] = find_root(fa_dsu[p]);
+    }
+    int to_logical(int p) const { return p ? id[p] : 0; }
+    void pushdown(int p)
+    {
+        if (!p) return;
+        T m = tmul[p], a = tadd[p];
+        if (m == T(1) && a == T()) return;
+        if (lc[p])
+        {
+            val[lc[p]] = m * val[lc[p]] + a;
+            tmul[lc[p]] *= m;
+            tadd[lc[p]] = m * tadd[lc[p]] + a;
+        }
+        if (rc[p])
+        {
+            val[rc[p]] = m * val[rc[p]] + a;
+            tmul[rc[p]] *= m;
+            tadd[rc[p]] = m * tadd[rc[p]] + a;
+        }
+        tmul[p] = T(1); tadd[p] = T();
+    }
+    void add_root(int p)
+    {
+        if (!p || deleted[p]) return;
+        root_idx[p] = roots.size();
+        roots.push_back(p);
+        // root_vals.insert(val[p]);   // [RV]
+        // root_sum += val[p];         // [RV]
+    }
+    void remove_root(int p)
+    {
+        if (!p || root_idx[p] == -1) return;
+        int idx = root_idx[p];
+        int last_p = roots.back();
+        roots[idx] = last_p;
+        root_idx[last_p] = idx;
+        roots.pop_back();
+        root_idx[p] = -1;
+        // root_vals.erase(root_vals.find(val[p]));     // [RV]
+        // root_sum -= val[p];                          // [RV]
+    }
+    int merge_trees(int x, int y)
+    {
+        if (!x || !y) return x | y;
+        if (Comp()(val[y], val[x]) || (val[x] == val[y] && id[x] > id[y])) swap(x, y);
+        pushdown(x);
+        rc[x] = merge_trees(rc[x], y);
+        if (dist[rc[x]] > dist[lc[x]]) swap(lc[x], rc[x]);
+        dist[x] = dist[rc[x]] + 1;
+        return x;
+    }
+    int normalize(int p)
+    {
+        while (p && deleted[p])
+        {
+            pushdown(p);
+            int nrt = merge_trees(lc[p], rc[p]);
+            if (nrt)
+            {
+                fa_dsu[nrt] = nrt;
+                fa_dsu[p] = nrt;
+                p = nrt;
+            }
+            else p = 0;
+        }
+        return p;
+    }
 };
 #endif
 /*
