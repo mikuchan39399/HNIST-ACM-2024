@@ -6,7 +6,7 @@ using namespace std;
 
 // ======= 模板参数配置区 =======
 const int N = 2e5 + 10;      // 序列最大长度
-const int M = 1.2e7 + 10;    // 线段树节点池大小 (通常 N * logN * 4)
+const int M = 1.2e7 + 10;    // 预算 = N * logN * 4 结点
 // ==============================
 
 int n, m;

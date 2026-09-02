@@ -13,6 +13,7 @@
 #include <random>
 #include "../泛型动态线段树.cpp"
 #include "../泛型线段树.cpp"
+#include "../../ST表/ST表.cpp"
 
 using namespace std;
 using LL = long long;
@@ -358,10 +359,38 @@ void test_dy_seg_tree()
     }
 }
 
+void test_st_table()
+{
+    mt19937 rng(20260901);
+    for (int tc = 0; tc < 200; tc++)
+    {
+        int n = 1 + rng() % 80;
+        vector<LL> a(n + 1);
+        for (int j = 1; j <= n; j++) a[j] = (LL)(rng() % 201) - 100;
+        for (int mode = 0; mode < 2; mode++)
+        {
+            ST st(1);              // 故意开小, 验自动扩容
+            st.build(a, mode == 0);
+            int q = 30;
+            while (q--)
+            {
+                int l = 1 + rng() % n, r = l + rng() % (n - l + 1);
+                LL ref = a[l];
+                for (int j = l; j <= r; j++) ref = mode == 0 ? max(ref, a[j]) : min(ref, a[j]);
+                assert(st.query(l, r) == ref);
+            }
+            assert(st.query(1, 1) == a[1] && st.query(n, n) == a[n]);
+            assert(st.query(1, n) == (mode == 0 ? *max_element(a.begin() + 1, a.end())
+                                                : *min_element(a.begin() + 1, a.end())));
+        }
+    }
+}
+
 int main()
 {
     test_seg_tree();
     test_dy_seg_tree();
-    cout << "seg_check passed: SegTree / DySegTree all tests ok\n";
+    test_st_table();
+    cout << "seg_check passed: SegTree / DySegTree / ST all tests ok\n";
     return 0;
 }

@@ -6,7 +6,7 @@ using namespace std;
 using LL = long long;
 
 const int N = 1e5 + 10;
-const int M = 8e6 + 10; // 动态开点空间：大概 N * 60 ~ N * 80
+const int M = 8e6 + 10; // 预算 = N * 60 ~ N * 80 结点
 const int UP = 1e5;
 
 int root[N], idx;

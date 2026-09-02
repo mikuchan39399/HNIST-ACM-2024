@@ -14,8 +14,7 @@ using namespace std;
 // 约定: 点编号 [1, n]; build(g) 扫全森林(dfn==0 起剖), build(g, root)
 //   单树; SegTree 按剖出的 dfn 序建树: build(1, 1, n, a, hld.seg),
 //   a 为 1-based 原点权, seg 为 dfn->原编号映射
-// 内存账: HLD 七个 int 数组 28B/n + SegTree 结点 24B × 4n ≈ 124B/n,
-//   n = 1e5 约 13MB
+// 内存: 剖链数组 28B/n + 线段树 24B×4n ≈ 124B/n; n=1e5 ≈ 13MB
 // 注意: dfs1/dfs2 为递归, 深链退化 O(n) 栈深, 小栈环境需改迭代
 struct SegTree
 {
@@ -26,7 +25,7 @@ struct SegTree
     };
     vector<Node> tr;
     // 构造: 预算 max_n 规模的 4n 结点
-    // 时间: O(n) | 空间: 24B × 4n (账目见类头)
+    // 时间: O(n) | 空间: 24B × 4n
     SegTree(int max_n = 0) :
         tr((max_n + 10) << 2, {0, 0, 0, 0})
     {}
@@ -98,7 +97,7 @@ struct HLD
     int n, dfn_idx;
     VI fa, dep, sz, son, top, dfn, seg;
     // 构造: 预算 max_n 的七个剖链数组
-    // 时间: O(n) | 空间: 28B/n (账目见类头)
+    // 时间: O(n) | 空间: 28B/n
     HLD(int max_n = 0) : n(max_n), dfn_idx(0),
         fa(max_n + 10, 0), dep(max_n + 10, 0), sz(max_n + 10, 0),
         son(max_n + 10, 0), top(max_n + 10, 0),

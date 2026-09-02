@@ -14,8 +14,7 @@ using namespace std;
 // 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继期望 O(log n); 结点删除后回收复用
 // K = 层数上限, 需 >= log2(规模), 默认 20 支撑 1e6
 // 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
-// 内存账: 结点扁平单池(每跳 1 次 cache miss), 每结点 (16+8K)B, K=20 即 176B;
-//   默认预算 1000010 ≈ 176MB 逼近红线, 大规模按 K 显式核算, 超预算插入触发 assert
+// 内存: 每结点 (16+8K)B, K=20 即 176B; 预算 = 峰值元素数, 1e6 ≈ 176MB
 template <int K = 20>
 struct SkipList
 {
@@ -37,7 +36,7 @@ struct SkipList
     int n;
     int budget;
     // 构造: 预算 max_nodes 结点(回收复用), 哨兵 0 号就位
-    // 时间: O(1) | 空间: O(预算) (账目见类头)
+    // 时间: O(1) | 空间: O(预算)
     SkipList(int max_nodes = 1000010) : tot(0), n(0), budget(max_nodes)
     {
         buf.reserve(budget + 1);

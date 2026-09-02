@@ -15,8 +15,7 @@ using namespace std;
 // 平衡机制: α = 0.75, 条件 4*max(lc.sz, rc.sz) > 3*sz 触发子树原位重建
 //   (插入/删除回溯均检查, 删小侧同样可触发); 重建 = 中序拍平 + 完美平衡二分,
 //   原位复用结点 id; 高度恒 ≤ log(n)/log(4/3), 递归栈深安全
-// 内存账: 每结点 24B, 重建/删除均回收 id (free 池), 预算按峰值存活计,
-//   默认 1000010 ≈ 24MB, 超预算插入触发 assert
+// 内存: 每结点 24B; 预算 = 峰值存活(删除/重建均回收), 1e6 ≈ 24MB
 struct SGTree
 {
     static constexpr LL INF = 0x3f3f3f3f3f3f3f3f;
@@ -30,7 +29,7 @@ struct SGTree
     VI rub;
     int idx, root, budget;
     // 构造: 预算 max_nodes 结点(按峰值存活计), 哨兵 0 号就位
-    // 时间: O(1) | 空间: O(预算) (账目见类头)
+    // 时间: O(1) | 空间: O(预算)
     SGTree(int max_nodes = 1000010) : idx(0), root(0), budget(max_nodes)
     {
         tr.reserve(budget + 1);

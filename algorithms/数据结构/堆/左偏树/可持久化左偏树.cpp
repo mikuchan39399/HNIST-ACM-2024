@@ -13,7 +13,7 @@ using namespace std;
 // 核心性质:
 //   1. 节点只增不改，所有写操作(merge/insert/pop)均生成新版本，旧根句柄永久有效。
 //   2. 外部无任何懒标记或并查集，完全依赖调用方自己维护版本根节点数组。
-//   3. 内存池大小估算: max_nodes = 初始节点数 + 操作次数 * 40
+//   3. 预算 = 初始点数 + 操作次数 * 40 结点
 template <class T = LL, class Comp = less<T>, class Pay = int>
 struct PersistentLeftist
 {

@@ -55,3 +55,6 @@ discrete	algorithms/杂项/离散化/离散化.cpp
 !algorithms/数据结构/线段树/线段树合并分裂/*
 !algorithms/数据结构/堆/左偏树/k短路未维护.cpp
 !algorithms/杂项/主元素问题/*
+cartesian	algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp
+splay	algorithms/数据结构/有序表与平衡树/Splay.cpp
+st	algorithms/数据结构/ST表/ST表.cpp

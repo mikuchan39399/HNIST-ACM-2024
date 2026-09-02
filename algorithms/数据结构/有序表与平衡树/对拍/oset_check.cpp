@@ -1,5 +1,6 @@
 // ============ 有序表与平衡树家族对拍套件 ============
-// 覆盖: AVL/Treap/FHQ_Treap/SGTree vs std::multiset, SkipList vs std::set 独立比对
+// 覆盖: AVL/Treap/FHQ_Treap/SGTree/Splay vs std::multiset, SkipList vs std::set 独立比对
+//       笛卡尔树: 随机数组建树三性质自证(中序=下标/小根堆/子树根=区间最小值)
 //       (插/删/rank/kth/pre/suf/size 300 组, 窄/宽值域交替, kth 全序走查,
 //        Treap/FHQ_Treap 笛卡尔树线性建树域: sort 后 build 全量对账) |
 //       FHQ_Seq 双域: 仿射域(单批插/删/加/乘/翻/移/和/RMQ最值) + 覆盖域
@@ -11,14 +12,61 @@
 #include "../Treap.cpp"
 #include "../FHQ_Treap.cpp"
 #include "../替罪羊树.cpp"
+#include "../Splay.cpp"
 #include "../FHQ_Treap_序列.cpp"
 #include "../跳表.cpp"
+#include "../笛卡尔树.cpp"
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
 #include <random>
 #include <set>
 #include <vector>
+
+// 笛卡尔树自证: 递归一遍, 查四件事 —— 每点至多一左一右(按编号分侧),
+// 中序位置对得上自身下号, 堆方向不破, 子树根是子树那段的最/大值
+static int ct_verify(int u, int fa, int lo, const VLL& a, Cartesian& ct, bool mn)
+{
+    int lch = 0, rch = 0;
+    for (auto& e : ct.tree[u])
+    {
+        if (e.v == fa) continue;
+        if (e.v < u) { assert(!lch); lch = e.v; }
+        else { assert(!rch); rch = e.v; }
+    }
+    int ls = lch ? ct_verify(lch, u, lo, a, ct, mn) : 0;
+    int rs = rch ? ct_verify(rch, u, lo + ls + 1, a, ct, mn) : 0;
+    int l = lo, r = lo + ls + rs;
+    LL key = a[l];
+    for (int j = l; j <= r; j++) key = mn ? min(key, a[j]) : max(key, a[j]);
+    assert(lo + ls == u);
+    assert(a[u] == key);
+    for (auto& e : ct.tree[u])
+    {
+        if (e.v == fa) continue;
+        assert(mn ? a[u] <= a[e.v] : a[u] >= a[e.v]);
+    }
+    return ls + rs + 1;
+}
+
+// 顺序插入 BST 参照: 等值往右(false: x < v 走左) / 等值往左(true: x <= v 走左)
+static void bst_ref(const VLL& a, VI& lcp, VI& rcp, bool eq_left)
+{
+    int n = (int)a.size() - 1;
+    lcp.assign(n + 1, 0);
+    rcp.assign(n + 1, 0);
+    for (int i = 2; i <= n; i++)
+    {
+        int cur = 1;
+        while (true)
+        {
+            bool goleft = eq_left ? (a[i] <= a[cur]) : (a[i] < a[cur]);
+            int& slot = goleft ? lcp[cur] : rcp[cur];
+            if (!slot) { slot = i; break; }
+            cur = slot;
+        }
+    }
+}
 
 int main()
 {
@@ -31,6 +79,7 @@ int main()
         Treap trp(1010);
         FHQ_Treap fhq(1010);
         SGTree sgt(1010);
+        Splay sp(1010);
         SkipList<5> sl(1010);
         multiset<LL> mref;
         set<LL> sref;
@@ -42,6 +91,7 @@ int main()
             sort(b.begin() + 1, b.end());
             trp.build(b);
             fhq.build(b);
+            sp.build(b);
             for (int j = 1; j <= m0; j++)
             {
                 avl.insert(b[j]);
@@ -50,13 +100,66 @@ int main()
                 sref.insert(b[j]);
             }
             mref = multiset<LL>(b.begin() + 1, b.end());
-            assert(trp.size() == m0 && fhq.size() == m0);
+            assert(trp.size() == m0 && fhq.size() == m0 && sp.size() == m0);
             for (int j = 1; j <= m0; j++)
             {
                 assert(trp.get_kth(j) == b[j]);
                 assert(fhq.get_kth(j) == b[j]);
+                assert(sp.get_kth(j) == b[j]);
             }
-            assert(trp.get_kth(m0 + 1) == INF && fhq.get_kth(m0 + 1) == INF);
+            assert(trp.get_kth(m0 + 1) == INF && fhq.get_kth(m0 + 1) == INF && sp.get_kth(m0 + 1) == INF);
+        }
+        // 笛卡尔树域: 随机数组(未排序, 窄值域带重复)双堆型建树, 三性质自证 + 图视图边数
+        {
+            int m0 = par() % 60;
+            vector<LL> b(m0 + 1);
+            for (int j = 1; j <= m0; j++) b[j] = (LL)(par() % 37) - 18;
+            Cartesian ct(70);
+            int rt = ct.build(b);
+            assert((rt != 0) == (m0 > 0));
+            if (m0)
+            {
+                ct_verify(rt, 0, 1, b, ct, true);
+                assert(ct.tree.edge_cnt() == m0 - 1);
+                if (m0 > 1) assert(ct.tree.node_cnt() == m0);
+                int rt2 = ct.build(b, false);
+                ct_verify(rt2, 0, 1, b, ct, false);
+                assert(ct.tree.edge_cnt() == m0 - 1);
+                if (m0 > 1) assert(ct.tree.node_cnt() == m0);
+            }
+        }
+        // 顺序插入 BST 域: 带重复值, 双等值约定对拍朴素插入
+        {
+            int m0 = par() % 40;
+            vector<LL> c(m0 + 1);
+            for (int j = 1; j <= m0; j++) c[j] = (LL)(par() % 11) - 5;
+            for (int conv = 0; conv < 2; conv++)
+            {
+                bool eq_left = (conv == 1);
+                VI lcp, rcp;
+                bst_ref(c, lcp, rcp, eq_left);
+                set<pair<int, int>> e1;
+                for (int j = 1; j <= m0; j++)
+                {
+                    if (lcp[j]) e1.insert({min(j, lcp[j]), max(j, lcp[j])});
+                    if (rcp[j]) e1.insert({min(j, rcp[j]), max(j, rcp[j])});
+                }
+                Cartesian cb(m0 + 1);
+                int root = eq_left ? cb.build_bst<true>(c) : cb.build_bst<false>(c);
+                assert((root != 0) == (m0 > 0));
+                if (m0)
+                {
+                    assert(cb.orig[root] == 1);   // 根 = 第一个插入的
+                    set<pair<int, int>> e2;
+                    for (size_t k = 0; k + 1 < cb.tree.edges.size(); k += 2)
+                    {
+                        int x = cb.tree.edges[k + 1].v, y = cb.tree.edges[k].v;
+                        int ox = cb.orig[x], oy = cb.orig[y];
+                        e2.insert({min(ox, oy), max(ox, oy)});
+                    }
+                    assert(e1 == e2);
+                }
+            }
         }
         int ops = 100 + par() % 400;
         for (int i = 0; i < ops; i++)
@@ -69,6 +172,7 @@ int main()
                 trp.insert(x);
                 fhq.insert(x);
                 sgt.insert(x);
+                sp.insert(x);
                 mref.insert(x);
                 bool had = sref.count(x) > 0;
                 int b = sl.size();
@@ -86,6 +190,7 @@ int main()
                 assert(trp.erase(x) == rm);
                 assert(fhq.erase(x) == rm);
                 assert(sgt.erase(x) == rm);
+                assert(sp.erase(x) == rm);
                 assert((sl.erase(x) != -1) == (sref.erase(x) > 0));
             }
             else if (op == 2)
@@ -95,6 +200,7 @@ int main()
                 assert(trp.get_rank(x) == expect);
                 assert(fhq.get_rank(x) == expect);
                 assert(sgt.get_rank(x) == expect);
+                assert(sp.get_rank(x) == expect);
                 assert(sl.get_rank(x) == (int)distance(sref.begin(), sref.lower_bound(x)));
             }
             else if (op == 3 && !mref.empty())
@@ -105,6 +211,7 @@ int main()
                 assert(trp.get_kth(k) == expect);
                 assert(fhq.get_kth(k) == expect);
                 assert(sgt.get_kth(k) == expect);
+                assert(sp.get_kth(k) == expect);
                 int k2 = 1 + par() % (int)sref.size();
                 assert(sl.get_kth(k2) == *next(sref.begin(), k2 - 1));
             }
@@ -116,6 +223,7 @@ int main()
                 assert(trp.get_pre(x) == expect);
                 assert(fhq.get_pre(x) == expect);
                 assert(sgt.get_pre(x) == expect);
+                assert(sp.get_pre(x) == expect);
                 auto it2 = sref.lower_bound(x);
                 LL expect2 = (it2 == sref.begin()) ? -INF : *prev(it2);
                 assert(sl.get_pre(x) == expect2);
@@ -128,6 +236,7 @@ int main()
                 assert(trp.get_suf(x) == expect);
                 assert(fhq.get_suf(x) == expect);
                 assert(sgt.get_suf(x) == expect);
+                assert(sp.get_suf(x) == expect);
                 auto it2 = sref.upper_bound(x);
                 LL expect2 = (it2 == sref.end()) ? INF : *it2;
                 assert(sl.get_suf(x) == expect2);
@@ -136,6 +245,7 @@ int main()
             assert(trp.size() == (int)mref.size());
             assert(fhq.size() == (int)mref.size());
             assert(sgt.size() == (int)mref.size());
+            assert(sp.size() == (int)mref.size());
             assert(sl.size() == (int)sref.size());
         }
         int k = 1;
@@ -145,12 +255,14 @@ int main()
             assert(trp.get_kth(k) == e);
             assert(fhq.get_kth(k) == e);
             assert(sgt.get_kth(k) == e);
+            assert(sp.get_kth(k) == e);
             k++;
         }
         assert(avl.get_kth(k) == INF);
         assert(trp.get_kth(k) == INF);
         assert(fhq.get_kth(k) == INF);
         assert(sgt.get_kth(k) == INF);
+        assert(sp.get_kth(k) == INF);
         int k2 = 1;
         for (LL e : sref)
         {
@@ -162,19 +274,22 @@ int main()
         trp.clear();
         fhq.clear();
         sgt.clear();
+        sp.clear();
         sl.clear();
-        assert(avl.size() == 0 && trp.size() == 0 && fhq.size() == 0 && sgt.size() == 0 && sl.size() == 0);
+        assert(avl.size() == 0 && trp.size() == 0 && fhq.size() == 0 && sgt.size() == 0 && sp.size() == 0 && sl.size() == 0);
         assert(avl.get_pre(0) == -INF && trp.get_suf(0) == INF);
         assert(fhq.get_pre(0) == -INF && sl.get_suf(0) == INF);
-        assert(sgt.get_pre(0) == -INF && sgt.get_suf(0) == INF);
-        assert(avl.get_kth(1) == INF && trp.get_kth(1) == INF && fhq.get_kth(1) == INF && sgt.get_kth(1) == INF && sl.get_kth(1) == INF);
+        assert(sgt.get_pre(0) == -INF && sp.get_suf(0) == INF);
+        assert(sp.get_pre(0) == -INF && sp.get_suf(0) == INF);
+        assert(avl.get_kth(1) == INF && trp.get_kth(1) == INF && fhq.get_kth(1) == INF && sgt.get_kth(1) == INF && sp.get_kth(1) == INF && sl.get_kth(1) == INF);
         avl.insert(7);
         trp.insert(7);
         fhq.insert(7);
         sgt.insert(7);
+        sp.insert(7);
         sl.insert(7);
-        assert(avl.get_kth(1) == 7 && trp.get_kth(1) == 7 && fhq.get_kth(1) == 7 && sgt.get_kth(1) == 7);
-        assert(avl.get_rank(7) == 0 && trp.get_rank(7) == 0 && fhq.get_rank(7) == 0 && sgt.get_rank(7) == 0);
+        assert(avl.get_kth(1) == 7 && trp.get_kth(1) == 7 && fhq.get_kth(1) == 7 && sgt.get_kth(1) == 7 && sp.get_kth(1) == 7);
+        assert(avl.get_rank(7) == 0 && trp.get_rank(7) == 0 && fhq.get_rank(7) == 0 && sgt.get_rank(7) == 0 && sp.get_rank(7) == 0);
     }
     for (int t = 0; t < 300; t++)
     {

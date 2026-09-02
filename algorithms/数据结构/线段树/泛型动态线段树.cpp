@@ -6,7 +6,7 @@
 #include <vector>
 using namespace std;
 using LL = long long;
-// 操作数 * logN  -- M * logN
+// 预算 = 操作数 * log2(值域) 结点, 1e6 次操作 ≈ 3e7
 template<class Info, class Tag>
 struct DySegTree
 {
@@ -21,7 +21,6 @@ struct DySegTree
     int idx;
     vector<Node> tr;
     int budget = 0;
-    // 兼容 256MB 限制, 禁止中途扩容
     DySegTree(LL _n = 1e9, int _budget = 4000010) : n(_n), root(0), idx(0), budget(_budget)
     {
         tr.reserve(budget + 1);

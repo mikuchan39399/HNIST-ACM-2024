@@ -7,12 +7,24 @@
 #include <cstdlib>
 #include <climits>
 #include <cfloat>
+#include <cstring>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <utility>
 #include <tuple>
 #include <type_traits>
+#include <algorithm>
+#include <array>
+#include <bitset>
+#include <cmath>
+#include <functional>
+#include <map>
+#include <numeric>
+#include <queue>
+#include <set>
+#include <stack>
 
 using namespace std;
 

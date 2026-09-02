@@ -23,7 +23,7 @@ struct Node
 {
     int lc, rc;
     int val, rd, sz;
-} tr[40 * N]; // 空间开 40倍N 足够 (N * logN 级别)
+} tr[40 * N]; // 预算 = 40N 结点
 
 mt19937 rnd{random_device{}()};
 

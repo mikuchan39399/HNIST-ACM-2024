@@ -29,7 +29,7 @@ struct LeftistTree
     VI root_idx;         // 物理点在 roots 里的下标, -1 = 非堆顶
     multiset<T> root_vals;  // 所有堆顶的值(不含 gadd)   [RV] 需全局查询时解封
     T root_sum;             // 全部堆顶之和(不含 gadd)   [RV] 需全局查询时解封
-    // max_n = n + insert; max_ops = set_val + add_val + insert
+    // 预算: max_n = n + insert 次数; max_ops = set_val + add_val + insert 次数
     LeftistTree(int max_n = 0, int max_ops = 0) : n(0), tot(0),
         pos(max_n + 10, 0), id(max_n + max_ops + 10, 0),
         lc(max_n + max_ops + 10, 0), rc(max_n + max_ops + 10, 0),

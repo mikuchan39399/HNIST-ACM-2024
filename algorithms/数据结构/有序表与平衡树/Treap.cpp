@@ -13,8 +13,7 @@ using namespace std;
 // ============ Treap 旋转平衡树 (可重复集合) ============
 // 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继期望 O(log n)
 // 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
-// 内存账: 每结点 32B, 默认预算 4000010 结点(按累计插入计, 删除不回收)
-//   ≈ 128MB, 超预算插入触发 assert
+// 内存: 每结点 32B; 预算 = 总插入次数(删除不回收), 4e6 结点 ≈ 128MB
 struct Treap
 {
     static constexpr LL INF = 0x3f3f3f3f3f3f3f3f;
@@ -26,7 +25,7 @@ struct Treap
     vector<node> tr;
     int idx, root, budget;
     // 构造: 预算 max_nodes 结点(按累计插入计, 删除不回收), 哨兵 0 号就位
-    // 时间: O(1) | 空间: O(预算) (账目见类头)
+    // 时间: O(1) | 空间: O(预算)
     Treap(int max_nodes = 4000010) : idx(0), root(0), budget(max_nodes)
     {
         tr.reserve(budget + 1);

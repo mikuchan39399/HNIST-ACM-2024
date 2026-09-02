@@ -4,15 +4,15 @@
 
 #include <vector>
 #include <algorithm>
+#include "../../杂项/utils/utils.cpp"
 
 using namespace std;
-using LL = long long;
-const LL INF = 0x3f3f3f3f3f3f3f3f;
 
 // ============ 线段树 (支持懒标记、线段树上二分) ============
 //   1. 结构解耦: 基于 Info (区间信息) 和 Tag (懒标记) 的代数结构解耦，只需修改两者的结构体即可适配不同题目。
 //   2. 编译期优化: 使用 if constexpr 自动推导并适配是否需要拆分标记 (split_tag) 或萃取有效标记 (get_real_tag)。
 //   3. 二分查找: 内置 find_first 和 find_last，支持传入 Pred 谓词进行 O(log N) 的线段树上二分定位。
+// 内存: 4n 结点 × (sizeof(Info) + sizeof(Tag))
 template<class Info, class Tag>
 struct SegTree
 {

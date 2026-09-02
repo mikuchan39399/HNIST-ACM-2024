@@ -22,8 +22,7 @@ struct PersSegTree
     int tot = 0;
     int cap = 2;
     vector<Node> tr;
-    // 兼容 256MB 限制
-    // 且覆盖 n=2e5 静态第k小((n+1)*(log2 m+1) ≈ 3.8e6); 更大规模务必显式传并核算内存
+    // 预算 = (n+1)(log2 m+1) 结点; n=2e5 静态第k小 ≈ 3.8e6, 更大规模显式传
     PersSegTree(LL max_n = 1, int max_nodes = 4000010) : n(max_n)
     {
         cap = max_nodes + 1;
