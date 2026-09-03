@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: |
+          g++ --version | head -1
+          pwsh --version
+      - name: Full regression (rule section 9)
+        shell: pwsh
+        run: ./scripts/run_checks.ps1
+      - name: Syntax sweep (engines + examples, checks excluded)
+        shell: pwsh
+        run: |
+          $fail = 0
+          $total = 0
+          Get-ChildItem algorithms -Recurse -Filter *.cpp | Where-Object { $_.Name -notlike '*_check.cpp' } | ForEach-Object {
+              $total++
+              g++ -std=c++20 -fsyntax-only $_.FullName
+              if ($LASTEXITCODE -ne 0) { Write-Host ("[SYNTAX FAIL] " + $_.FullName); $fail++ }
+          }
+          Write-Host ("syntax sweep: " + $total + " files, failed: " + $fail)
+          if ($fail -gt 0) { exit 1 }

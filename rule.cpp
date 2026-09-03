@@ -406,6 +406,11 @@
 //   rule/清单/README/.gitignore。脚本里库根一律
 //   Split-Path -Parent $PSScriptRoot(脚本在子目录, $PSScriptRoot
 //   不再是库根)。
+// CI(GitHub Actions): push/PR 即跑 .github/workflows/ci.yml, ubuntu+g+++pwsh,
+//   两步 = scripts\run_checks.ps1 全量回归 + algorithms 全 cpp 语法扫(_check
+//   除外, 无套件引擎与例题进网); misc_check 的 rw 往返仅 Windows 执行
+//   (Linux 无 CON 设备, 引擎仍被编译覆盖)。CI 是回归的镜子: 本地绿是义务,
+//   CI 红必须当场修。2026/9/3 建成。
 // zoi\ 跳板层: 每个 stub 就一行 #include 指向真身, 名字短、纯 ASCII。
 //   题文件永远写 #include "graph.h", 中文路径只在 catalog 里出现一次。
 //   映射表 zoi\_catalog.txt; 新引擎入库 = catalog 加一行 + 重跑

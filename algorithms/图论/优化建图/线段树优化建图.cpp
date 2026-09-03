@@ -46,7 +46,7 @@ private:
     VI tlc, trc;
     int build_out(int l, int r)
     {
-        if (l == r) return l;          // 叶子 = 原点 id, 不另开
+        if (l == r) return l;          // 叶子 = 原点 id
         int p = ++tot, mid = (l + r) >> 1;
         tlc[p] = build_out(l, mid);
         trc[p] = build_out(mid + 1, r);

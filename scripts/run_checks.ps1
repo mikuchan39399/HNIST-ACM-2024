@@ -13,7 +13,8 @@ $root = Split-Path -Parent $PSScriptRoot   # scripts/ -> library root
 #   5. every engine cpp is covered (catalog entry or '!' exemption)
 #      -> [UNCOVERED]: a new template without a stub cannot slip through
 # catalog line formats: "name<TAB>relpath" = stub entry, "!glob" = exemption
-$cat = Join-Path $root 'zoi\_catalog.txt'
+$zoiDir = Join-Path $root 'zoi'
+$cat = Join-Path $zoiDir '_catalog.txt'
 if (Test-Path -LiteralPath $cat) {
     $enc2 = New-Object System.Text.UTF8Encoding($false)
     $names = @{}
@@ -42,7 +43,7 @@ if (Test-Path -LiteralPath $cat) {
             Write-Host ('[STUB BROKEN] catalog target missing: ' + $rel) -ForegroundColor Red
             $bad++
         }
-        if (-not (Test-Path -LiteralPath (Join-Path $root ('zoi\' + $name + '.h')))) {
+        if (-not (Test-Path -LiteralPath (Join-Path $zoiDir ($name + '.h')))) {
             Write-Host ('[STUB STALE] stub file missing, rerun make_stubs: ' + $name) -ForegroundColor Red
             $bad++
         }
@@ -57,7 +58,7 @@ if (Test-Path -LiteralPath $cat) {
             $bad++
         }
     }
-    foreach ($h in Get-ChildItem -LiteralPath (Join-Path $root 'zoi') -Filter '*.h') {
+    foreach ($h in Get-ChildItem -LiteralPath $zoiDir -Filter '*.h') {
         if (-not $names.ContainsKey($h.BaseName)) {
             Write-Host ('[STUB ORPHAN] stub not in catalog: ' + $h.BaseName) -ForegroundColor Red
             $bad++
@@ -113,11 +114,12 @@ if (Test-Path -LiteralPath $cat) {
 }
 $pattern = '*_check.cpp'
 if ($Filter -ne '') { $pattern = '*' + $Filter + '*_check.cpp' }
+$tmp = if ($env:TEMP) { $env:TEMP } else { [IO.Path]::GetTempPath() }
 $checks = Get-ChildItem (Join-Path $root 'algorithms') -Recurse -Filter $pattern | Sort-Object FullName
 $fail = 0
 foreach ($c in $checks) {
     Push-Location $c.DirectoryName
-    $exe = Join-Path $env:TEMP ($c.BaseName + '_run.exe')
+    $exe = Join-Path $tmp ($c.BaseName + '_run.exe')
     g++ -std=c++20 -Wall -Wextra -O2 $c.Name -o $exe
     if ($LASTEXITCODE -ne 0) {
         Write-Host ("[COMPILE FAIL] " + $c.FullName.Substring($root.Length + 1)) -ForegroundColor Red

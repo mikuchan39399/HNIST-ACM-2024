@@ -1,7 +1,7 @@
 // ============ misc_check 单调队列/快读写/离散化/防卡哈希 回归套件 ============
 // 覆盖: MonotonicQueue 滑窗 min/max 对拍暴力 | Dcr 离散化对拍 sort+unique |
 //       custom_hash 插 1e5 查全中+桶分布粗检 | rw read/write 字节往返
-//       (freopen 临时文件, 动 stdio, 放最后独占跑)
+//       (freopen 临时文件, 动 stdio, 放最后独占跑; 仅 Windows 执行, 见 main)
 // 纪律: 改动上述任一模板, 必重跑本套件
 // 跑法: g++ -std=c++20 -Wall -Wextra -O2 misc_check.cpp -o misc_check && ./misc_check
 #include <cstdio>
@@ -145,7 +145,12 @@ int main()
     test_mono_queue();
     test_discrete();
     test_custom_hash();
-    test_rw();                       // 动 stdin/stdout, 放最后
-    printf("misc_check passed: monoQueue/discrete/customHash/rw all tests ok\n");
+#ifdef _WIN32
+    test_rw();                       // 动 stdin/stdout, 放最后; Linux(CI)无 CON 设备不执行, 引擎仍被编译覆盖
+    const char* rwmsg = "/rw";
+#else
+    const char* rwmsg = "";
+#endif
+    printf("misc_check passed: monoQueue/discrete/customHash%s all tests ok\n", rwmsg);
     return 0;
 }
