@@ -3,7 +3,7 @@
 // 本文件是最高规范。任何建议(包括 AI 自己的)和它冲突, 一律以它为准。
 // 对话没带这个文件时: 先找用户要, 不要猜码风。
 //
-// 最近一轮: 线段树优化建图入库(SegGraph 边工厂, 微型骨架树不出数据结构职责, CF786B 范例+朴素连边对拍)
+// 最近一轮: CI 建成(GitHub Actions, ubuntu+g++13+pwsh, 全量回归+语法扫; 首日八轮揪出六病: BOM/桩大小写/constexpr 严格度/无符号下溢/负权哨兵/include 层数+visit 撞名)
 // 更早的历史都归档在 rule_history.md, 防止这份文件越长越没人读。
 // ============================================================================
 
@@ -294,6 +294,9 @@
 //   的编译器严格度差(bigint static_assert 降级运行期)。CI 调试通道:
 //   WSL 装 pwsh(tar 包免 root)+g++-13(PPA)+拉 GitHub tarball 精确复刻,
 //   全输出可见, 别盲修。
+// - git add . 前必须过目 status/diff: 用户可能有未交付的手改(实测: 会话
+//   中断后重跑的提交把用户半成品的 segGraph 接口改名一并推上, CI 当场
+//   抓包——接口与 check/例题脱节。git add . 的" ." 只该吞自己改的东西)。
 // - 对拍挂了, 朴素参考也是嫌疑人(HLD 融合实测四轮探针才洗清引擎冤案):
 //   同构操作的手写双版要互查对称性——路径加的朴素 while 跳出后漏给 LCA
 //   补加, 而查询版有收尾 s+=ref[a], 差恰好 k, 暴露却在两步之后的另一条
@@ -425,7 +428,9 @@
 //   两步 = scripts\run_checks.ps1 全量回归 + algorithms 全 cpp 语法扫(_check
 //   除外, 无套件引擎与例题进网); misc_check 的 rw 往返仅 Windows 执行
 //   (Linux 无 CON 设备, 引擎仍被编译覆盖)。CI 是回归的镜子: 本地绿是义务,
-//   CI 红必须当场修。2026/9/3 建成。
+//   CI 红必须当场修。2026/9/3 建成。看结论不用开网页: 匿名轮询
+//   GET api.github.com/repos/<owner>/<repo>/actions/runs?per_page=1 (公开仓
+//   可用; 日志接口要 token, 所以 WSL 复现通道更重要)。
 // zoi\ 跳板层: 每个 stub 就一行 #include 指向真身, 名字短、纯 ASCII。
 //   题文件永远写 #include "graph.h", 中文路径只在 catalog 里出现一次。
 //   映射表 zoi\_catalog.txt; 新引擎入库 = catalog 加一行 + 重跑
