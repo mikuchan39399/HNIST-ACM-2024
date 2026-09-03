@@ -7,10 +7,10 @@
 using namespace std;
 using VPII = vector<PII>;
 
-// 组装: edges[u] 存 {邻居, 边ID}; visit[id] 标记边已用; 1-based 加边后
+// 组装: edges[u] 存 {邻居, 边ID}; used[id] 标记边已用; 1-based 加边后
 //       dfs(起点), ans 逆序即无向图欧拉路径边序列
 vector<VPII> edges;
-vector<bool> visit;
+vector<bool> used;
 VI ans;
 
 // 回溯式剥边求欧拉路径边序列 (Hierholzer)
@@ -22,8 +22,8 @@ void dfs(int u)
         int v = edges[u].back().first;
         int id = edges[u].back().second;
         edges[u].pop_back();
-        if (visit[id]) continue;
-        visit[id] = true;
+        if (used[id]) continue;
+        used[id] = true;
         dfs(v);
         ans.push_back(id);
     }
