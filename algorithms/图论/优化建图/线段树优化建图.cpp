@@ -41,6 +41,14 @@ struct SegGraph
     // [l,r] 全体 -> v, 权 w
     // 时间: O(log n) | 空间: O(1)
     void add_in(int l, int r, int v, LL w) { link_in(rt_in, 1, n, l, r, v, w); }
+    // 区间 [l1, r1] 全体 -> 区间 [l2, r2] 全体, 权 w
+    // 时间: O(log n) | 空间: 增加 1 个中继虚点, 至多 4*ceil(log2 n) 条有向边
+    void add_range_to_range(int l1, int r1, int l2, int r2, LL w)
+    {
+        int mid_node = ++tot; 
+        link_in(rt_in, 1, n, l1, r1, mid_node, 0);
+        link_out(rt_out, 1, n, l2, r2, mid_node, w);  
+    }
 private:
     int rt_out, rt_in;
     VI tlc, trc;
