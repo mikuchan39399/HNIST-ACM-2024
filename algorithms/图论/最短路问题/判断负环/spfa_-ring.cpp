@@ -28,9 +28,7 @@ struct SPFARing
     template <class G>
     bool run(G& g)
     {
-        z_fill_n(n, 0, dist);
-        z_fill_n(n, 0, cnt);
-        z_fill_n(n, 0, inq);
+        z_fill_n(n, 0, dist, cnt, inq);
         queue<int> q;
         for (int i = 1; i <= n; i++) { q.push(i); inq[i] = 1; }
         while (q.size())
