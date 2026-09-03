@@ -26,7 +26,7 @@ int main()
             int v, u;
             LL w;
             cin >> v >> u >> w;
-            sg.add_edge(v, u, w);     // 普通边, 与骨架无关
+            sg.add_p2p(v, u, w);     // 普通边, 与骨架无关
         }
         else if (op == 2)
         {

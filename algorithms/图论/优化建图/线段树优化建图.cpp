@@ -35,7 +35,7 @@ struct SegGraph
     }
     // 普通单向边 u->v 权 w
     // 时间: O(1) | 空间: O(1)
-    void add_edge(int u, int v, LL w) { g.add(u, v, w); }
+    void add_p2p(int u, int v, LL w) { g.add(u, v, w); }
     // u -> [l,r] 全体, 权 w
     // 时间: O(log n) | 空间: O(1)
     void add_p2r(int u, int l, int r, LL w) { link_out(rt_out, 1, n, l, r, u, w); }
@@ -97,7 +97,7 @@ private:
  * while (q--)
  * {
  *     int op; cin >> op;
- *     if (op == 1) { int u, v; LL w; cin >> u >> v >> w; sg.add_edge(u, v, w); }
+ *     if (op == 1) { int u, v; LL w; cin >> u >> v >> w; sg.add_p2p(u, v, w); }
  *     if (op == 2) { int u, l, r; LL w; cin >> u >> l >> r >> w; sg.add_p2r(u, l, r, w); }
  *     if (op == 3) { int v, l, r; LL w; cin >> v >> l >> r >> w; sg.add_r2p(l, r, v, w); }
  *     // sg.add_r2r(l1, r1, l2, r2, w);     // 区间连区间, 每次 +1 中继虚点

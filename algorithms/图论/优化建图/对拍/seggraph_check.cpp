@@ -36,7 +36,7 @@ void test_seg_graph()
             int op = rng() % 3;
             if (op == 0)
             {
-                sg.add_edge(u, v, w);
+                sg.add_p2p(u, v, w);
                 gn.add(u, v, w);
             }
             else if (op == 1)
