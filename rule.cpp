@@ -3,7 +3,7 @@
 // 本文件是最高规范。任何建议(包括 AI 自己的)和它冲突, 一律以它为准。
 // 对话没带这个文件时: 先找用户要, 不要猜码风。
 //
-// 最近一轮: 代数层插件货架化(示例 Info/Tag 出引擎, 泛型插件\ 复制源+目录豁免留痕) | HLD 吃进泛型线段树+补 check 还清 TEST GAP | 坑位表新增"朴素参考也是嫌疑人"
+// 最近一轮: 线段树优化建图入库(SegGraph 边工厂, 微型骨架树不出数据结构职责, CF786B 范例+朴素连边对拍)
 // 更早的历史都归档在 rule_history.md, 防止这份文件越长越没人读。
 // ============================================================================
 
@@ -294,13 +294,13 @@
 //   ——只断言契约承诺的部分, 契约外不测也不断言。
 //
 // 回归资产: 对拍件放所在目录的 对拍\ 子文件夹, 命名 X_check.cpp,
-//   相对引用 ../。总入口 scripts\run_checks.ps1。现役 13 套:
-//   graph_check(LCA×2/拓扑/直径×2/重心/Graph) | conn_check(SCC/EBCC/
-//   VBCC/BCT) | vt_check(虚树双实现互拍) | leftist_check(双域+持久化
+//   相对引用 ../。总入口 scripts\run_checks.ps1。现役 16 套:
+//   graph_check(LCA×2/拓扑/直径×2/重心/Graph/最短路×4+判负环×2) | conn_check(SCC/EBCC/
+//   VBCC/BCT) | seggraph_check(优化建图对拍朴素连边) | vt_check(虚树双实现互拍) | leftist_check(双域+持久化
 //   版本链) | dsu_check(DSU/WDSU 多 mod) | pst_check+seg_check |
 //   hld_check(HLD×泛型seg 单树+森林) | oset_check(平衡树七件+FHQ_Seq 双域) |
-//   trie_check | mint_check |
-//   bigint_check | rnd_check。
+//   bit_check(BIT 前后缀+BIT2D 矩阵) | trie_check | mint_check |
+//   bigint_check | rnd_check | misc_check(单调队列/离散化/防卡哈希/rw)。
 //   Graph 是引用制: 母版修一次全库生效, 没有副本同步义务。
 // 回归入口: 日常只跑定点(-Filter 家族名, 如 oset/conn/vt/leftist/dsu/
 //   seg); 里程碑和赛前跑全量。多条回归命令禁止并行(共用 %TEMP% 下

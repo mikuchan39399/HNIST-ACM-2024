@@ -1,64 +1,53 @@
-#include <iostream>
-#include <cstring>
+// zoi: bfRing
+#ifndef Z_OI_BFRING
+#define Z_OI_BFRING
+
+#include "../../图的存储/Graph.cpp"
+#include "../../../杂项/utils/utils.cpp"
+
 using namespace std;
-const int N = 2e3 + 10, M = 3e3 + 10, INF = 0x3f3f3f3f;
-int n, m;
-int cnt;
-struct node
-{
-    int x, y ,z;
-}arr[2 * M];
-int dist[N];
 
-bool bf()
+// ============ Bellman-Ford 判负环 ============
+// 全源种子(dist 全 0), 判据 = 第 n 轮全边松弛仍有更新, 与起点可达性无关
+// 内存: dist 8B/点; 预算 = max_n
+struct BFRing
 {
-    memset(dist, 0x3f, sizeof(dist));
-    dist[1] = 0;
-    bool flag;
-    for(int i = 1; i <= n; i++)
+    int n;
+    VLL dist;
+    // 构造: 预算 max_n
+    // 时间: O(n) | 空间: 8B/点
+    BFRing(int max_n = 0) : n(0), dist(max_n + 10, 0) {}
+    // 多测复位: n 重配
+    // 时间: O(1) | 空间: O(1)
+    void init(int _n) { n = _n; }
+    // 判整图是否有负环, 返回 true = 有
+    // 时间: O(nm) | 空间: O(1)
+    template <class G>
+    bool run(G& g)
     {
-        flag = false;
-        for(int j = 1; j <= cnt; j++)
+        z_fill_n(n, 0, dist);
+        for (int i = 1; i <= n; i++)
         {
-            int pre = arr[j].x, next = arr[j].y, len = arr[j].z;
-            if(dist[pre] == INF) continue;
-            if(dist[pre] + len < dist[next])
-            {
-                flag = true;
-                dist[next] = dist[pre] + len;
-            }
+            bool flag = false;
+            for (int u = 1; u <= n; u++)
+                for (auto& [v, nxt, w] : g[u])
+                    if (dist[u] + w < dist[v])
+                    {
+                        dist[v] = dist[u] + w;
+                        flag = true;
+                    }
+            if (!flag) return false;   // n 轮内收敛 = 无负环
         }
-        if(flag == false) return false;
+        return true;
     }
-    return true;
-}
-int main()
-{
-    int t; cin >> t;
-    while(t--)
-    {
-        memset(arr, 0, sizeof(arr));
-        cnt = 0;
-        cin >> n >> m;
-        for(int i = 1; i <= m; i++)
-        {
-            int u, v, w; cin >> u >> v >> w;
-            if(w < 0)
-            {
-                cnt++;
-                arr[cnt].x = u, arr[cnt].y = v, arr[cnt].z = w;
-            }
-            else
-            {
-                cnt++;
-                arr[cnt].x = u, arr[cnt].y = v, arr[cnt].z = w;
-                cnt++;
-                arr[cnt].x = v, arr[cnt].y = u, arr[cnt].z = w;
-            }
-        }
-
-        if(bf()) cout << "YES" << endl;
-        else cout << "NO" << endl;
-    }
-    return 0;
-}
+};
+#endif
+/*
+ * Usage:
+ * Graph<true, LL> g{n, m};
+ * BFRing bf{n};
+ * bf.init(n);
+ * for (int i = 1; i <= m; i++) { int u, v; LL w; cin >> u >> v >> w; g.add(u, v, w); }
+ * bf.run(g);                         // true = 图里有负环
+ * // 多测: g.clear(); bf.init(n); 重跑
+ */

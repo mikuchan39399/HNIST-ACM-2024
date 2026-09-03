@@ -1,10 +1,10 @@
 // zoi: monoQueue
-#include <iostream>
-#include <vector>
+#ifndef Z_OI_MONO_QUEUE
+#define Z_OI_MONO_QUEUE
+
+#include "../../杂项/utils/utils.cpp"
 
 using namespace std;
-using LL = long long;
-using VLL = vector<LL>;
 
 struct MonotonicQueue
 {
@@ -84,6 +84,7 @@ struct MonotonicQueue
         return res;
     }
 };
+#endif
 
 /*
  * 使用示例:

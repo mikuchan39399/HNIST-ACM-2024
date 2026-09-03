@@ -1,13 +1,10 @@
 // zoi: rnd
-#include <random>
-#include <chrono>
-#include <cassert>
-#include <concepts>
-
-using namespace std;
-
 #ifndef Z_OI_ZRND
 #define Z_OI_ZRND
+
+#include "../utils/utils.cpp"
+
+using namespace std;
 // ============ z_rnd 范围随机数 ============
 // 均匀随机数: 整数双闭 [lo,hi] / 浮点半开 [lo,hi), 返回 T; 缺省 lo = 0
 template <class T = int> requires integral<T> || floating_point<T>

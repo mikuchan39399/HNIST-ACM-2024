@@ -1,51 +1,57 @@
-#include <iostream>
-#include <vector>
+// zoi: dijN
+#ifndef Z_OI_DIJN
+#define Z_OI_DIJN
+
+#include "../../图的存储/Graph.cpp"
+#include "../../../杂项/utils/utils.cpp"
+
 using namespace std;
-const int N = 1e4 + 10, M = 5e5 + 10, INF = 2147483647;
-int n, m, s;
-typedef pair<int, int> PII;
-vector<PII> edges[N];
-bool st[N];//标记已经确认最短路的点
-int dist[N];
 
-void dijkstra()
+// ============ Dijkstra 朴素 O(n^2) 单源最短路 ============
+// 要求边权非负; 稠密图(m≈n^2)比堆版省堆开销; dist 不可达 = INF
+// 内存: dist 8B/点 + st 4B/点; 预算 = max_n
+struct DijkstraN
 {
-    for(int i = 0; i <= n; i++) dist[i] = INF;
-    dist[s] = 0;
-    for(int i = 1; i <= n - 1; i++)//确认n-1个点的最短路
+    int n;
+    VLL dist;
+    VI st;
+    // 构造: 预算 max_n
+    // 时间: O(n) | 空间: 12B/点
+    DijkstraN(int max_n = 0) : n(0), dist(max_n + 10, INF), st(max_n + 10, 0) {}
+    // 多测复位: dist 清 INF, st 清 0 (dist[0]=INF 兼作选点哨兵)
+    // 时间: O(n) | 空间: O(1)
+    void init(int _n)
     {
-        int t = 0;
-        for(int j = 1; j <= n; j++)//找到没被确认最短路的点中的dist_min
+        n = _n;
+        z_fill_n(_n, INF, dist);
+        z_fill_n(_n, 0, st);
+    }
+    // 单源跑最短路, 结果写 dist
+    // 时间: O(n^2 + m) | 空间: O(1)
+    template <class G>
+    void run(int s, G& g)
+    {
+        dist[s] = 0;
+        for (int i = 1; i < n; i++)   // 每轮确认一个点, 共 n-1 轮
         {
-            if(!st[j] && dist[j] < dist[t])
-            {
-                t = j;
-            }
-        }
-        st[t] = true;//t最短路已确认
-
-        for(auto& e : edges[t])//只要盯着这一轮确认最短路的点松弛就行了
-        {
-            int pos = e.first, len = e.second;
-            dist[pos] = min(dist[pos], len + dist[t]);
+            int t = 0;
+            for (int j = 1; j <= n; j++)
+                if (!st[j] && dist[j] < dist[t]) t = j;
+            if (!t) break;            // 其余点全不可达
+            st[t] = true;
+            for (auto& [v, nxt, w] : g[t])
+                dist[v] = min(dist[v], dist[t] + w);
         }
     }
-
-    for(int i = 1; i <= n; i++)
-    {
-        cout << dist[i] << " ";
-    }
-}
-int main()
-{
-    cin >> n >> m >> s;
-    for(int i = 1; i <= m; i++)
-    {
-        int u, v, w; cin >> u >> v >> w;
-        edges[u].push_back({v, w});
-    }
-
-    dijkstra();
-
-    return 0;
-}
+};
+#endif
+/*
+ * Usage:
+ * Graph<true, int> g{n, n * n};     // 稠密图用 int 权省内存
+ * DijkstraN dij{n};
+ * dij.init(n);
+ * for (int i = 1; i <= m; i++) { int u, v, w; cin >> u >> v >> w; g.add(u, v, w); }
+ * dij.run(s, g);
+ * dij.dist[v];                       // 不可达 = INF
+ * // 多测: g.clear(); dij.init(n); 重跑
+ */

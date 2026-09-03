@@ -1,7 +1,9 @@
 // zoi: discrete
-#include <vector>
-#include <algorithm>
-#include <cassert>
+#ifndef Z_OI_DCR
+#define Z_OI_DCR
+
+#include "../utils/utils.cpp"
+
 using namespace std;
 
 template<class T> // 1-base
@@ -29,3 +31,4 @@ struct Dcr
     int size() const { return v.size(); }
     const T& operator[](int idx) const { return v[idx - 1]; }
 };
+#endif

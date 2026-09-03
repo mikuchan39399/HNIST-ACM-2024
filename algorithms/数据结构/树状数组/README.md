@@ -1,3 +1,6 @@
-# 骨架空目录
+# 树状数组
 
-本目录暂无入库文件。学习与入库路线见所在家族 README(数学 / 图论 / 字符串 / 数据结构\分块 / 计算几何)。
+树状数组.cpp: BIT 区间加+前缀/区间和(差分双 BIT), BITR 后缀镜像版。
+二维树状数组.cpp: BIT2D 矩阵加+矩阵和(差分四 BIT)。
+对拍\bit_check.cpp: 回归入口 scripts\run_checks.ps1 -Filter bit。
+

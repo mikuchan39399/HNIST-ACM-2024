@@ -1,12 +1,11 @@
 // zoi: i128
-#include <istream>
-#include <ostream>
-#include <string>
+#ifndef Z_OI_I128
+#define Z_OI_I128
+
+#include "../utils/utils.cpp"
 
 using namespace std;
 
-#ifndef Z_OI_I128
-#define Z_OI_I128
 using i128 = __int128_t;
 using u128 = __uint128_t;
 inline istream& operator>>(istream& is, i128& x)

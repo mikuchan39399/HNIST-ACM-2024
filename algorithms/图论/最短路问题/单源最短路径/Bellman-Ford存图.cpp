@@ -1,56 +1,60 @@
-#include <iostream>
-#include <vector>
+// zoi: bf
+#ifndef Z_OI_BF
+#define Z_OI_BF
+
+#include "../../图的存储/Graph.cpp"
+#include "../../../杂项/utils/utils.cpp"
 
 using namespace std;
-int n, m, s;
-const int N = 1e4 + 10, M = 5e5 + 10, INF = 2147483647;
-typedef long long LL;
-typedef pair<int, int> PII;
-LL dist[N];
-vector<PII> edges[N];
 
-void bf()
+// ============ Bellman-Ford 单源最短路 ============
+// 允许负边权(图需无负环, 判环用 bfRing); dist 不可达 = INF
+// 内存: dist 8B/点; 预算 = max_n
+struct BellmanFord
 {
-    for(int i = 0; i <= n; i++)
+    int n;
+    VLL dist;
+    // 构造: 预算 max_n
+    // 时间: O(n) | 空间: 8B/点
+    BellmanFord(int max_n = 0) : n(0), dist(max_n + 10, INF) {}
+    // 多测复位: dist 清 INF
+    // 时间: O(n) | 空间: O(1)
+    void init(int _n)
     {
-        dist[i] = INF;
+        n = _n;
+        z_fill_n(_n, INF, dist);
     }
-
-    dist[s] = 0;
-    for(int i = 1; i <= n - 1; i++)
+    // 单源跑最短路, 结果写 dist
+    // 时间: O(nm) | 空间: O(1)
+    template <class G>
+    void run(int s, G& g)
     {
-        bool flag = false;
-        for(int j = 1; j <= n; j++)//    bf算法每一轮要松弛所有边
+        dist[s] = 0;
+        for (int i = 1; i < n; i++)   // 每轮松弛全部边, 无更新提前收工
         {
-            flag = false;
-            if(dist[j] == INF) continue;
-            for(auto& e : edges[j])
+            bool flag = false;
+            for (int u = 1; u <= n; u++)
             {
-                int u = e.first, w = e.second;
-                if(dist[j] + w < dist[u])
-                {
-                    dist[u] = dist[j] + w;
-                    flag = true;
-                }
+                if (dist[u] == INF) continue;
+                for (auto& [v, nxt, w] : g[u])
+                    if (dist[u] + w < dist[v])
+                    {
+                        dist[v] = dist[u] + w;
+                        flag = true;
+                    }
             }
+            if (!flag) break;
         }
-        if(!flag) break;
     }
-
-    for(int i = 1; i <= n; i++)
-    {
-        cout << dist[i] << " ";
-    }
-}
-int main()
-{
-    cin >> n >> m >> s;
-    
-    for(int i = 1; i <= m; i++)
-    {
-        int u, v, w; cin >> u >> v >> w;
-        edges[u].push_back({v, w});
-    }
-    bf();
-    return 0;
-}
+};
+#endif
+/*
+ * Usage:
+ * Graph<true, LL> g{n, m};          // 负边权也行
+ * BellmanFord bf{n};
+ * bf.init(n);
+ * for (int i = 1; i <= m; i++) { int u, v; LL w; cin >> u >> v >> w; g.add(u, v, w); }
+ * bf.run(s, g);
+ * bf.dist[v];                        // 不可达 = INF
+ * // 多测: g.clear(); bf.init(n); 重跑
+ */

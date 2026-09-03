@@ -1,5 +1,6 @@
 // ============ 图论家族回归套件 ============
 // 覆盖: LCA×2(DFN_LCA/HLD_LCA) | 拓扑排序 | 直径×2(两次DFS/树形dp) | 重心
+//       | 最短路×4(dij/dijN/spfa/bf, 含负边与多源) | 判负环×2(bfRing/spfaRing)
 // 纪律: 改动上述任一模板或 Graph 母版, 必重跑本套件
 // 跑法: g++ -std=c++20 -Wall -Wextra -O2 graph_check.cpp -o graph_check && ./graph_check
 #include <algorithm>
@@ -18,6 +19,12 @@
 #include "../树上问题/树的直径/两次dfs.cpp"
 #include "../树上问题/树的直径/树形dp法.cpp"
 #include "../树上问题/树的重心/树的重心.cpp"
+#include "../最短路问题/单源最短路径/dijkstra_heap.cpp"
+#include "../最短路问题/单源最短路径/dijkstra.cpp"
+#include "../最短路问题/单源最短路径/spfa 存图.cpp"
+#include "../最短路问题/单源最短路径/Bellman-Ford存图.cpp"
+#include "../最短路问题/判断负环/bf_-ring.cpp"
+#include "../最短路问题/判断负环/spfa_-ring.cpp"
 using namespace std;
 using LL = long long;
 using VI = vector<int>;
@@ -370,12 +377,89 @@ static void test_graph_core()
     }
 }
 
+// ============ 段 5: 最短路家族 ============
+// 域 1 非负权: dij/dijN/spfa/bf 四引擎 dist 互拍 + 多源对拍双单源取 min
+// 域 2 负边 DAG(无环必无负环): spfa/bf 互拍, 判环双引擎必 false
+// 域 3 随机混合权: bfRing/spfaRing 互拍 | 定向: 埋负环必中, 无负环必过
+static void test_shortest_path()
+{
+    mt19937 rng(424242);
+    static Dijkstra dij{61};
+    static DijkstraN dijn{61};
+    static SPFA sp{61};
+    static BellmanFord bf{61};
+    static BFRing bfr{61};
+    static SPFARing spr{61};
+    for (int tc = 0; tc < 200; tc++)   // 域 1: 非负权四引擎互拍 + 多源
+    {
+        int n = 1 + rng() % 40, m = rng() % 120;
+        Graph<true, LL> g{n, m};
+        for (int i = 0; i < m; i++)
+            g.add(1 + rng() % n, 1 + rng() % n, rng() % 21);
+        int s = 1 + rng() % n, s2 = 1 + rng() % n;
+        dij.init(n); dijn.init(n); sp.init(n); bf.init(n);
+        dij.run(s, g);
+        dijn.run(s, g);
+        sp.run(s, g);
+        bf.run(s, g);
+        for (int i = 1; i <= n; i++)
+            assert(dij.dist[i] == dijn.dist[i] && dij.dist[i] == sp.dist[i]
+                   && dij.dist[i] == bf.dist[i]);
+        VLL d1 = dij.dist;
+        VLL d2 = [&]{ dij.init(n); dij.run(s2, g); return dij.dist; }();
+        dij.init(n);
+        dij.run(VI{s, s2}, g);
+        for (int i = 1; i <= n; i++)
+            assert(dij.dist[i] == min(d1[i], d2[i]));
+    }
+    for (int tc = 0; tc < 200; tc++)   // 域 2: 负边 DAG
+    {
+        int n = 1 + rng() % 40, m = rng() % 100;
+        Graph<true, LL> g{n, m};
+        for (int i = 0; i < m; i++)
+        {
+            int u = 1 + rng() % n, v = 1 + rng() % n;
+            if (u == v) continue;
+            if (u > v) swap(u, v);   // 只加 u<v, 图必为 DAG
+            g.add(u, v, (LL)(rng() % 41) - 20);
+        }
+        int s = 1 + rng() % n;
+        sp.init(n); bf.init(n);
+        sp.run(s, g); bf.run(s, g);
+        for (int i = 1; i <= n; i++) assert(sp.dist[i] == bf.dist[i]);
+        bfr.init(n); spr.init(n);
+        assert(!bfr.run(g) && !spr.run(g));
+    }
+    for (int tc = 0; tc < 200; tc++)   // 域 3: 混合权判环互拍
+    {
+        int n = 2 + rng() % 20, m = rng() % 60;
+        Graph<true, LL> g{n, m};
+        for (int i = 0; i < m; i++)
+            g.add(1 + rng() % n, 1 + rng() % n, (LL)(rng() % 41) - 20);
+        bfr.init(n); spr.init(n);
+        assert(bfr.run(g) == spr.run(g));
+    }
+    {
+        Graph<true, LL> g{4, 4};    // 定向: 环 1->2->3->1 总权 -3
+        g.add(1, 2, 1); g.add(2, 3, -5); g.add(3, 1, 1); g.add(3, 4, 2);
+        bfr.init(4); spr.init(4);
+        assert(bfr.run(g) && spr.run(g));
+    }
+    {
+        Graph<true, LL> g{4, 4};    // 定向: 正环 + 悬挂负边, 无负环
+        g.add(1, 2, 5); g.add(2, 3, -1); g.add(1, 3, 3); g.add(3, 4, 0);
+        bfr.init(4); spr.init(4);
+        assert(!bfr.run(g) && !spr.run(g));
+    }
+}
+
 int main()
 {
     test_lca_engines();
     test_topo_sort();
     test_tree_basic();
     test_graph_core();
+    test_shortest_path();
     cout << "All tests passed flawlessly!\n";
     return 0;
 }

@@ -25,6 +25,9 @@
 #include <queue>
 #include <set>
 #include <stack>
+#include <chrono>
+#include <concepts>
+#include <random>
 
 using namespace std;
 
@@ -69,8 +72,8 @@ inline int dy4[4] = {1, -1, 0, 0};
 inline int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
 inline int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 
-template<typename... CS>
-void z_fill_n(int n, int val, CS&... cs)
+template <class V, typename... CS>
+void z_fill_n(int n, V val, CS&... cs)
 {
     assert(((((int)cs.size()) >= n) && ...));
     (fill(cs.begin(), cs.begin() + min((size_t)(n + 10), cs.size()), val), ...);

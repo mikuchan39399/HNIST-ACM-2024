@@ -9,6 +9,7 @@ leftist	algorithms/数据结构/堆/左偏树/左偏树.cpp
 dsu	algorithms/数据结构/并查集/DSU.cpp
 wdsu	algorithms/数据结构/并查集/WDSU.cpp
 monoQueue	algorithms/数据结构/单调队列/单调队列.cpp
+bit	algorithms/数据结构/树状数组/树状数组.cpp
 bit2d	algorithms/数据结构/树状数组/二维树状数组.cpp
 skiplist	algorithms/数据结构/有序表与平衡树/跳表.cpp
 avl	algorithms/数据结构/有序表与平衡树/AVL.cpp
@@ -32,6 +33,10 @@ eulerUndirected	algorithms/图论/欧拉图/无向图欧拉边路径.cpp
 eulerDirected	algorithms/图论/欧拉图/有向图欧拉边路径.cpp
 topo	algorithms/图论/拓扑排序/拓扑排序.cpp
 dij	algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp
+dijN	algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp
+spfa	algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp
+bf	algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp
+bfRing	algorithms/图论/最短路问题/判断负环/bf_-ring.cpp
 spfaRing	algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp
 trie	algorithms/字符串/字典树/字典树.cpp
 persistentTrie	algorithms/字符串/字典树/可持久化字典树.cpp
@@ -48,6 +53,7 @@ discrete	algorithms/杂项/离散化/离散化.cpp
 !algorithms/图论/最短路问题/*
 !algorithms/图论/树上问题/最近公共祖先/*
 !algorithms/图论/欧拉图/*
+!algorithms/图论/优化建图/例题/*
 !algorithms/数学/数论/*
 !algorithms/数学/组合数学/*
 !algorithms/数据结构/树套树/*
@@ -55,6 +61,7 @@ discrete	algorithms/杂项/离散化/离散化.cpp
 !algorithms/数据结构/线段树/线段树合并分裂/*
 !algorithms/数据结构/堆/左偏树/k短路未维护.cpp
 !algorithms/杂项/主元素问题/*
+segGraph	algorithms/图论/优化建图/线段树优化建图.cpp
 cartesian	algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp
 splay	algorithms/数据结构/有序表与平衡树/Splay.cpp
 st	algorithms/数据结构/ST表/ST表.cpp

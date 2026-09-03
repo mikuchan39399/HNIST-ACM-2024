@@ -1,72 +1,85 @@
-// zoi: bit2d
-#include <iostream>
+﻿// zoi: bit2d
+#ifndef Z_OI_BIT2D
+#define Z_OI_BIT2D
+
+#include <vector>
+#include "../../杂项/utils/utils.cpp"
 
 using namespace std;
 
-using LL = long long;
-
-const int N = 2050; // 根据题意修改矩阵最大边长
-
-// 二维树状数组核心：利用四个树状数组维护差分数组的不同项
-// 假设原数组为 A，其差分数组为 D
-// t1 维护：D[i][j]
-// t2 维护：D[i][j] * i
-// t3 维护：D[i][j] * j
-// t4 维护：D[i][j] * i * j
-LL t1[N][N], t2[N][N], t3[N][N], t4[N][N];
-int n, m;
-
-#define lowbit(x) ((x) & -(x))
-
-// 单点修改辅助函数：更新差分数组对应的四个项
-void add(int x, int y, LL k) 
+// ============ 二维树状数组 矩阵加 + 矩阵和 (差分四 BIT) ============
+// 1-based; 矩阵加走二维差分, 前缀和 pre(x,y) = Σ D[i][j]*(x+1-i)*(y+1-j)
+//   展开成 (x+1)(y+1)*D - (y+1)*D*i - (x+1)*D*j + D*i*j,
+//   t1/t2/t3/t4 四棵 BIT 分别维护 D / D*i / D*j / D*i*j
+// 内存: 四棵 LL BIT 共 32B/格; 预算 = n*m, 2000×2000 ≈ 128MB
+struct BIT2D
 {
-    for (int i = x; i <= n; i += lowbit(i)) 
+    int n, m;
+    vector<VLL> t1, t2, t3, t4;
+    // 构造: 预算 max_n×max_m 的四棵 BIT
+    // 时间: O(max_n*max_m) | 空间: 32B/格
+    BIT2D(int max_n = 0, int max_m = 0) : n(max_n), m(max_m),
+        t1(max_n + 2, VLL(max_m + 2, 0)), t2(max_n + 2, VLL(max_m + 2, 0)),
+        t3(max_n + 2, VLL(max_m + 2, 0)), t4(max_n + 2, VLL(max_m + 2, 0))
+    {}
+    // 多测复位: n*m 重配, 四棵清 [0..n+1]×[0..m+1]
+    // 时间: O(n*m) | 空间: O(1)
+    void init(int _n, int _m)
     {
-        for (int j = y; j <= m; j += lowbit(j)) 
+        n = _n;
+        m = _m;
+        for (int i = 0; i <= n + 1; i++)
         {
-            t1[i][j] += k;
-            t2[i][j] += x * k;
-            t3[i][j] += y * k;
-            t4[i][j] += 1ll * x * y * k; // 加上 1ll 防止坐标相乘提前溢出 int
+            fill(t1[i].begin(), t1[i].begin() + m + 2, 0);
+            fill(t2[i].begin(), t2[i].begin() + m + 2, 0);
+            fill(t3[i].begin(), t3[i].begin() + m + 2, 0);
+            fill(t4[i].begin(), t4[i].begin() + m + 2, 0);
         }
     }
-}
-
-// 二维区间修改：利用二维差分性质
-// 将左上角 (x1, y1) 到右下角 (x2, y2) 范围内的所有元素加上 k
-void range_add(int x1, int y1, int x2, int y2, LL k) 
-{
-    add(x1, y1, k);
-    add(x1, y2 + 1, -k);
-    add(x2 + 1, y1, -k);
-    add(x2 + 1, y2 + 1, k);
-}
-
-// 二维前缀和查询辅助函数
-// 数学推导：通过四个差分维护数组，求出 (1, 1) 到 (x, y) 的前缀和
-LL query(int x, int y) 
-{
-    LL res = 0;
-    for (int i = x; i > 0; i -= lowbit(i)) 
+    // 矩阵 (x1,y1)-(x2,y2) 整体加 k (贴边时差分越界端自动丢弃)
+    // 时间: O(log n·log m) | 空间: O(1)
+    void add(int x1, int y1, int x2, int y2, LL k)
     {
-        for (int j = y; j > 0; j -= lowbit(j)) 
-        {
-            res += 1ll * (x + 1) * (y + 1) * t1[i][j]
-                 - 1ll * (y + 1) * t2[i][j]
-                 - 1ll * (x + 1) * t3[i][j]
-                 + t4[i][j];
-        }
+        upd(x1, y1, k);
+        upd(x1, y2 + 1, -k);
+        upd(x2 + 1, y1, -k);
+        upd(x2 + 1, y2 + 1, k);
     }
-    return res;
-}
-
-// 二维区间查询：利用二维容斥原理
-// 查询左上角 (x1, y1) 到右下角 (x2, y2) 范围内的所有元素的和
-LL range_query(int x1, int y1, int x2, int y2) 
-{
-    return query(x2, y2) 
-         - query(x1 - 1, y2) 
-         - query(x2, y1 - 1) 
-         + query(x1 - 1, y1 - 1);
-}
+    // 返回矩阵 (x1,y1)-(x2,y2) 之和
+    // 时间: O(log n·log m) | 空间: O(1)
+    LL query(int x1, int y1, int x2, int y2)
+    {
+        return pre(x2, y2) - pre(x1 - 1, y2) - pre(x2, y1 - 1) + pre(x1 - 1, y1 - 1);
+    }
+private:
+    void upd(int x, int y, LL k)
+    {
+        for (int i = x; i <= n; i += i & -i)
+            for (int j = y; j <= m; j += j & -j)
+            {
+                t1[i][j] += k;
+                t2[i][j] += (LL)x * k;
+                t3[i][j] += (LL)y * k;
+                t4[i][j] += (LL)x * y * k;
+            }
+    }
+    LL pre(int x, int y)
+    {
+        LL s = 0;
+        for (int i = x; i > 0; i -= i & -i)
+            for (int j = y; j > 0; j -= j & -j)
+                s += (LL)(x + 1) * (y + 1) * t1[i][j]
+                   - (LL)(y + 1) * t2[i][j]
+                   - (LL)(x + 1) * t3[i][j]
+                   + t4[i][j];
+        return s;
+    }
+};
+#endif
+/*
+ * Usage:
+ * BIT2D t(n, m);                // 预算 n×m
+ * t.init(n, m);                 // 多测复位
+ * t.add(x1, y1, x2, y2, k);     // 矩阵整体加 k
+ * t.query(x1, y1, x2, y2);      // 矩阵和
+ */

@@ -2,8 +2,7 @@
 #ifndef Z_OI_HASH
 #define Z_OI_HASH
 
-#include <cstdint>
-#include <chrono>
+#include "../utils/utils.cpp"
 
 using namespace std;
 
