@@ -18,10 +18,10 @@ using LL = long long;
 void test_seg_graph()
 {
     mt19937 rng(786786);
-    static SegGraph sg{41, 4000};
-    static Dijkstra d1{170};
+    static SegGraph sg{61, 4000};
+    static Dijkstra d1{254};
     static Dijkstra d2{41};
-    static Graph<true, LL> gn{41, 4000};
+    static Graph<true, LL> gn{41, 200000};
     for (int tc = 0; tc < 300; tc++)
     {
         int n = 1 + rng() % 40, q = rng() % 60;
@@ -41,13 +41,21 @@ void test_seg_graph()
             }
             else if (op == 1)
             {
-                sg.add_out(u, l, r, w);
+                sg.add_p2r(u, l, r, w);
                 for (int k = l; k <= r; k++) gn.add(u, k, w);
+            }
+            else if (op == 2)
+            {
+                sg.add_r2p(l, r, v, w);
+                for (int k = l; k <= r; k++) gn.add(k, v, w);
             }
             else
             {
-                sg.add_in(l, r, v, w);
-                for (int k = l; k <= r; k++) gn.add(k, v, w);
+                int l2 = 1 + rng() % n, r2 = 1 + rng() % n;
+                if (l2 > r2) swap(l2, r2);
+                sg.add_r2r(l, r, l2, r2, w);
+                for (int i = l; i <= r; i++)
+                    for (int j = l2; j <= r2; j++) gn.add(i, j, w);
             }
         }
         int s = 1 + rng() % n;

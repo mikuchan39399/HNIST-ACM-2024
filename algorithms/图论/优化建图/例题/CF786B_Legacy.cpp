@@ -33,14 +33,14 @@ int main()
             int v, l, r;
             LL w;
             cin >> v >> l >> r >> w;
-            sg.add_out(v, l, r, w);   // v -> 区间: 进出树覆盖点顺骨架下漏
+            sg.add_p2r(v, l, r, w);   // v -> 区间: 进出树覆盖点顺骨架下漏
         }
         else
         {
             int v, l, r;
             LL w;
             cin >> v >> l >> r >> w;
-            sg.add_in(l, r, v, w);    // 区间 -> v: 入树叶子汇流上覆盖点再出去
+            sg.add_r2p(l, r, v, w);    // 区间 -> v: 入树叶子汇流上覆盖点再出去
         }
     }
     Dijkstra dij{sg.tot};

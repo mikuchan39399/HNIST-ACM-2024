@@ -11,7 +11,8 @@ using namespace std;
 // 出树边父->子 0 权, u->[l,r] 一条边进覆盖点, 顺骨架漏到区间每个叶子;
 // 入树边子->父 0 权, [l,r]->v 区间叶子汇流上覆盖点, 一条边出去;
 // 两树叶子=原点共用 id, 点既是源又是汇, 骨架自身不产生点->点的免费捷径
-// 内存: 结点实拿 3n-2(池 4n) + 树孩子表 8B/结点 + Graph 边 16B/条;
+// 内存: 结点实拿 3n-2(池 4n) + r2r 每次 +1 中继虚点 + 树孩子表 8B/结点
+//   + Graph 边 16B/条;
 //   边 = 4n 条树边 + 每次区间操作 <= 2*ceil(log2 n) 条; n=q=1e5 ≈ 67MB
 struct SegGraph
 {
@@ -97,8 +98,9 @@ private:
  * {
  *     int op; cin >> op;
  *     if (op == 1) { int u, v; LL w; cin >> u >> v >> w; sg.add_edge(u, v, w); }
- *     if (op == 2) { int u, l, r; LL w; cin >> u >> l >> r >> w; sg.add_out(u, l, r, w); }
- *     if (op == 3) { int v, l, r; LL w; cin >> v >> l >> r >> w; sg.add_in(l, r, v, w); }
+ *     if (op == 2) { int u, l, r; LL w; cin >> u >> l >> r >> w; sg.add_p2r(u, l, r, w); }
+ *     if (op == 3) { int v, l, r; LL w; cin >> v >> l >> r >> w; sg.add_r2p(l, r, v, w); }
+ *     // sg.add_r2r(l1, r1, l2, r2, w);     // 区间连区间, 每次 +1 中继虚点
  * }
  * Dijkstra dij{sg.tot};                    // 引擎: 最短路 dij.h
  * dij.init(sg.tot);
