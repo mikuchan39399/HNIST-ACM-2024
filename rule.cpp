@@ -240,6 +240,8 @@
 //       探测, 不写就不编译, 不污染普通题的 Info/Tag。
 // 图组装: Graph<bool Dir, class W=Empty> + [[no_unique_address]] W w,
 //       无权图权重零字节。算法一律 template<class G> 鸭子类型, 禁继承。
+//       G 不走 const: 链表迭代器无 const 路径(const G& 上范围 for 编译
+//       不过), 遍历只认可变 g; const 入参只给 vector 等标准容器。
 // vector 口径: build 传 1-based a[1..m](a.size()=m+1); 其余 vector 入参
 //       (批量 insert 等)传 0-based 整个 vector。接口注释必须写清口径。
 // 函数式引擎(PersSegTree/Leftist): 返回值风格, 句柄进出 rt=modify(rt,...),
