@@ -1,7 +1,9 @@
-param([string]$Filter = '', [string]$OutFile = 'zoi-booklet.pdf')
+param([string]$Filter = '', [string]$OutFile = 'zoi-booklet.pdf', [int]$SoloMin = 90)
 # make_booklet.ps1 - printable contest booklet generator (typst, A4, 2 columns)
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\make_booklet.ps1              -> full
 #        powershell -ExecutionPolicy Bypass -File scripts\make_booklet.ps1 -Filter seg  -> scoped
+# SoloMin: entries with >= SoloMin lines start on an odd page (= a physical sheet's
+#          front side), so duplex-printed big algorithms open on a fresh sheet.
 # Pipeline: catalog (order = section order) -> include rewrite (stub names)
 #           -> SHA256[:8] over LF-normalized text -> booklet.typ -> typst compile.
 # Requires: typst on PATH, or scripts\typst.exe next to this script (auto-detected).
@@ -107,13 +109,20 @@ $s = New-Object System.Text.StringBuilder
 [void]$s.AppendLine('#set page(columns: 2, margin: (x: 0.85cm, y: 1.05cm, top: 1.5cm), header: pagehead)')
 [void]$s.AppendLine('')
 $lastFam = ''
+$pb = '#pagebreak(to: "odd", weak: true)'   # jump to next odd page (physical sheet front); weak = no-op if already odd
 foreach ($b in $blocks) {
-    if ($b.Meta.Family -ne $lastFam) {
+    $newFam = $b.Meta.Family -ne $lastFam
+    $big = $b.Lines -ge $SoloMin
+    if ($big -and $newFam) { [void]$s.AppendLine($pb) }
+    if ($newFam) {
         if ($lastFam -ne '') { [void]$s.AppendLine('') }
         [void]$s.AppendLine('== ' + (Esc $b.Meta.Family))
         $lastFam = $b.Meta.Family
     }
-    [void]$s.AppendLine('=== ' + (Esc $b.Meta.Name) + ' -- ' + (Esc $b.Meta.Cn))
+    elseif ($big) { [void]$s.AppendLine($pb) }
+    $lbl = ''
+    if ($big) { $lbl = ' <big-' + $b.Meta.Name + '>' }   # anchor for parity audit
+    [void]$s.AppendLine('=== ' + (Esc $b.Meta.Name) + ' -- ' + (Esc $b.Meta.Cn) + $lbl)
     [void]$s.AppendLine('#align(right, text(size: 5.4pt, fill: luma(105))[' + $b.Lines + ' ln -- sha256 ' + $b.Hash + '])')
     [void]$s.AppendLine('```cpp')
     [void]$s.AppendLine($b.Text)
@@ -123,6 +132,7 @@ foreach ($b in $blocks) {
 if ($plugBlocks.Count -gt 0) {
     [void]$s.AppendLine('== Appendix / algebra plugins (copy into solution, adapt fields)')
     foreach ($b in $plugBlocks) {
+        if ($b.Lines -ge $SoloMin) { [void]$s.AppendLine($pb) }
         [void]$s.AppendLine('=== ' + (Esc $b.Meta.Name))
     [void]$s.AppendLine('#align(right, text(size: 5.4pt, fill: luma(105))[' + $b.Lines + ' ln -- sha256 ' + $b.Hash + '])')
         [void]$s.AppendLine('```cpp')
@@ -141,3 +151,23 @@ finally { Pop-Location }
 
 Write-Host ('[OK] booklet: ' + $blocks.Count + ' engines, ' + $plugBlocks.Count + ' plugins -> ' + (Join-Path $root $OutFile))
 foreach ($w in $script:warn) { Write-Host ('[WARN] ' + $w) -ForegroundColor Yellow }
+
+# ---- parity audit: big entries must start on odd pages (duplex sheet fronts) ----
+$qout = $null
+$prevEAP = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+try { $qout = & $typst query $typPath 'heading' --format json 2>$null } catch {}
+$ErrorActionPreference = $prevEAP
+$viol = 0
+try { $heads = @($qout | ConvertFrom-Json) } catch { $heads = @() }
+foreach ($h in $heads) {
+    $lb = "$($h.label)"
+    if (-not $lb.StartsWith('big-')) { continue }
+    $pg = $h.location.page
+    if ("$pg" -match '^\d+$' -and [int]$pg % 2 -eq 0) {
+        Write-Host ('[PARITY VIOLATION] ' + $lb + ' starts on even page ' + $pg) -ForegroundColor Red
+        $viol++
+    }
+}
+if ($viol -eq 0) { Write-Host '[OK] parity: all big entries start on odd pages (sheet fronts)' }
+else { Write-Host ('[FAIL] parity violations: ' + $viol); exit 1 }

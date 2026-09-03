@@ -439,7 +439,11 @@
 //   态的纸面等价物, utils 只印一次); 泛型插件附录自动收(含 main 的整题
 //   解跳过); 每条目印 行数+SHA256 前 8 hex(LF 归一化改写后文本), 誊写
 //   自检先数行数再对 hash。typst 单 exe 落 scripts\(gitignore, 脚本自动
-//   探测 PATH->本地); 生成物不进 git。typst 语法雷区(实测): markup 的 _
+//   探测 PATH->本地); 生成物不进 git。双面打印: 大条目(行数 >= SoloMin,
+//   缺省 90)用 pagebreak(to:"odd", weak:true) 从纸张正面(奇数页)起排,
+//   编译后自动 parity 审计(big-* label 锚, 违例 exit 1)——条件 pagebreak
+//   禁用 context 读页码(布局反馈循环不收敛, 实测振荡); 页码语义 = 一面
+//   一页。typst 语法雷区(实测): markup 的 _
 //   是强调开关, 中文文件名带下划线须转义; content block 里 # 开代码表达
 //   式, 文案禁裸 # 与 [。2026/9/3 建成。
 // zoi\ 跳板层: 每个 stub 就一行 #include 指向真身, 名字短、纯 ASCII。
