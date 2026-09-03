@@ -2,7 +2,7 @@
 #ifndef Z_OI_EULER_DIR
 #define Z_OI_EULER_DIR
 
-#include "../../../杂项/utils/utils.cpp"
+#include "../../杂项/utils/utils.cpp"
 
 using namespace std;
 using VPII = vector<PII>;
