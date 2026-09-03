@@ -1,4 +1,4 @@
-﻿// zoi: bit2d
+// zoi: bit2d
 #ifndef Z_OI_BIT2D
 #define Z_OI_BIT2D
 
