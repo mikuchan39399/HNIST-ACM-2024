@@ -15,30 +15,34 @@ struct VirtualTree
     VirtualTree(int max_n = 0) : tree(max_n, max_n * 2) {}
     void clear() { tree.clear(); }
     template<typename LCA>
-    void build(VI& nodes, LCA& lca, int root = 1)
+    // 用关键点集建虚树: 两两 LCA 的祖先链并入点集, tree 得压缩子树
+    // (至多 2k-1 点); 关键点跨树时静默得到空树; 不修改调用方容器
+    // 时间: O(k log k) | 空间: 虚树至多 2k-1 点
+    void build(const VI& nodes, LCA& lca, int root = 1)
     {
         clear();
-        if (nodes.empty()) return;
-        for (int x : nodes)
+        VI ns = nodes;              // 内部拷贝, 调用方列表不被消耗
+        if (ns.empty()) return;
+        for (int x : ns)
             if (lca.rt[x] != lca.rt[root]) return;
-        nodes.push_back(root);
-        sort(nodes.begin(), nodes.end(), [&](int a, int b){
+        ns.push_back(root);
+        sort(ns.begin(), ns.end(), [&](int a, int b){
             return lca.dfn[a] < lca.dfn[b];
         });
-        int sz = nodes.size();
+        int sz = ns.size();
         for (int i = 1; i < sz; i++)
         {
-            int p = lca.lca(nodes[i - 1], nodes[i]);
-            nodes.push_back(p);
+            int p = lca.lca(ns[i - 1], ns[i]);
+            ns.push_back(p);
         }
-        sort(nodes.begin(), nodes.end(), [&](int a, int b){
+        sort(ns.begin(), ns.end(), [&](int a, int b){
             return lca.dfn[a] < lca.dfn[b];
         });
-        nodes.erase(unique(nodes.begin(), nodes.end()), nodes.end());
-        for (int i = 1; i < (int)nodes.size(); i++)
+        ns.erase(unique(ns.begin(), ns.end()), ns.end());
+        for (int i = 1; i < (int)ns.size(); i++)
         {
-            int p = lca.lca(nodes[i - 1], nodes[i]);
-            tree.add(p, nodes[i], lca.dist(p, nodes[i]));
+            int p = lca.lca(ns[i - 1], ns[i]);
+            tree.add(p, ns[i], lca.dist(p, ns[i]));
         }
     }
 };
