@@ -131,7 +131,7 @@ void test_pers_seg_tree()
                 {
                     int l = 1 + rng() % sn, r = 1 + rng() % sn;
                     if (l > r) swap(l, r);
-                    LL v = rng() % 9 - 4;
+                    LL v = (int)(rng() % 9) - 4;
                     vector<LL> cur = snaps.back();
 
                     if (op == 0)
@@ -163,7 +163,7 @@ void test_pers_seg_tree()
                     InfoB res = s.query(rts[vi], l, r);
                     assert(res.sum == es && res.mx == em);
 
-                    LL x = rng() % 15 - 4;
+                    LL x = (int)(rng() % 15) - 4;
 
                     LL got = s.find_first(rts[vi], l, [x](const InfoB& info) { return info.mx > x; });
                     LL exp = -1;

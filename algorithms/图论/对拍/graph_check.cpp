@@ -269,7 +269,7 @@ void test_tree_basic()
             gu.add(p, v);
             gw.add(p, v, w);
         }
-        for (int i = 1; i <= n; i++) bt.pt[i] = rng() % 9 - 2; // 含零/负点权
+        for (int i = 1; i <= n; i++) bt.pt[i] = (int)(rng() % 9) - 2; // 含零/负点权; 先窄化再减, 防无符号下溢(Linux uint_fast32_t 8B 时 -2 变 1.8e19 溢出 LL)
 
         assert(pw.build(gw, n) == bt.diameter());
         if (nonneg)

@@ -9,9 +9,10 @@
 using namespace std;
 using LL = long long;
 
-// ============ constexpr 全链路探针 (GCC>=12 编译期算高精度) ============
-static_assert(BigInt(7).pow(3) == BigInt(343));
-static_assert(BigInt(114514).pow(2) == BigInt((LL)13113456196));
+// ============ constexpr 全链路探针: 编译期算高精度 ============
+// 本地 mingw g++15 曾以 static_assert 验证过; Linux g++12/13 对 constexpr
+// vector 比较严格(allocated storage after deallocation)会拒编, 降级运行期
+// 断言(见 main), 编译期能力验证责任归本地。
 
 // ============ 独立 oracle 甲: 十进制串竖式 (与模板 base-1e9/Karatsuba 不同构) ============
 static string s_mul(const string& x, const string& y)
@@ -268,6 +269,8 @@ void test_parse_io()
 
 int main()
 {
+    assert(BigInt(7).pow(3) == BigInt(343));                  // constexpr 链路运行期复验
+    assert(BigInt(114514).pow(2) == BigInt((LL)13113456196));
     test_i128_core();
     test_mul_straddle();
     test_div_property();

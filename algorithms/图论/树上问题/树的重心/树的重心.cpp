@@ -49,7 +49,7 @@ private:
     void dfs(int u, int p, G& g)
     {
         sz[u] = pt[u];
-        LL mx = 0;
+        LL mx = numeric_limits<LL>::min();   // 负点权下所有块可为负, 不能拿 0 当哨兵
         for (auto& e : g[u])
         {
             int v = e.v;
@@ -58,7 +58,7 @@ private:
             sz[u] += sz[v];
             mx = max(mx, sz[v]);
         }
-        mx = max(mx, total - sz[u]);
+        mx = max(mx, total - sz[u]);   // up 块在子树累加完成后算
         if (mx < min_max_part) min_max_part = mx, centroids = {u};
         else if (mx == min_max_part) centroids.push_back(u);
     }
