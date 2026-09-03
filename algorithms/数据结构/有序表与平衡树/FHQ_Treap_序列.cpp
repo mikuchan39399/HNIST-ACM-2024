@@ -283,7 +283,7 @@ private:
         LL hi = tr[x].mx * m + a, lo = tr[x].mn * m + a;
         tr[x].mx = max(hi, lo);
         tr[x].mn = min(hi, lo);
-        if (m == 0) // 常数段: 非空最优 = max(a, a*sz)
+        if (m == 0)
             tr[x].lmax = tr[x].rmax = tr[x].tmax = a > 0 ? a * tr[x].sz : a;
         tr[x].ta = tr[x].ta * m + a;
         tr[x].tm = tr[x].tm * m;
