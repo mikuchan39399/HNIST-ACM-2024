@@ -433,6 +433,15 @@
 //   CI 红必须当场修。2026/9/3 建成。看结论不用开网页: 匿名轮询
 //   GET api.github.com/repos/<owner>/<repo>/actions/runs?per_page=1 (公开仓
 //   可用; 日志接口要 token, 所以 WSL 复现通道更重要)。
+// 赛场纸质化: scripts\make_booklet.ps1 一条命令出 zoi-booklet.pdf(typst,
+//   A4 双栏, Consolas+雅黑, 目录带页码); catalog 顺序即章节序; 引擎相对
+//   include 改写为跳板短名(graph.h 形态——誊写产物=同目录 .h 集合, 展开
+//   态的纸面等价物, utils 只印一次); 泛型插件附录自动收(含 main 的整题
+//   解跳过); 每条目印 行数+SHA256 前 8 hex(LF 归一化改写后文本), 誊写
+//   自检先数行数再对 hash。typst 单 exe 落 scripts\(gitignore, 脚本自动
+//   探测 PATH->本地); 生成物不进 git。typst 语法雷区(实测): markup 的 _
+//   是强调开关, 中文文件名带下划线须转义; content block 里 # 开代码表达
+//   式, 文案禁裸 # 与 [。2026/9/3 建成。
 // zoi\ 跳板层: 每个 stub 就一行 #include 指向真身, 名字短、纯 ASCII。
 //   题文件永远写 #include "graph.h", 中文路径只在 catalog 里出现一次。
 //   映射表 zoi\_catalog.txt; 新引擎入库 = catalog 加一行 + 重跑

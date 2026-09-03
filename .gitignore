@@ -13,6 +13,11 @@ bin-release/
 *.ipa
 *.apk
 
+# booklet build artifacts (scripts\make_booklet.ps1 regenerates)
+booklet.typ
+zoi-booklet.pdf
+scripts/typst.exe
+
 #过滤掉不想要文件和文件夹
 *.exe
 *.sln
