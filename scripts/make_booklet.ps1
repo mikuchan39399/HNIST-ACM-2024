@@ -141,6 +141,13 @@ function Convert-Entry($e) {
     }
     $rew = [regex]::Replace($text, '(?m)^(\s*#\s*include\s+")(?:[^"]*[/\\])?([^"/\\]+\.cpp)"', $ev)
     $norm = ($rew -replace "`r`n", "`n").TrimEnd()
+    # trim decorative '='/'-' banner lines to the column width before hashing:
+    # a code column fits ~70 chars of 6pt Consolas inside the raw box inset,
+    # prose ~60 of 7.5pt Noto; unbreakable runs past that spill into the next
+    # column. Applied pre-hash so the printed fingerprint matches the paper.
+    $cap = if ($e.Prose) { 60 } else { 70 }
+    $trimDeco = [System.Text.RegularExpressions.MatchEvaluator]{ param($m) $m.Groups[1].Value.Substring(0, $cap) }
+    $norm = [regex]::Replace($norm, ('(?m)^(\s*[=\-]{' + ($cap + 1) + ',})\s*$'), $trimDeco)
     $sha = [System.Security.Cryptography.SHA256]::Create()
     $h = ($sha.ComputeHash($enc.GetBytes($norm)) | ForEach-Object { $_.ToString('x2') }) -join ''
     [pscustomobject]@{ Meta = $e; Text = $norm; Hash = $h.Substring(0, 8); Lines = ($norm -split "`n").Count }

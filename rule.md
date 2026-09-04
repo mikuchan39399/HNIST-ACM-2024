@@ -337,7 +337,8 @@ CI(GitHub Actions): push/PR 即跑 ci.yml(ubuntu+g+++pwsh): run_checks 全量
   catalog 顺序即章节序, 行首 ^ = 笔记条目(.txt 正文, 无代码无跳板); 相对
   include 改写为跳板短名(誊写产物=同目录 .h 集合, utils 只印一次); 插件
   附录自动收(含 main 跳过); 每条目印 行数+ SHA256 前 8 hex(LF 归一化),
-  自检先数行再对 hash; 目录两级=域/条目,
+  自检先数行再对 hash; 纯 =/- 装饰线超栏宽转换期截断(先截后 hash, 纸
+  面与指纹一致); 目录两级=域/条目,
   子域是分隔条(subsep), 未代表组的 README 印作导语(subintro); 全库知
   识点文件夹构建期对账(175 个), 缺条 exit 1 并打印缺席清单(防缺斤少
   两); 缺失叶子自动成骨架条目(README 作正文, 空壳打「待补」)紧凑连
