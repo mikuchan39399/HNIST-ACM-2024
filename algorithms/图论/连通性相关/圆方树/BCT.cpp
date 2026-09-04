@@ -15,9 +15,9 @@ struct VBCC
 {
     int n;
     int dfn_idx, vbcc_cnt;
-    Graph<false, Empty> tree;   // 圆方树
+    Graph<false, Empty> tree;   // 圆方树, 方点 = n+1..n+vbcc_cnt
     VI dfn, low, sta, cut;
-    VVI vbcc_cir;               // 存储每个 VBCC 所包含的所有圆点
+    VVI vbcc_cir;               // 各 VBCC 的圆点表
     VBCC(int max_n = 0) : n(max_n), dfn_idx(0), vbcc_cnt(0),
         tree(max_n * 2, max_n * 2),
         dfn(max_n + 10, 0), low(max_n + 10, 0), cut(max_n + 10, 0),
@@ -34,8 +34,7 @@ struct VBCC
         sta.clear();
         vbcc_cir.assign(1, VI{});
     }
-    // 跑 Tarjan 求点双; g = 无向 Graph 形邻接(范围 for g[u] 取 e.v 即可,
-    // 权任意); root = -1 时扫全图 1..n
+    // 点双+割点; g 任意无向邻接(只读 e.v); root = -1 扫全图
     // 时间: O(n + m) | 空间: O(n)
     template <class G>
     void build(G& g, int _n, int root = -1)
@@ -59,7 +58,7 @@ struct VBCC
                 tree.add(u, v);
         }
     }
-    // 返回单个割点参与的 VBCC 列表
+    // u 参与的 VBCC 编号表
     VI get_bel_vbccs(int u)
     {
         VI res;
@@ -67,7 +66,7 @@ struct VBCC
             res.push_back(e.v - n);
         return res;
     }
-    // 返回单个 VBCC 包含的割点列表
+    // 第 i 个 VBCC 的割点表
     VI get_cuts_vbcc(int i)
     {
         VI res;
