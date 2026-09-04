@@ -1,4 +1,1 @@
-# HNIST-ACM-2024
-# *filled with determination
-
-超时问题解决：https://blog.csdn.net/weixin_44223180/article/details/133059575
+# contests — 比赛归档, 每场一个子目录

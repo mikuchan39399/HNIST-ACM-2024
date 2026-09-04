@@ -25,8 +25,6 @@ struct DSU
             fa[i] = i;
             sz[i] = 1;
         }
-        for (int i = 0; i <= n; i++)
-            fa[i] = i;
     }
     int find(int x)
     {
