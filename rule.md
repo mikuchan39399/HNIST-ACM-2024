@@ -4,8 +4,9 @@
   自动路由到本文件, 开始任何任务前先通读它; 指针失效没带上时, 先找
   用户要, 不要猜码风。手动粘贴整份仍是后备通道。
 
-最近一轮: rule.cpp 迁移为 rule.md(机械格式转换, 内容零改动, 引用面同步)
-  + §13 补三条现行机制(^ 笔记条目 / eval 审计 / catalog 连续性守卫)
+最近一轮: 连通性四件套鸭子化(build(g,n) 外部建图注入, EBCC 桥改树方
+  向半边 id)+索引中文目录小写 dp 修复(CI 二进宫)+手册装饰线截断+全局
+  task zoi-booklet; 更早的归档 rule_history.md, 防止越读越没人读。
 更早的历史都归档在 rule_history.md, 防止这份文件越长越没人读。
 
 ## 0. 角色与总目标
@@ -226,6 +227,12 @@ vector 口径: build 传 1-based a[1..m](a.size()=m+1); 其余 vector 入参
   ——本地绿掩盖真病灶的又一案。
 - 负权场景 max 哨兵禁用 0: 候选块可全为负, 哨兵取 LLONG_MIN(树重心 dfs
   实测; 顺带: up 块必须在子树累加完成后算, 挪到循环前是低级错)。
+- 索引路径大小写二进宫(2026/9/5): 中文目录段(背包dp/树形dp)以小写写入
+  git 索引, NTFS 不敏感全程无感(git status 都干净), Linux CI 检出后
+  catalog 大写路径全 miss, 预检 5 秒红; 修复必须 git update-index
+  --force-remove 旧串 + --add 磁盘真名(git rm --cached + add 会被
+  ignorecase 折叠吃掉, 路径原地不动); 事后用 git ls-files -z 字节流
+  vs 磁盘名单对账归零。
 - 跨平台 CI 是库体检机, 首日五病全是本地抓不到的: BOM(PS5.1
   Set-Content 带毒)/git 索引旧小写桩名(Linux 大小写敏感)/include 层数错
   (TEST GAP 盲区, 语法扫兜底)/visit 撞 std::visit(g++13 严格)/constexpr

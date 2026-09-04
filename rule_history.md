@@ -79,7 +79,6 @@
   system 层 manager 2.6.0 在位)。
 
 ## 2026/9/6 rule 通道与格式日
-
 - .clinerules 接线: Cline 官方主格式是项目根 .clinerules\ 文件夹(.md 自动
   注入每次对话); 只放路由指针不复制内容, 唯一真相源仍是一份; 因刷题
   workspace(oj_test)与库根是两个目录, 两边各放一份 zoi.md, 刷题侧用绝对
@@ -95,3 +94,23 @@
   未落库改动, 现状 = a39dd7a; make_booklet.ps1 全文 371 行逐行核查, 内
   容零硬编码(条目/骨架/导语/插件/排序全部运行时数据驱动, 仅排版参数集
   中在模板段属正常配置)。
+- 手册装饰线修复: 纯 =/- 横幅超栏宽转换期截断(hash 前做, 纸面与指纹一
+  致); 连通性鸭子化后 conn_check 加带权图鸭子等价断言, graph_check 加
+  Graph 赋值段; 生成 PDF 入口 = 全局 tasks.json 的 zoi-booklet 任务。
+
+## 2026/9/6 CI 排障战报(大小写二进宫 + WSL 复现通道实战)
+
+- 病灶: ffb4739 轮把 动态规划/背包dp、树形dp 的 11 条路径以小写写进
+  git 索引; run #23/#24 连红(预检 5 秒死), Windows 全程无感。修复
+  b565f78(update-index 字面改), CI #25 转绿。
+- WSL 复现通道全流程: pwsh 用官方 linux-x64 tar.gz 免安装解压到 $HOME;
+  g++ 认 c++20 需 g++-10 起(PATH 注入 ~/g10/g++ 软链, 零改脚本); /tmp
+  会被 WSL 实例空闲回收清空(产物放 $HOME); git archive 出的 tar 走文
+  件中转(PS 管道传二进制必毁); 外层 PS 双引号会剥 $variable 和吃 &&,
+  复杂命令一律落 .sh/.ps1 文件跑; 输出被终端吞时 cmd /c 落日志再读。
+- 复现判读纪律: 环境差(g++10 vs CI g++13)产生的失败是伪影——bigint
+  的 constexpr vector 需 GCC 12+, g++10 编不过不代表 CI 红; 判读必须
+  区分真病灶与复现环境缺口。
+- meta 教训: run_commands 超时弃等后进程仍在跑, 判断副作用必须对账实
+  际状态(文件在不在/内容新不新), 不能假设成败; Start-Process 异步 +
+  输出落文件 + read 轮询是终端失效时的可靠三板斧。
