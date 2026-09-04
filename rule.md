@@ -113,6 +113,8 @@
 ## 4. 引擎清单与红线 (已裁决, 翻案要拿新证据)
 现役清单唯一真相源 = zoi\_catalog.txt(跳板目录), 本节不再维护清单副本。
 家族注记: 替罪羊 α=0.75 真删除+原位重建; LCA 主力 = DFN_LCA;
+  连通性四件(SCC/EBCC/VBCC/BCT)鸭子注入 build(g,n), EBCC 桥 = 树方向
+  半边 id(端点经 g.edges 取), SCC 可直接吃 SegGraph 的带权图;
   轻件(最短路/欧拉/拓扑等应用件)不强求对拍; k 短路弃置留档不回归。
 禁做: 任何摊还结构 × 可持久化 = 禁(版本回放摧毁势能)——Splay/LCT/
   势能线段树/哈希表/桶的持久化版全灭。例外: 可持久化并查集(按秩合并+
@@ -361,8 +363,9 @@ zoi\ 跳板层: stub = 一行 #include 指向真身, 纯 ASCII 短名, 中文路
 scripts\zoi.ps1: expand <file> 备份 A.zoi.cpp 并把递归展开(内联本地
   include + 钻石去重 + 保留守卫)原地写回, 顺带复制剪贴板; restore <dir>
   批量回溯; status 干跑。
-接口: Ctrl+Shift+B = zoi-expand; 命令面板 zoi-restore。cph 带
-  -I<库根>\zoi(user settings), 直编与展开态共用短 include; IntelliSense
+接口: Ctrl+Shift+B = zoi-expand; 命令面板 zoi-restore / zoi-booklet(
+  重建手册 PDF, 任务在用户全局 tasks.json)。cph 带 -I<库根>\zoi(user
+  settings), 直编与展开态共用短 include; IntelliSense
   已接(includePath 含 zoi): 补全/悬停/F12 穿透跳板均可用。
 安全轨: 备份已存在拒绝二次展开; 无本地 include 则 no-op; 回溯前 SHA1
   内容指纹比对(内容没变放行, touch/自动保存不改内容; 真变了跳过警告,

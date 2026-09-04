@@ -3,6 +3,7 @@
 //       删边判连通, 点划分 vs 去桥后连通块, 桥树边数, 成员表) | VBCC/BCT(割点
 //       vs 逐点删除断连, 点双成员表 vs 子集枚举法, 圆方树邻接/边数,
 //       get_bel_vbccs/get_cuts_vbcc); BCT 同场共编即幂等证明
+// 鸭子化: 四件均外部建图注入(EBCC 桥 = 树方向半边 id); SCC 另验带权图等价
 // 纪律: 改动 Tarjan_SCC/EBCC/VBCC/BCT/Graph, 必重跑本套件
 // 跑法: g++ -std=c++20 -Wall -Wextra -O2 conn_check.cpp -o conn_check && ./conn_check
 #include <iostream>
@@ -65,19 +66,28 @@ static vector<VI> canonical_sets(vector<VI> s)
 static void test_scc(mt19937& rng)
 {
     static SCC scc(30, 100);
+    static Graph<true, Empty> ge(30, 100);
+    static Graph<true, LL> gw(30, 100);   // 带权形态: SegGraph 注入通道
+    static SCC sccw(30, 100);
     for (int tc = 0; tc < 300; tc++)
     {
         int n = 1 + rng() % 10;
         int m = rng() % 16;
         VPII es;
         scc.init(n);
+        sccw.init(n);
+        ge.clear();
+        gw.clear();
         for (int i = 0; i < m; i++)
         {
             int u = 1 + rng() % n, v = 1 + rng() % n;   // 允许自环
-            scc.add_edge(u, v);
+            ge.add(u, v);
+            gw.add(u, v, (LL)u);          // 权随便, SCC 不读
             es.push_back({u, v});
         }
-        scc.build();
+        scc.build(ge, n);
+        sccw.build(gw, n);                // 带权鸭子等价
+        for (int u = 1; u <= n; u++) assert(sccw.bel[u] == scc.bel[u]);
 
         // 暴力: Warshall 传递闭包, 类标记 = 类内最小编号
         VVI reach(n + 1, VI(n + 1, 0));
@@ -112,7 +122,7 @@ static void test_scc(mt19937& rng)
         assert(scc.scc_cnt == (int)classes.size());
 
         // 去重缩点 DAG 边集
-        scc.build_dag_unique();
+        scc.build_dag_unique(ge);
         VI canon(scc.scc_cnt + 1, 0);
         for (int u = 1; u <= n; u++) canon[scc.bel[u]] = got[u];
         set<PII> expect;
@@ -129,21 +139,23 @@ static void test_scc(mt19937& rng)
 
 static void test_ebcc(mt19937& rng)
 {
-    static EBCC ebcc(30, 100);
+    static EBCC ebcc(30);
+    static Graph<false, Empty> g(30, 100);
     for (int tc = 0; tc < 300; tc++)
     {
         int n = 1 + rng() % 10;
         int m = rng() % 16;
         VPII es;                                       // u != v, 允许重边
         ebcc.init(n);
+        g.clear();
         for (int i = 0; i < m; i++)
         {
             int u = 1 + rng() % n, v = 1 + rng() % n;
             if (u == v) v = u % n + 1;
-            ebcc.add_edge(u, v, i + 1);
+            g.add(u, v);
             es.push_back({u, v});
         }
-        ebcc.build();
+        ebcc.build(g, n);
 
         // 暴力桥: 删第 i 条边后两端不连通
         VI exp_bridges;
@@ -154,10 +166,21 @@ static void test_ebcc(mt19937& rng)
             VI lab = undirected_comp(n, es, 0, del);
             if (lab[es[i].first] != lab[es[i].second]) exp_bridges.push_back(i + 1);
         }
-        VI got_bridges = ebcc.get_bridges();
-        sort(exp_bridges.begin(), exp_bridges.end());
-        sort(got_bridges.begin(), got_bridges.end());
-        assert(got_bridges == exp_bridges);
+        // got = 树方向半边 id -> 归一 (min,max) 端点; exp = 逻辑边号同归一
+        vector<PII> gotp, expp;
+        for (int h : ebcc.get_bridges(g))
+        {
+            int a = g.edges[g.rev(h)].v, b = g.edges[h].v;
+            gotp.push_back({min(a, b), max(a, b)});
+        }
+        for (int b : exp_bridges)
+        {
+            int a1 = es[b - 1].first, b1 = es[b - 1].second;
+            expp.push_back({min(a1, b1), max(a1, b1)});
+        }
+        sort(gotp.begin(), gotp.end());
+        sort(expp.begin(), expp.end());
+        assert(gotp == expp);
 
         // 点划分: 去所有桥后的连通块
         VI del(m, 0);
@@ -174,7 +197,7 @@ static void test_ebcc(mt19937& rng)
         for (int u = 1; u <= n; u++) assert(got[u] == lab_exp[u]);
 
         // 桥树边数 == 桥数; 成员表 vs 连通块成员
-        ebcc.build_tree();
+        ebcc.build_tree(g);
         assert(ebcc.tree.edge_cnt() == (int)exp_bridges.size());
         map<int, VI> by_comp;
         for (int u = 1; u <= n; u++) by_comp[lab_exp[u]].push_back(u);
@@ -187,24 +210,26 @@ static void test_ebcc(mt19937& rng)
 
 static void test_vbcc(mt19937& rng)
 {
-    static VBCC vbcc(30, 100);
+    static VBCC vbcc(30);
+    static Graph<false, Empty> g(30, 100);
     for (int tc = 0; tc < 300; tc++)
     {
         int n = 1 + rng() % 10;
         int m = rng() % 16;
         VPII es;                                       // u != v, 允许重边(契约: 自环不入图)
         vbcc.init(n);
+        g.clear();
         for (int i = 0; i < m; i++)
         {
             int u = 1 + rng() % n, v = 1 + rng() % n;
             if (n > 1)
             {
                 if (u == v) v = u % n + 1;
-                vbcc.add_edge(u, v);
+                g.add(u, v);
                 es.push_back({u, v});
             }
         }
-        vbcc.build();
+        vbcc.build(g, n);
 
         // 暴力割点: 删 v 后块数 > 原块数 - 1
         VI lab0 = undirected_comp(n, es, 0, VI(m, 0));

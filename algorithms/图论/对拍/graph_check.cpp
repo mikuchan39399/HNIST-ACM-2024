@@ -1,6 +1,7 @@
 // ============ 图论家族回归套件 ============
 // 覆盖: LCA×2(DFN_LCA/HLD_LCA) | 拓扑排序 | 直径×2(两次DFS/树形dp) | 重心
 //       | 最短路×4(dij/dijN/spfa/bf, 含负边与多源) | 判负环×2(bfRing/spfaRing)
+//       | Graph 赋值(拷贝/移动深独立, 自赋值, nothrow 契约)
 // 纪律: 改动上述任一模板或 Graph 母版, 必重跑本套件
 // 跑法: g++ -std=c++20 -Wall -Wextra -O2 graph_check.cpp -o graph_check && ./graph_check
 #include <algorithm>
@@ -453,12 +454,70 @@ static void test_shortest_path()
     }
 }
 
+// ============ 段 7: Graph 赋值语义 ============
+
+// 整图邻接快照(每点按链序的 v 序列), 供赋值前后比对
+template <class G>
+static VVI snap(G& g, int n)
+{
+    VVI s(n + 1);
+    for (int u = 1; u <= n; u++)
+        for (auto& e : g[u]) s[u].push_back(e.v);
+    return s;
+}
+
+void test_graph_assign()
+{
+    // 隐式拷贝/移动赋值是鸭子化的前置契约(算法器会拷贝/移动整图),
+    // nothrow 移动赋值编译期钉死
+    static_assert(is_nothrow_move_assignable_v<Graph<true>>);
+    static_assert(is_nothrow_move_assignable_v<Graph<false, LL>>);
+    mt19937 rng(42);
+    for (int tc = 0; tc < 300; tc++)
+    {
+        int n = 1 + rng() % 40, m = rng() % 80;
+        Graph<true> a1(n, m);         // 有向 Empty (SCC 形态)
+        Graph<true, LL> a2(n, m);     // 有向 LL (SegGraph 形态)
+        Graph<false, LL> a3(n, m);    // 无向 LL (带权连通性形态)
+        for (int i = 0; i < m; i++)
+        {
+            int u = 1 + rng() % n, v = 1 + rng() % n;
+            LL w = (LL)(rng() % 100);
+            a1.add(u, v); a2.add(u, v, w); a3.add(u, v, w);
+        }
+        VVI s1 = snap(a1, n), s2 = snap(a2, n), s3 = snap(a3, n);
+        // 拷贝赋值: 结构逐点等价
+        Graph<true> b1; b1 = a1;
+        Graph<true, LL> b2; b2 = a2;
+        Graph<false, LL> b3; b3 = a3;
+        assert(snap(b1, n) == s1);
+        assert(snap(b2, n) == s2);
+        assert(snap(b3, n) == s3);
+        // 深独立: 副本加边/清空, 母本快照纹丝不动
+        b1.add(1, 1); b2.add(1, 1, 7); b3.add(1, 1, 7);
+        b1.clear(); b2.clear(); b3.clear();
+        assert(snap(a1, n) == s1);
+        assert(snap(a2, n) == s2);
+        assert(snap(a3, n) == s3);
+        // 移动赋值: 接管结构(母本进入有效未定态, 不再断言其内容)
+        Graph<true> c1; c1 = move(a1);
+        Graph<true, LL> c2; c2 = move(a2);
+        assert(snap(c1, n) == s1);
+        assert(snap(c2, n) == s2);
+        assert(c1.edge_cnt() == m && c2.edge_cnt() == m);
+        // 拷贝自赋值(经别名): 无操作不损坏
+        auto& r1 = c1; c1 = r1;
+        assert(snap(c1, n) == s1);
+    }
+}
+
 int main()
 {
     test_lca_engines();
     test_topo_sort();
     test_tree_basic();
     test_graph_core();
+    test_graph_assign();
     test_shortest_path();
     cout << "All tests passed flawlessly!\n";
     return 0;

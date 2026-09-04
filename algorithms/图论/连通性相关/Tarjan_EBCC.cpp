@@ -14,15 +14,13 @@ using namespace std;
 // 分清题目中冗余的重边和故意的重边, 只有前者需要去重
 struct EBCC
 {
-    struct EData { int id; }; // 将原图的边编号作为有效载荷
     int n;
     int dfn_idx, ebcc_cnt;
-    Graph<false, EData> g;    // 原图
     Graph<false, Empty> tree; // 缩点后建的桥树（无权无向图）
     VI dfn, low, bel, sta;
     VVI ebcc_points;          // ebcc_points[i] 存第 i 个 EBCC 里的所有原图点
-    EBCC(int max_n = 0, int max_m = 0) : n(max_n), dfn_idx(0), ebcc_cnt(0),
-        g(max_n, max_m), tree(max_n, max_n),
+    EBCC(int max_n = 0) : n(max_n), dfn_idx(0), ebcc_cnt(0),
+        tree(max_n, max_n),
         dfn(max_n + 10, 0), low(max_n + 10, 0), bel(max_n + 10, 0),
         ebcc_points(1, VI{})
     {
@@ -31,21 +29,25 @@ struct EBCC
     void init(int _n)
     {
         n = _n;
-        g.clear();
         tree.clear();
         z_fill_n(n, 0, dfn, low, bel);
         dfn_idx = ebcc_cnt = 0;
         sta.clear();
         ebcc_points.assign(1, VI());
     }
-    void add_edge(int u, int v, int eid) { g.add(u, v, {eid}); }
-    void build()
+    // 跑 Tarjan 求边双; g = 无向 Graph 形邻接(半边成对, 范围 for g[u] 取
+    // e.v + g.id(e)/g.rev(i)/g.edges 可用, 权任意)
+    // 时间: O(n + m) | 空间: O(n)
+    template <class G>
+    void build(G& g, int _n)
     {
+        n = _n;
         for (int i = 1; i <= n; i++)
-            if (!dfn[i]) tarjan(i, -1);
+            if (!dfn[i]) tarjan(g, i, -1);
     }
     // 缩点建树
-    void build_tree()
+    template <class G>
+    void build_tree(G& g)
     {
         // 遍历所有正向边
         for (size_t i = 0; i < g.edges.size(); i += 2)
@@ -55,19 +57,23 @@ struct EBCC
             if (bel[u] != bel[v]) tree.add(bel[u], bel[v]);
         }
     }
-    VI get_bridges() // 获取所有割边的逻辑编号
+    // 所有桥的树方向半边 id (每对取偶数那条); 桥两端 =
+    // g.edges[g.rev(i)].v 与 g.edges[i].v, 逻辑边号 = i / 2 (0 起)
+    template <class G>
+    VI get_bridges(G& g)
     {
         VI bridges;
         for (size_t i = 0; i < g.edges.size(); i += 2)
         {
             int u = g.edges[g.rev(i)].v;
             int v = g.edges[i].v;
-            if (bel[u] != bel[v]) bridges.push_back(g.edges[i].w.id);
+            if (bel[u] != bel[v]) bridges.push_back((int)i);
         }
         return bridges;
     }
 private:
-    void tarjan(int u, int in_edge)
+    template <class G>
+    void tarjan(G& g, int u, int in_edge)
     {
         dfn_idx++;
         dfn[u] = low[u] = dfn_idx;
@@ -79,7 +85,7 @@ private:
             int v = e.v;
             if (!dfn[v])
             {
-                tarjan(v, i);
+                tarjan(g, v, i);
                 low[u] = min(low[u], low[v]);
             }
             else low[u] = min(low[u], dfn[v]);
@@ -107,7 +113,8 @@ private:
 const int MAXN = 500005;
 const int MAXM = 1000005;
 
-EBCC graph(MAXN, MAXM);
+EBCC graph(MAXN);
+Graph<false> g(MAXN, MAXM);
 
 void dfs_tree(int u, int fa, VI& vis)
 {
@@ -124,16 +131,17 @@ void solve()
 {
     int n, m; cin >> n >> m;
     graph.init(n);
+    g.clear();
     for (int i = 1; i <= m; i++)
     {
         int u, v; cin >> u >> v;
         if (u == v) continue;
         // 自动建无向边，无需正反加两次
-        graph.add_edge(u, v, i);
+        g.add(u, v);
     }
-    graph.build();       // 跑 Tarjan 求 EBCC
-    graph.build_tree();  // 生成缩点桥树
-    VI bridges = graph.get_bridges(); // 获取割边(桥)集合
+    graph.build(g, n);       // 跑 Tarjan 求 EBCC
+    graph.build_tree(g);     // 生成缩点桥树
+    VI bridges = graph.get_bridges(g); // 桥的树方向半边 id(端点经 g.edges 取)
     // 遍历桥树的连通块
     VI vis(graph.ebcc_cnt + 1, 0);
     for (int i = 1; i <= graph.ebcc_cnt; i++)

@@ -15,11 +15,10 @@ struct SCC
 {
     int n;
     int dfn_idx, scc_cnt;
-    Graph<true, Empty> g;      // 原有向图
-    Graph<true, Empty> dag;    // 缩点后的 DAG
+    Graph<true, Empty> dag;    // 缩点后的 DAG (输出物)
     VI dfn, low, bel, in_stk, sta;
     SCC(int max_n = 0, int max_m = 0) : n(max_n), dfn_idx(0), scc_cnt(0),
-        g(max_n, max_m), dag(max_n, max_m),
+        dag(max_n, max_m),
         dfn(max_n + 10, 0), low(max_n + 10, 0),
         bel(max_n + 10, 0), in_stk(max_n + 10, 0)
     {
@@ -28,20 +27,24 @@ struct SCC
     void init(int _n)
     {
         n = _n;
-        g.clear();
         dag.clear();
         z_fill_n(n, 0, dfn, low, bel, in_stk);
         dfn_idx = scc_cnt = 0;
         sta.clear();
     }
-    void add_edge(int u, int v) { g.add(u, v); }
-    void build()
+    // 跑 Tarjan 求强连通分量; g = 任意有向邻接表鸭子(范围 for g[u] 取
+    // e.v 即可, 带权无权都行, 典型: 直接喂 SegGraph 的 Graph<true, LL>)
+    // 时间: O(n + m) | 空间: O(n)
+    template <class G>
+    void build(G& g, int _n)
     {
+        n = _n;
         for (int i = 1; i <= n; i++)
-            if (!dfn[i]) tarjan(i);
+            if (!dfn[i]) tarjan(g, i);
     }
-    // 构建缩点后的 DAG
-    void build_dag()
+    // 构建缩点后的 DAG (输出图恒为无权 Graph<true>)
+    template <class G>
+    void build_dag(G& g)
     {
         for (int u = 1; u <= n; u++)
         {
@@ -53,7 +56,8 @@ struct SCC
         }
     }
     // 去重边 DAG
-    void build_dag_unique()
+    template <class G>
+    void build_dag_unique(G& g)
     {
         VPII edges;
         for (int u = 1; u <= n; u++)
@@ -70,7 +74,8 @@ struct SCC
             dag.add(edge.first, edge.second);
     }
 private:
-    void tarjan(int u)
+    template <class G>
+    void tarjan(G& g, int u)
     {
         dfn_idx++;
         low[u] = dfn[u] = dfn_idx;
@@ -81,7 +86,7 @@ private:
             int v = e.v;
             if (!dfn[v])
             {
-                tarjan(v);
+                tarjan(g, v);
                 low[u] = min(low[u], low[v]);
             }
             else if (in_stk[v]) low[u] = min(low[u], dfn[v]);
@@ -108,6 +113,7 @@ private:
 const int MAXN = 500005;
 const int MAXM = 1000005;
 SCC graph(MAXN, MAXM);
+Graph<true> g(MAXN, MAXM);
 
 int scc_val[MAXN];
 int dp[MAXN]; // 记录到达每个 SCC 的最大权值和
@@ -118,6 +124,7 @@ void solve()
     cin >> n >> m;
 
     graph.init(n);
+    g.clear();
 
     VI val(n + 1);
     for (int i = 1; i <= n; i++)
@@ -131,11 +138,11 @@ void solve()
     {
         int u, v;
         cin >> u >> v;
-        graph.add_edge(u, v);
+        g.add(u, v);
     }
 
     // 1. 跑 Tarjan 找 SCC
-    graph.build();
+    graph.build(g, n);
 
     // 2. 将原图权值累加到对应的 SCC 新节点上
     for (int i = 1; i <= n; i++)
@@ -144,7 +151,7 @@ void solve()
     }
 
     // 3. 构建 DAG
-    graph.build_dag();
+    graph.build_dag(g);
 
     // 4. DAG 上 DP (利用 Tarjan 自带的拓扑序)
     // 初始化 DP 数组为当前点权
