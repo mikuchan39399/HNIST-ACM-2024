@@ -18,7 +18,7 @@ jobs:
         run: |
           g++ --version | head -1
           pwsh --version
-      - name: Full regression (rule section 9)
+      - name: Full regression (rule.md section 9)
         shell: pwsh
         run: ./scripts/run_checks.ps1
       - name: Syntax sweep (engines + examples, checks excluded)

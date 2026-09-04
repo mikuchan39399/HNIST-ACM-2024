@@ -77,3 +77,21 @@
   位段打包键必须能证明各字段上界, 否则直接多键排。
 - 杂项: global 层残留 credential.helper=manager-core 清除(GCM 旧名警告,
   system 层 manager 2.6.0 在位)。
+
+## 2026/9/6 rule 通道与格式日
+
+- .clinerules 接线: Cline 官方主格式是项目根 .clinerules\ 文件夹(.md 自动
+  注入每次对话); 只放路由指针不复制内容, 唯一真相源仍是一份; 因刷题
+  workspace(oj_test)与库根是两个目录, 两边各放一份 zoi.md, 刷题侧用绝对
+  路径指回库根。
+- rule.cpp -> rule.md: 纯机械转换(去 // 前缀+章节横幅转 ## 标题), 转换
+  脚本先出 %TEMP% 草稿并做正文逐行对账(结构行除外字符级一致)才落库;
+  引用面同步 run_checks.ps1 头注释与 ci.yml 步骤名。动机: 宪法本来就不
+  是 C++ 代码, .md 有高亮且进 AI 工具生态(.clinerules/cursor 等)。
+- §13 补三条现行机制: catalog ^ 笔记条目(.txt 正文); typst query 输出无
+  location, 旧 JSON 审计静默空匹配假绿, eval 才是真相; catalog 域/子域
+  连续性守卫(乱序构建直接 throw)。
+- 同轮事实核查("flash 大修"考古): reflog/mtime/diff 三证一致, 仓库内无
+  未落库改动, 现状 = a39dd7a; make_booklet.ps1 全文 371 行逐行核查, 内
+  容零硬编码(条目/骨架/导语/插件/排序全部运行时数据驱动, 仅排版参数集
+  中在模板段属正常配置)。

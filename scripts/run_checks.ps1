@@ -1,5 +1,5 @@
 param([string]$Filter = '')
-# run_checks.ps1 - one-shot regression runner (rule.cpp section 9)
+# run_checks.ps1 - one-shot regression runner (rule.md section 9)
 # Usage: powershell -ExecutionPolicy Bypass -File run_checks.ps1              -> full regression
 #        powershell -ExecutionPolicy Bypass -File run_checks.ps1 -Filter oset -> scoped (name contains 'oset')
 # NOTE: keep this file ASCII-only; PS 5.1 reads no-BOM files as ANSI and CJK
