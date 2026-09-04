@@ -153,7 +153,7 @@ void test_topo_sort()
 {
     mt19937 rng(42);
     static Graph<true> g(60, 240);      // static + clear 复用, 覆盖多测路径
-    static TopoSort<Graph<true>> ts;
+    static TopoSort ts;
     for (int tc = 0; tc < 300; tc++)
     {
         int n = 1 + rng() % 40;

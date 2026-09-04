@@ -12,13 +12,13 @@ using namespace std;
 // 仅接受有向图 Graph<true, ...>;
 // build 返回 false = 有环; true = DAG, 无任何环,
 // 负权边的最短路/DP 可直接按 get() 的顺序松弛
-template <class G>
 struct TopoSort
 {
     VI in;   // 入度副本, 不动原图
     VI ord;  // 拓扑序
     // 返回值: true = DAG(无环) | false = 有环
     // 时间: O(n + m) | 空间: O(n)
+    template <class G>
     bool build(G& g, int n)
     {
         in = g.in_deg;
@@ -40,7 +40,7 @@ struct TopoSort
 /*
  * Usage:
  * Graph<true> g(n, m);
- * TopoSort<Graph<true>> ts;
+ * TopoSort ts;
  * for (int i = 1; i <= m; i++) { int u, v; cin >> u >> v; g.add(u, v); }
  * if (!ts.build(g, n)) { cout << "-1" << '\n'; }  // 有环
  * for (int u : ts.get()) cout << u << ' ';
