@@ -17,7 +17,7 @@ struct SegGraph
 {
     int n, tot;
     Graph<true, W> g;
-    // 预算: max_m = 4*max_n + q * 2*ceil(log2 max_n) (若有 r2r 再加中继边)
+    // 预算: max_m = 4*max_n + q * 2*ceil(log2 max_n) (r2r/r2new/p2new 每次各拿 1 个虚点)
     // 时间: O(max_n) | 空间: O(max_n + max_m)
     SegGraph(int max_n = 0, int max_m = 0) : n(0), tot(max_n),
         g(4 * max_n + 10, max_m), tlc(4 * max_n + 10, 0), trc(4 * max_n + 10, 0)
@@ -41,13 +41,28 @@ struct SegGraph
     // [l,r] 全体 -> v, 权 w
     // 时间: O(log n) | 空间: O(1)
     void add_r2p(int l, int r, int v, W w = W()) { link_in(rt_in, 1, n, l, r, v, w); }
+    // 新建一个虚点并让点 u 连入, 返回虚点编号
+    // 时间: O(1) | 空间: 1 个虚点, 1 条有向边
+    int add_p2new(int u, W w = W())
+    {
+        int p = ++tot;
+        g.add(u, p, w);
+        return p;
+    }
+    // 新建一个虚点并让区间 [l, r] 全体连入, 返回虚点编号
+    // 时间: O(log n) | 空间: 1 个虚点, 至多 2*ceil(log2 n) 条有向边
+    int add_r2new(int l, int r, W w = W())
+    {
+        int p = ++tot;
+        link_in(rt_in, 1, n, l, r, p, w);
+        return p;
+    }
     // 区间 [l1, r1] 全体 -> 区间 [l2, r2] 全体, 权 w
     // 时间: O(log n) | 空间: 增加 1 个中继虚点, 至多 4*ceil(log2 n) 条有向边
     void add_r2r(int l1, int r1, int l2, int r2, W w = W())
     {
-        int mid_node = ++tot;
-        link_in(rt_in, 1, n, l1, r1, mid_node, W());
-        link_out(rt_out, 1, n, l2, r2, mid_node, w);
+        int mid_node = add_r2new(l1, r1);
+        add_p2r(mid_node, l2, r2, w);
     }
 private:
     int rt_out, rt_in;
@@ -100,6 +115,9 @@ private:
  *     if (op == 2) { int u, l, r; LL w; cin >> u >> l >> r >> w; sg.add_p2r(u, l, r, w); }
  *     if (op == 3) { int v, l, r; LL w; cin >> v >> l >> r >> w; sg.add_r2p(l, r, v, w); }
  *     // sg.add_r2r(l1, r1, l2, r2, w);     // 区间连区间, 每次 +1 中继虚点
+ *     // int v = sg.add_r2new(l1, r1, w1);  // 手动中继: 新虚点收编区间, 返回虚点号
+ *     // int v2 = sg.add_p2new(u, w0);       // 单点起链: u 收进新虚点(O(1)), 再自由分发
+ *     // sg.add_p2r(v, l2, r2, w2);         // 虚点当源发往区间(同权即等价 r2r, 异权自由拼)
  * }
  * Dijkstra dij{sg.tot};                    // 引擎: 最短路 dij.h
  * dij.init(sg.tot);
