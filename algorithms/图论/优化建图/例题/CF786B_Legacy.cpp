@@ -15,7 +15,7 @@ int main()
     cin.tie(nullptr);
     int n, q, s;
     cin >> n >> q >> s;
-    SegGraph sg{n, 8 * n + 34 * q};   // 边预算公式见引擎头注释
+    SegGraph<LL> sg{n, 8 * n + 34 * q};   // 边预算公式见引擎头注释
     sg.build(n);                      // 两棵骨架树, 树边 0 权
     while (q--)
     {

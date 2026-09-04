@@ -1,5 +1,5 @@
 // ============ seggraph_check 线段树优化建图 回归套件 ============
-// 覆盖: SegGraph 三型连边(add_edge/add_out/add_in)建图跑 Dijkstra,
+// 覆盖: SegGraph 四型连边(p2p/p2r/r2p/r2r)建图跑 Dijkstra + Empty 无权实例同拓扑互拍,
 //       对拍朴素全边展开图(README 钦定的暴力参照系); 非负权;
 //       static 实例跨轮 build 复用(多测路径, 内部自动清图)
 // 纪律: 改动 线段树优化建图 / Dijkstra / Graph 模板, 必重跑本套件
@@ -18,7 +18,8 @@ using LL = long long;
 void test_seg_graph()
 {
     mt19937 rng(786786);
-    static SegGraph sg{61, 4000};
+    static SegGraph<LL> sg{61, 4000};
+    static SegGraph<Empty> se{61, 4000};   // 无权实例(偏序用法), 同拓扑互拍
     static Dijkstra d1{254};
     static Dijkstra d2{41};
     static Graph<true, LL> gn{41, 200000};
@@ -27,26 +28,30 @@ void test_seg_graph()
         int n = 1 + rng() % 40, q = rng() % 60;
         gn.clear();
         sg.build(n);
+        se.build(n);
         for (int i = 0; i < q; i++)
         {
             int l = 1 + rng() % n, r = 1 + rng() % n;
             if (l > r) swap(l, r);
             int u = 1 + rng() % n, v = 1 + rng() % n;
             LL w = rng() % 21;
-            int op = rng() % 3;
+            int op = rng() % 4;
             if (op == 0)
             {
                 sg.add_p2p(u, v, w);
+                se.add_p2p(u, v);
                 gn.add(u, v, w);
             }
             else if (op == 1)
             {
                 sg.add_p2r(u, l, r, w);
+                se.add_p2r(u, l, r);
                 for (int k = l; k <= r; k++) gn.add(u, k, w);
             }
             else if (op == 2)
             {
                 sg.add_r2p(l, r, v, w);
+                se.add_r2p(l, r, v);
                 for (int k = l; k <= r; k++) gn.add(k, v, w);
             }
             else
@@ -54,10 +59,12 @@ void test_seg_graph()
                 int l2 = 1 + rng() % n, r2 = 1 + rng() % n;
                 if (l2 > r2) swap(l2, r2);
                 sg.add_r2r(l, r, l2, r2, w);
+                se.add_r2r(l, r, l2, r2);
                 for (int i = l; i <= r; i++)
                     for (int j = l2; j <= r2; j++) gn.add(i, j, w);
             }
         }
+        assert(se.tot == sg.tot && se.g.edge_cnt() == sg.g.edge_cnt());   // Empty 与 LL 同拓扑
         int s = 1 + rng() % n;
         d1.init(sg.tot);
         d1.run(s, sg.g);
