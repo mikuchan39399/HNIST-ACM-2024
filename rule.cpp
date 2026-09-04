@@ -3,7 +3,7 @@
 // 本文件是最高规范。任何建议(包括 AI 自己的)和它冲突, 一律以它为准。
 // 对话没带这个文件时: 先找用户要, 不要猜码风。
 //
-// 最近一轮: 赛场手册建成(make_booklet.ps1 -> typst A4 双栏 PDF, 排版三改: 页眉/代码框/目录双栏; 双面打印: 大条目 pagebreak(to odd) 正面起排 + big-* 锚自动 parity 审计)
+// 最近一轮: 手册 v2(make_booklet.ps1): 全库知识点文件夹覆盖审计(175 个, 缺条 exit 1), 目录改域/条目两级(子域转分隔条, 组 README 印导语), 107 骨架条目自动扫入并紧凑连排, 大条目奇数页改 -SoloMin 可选(默认 0 = 连续排版零空白页), 修「待补」乱码(PS5.1 无 BOM 按 ANSI, 中文字面量改码点拼接)
 // 更早的历史都归档在 rule_history.md, 防止这份文件越长越没人读。
 // ============================================================================
 
@@ -361,14 +361,20 @@
 //   回归 + 全 cpp 语法扫(_check 除外, TEST GAP 盲区进网; misc 的 rw 仅
 //   Windows)。本地绿是义务, CI 红当场修; 结论匿名轮询 actions/runs API,
 //   日志要 token 故 WSL 复现通道是主力。2026/9/3 建成。
-// 赛场纸质化: make_booklet.ps1 -> zoi-booklet.pdf(typst A4 双栏, 目录带页码);
+// 赛场纸质化: make_booklet.ps1 -> zoi-booklet.pdf(typst A4 横排三栏, 目录带页码);
 //   catalog 顺序即章节序; 相对 include 改写为跳板短名(誊写产物=同目录 .h
 //   集合, utils 只印一次); 插件附录自动收(含 main 跳过); 每条目印 行数+
-//   SHA256 前 8 hex(LF 归一化), 自检先数行再对 hash; 大条目(>=SoloMin 90)
-//   pagebreak(to:"odd") 从纸张正面起排 + big-* 锚自动 parity 审计(违例
-//   exit 1); 条件分页禁 context 读页码(反馈循环); 页码=一面一页; typst
+//   SHA256 前 8 hex(LF 归一化), 自检先数行再对 hash; 目录两级=域/条目,
+//   子域是分隔条(subsep), 未代表组的 README 印作导语(subintro); 全库知
+//   识点文件夹构建期对账(175 个), 缺条 exit 1 并打印缺席清单(防缺斤少
+//   两); 缺失叶子自动成骨架条目(README 作正文, 空壳打「待补」)紧凑连
+//   排, 真实条目一条一页; 大条目正面起排改 -SoloMin 可选(默认 0 连续
+//   排版零空白页, 双面打印场景 -SoloMin 90; parity 审计仅在 >0 时跑);
+//   条件分页禁 context 读页码(反馈循环); 页码=一面一页; PS5.1 读无 BOM
+//   按 ANSI, 中文字面量一律码点拼接(「待补」曾乱码成「寰呰」); typst
 //   雷区: _ 是强调开关(中文文件名须转义), content 里 # 开代码(禁裸 #/[)。
-//   typst 单 exe 落 scripts\(gitignore); 生成物不进 git。2026/9/3 建成。
+//   typst 单 exe 落 scripts\(gitignore); 生成物不进 git。2026/9/3 建成,
+//   2026/9/5 全库覆盖+两级目录改版。
 // zoi\ 跳板层: stub = 一行 #include 指向真身, 纯 ASCII 短名, 中文路径只在
 //   zoi\_catalog.txt 出现; 新引擎入库 = catalog 加一行 + 跑 make_stubs。
 //   后缀必须 .h(.cpp 不进补全候选); 命名标准缩写留任、冷门驼峰全称;

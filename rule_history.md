@@ -57,3 +57,23 @@
 - 迁移 runbook 五步详解与 cph 依赖面说明(紧凑版留在宪法)。
 - §4 现役引擎清单(2026/9/1 时点 21 引擎)退位: 唯一真相源改为
   zoi\_catalog.txt, 清单不再在宪法维护副本。
+
+## 2026/9/5-6 手册 v2 归档 (排版打磨 ffb4739 + 全库覆盖改版)
+
+- 排版打磨一轮(ffb4739, 已推): 正文/标题 Source Sans Pro + Noto Sans SC,
+  CJK-Latin 自动加隙; 代码显式 Consolas; 标题双色蓝阶; 代码块全边框;
+  页眉 hairline; 页码函数化(目录纯页码/页脚 n/total)。
+- 手册 v2: 覆盖审计入宪(175 知识点文件夹全锚定, 缺条 exit 1 印缺席清单);
+  目录改域/条目两级(outline depth 2, 子域降分隔条 subsep), 14 个未代表
+  组中 10 份 README 按路径序拼接印作导语(subintro, 同 key 撞车曾互相覆
+  盖); 107 个缺失叶子自动成骨架条目(44 有 README 作正文, 63 空壳打「待
+  补」), 骨架 run 起新页后紧凑连排; 大条目奇数页改 -SoloMin 可选, 默认
+  0 连续排版消灭整页空白页(parity 审计随之条件化); 「待补」乱码根除
+  (PS5.1 读无 BOM 按 ANSI 把 UTF-8 中文字面量读成「寰呰」, 全部改码点
+  拼接, 脚本 ASCII-only 机械检查归零)。
+- 排序键教训: 打包数值键 domRank*1e6+subRank*1e4+tie 在 auto-only 子域
+  拿 1000+ 号后跨位段溢出, 已知域的骨架整体流落到杂项之后(目录页码 113
+  露馅, --pages 渲染 PNG 目视实锤); 改多键 Sort-Object D,S,T,I 根治——
+  位段打包键必须能证明各字段上界, 否则直接多键排。
+- 杂项: global 层残留 credential.helper=manager-core 清除(GCM 旧名警告,
+  system 层 manager 2.6.0 在位)。
