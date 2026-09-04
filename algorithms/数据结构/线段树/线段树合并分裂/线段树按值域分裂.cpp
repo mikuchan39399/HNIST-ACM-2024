@@ -1,3 +1,4 @@
+// zoi: segSplit
 #include <iostream>
 #include <vector>
 

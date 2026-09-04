@@ -1,3 +1,4 @@
+// zoi: eulerPointUndirected
 #include <vector>
 #include <utility>
 

@@ -1,3 +1,4 @@
+// zoi: eulerPointDirected
 #include <vector>
 
 using namespace std;

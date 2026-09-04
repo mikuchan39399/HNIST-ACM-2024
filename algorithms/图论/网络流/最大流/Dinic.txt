@@ -1,0 +1,3 @@
+占位: 待入库。
+
+Dinic 最大流: BFS 分层 + current-arc 优化, O(V^2 E); 建图用 Graph<false>, 对偶半边 rev(i)=i^1, 增广流量存反向边权。

@@ -25,6 +25,15 @@ if (Test-Path -LiteralPath $cat) {
         $t = $l.Trim()
         if ($t -eq '' -or $t.StartsWith('#')) { continue }
         if ($t.StartsWith('!')) { $exempt += $t.Substring(1).Trim(); continue }
+        if ($t.StartsWith('^')) {
+            # prose entry (^name<TAB>file): target must exist; no stub, no stamp, no coverage duty
+            $pp = $t.Substring(1) -split "`t"
+            if ($pp.Count -ne 2 -or -not (Test-Path -LiteralPath (Join-Path $root ($pp[1].Trim())))) {
+                Write-Host ('[PROSE BROKEN] prose target missing: ' + $t) -ForegroundColor Red
+                $bad++
+            }
+            continue
+        }
         $parts = $t -split "`t"
         if ($parts.Count -ne 2) {
             Write-Host ('[CATALOG BAD] expected name<TAB>path: ' + $t) -ForegroundColor Red

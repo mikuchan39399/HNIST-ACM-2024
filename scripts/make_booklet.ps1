@@ -1,5 +1,9 @@
 param([string]$Filter = '', [string]$OutFile = 'zoi-booklet.pdf', [int]$SoloMin = 90)
-# make_booklet.ps1 - printable contest booklet generator (typst, A4, 2 columns)
+# make_booklet.ps1 - printable contest booklet generator (typst, A4 landscape, 3 columns)
+# Layout: one code block per page (pagebreak before every entry); entries >= SoloMin
+#         additionally start on an odd page (duplex sheet front) + parity audit.
+#         Page header center shows the entry flowing on that page. Catalog lines
+#         starting with '^' are prose entries (theorems/notes, no code, no stub).
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\make_booklet.ps1              -> full
 #        powershell -ExecutionPolicy Bypass -File scripts\make_booklet.ps1 -Filter seg  -> scoped
 # SoloMin: entries with >= SoloMin lines start on an odd page (= a physical sheet's
@@ -27,16 +31,20 @@ $entries = @()
 foreach ($l in $catLines) {
     $t = $l.Trim()
     if ($t -eq '' -or $t.StartsWith('#') -or $t.StartsWith('!')) { continue }
+    $prose = $t.StartsWith('^')            # ^name<TAB>file = prose entry (no code, no stub)
+    if ($prose) { $t = $t.Substring(1) }
     $parts = $t -split "`t"
     if ($parts.Count -ne 2) { continue }
     $segs = $parts[1].Trim() -split '/'
     $entries += [pscustomobject]@{
         Name = $parts[0].Trim(); Rel = $parts[1].Trim()
-        Family = $segs[1] + ' / ' + $segs[2]
-        Cn = [IO.Path]::GetFileNameWithoutExtension($parts[1].Trim()) }
+        Domain = $segs[1]
+        Sub = $segs[2]
+        Cn = [IO.Path]::GetFileNameWithoutExtension($parts[1].Trim())
+        Prose = $prose }
 }
 if ($Filter -ne '') {
-    $entries = @($entries | Where-Object { $_.Family -like "*$Filter*" -or $_.Name -like "*$Filter*" -or $_.Cn -like "*$Filter*" })
+    $entries = @($entries | Where-Object { $_.Domain -like "*$Filter*" -or $_.Sub -like "*$Filter*" -or $_.Name -like "*$Filter*" -or $_.Cn -like "*$Filter*" })
 }
 if ($entries.Count -eq 0) { throw 'no catalog entries matched' }
 
@@ -81,64 +89,109 @@ foreach ($p in $plugins) { $plugBlocks += Convert-Entry $p }
 # ---- assemble typst source ----
 function Esc([string]$t) { return ($t -replace '([_\*\[\]#`$\\@<>])', '\$1') }   # typst markup escape
 $s = New-Object System.Text.StringBuilder
-[void]$s.AppendLine('#set page(paper: "a4", margin: (x: 1.1cm, y: 1.2cm, top: 1.6cm), numbering: "1 / 1")')
-[void]$s.AppendLine('#set text(font: ("Consolas", "Microsoft YaHei"), size: 7pt, lang: "zh")')
+[void]$s.AppendLine('#set page(paper: "a4", flipped: true, margin: (x: 0.8cm, y: 1.0cm, top: 1.5cm), numbering: (..a) => text(size: 6pt, fill: luma(120), { let n = a.pos().at(0); let t = if a.pos().len() > 1 { a.pos().at(1) } else { none }; if t == none { str(n) } else { str(n) + " / " + str(t) } }))')
+[void]$s.AppendLine('#set text(font: ("Source Sans Pro", "Noto Sans SC"), size: 7.5pt, lang: "zh", region: "cn", cjk-latin-spacing: auto)')
 [void]$s.AppendLine('#set par(leading: 0.52em, spacing: 0.85em, justify: false)')
 [void]$s.AppendLine('#set heading(numbering: none)')
-[void]$s.AppendLine('#show raw: set text(size: 6pt)')
-[void]$s.AppendLine('#show raw.where(block: true): it => block(width: 100%, fill: luma(248), stroke: (left: 0.6pt + luma(185)), inset: (x: 5pt, y: 3.5pt), radius: 2pt, it)')
-[void]$s.AppendLine('#show heading.where(level: 2): it => block(above: 1.7em, below: 0.75em, width: 100%)[#text(size: 10pt, weight: "bold", it.body) #v(-0.55em, weak: true) #line(length: 100%, stroke: 0.6pt + luma(175))]')
+[void]$s.AppendLine('#show heading.where(level: 1): it => block(above: 2.4em, below: 1.1em, width: 100%)[#text(size: 13pt, weight: "bold", fill: rgb("#1f4e79"), it.body) #v(0.5em) #line(length: 100%, stroke: 1pt + rgb("#1f4e79"))]')
+[void]$s.AppendLine('#show raw: set text(font: ("Consolas", "Noto Sans SC"), size: 6pt)')
+[void]$s.AppendLine('#show raw.where(block: true): it => block(width: 100%, fill: luma(249), stroke: (left: 1.1pt + luma(150), top: 0.35pt + luma(215), right: 0.35pt + luma(215), bottom: 0.35pt + luma(215)), inset: (x: 5pt, y: 3.5pt), radius: (top-right: 2pt, bottom-right: 2pt), it)')
+[void]$s.AppendLine('#show heading.where(level: 2): it => block(above: 2.1em, below: 0.9em, width: 100%)[#text(size: 10pt, weight: "bold", fill: rgb("#2e6da4"), it.body) #v(0.45em) #line(length: 100%, stroke: 0.7pt + luma(160))]')
 [void]$s.AppendLine('#show heading.where(level: 3): it => block(above: 1.15em, below: 0.25em, text(weight: "bold", size: 7.4pt, it.body))')
-[void]$s.AppendLine('#show outline: set text(size: 6pt)')
-[void]$s.AppendLine('#show outline.entry: set par(leading: 0.42em)')
+[void]$s.AppendLine('#show outline: set text(size: 7pt)')
+[void]$s.AppendLine('#show outline.entry: set par(leading: 0.5em)')
+[void]$s.AppendLine('#show outline.entry.where(level: 1): it => block(above: 0.85em, below: 0.15em, text(weight: "bold", size: 8.5pt, fill: rgb("#1f4e79"), it))')
+[void]$s.AppendLine('#show outline.entry.where(level: 2): it => { set text(size: 6.8pt); it }')
+[void]$s.AppendLine('#show outline.entry.where(level: 3): it => { set text(size: 6.3pt, fill: luma(75)); it }')
 [void]$s.AppendLine('#let pagehead = context {')
-[void]$s.AppendLine('  let hs = query(heading.where(level: 2).before(here()))')
-[void]$s.AppendLine('  let cur = if hs.len() > 0 { hs.last().body } else { [--] }')
-[void]$s.AppendLine('  grid(columns: (1fr, auto), text(size: 6pt, fill: luma(110), cur), text(size: 6pt, fill: luma(110))[zoi booklet])')
+[void]$s.AppendLine('  let pg = here().page()')
+[void]$s.AppendLine('  let doms = query(heading.where(level: 1).before(here()))')
+[void]$s.AppendLine('  let dom = if doms.len() > 0 { doms.last().body } else { [--] }')
+[void]$s.AppendLine('  let fams = query(heading.where(level: 2).before(here()))')
+[void]$s.AppendLine('  let fam = if fams.len() > 0 { fams.last().body } else { [--] }')
+[void]$s.AppendLine('  let ents = query(heading.where(level: 3).before(here())).filter(h => h.has(str(label)))')
+[void]$s.AppendLine('  let flowing = if ents.len() > 0 { ents.last().body } else { "" }')
+[void]$s.AppendLine('  grid(columns: (auto, 1fr, auto), text(size: 6pt, fill: luma(110))[#dom / #fam], align(center, text(size: 6pt, fill: luma(110), flowing)), text(size: 6pt, fill: luma(110))[zoi booklet])')
+[void]$s.AppendLine('  v(0.3em)')
+[void]$s.AppendLine('  line(length: 100%, stroke: 0.3pt + luma(205))')
 [void]$s.AppendLine('}')
+[void]$s.AppendLine('#let colrule = [#place(line(start: (33.34%, 0%), end: (33.34%, 100%), stroke: 0.4pt + luma(210))) #place(line(start: (66.67%, 0%), end: (66.67%, 100%), stroke: 0.4pt + luma(210)))]')
 [void]$s.AppendLine('')
 [void]$s.AppendLine('#v(1fr)')
 [void]$s.AppendLine('#align(center, text(size: 24pt, weight: "bold")[zoi Contest Booklet])')
 [void]$s.AppendLine('#v(0.5em)')
 [void]$s.AppendLine('#align(center, text(size: 7pt, fill: luma(100))[' + $blocks.Count + ' engines + ' + $plugBlocks.Count + ' algebra plugins - hash = SHA256 first 8 hex over LF-normalized text, includes rewritten to stub names. On-site check: count lines, then hash after LF save.])')
 [void]$s.AppendLine('#v(1em)')
-[void]$s.AppendLine('#align(center, line(length: 55%, stroke: 0.8pt + luma(150)))')
-[void]$s.AppendLine('#v(1em)')
-[void]$s.AppendLine('#columns(2, gutter: 1cm)[#outline(depth: 3, indent: 0.7em)]')
+[void]$s.AppendLine('#align(center, line(length: 55%, stroke: 1.1pt + rgb("#1f4e79")))')
+[void]$s.AppendLine('#v(1fr)')
 [void]$s.AppendLine('#pagebreak()')
-[void]$s.AppendLine('#set page(columns: 2, margin: (x: 0.85cm, y: 1.05cm, top: 1.5cm), header: pagehead)')
+[void]$s.AppendLine('#columns(3, gutter: 0.9cm)[#outline(title: none, depth: 3, indent: 0.8em)]')
+[void]$s.AppendLine('#pagebreak()')
+[void]$s.AppendLine('#set page(columns: 3, margin: (x: 0.7cm, y: 0.95cm, top: 1.4cm), header: pagehead, foreground: colrule)')
 [void]$s.AppendLine('')
-$lastFam = ''
-$pb = '#pagebreak(to: "odd", weak: true)'   # jump to next odd page (physical sheet front); weak = no-op if already odd
+# guard: (Domain, Sub) groups must be contiguous in catalog order, or the emit
+# loop prints the same sub heading twice and the TOC lists it two times
+$prevKey = ''
+$seenSub = @{}
 foreach ($b in $blocks) {
-    $newFam = $b.Meta.Family -ne $lastFam
+    $k = $b.Meta.Domain + '/' + $b.Meta.Sub
+    if ($seenSub.ContainsKey($k) -and $prevKey -ne $k) { throw ('catalog: non-contiguous sub-domain: ' + $k) }
+    $seenSub[$k] = $true
+    $prevKey = $k
+}
+$lastDom = ''
+$lastSub = ''
+$pbOdd = '#pagebreak(to: "odd", weak: true)'   # big entries: jump to next odd page (physical sheet front)
+$pbPage = '#pagebreak(weak: true)'             # one code block per page: every entry opens a fresh page
+foreach ($b in $blocks) {
+    $newDom = $b.Meta.Domain -ne $lastDom
+    $newSub = $b.Meta.Sub -ne $lastSub
     $big = $b.Lines -ge $SoloMin
-    if ($big -and $newFam) { [void]$s.AppendLine($pb) }
-    if ($newFam) {
-        if ($lastFam -ne '') { [void]$s.AppendLine('') }
-        [void]$s.AppendLine('== ' + (Esc $b.Meta.Family))
-        $lastFam = $b.Meta.Family
+    $brk = if ($big) { $pbOdd } else { $pbPage }
+    if ($newDom) {
+        if ($lastDom -ne '') { [void]$s.AppendLine('') }
+        [void]$s.AppendLine($brk)              # domain heading rides the fresh page of its first entry
+        [void]$s.AppendLine('= ' + (Esc $b.Meta.Domain))
+        $lastDom = $b.Meta.Domain
     }
-    elseif ($big) { [void]$s.AppendLine($pb) }
-    $lbl = ''
-    if ($big) { $lbl = ' <big-' + $b.Meta.Name + '>' }   # anchor for parity audit
-    [void]$s.AppendLine('=== ' + (Esc $b.Meta.Name) + ' -- ' + (Esc $b.Meta.Cn) + $lbl)
+    else { [void]$s.AppendLine($brk) }
+    if ($newSub) {
+        [void]$s.AppendLine('== ' + (Esc $b.Meta.Sub))
+        $lastSub = $b.Meta.Sub
+    }
+    if ($b.Meta.Prose) {
+        [void]$s.AppendLine('=== [' + (Esc $b.Meta.Cn) + ' #text(fill: luma(165), size: 0.72em)[待补]] <e-' + $b.Meta.Name + '>')
+    }
+    else {
+        [void]$s.AppendLine('=== ' + (Esc $b.Meta.Cn) + ' <e-' + $b.Meta.Name + '>')
+    }
     [void]$s.AppendLine('#align(right, text(size: 5.4pt, fill: luma(105))[' + $b.Lines + ' ln -- sha256 ' + $b.Hash + '])')
-    [void]$s.AppendLine('```cpp')
-    [void]$s.AppendLine($b.Text)
-    [void]$s.AppendLine('```')
+    if ($b.Meta.Prose) {
+        [void]$s.AppendLine('#set par(justify: true)')
+        [void]$s.AppendLine((Esc $b.Text))
+        [void]$s.AppendLine('#set par(justify: false)')
+    }
+    else {
+        [void]$s.AppendLine('```cpp')
+        [void]$s.AppendLine($b.Text)
+        [void]$s.AppendLine('```')
+    }
     [void]$s.AppendLine('')
 }
 if ($plugBlocks.Count -gt 0) {
-    [void]$s.AppendLine('== Appendix / algebra plugins (copy into solution, adapt fields)')
+    $firstPlug = $true
+    $pi = 0
     foreach ($b in $plugBlocks) {
-        if ($b.Lines -ge $SoloMin) { [void]$s.AppendLine($pb) }
-        [void]$s.AppendLine('=== ' + (Esc $b.Meta.Name))
-    [void]$s.AppendLine('#align(right, text(size: 5.4pt, fill: luma(105))[' + $b.Lines + ' ln -- sha256 ' + $b.Hash + '])')
+        $brk = if ($b.Lines -ge $SoloMin) { $pbOdd } else { $pbPage }
+        if ($firstPlug) { [void]$s.AppendLine($brk); [void]$s.AppendLine('== Appendix / algebra plugins'); $firstPlug = $false }
+        else { [void]$s.AppendLine($brk) }
+        [void]$s.AppendLine('=== ' + (Esc $b.Meta.Name) + ' <e-plug' + $pi + '>')
+        [void]$s.AppendLine('#align(right, text(size: 5.4pt, fill: luma(105))[' + $b.Lines + ' ln -- sha256 ' + $b.Hash + '])')
         [void]$s.AppendLine('```cpp')
         [void]$s.AppendLine($b.Text)
         [void]$s.AppendLine('```')
         [void]$s.AppendLine('')
+        $pi++
     }
 }
 $typPath = Join-Path $root 'booklet.typ'
@@ -153,21 +206,31 @@ Write-Host ('[OK] booklet: ' + $blocks.Count + ' engines, ' + $plugBlocks.Count 
 foreach ($w in $script:warn) { Write-Host ('[WARN] ' + $w) -ForegroundColor Yellow }
 
 # ---- parity audit: big entries must start on odd pages (duplex sheet fronts) ----
-$qout = $null
+# NOTE: `typst query` output carries no location on current toolchains; the old
+#       JSON audit silently matched nothing (vacuous OK). eval() is the truth.
 $prevEAP = $ErrorActionPreference
 $ErrorActionPreference = 'Continue'
-try { $qout = & $typst query $typPath 'heading' --format json 2>$null } catch {}
+$expr = 'query(heading).filter(h=>h.has(str(label))).map(h=>(h.label,h.location().page()))'
+$evalOut = & $typst eval $expr --in $typPath 2>$null
 $ErrorActionPreference = $prevEAP
 $viol = 0
-try { $heads = @($qout | ConvertFrom-Json) } catch { $heads = @() }
-foreach ($h in $heads) {
-    $lb = "$($h.label)"
-    if (-not $lb.StartsWith('big-')) { continue }
-    $pg = $h.location.page
-    if ("$pg" -match '^\d+$' -and [int]$pg % 2 -eq 0) {
-        Write-Host ('[PARITY VIOLATION] ' + $lb + ' starts on even page ' + $pg) -ForegroundColor Red
-        $viol++
+$hits = 0
+$bigHits = 0
+$bigset = @()
+foreach ($b in $blocks) { if ($b.Lines -ge $SoloMin) { $bigset += $b.Meta.Name } }
+for ($pi = 0; $pi -lt $plugBlocks.Count; $pi++) { if ($plugBlocks[$pi].Lines -ge $SoloMin) { $bigset += 'plug' + $pi } }
+foreach ($m in [regex]::Matches(($evalOut -join ' '), '"<(e-[a-zA-Z0-9]+)>",(\d+)')) {
+    $hits++
+    $nm = $m.Groups[1].Value.Substring(2)
+    $pg = [int]$m.Groups[2].Value
+    if ($bigset -contains $nm) {
+        $bigHits++
+        if ($pg % 2 -eq 0) {
+            Write-Host ('[PARITY VIOLATION] ' + $nm + ' starts on even page ' + $pg) -ForegroundColor Red
+            $viol++
+        }
     }
 }
-if ($viol -eq 0) { Write-Host '[OK] parity: all big entries start on odd pages (sheet fronts)' }
+if ($hits -eq 0) { Write-Host '[FAIL] parity audit matched no entry anchors (eval broken?)'; exit 1 }
+if ($viol -eq 0) { Write-Host ('[OK] parity: ' + $bigHits + '/' + $bigset.Count + ' big entries start on odd pages (sheet fronts)') }
 else { Write-Host ('[FAIL] parity violations: ' + $viol); exit 1 }

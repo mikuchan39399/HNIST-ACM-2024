@@ -1,3 +1,4 @@
+// zoi: divisorSums
 #include <iostream>
 using namespace std;
 

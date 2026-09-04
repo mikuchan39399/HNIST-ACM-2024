@@ -1,3 +1,4 @@
+// zoi: segFhq
 #include <iostream>
 #include <vector>
 #include <random>

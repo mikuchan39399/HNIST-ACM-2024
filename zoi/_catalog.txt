@@ -1,9 +1,10 @@
-utils	algorithms/杂项/utils/utils.cpp
-rw	algorithms/杂项/快读快写/快读快写.cpp
-graph	algorithms/图论/图的存储/Graph.cpp
+# ---- entries: domain blocks (数据结构 / 图论 / 字符串 / 数学 / 计算几何 / 杂项) ----
 seg	algorithms/数据结构/线段树/泛型线段树.cpp
 dynamicSeg	algorithms/数据结构/线段树/泛型动态线段树.cpp
 persistentSeg	algorithms/数据结构/线段树/可持久化线段树/主席树.cpp
+segSplit	algorithms/数据结构/线段树/线段树合并分裂/线段树按值域分裂.cpp
+segSplitSort	algorithms/数据结构/线段树/线段树合并分裂/线段树分裂解决区间排序后单点查询问题.cpp
+segMergeTree	algorithms/数据结构/线段树/线段树合并分裂/线段树合并解决树上查分词频问题.cpp
 persistentLeftist	algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp
 leftist	algorithms/数据结构/堆/左偏树/左偏树.cpp
 dsu	algorithms/数据结构/并查集/DSU.cpp
@@ -11,18 +12,34 @@ wdsu	algorithms/数据结构/并查集/WDSU.cpp
 monoQueue	algorithms/数据结构/单调队列/单调队列.cpp
 bit	algorithms/数据结构/树状数组/树状数组.cpp
 bit2d	algorithms/数据结构/树状数组/二维树状数组.cpp
+segFhq	algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp
+st	algorithms/数据结构/ST表/ST表.cpp
 skiplist	algorithms/数据结构/有序表与平衡树/跳表.cpp
 avl	algorithms/数据结构/有序表与平衡树/AVL.cpp
 treap	algorithms/数据结构/有序表与平衡树/Treap.cpp
 fhq	algorithms/数据结构/有序表与平衡树/FHQ_Treap.cpp
 fhqSeq	algorithms/数据结构/有序表与平衡树/FHQ_Treap_序列.cpp
 scapegoat	algorithms/数据结构/有序表与平衡树/替罪羊树.cpp
+cartesian	algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp
+splay	algorithms/数据结构/有序表与平衡树/Splay.cpp
+^knapsack	algorithms/动态规划/背包DP/背包问题.txt
+treeKnapDfs	algorithms/动态规划/背包DP/树上背包/dfn序.cpp
+treeKnapBound	algorithms/动态规划/背包DP/树上背包/上下界.cpp
+^lisLcs	algorithms/动态规划/线性DP/LIS与LCS.txt
+^intervalDp	algorithms/动态规划/区间DP/区间DP.txt
+^digitDp	algorithms/动态规划/状压与数位DP/数位DP.txt
+^bitmaskDp	algorithms/动态规划/状压与数位DP/状压DP.txt
+^slopeOpt	algorithms/动态规划/优化技术/斜率优化.txt
+graph	algorithms/图论/图的存储/Graph.cpp
 scc	algorithms/图论/连通性相关/Tarjan_SCC.cpp
 ebcc	algorithms/图论/连通性相关/Tarjan_EBCC.cpp
 vbcc	algorithms/图论/连通性相关/Tarjan_VBCC.cpp
 bct	algorithms/图论/连通性相关/圆方树/BCT.cpp
 lca	algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp
 hldlca	algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp
+binliftLca	algorithms/图论/树上问题/最近公共祖先/树上倍增LCA.cpp
+eulerLca	algorithms/图论/树上问题/最近公共祖先/欧拉序LCA.cpp
+tarjanLca	algorithms/图论/树上问题/最近公共祖先/tarjan.cpp
 hld	algorithms/图论/树上问题/树链剖分/HLD.cpp
 virtualTree	algorithms/图论/树上问题/虚树/二次排序.cpp
 virtualTreeStack	algorithms/图论/树上问题/虚树/单调栈.cpp
@@ -31,37 +48,53 @@ diameterDp	algorithms/图论/树上问题/树的直径/树形dp法.cpp
 centroid	algorithms/图论/树上问题/树的重心/树的重心.cpp
 eulerUndirected	algorithms/图论/欧拉图/无向图欧拉边路径.cpp
 eulerDirected	algorithms/图论/欧拉图/有向图欧拉边路径.cpp
+eulerPointUndirected	algorithms/图论/欧拉图/无向图欧拉点路径.cpp
+eulerPointDirected	algorithms/图论/欧拉图/有向图欧拉点路径.cpp
 topo	algorithms/图论/拓扑排序/拓扑排序.cpp
+segGraph	algorithms/图论/优化建图/线段树优化建图.cpp
+^dinic	algorithms/图论/网络流/最大流/Dinic.txt
+^mcmf	algorithms/图论/网络流/最小费用最大流/MCMF.txt
 dij	algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp
 dijN	algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp
 spfa	algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp
 bf	algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp
 bfRing	algorithms/图论/最短路问题/判断负环/bf_-ring.cpp
 spfaRing	algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp
+floyd	algorithms/图论/最短路问题/全源最短路径/floyd.cpp
 trie	algorithms/字符串/字典树/字典树.cpp
 persistentTrie	algorithms/字符串/字典树/可持久化字典树.cpp
+^acam	algorithms/字符串/AC自动机/AC自动机.txt
+^sam	algorithms/字符串/后缀自动机/后缀自动机.txt
+^suffixArray	algorithms/字符串/后缀数组/后缀数组.txt
 mint	algorithms/数学/数论/mint.cpp
+segSieve	algorithms/数学/数论/区间筛质数.cpp
+intSqrt	algorithms/数学/数论/整数开方.cpp
+divisorSums	algorithms/数学/数论/约数个数及约数和公式法.cpp
+divCeilFloor	algorithms/数学/数论/除法上下取整.cpp
+^mobius	algorithms/数学/数论/莫比乌斯反演.txt
 bigint	algorithms/数学/高精度计算/高精度.cpp
+^matrixTree	algorithms/数学/组合数学/矩阵树定理.txt
+lucas	algorithms/数学/组合数学/卢卡斯定理求组合数.cpp
+binomLoop	algorithms/数学/组合数学/循环求组合数.cpp
+binomPascal	algorithms/数学/组合数学/打表杨辉三角求组合数.cpp
+binomFactInv	algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp
+^fft	algorithms/数学/多项式/FFT.txt
+^geoBasic	algorithms/计算几何/二维基础/二维基础.txt
+^convex	algorithms/计算几何/凸包/凸包.txt
+^hpi	algorithms/计算几何/半平面交/半平面交.txt
+utils	algorithms/杂项/utils/utils.cpp
+rw	algorithms/杂项/快读快写/快读快写.cpp
 i128	algorithms/杂项/128位整数/128int.cpp
 rnd	algorithms/杂项/随机数/z_rnd.cpp
 customHash	algorithms/杂项/防卡/哈希防卡.cpp
 discrete	algorithms/杂项/离散化/离散化.cpp
+misraGries	algorithms/杂项/主元素问题/Misra-Gries.cpp
 
-# exemptions: engines deliberately WITHOUT a stub (glob; sync check requires
-# every engine cpp to be either a stub target above or matched by one of these)
-!algorithms/动态规划/*
-!algorithms/图论/最短路问题/*
-!algorithms/图论/树上问题/最近公共祖先/*
-!algorithms/图论/欧拉图/*
+# exemptions: engines deliberately WITHOUT a booklet entry (glob; sync check
+# requires every engine cpp to be a catalog target above or matched by one of
+# these -- 例题 problem solutions, 对拍 harnesses, unmaintained WIP, plugins)
 !algorithms/图论/优化建图/例题/*
-!algorithms/数学/数论/*
-!algorithms/数学/组合数学/*
-!algorithms/数据结构/树套树/*
-!algorithms/数据结构/线段树/泛型插件/*
-!algorithms/数据结构/线段树/线段树合并分裂/*
+!algorithms/图论/欧拉图/例题/*
+!algorithms/图论/最短路问题/全源最短路径/P6125 无向图的最小环.cpp
 !algorithms/数据结构/堆/左偏树/k短路未维护.cpp
-!algorithms/杂项/主元素问题/*
-segGraph	algorithms/图论/优化建图/线段树优化建图.cpp
-cartesian	algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp
-splay	algorithms/数据结构/有序表与平衡树/Splay.cpp
-st	algorithms/数据结构/ST表/ST表.cpp
+!algorithms/数据结构/线段树/泛型插件/*

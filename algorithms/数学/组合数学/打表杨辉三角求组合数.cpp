@@ -1,3 +1,4 @@
+// zoi: binomPascal
 #include <iostream>
 
 using namespace std;
