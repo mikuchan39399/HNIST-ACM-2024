@@ -23,23 +23,20 @@ HNIST-ACM-2024/
 │  ├─ progress/      本人的学习进度与模板整理状态
 │  ├─ setup/         队友安装与卸载
 │  ├─ expand/        展开提交、恢复及状态清理
-│  ├─ booklet/       生成与打印比赛手册
+│  ├─ booklet/       打印指南；output/ 放 PDF 与排版源文件（不提交）
 │  ├─ maintenance/   修改脚本、维护目录和制作分享包
 │  ├─ releases/      本地生成的队友 ZIP（产物不提交）
 │  └─ backups/       个人恢复备份（备份不提交）
 ├─ rules/            协作约定、测试坑位、工作板与测试资产表
-├─ records/          训练复盘与历史记录；tooling/ 保存工具改造证据
+├─ records/          训练复盘与历史；tooling/ 保存旧规则和工具改造证据
 ├─ contests/         比赛相关资料
 ├─ .github/          GitHub Actions 自动检查
 ├─ .clinerules/      Cline 入口，统一指向 AGENTS.md
 ├─ .vscode/          仓库级编辑器配置
 ├─ AGENTS.md         AI 按任务选择规则的入口
 ├─ rule.md           算法模板开发契约
-├─ rule_history.md   旧规则与历史裁决
 ├─ .zoi-checks/      隔离测试、临时工作文件（不提交）
-├─ .ci-results/      测试汇总与日志（不提交）
-├─ booklet.typ       自动生成的排版源文件（不提交）
-└─ zoi-booklet.pdf   自动生成的比赛手册（不提交）
+└─ .ci-results/      测试汇总与日志（不提交）
 ```
 
 写题看 `algorithms/` 和 `zoi/`；使用工具看 `docs/`；AI 接手先看 `AGENTS.md`。生成物和临时目录运行后才会出现，不需要手工创建。

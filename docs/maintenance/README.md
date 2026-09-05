@@ -71,7 +71,7 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 
 ## 手册生成约定
 
-赛场纸质化: make_booklet.ps1 -> zoi-booklet.pdf(typst A4 横排三栏, 目录带页码);
+赛场纸质化: make_booklet.ps1 -> docs/booklet/output/zoi-booklet.pdf(typst A4 横排三栏, 目录带页码);
   catalog 顺序即章节序, 行首 ^ = 笔记条目(.txt 正文, 无代码无跳板); 相对
   include 改写为跳板短名(誊写产物=同目录 .h 集合, utils 只印一次); 插件
   附录自动收(含 main 跳过); 每条目印 行数+ SHA256 前 8 hex(LF 归一化),
@@ -109,3 +109,5 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 纸质化回归须检查：筛选条目的 include 仍按完整 catalog 和相对目标路径改写；同名源文件不按 basename 混淆；SoloMin 的正文和插件均按阈值从奇数页开始，审计不得漏掉应检查锚点。版式修改后核对代码块、目录覆盖与页数，并渲染检查目录、正文、笔记和附录。
 
 临时工作目录统一使用库内 .zoi-checks/codex-work，命令以仓库根目录为工作目录；不再把本项目的测试副本、预览图和中间脚本放到 C 盘会话目录。此目录受 Git 忽略，正式文档仍放 docs。
+
+根目录只保留 README.md、AGENTS.md、rule.md 和 .gitignore 等必要入口。旧规则历史位于 records/tooling/rule_history.md；手册 PDF 及同名 .typ 默认生成到 docs/booklet/output，指定 OutFile 时两者跟随该路径，不能重新把默认生成物散落到根目录。打包排除手册 output，仍保留历史正文。

@@ -13,5 +13,5 @@
 | 文档整理 | 将要修改的正文及引用它的入口；保留约束与历史，不重复编写第二套规则 |
 
 用户明确要求优先。各正文只管自己的范围，入口不复制条款；冲突先查实现和现行正文，无法判定时向用户说明。
-rule.md 与 rule_history.md 仍需用户明确授权才可改动。已读且未变化的正文不用重复加载；缺文件先查路径，仍找不到再询问用户。
-历史方案和运行证据在 records/tooling、rule_history.md、rules/sweep-history.md，只有追溯特定问题时才读。
+rule.md 与 records/tooling/rule_history.md 仍需用户明确授权才可改动。已读且未变化的正文不用重复加载；缺文件先查路径，仍找不到再询问用户。
+历史方案和运行证据在 records/tooling、records/tooling/rule_history.md、rules/sweep-history.md，只有追溯特定问题时才读。

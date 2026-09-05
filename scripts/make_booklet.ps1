@@ -1,4 +1,4 @@
-param([string]$Filter = '', [string]$OutFile = 'zoi-booklet.pdf', [int]$SoloMin = 0)
+param([string]$Filter = '', [string]$OutFile = 'docs/booklet/output/zoi-booklet.pdf', [int]$SoloMin = 0)
 # make_booklet.ps1 - printable contest booklet generator (typst, A4 landscape, 3 columns)
 # Layout: every catalog entry (code or ^ prose) opens a fresh page; skeleton entries
 #         auto-scanned from library folders flow compactly on shared pages.
@@ -312,15 +312,18 @@ if ($plugBlocks.Count -gt 0) {
         $pi++
     }
 }
-$typPath = Join-Path $root 'booklet.typ'
+$outputPath = if ([IO.Path]::IsPathRooted($OutFile)) { [IO.Path]::GetFullPath($OutFile) } else { [IO.Path]::GetFullPath((Join-Path $root $OutFile)) }
+[void][IO.Directory]::CreateDirectory((Split-Path -Parent $outputPath))
+$typPath = [IO.Path]::ChangeExtension($outputPath, '.typ')
+if ($typPath -eq $outputPath) { throw 'OutFile must not use the .typ extension' }
 [IO.File]::WriteAllText($typPath, $s.ToString(), $enc)
 
 # ---- compile ----
 Push-Location $root
-try { & $typst compile booklet.typ $OutFile; if ($LASTEXITCODE -ne 0) { throw 'typst compile failed' } }
+try { & $typst compile $typPath $outputPath; if ($LASTEXITCODE -ne 0) { throw 'typst compile failed' } }
 finally { Pop-Location }
 
-Write-Host ('[OK] booklet: ' + $realCount + ' catalog entries + ' + $autoBlocks.Count + ' skeleton entries, ' + $plugBlocks.Count + ' plugins -> ' + (Join-Path $root $OutFile))
+Write-Host ('[OK] booklet: ' + $realCount + ' catalog entries + ' + $autoBlocks.Count + ' skeleton entries, ' + $plugBlocks.Count + ' plugins -> ' + $outputPath)
 foreach ($w in $script:warn) { Write-Host ('[WARN] ' + $w) -ForegroundColor Yellow }
 
 # ---- anchor eval: one query feeds both audits ----

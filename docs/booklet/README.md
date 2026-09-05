@@ -6,7 +6,7 @@
 ./scripts/make_booklet.ps1
 ```
 
-输出根目录 zoi-booklet.pdf。默认 A4 横排三栏，带目录、页码和代码指纹；catalog 的顺序决定条目顺序，笔记会一并收录。
+默认输出 docs/booklet/output/zoi-booklet.pdf，配套 zoi-booklet.typ 放在同一目录。默认 A4 横排三栏，带目录、页码和代码指纹；catalog 的顺序决定条目顺序，笔记会一并收录。
 
 只看某一部分，或为双面打印安排较长条目从正面开始：
 
@@ -16,6 +16,8 @@
 ```
 
 筛选版不执行全库覆盖审计；赛前生成不带 Filter 的完整版本，并检查纸面排版。PDF 和 booklet.typ 为生成物，不提交到 Git。
+
+用 -OutFile 指定其他 PDF 路径时，配套 .typ 使用相同文件名并放在旁边；相对路径从库根解析，目录不存在时自动创建。
 
 实现约定见 [维护说明](../maintenance/README.md)。
 

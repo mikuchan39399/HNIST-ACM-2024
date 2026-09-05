@@ -305,3 +305,13 @@ forget 新增支持合法旧 SHA 配对，当前源码不改；缺 SHA 或缺源
 ## 2026/9/6 astra：临时工作目录归库（完成，未提交）
 
 按用户要求将 C 盘本次会话的 work 迁入 .zoi-checks/codex-work，共 1162 文件逐项 SHA256 校验后删除原目录；迁移清单在 .zoi-checks/codex-work-migration.json。正式文档和代码未移动，旧测试脚本只作历史现场保留，不保证其中绝对路径仍可直接运行。后续临时产物在仓库内生成，维护说明已同步。
+
+
+## 2026/9/6 astra：根目录归整（完成，未提交）
+
+按用户授权将 rule_history.md 原文移入 records/tooling，PDF与排版源移入 docs/booklet/output；迁移文件哈希一致，现行入口及README目录树同步。make_booklet默认新路径、自动建输出目录、同名.typ随PDF；打包保留历史且排除output。默认全库生成通过175/175覆盖，生成排版源与原文完全一致，打包验证历史存在且无手册生成物。根目录剩4个入口文件，未提交推送。
+
+
+## 2026/9/6 astra：CI Action 运行时升级（本地完成，未提交）
+
+核实官方 action.yml 后，将三个作业中的 checkout v4 升至 v5、upload-artifact v4 升至 v6，六处均使用 Node.js 24；upload-artifact v5 仍默认 Node 20，因此跳过。Windows 本地 actionlint 与 git diff --check 通过，测试步骤及上传参数保留；scripts/checks.md 补齐第三个安装卸载作业的说明。先前 GitHub run 33983266325（e8eef2c）已完成且 setup/regression/sanitizer 全部成功，仅有旧 Action 运行时警告；此结果不覆盖本轮升级，新版待推送后线上验证。未改算法与学习状态。

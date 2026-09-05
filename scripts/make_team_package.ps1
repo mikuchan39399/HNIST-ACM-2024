@@ -14,10 +14,10 @@ $package=Join-Path $stage 'HNIST-ZOI'
 $files=@()
 foreach ($dir in @('algorithms','zoi','scripts','rules','docs','records/tooling','.clinerules')) {
     $files += @(Get-ChildItem -LiteralPath (Join-Path $root $dir) -Recurse -File | Where-Object {
-        $_.FullName -notmatch '[\\/]docs[\\/](backups|releases)[\\/]' -and $_.Extension -in @('.ps1','.cmd','.cpp','.h','.txt','.md','.py','.typ') -and $_.Name -notmatch '\.zoi\.'
+        $_.FullName -notmatch '[\\/]docs[\\/](backups|releases|booklet[\\/]output)[\\/]' -and $_.Extension -in @('.ps1','.cmd','.cpp','.h','.txt','.md','.py','.typ') -and $_.Name -notmatch '\.zoi\.'
     })
 }
-foreach ($name in @('rule.md','rule_history.md','README.md','AGENTS.md','LICENSE')) { if ([IO.File]::Exists((Join-Path $root $name))) { $files += Get-Item -LiteralPath (Join-Path $root $name) } }
+foreach ($name in @('rule.md','README.md','AGENTS.md','LICENSE')) { if ([IO.File]::Exists((Join-Path $root $name))) { $files += Get-Item -LiteralPath (Join-Path $root $name) } }
 try {
     $items=@()
     foreach ($f in $files) {

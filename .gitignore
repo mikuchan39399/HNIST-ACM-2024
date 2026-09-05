@@ -44,3 +44,6 @@ Release/
 !/docs/backups/README.md
 /docs/releases/*
 !/docs/releases/README.md
+
+# Generated paper booklet and its matching Typst source
+/docs/booklet/output/
