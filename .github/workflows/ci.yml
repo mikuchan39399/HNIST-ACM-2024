@@ -13,6 +13,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  setup:
+    runs-on: windows-2022
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup and uninstall on Windows PowerShell 5.1
+        shell: powershell
+        run: ./scripts/check_setup.ps1
+      - name: Setup and uninstall on PowerShell 7
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: ./scripts/check_setup.ps1
+      - name: Keep setup diagnostics
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: setup-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .zoi-checks/setup-test-*/*.log
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: warn
+
   regression:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -22,9 +44,24 @@ jobs:
         run: |
           g++ --version
           pwsh --version
+      - name: Check generated test inventory
+        shell: pwsh
+        run: ./scripts/make_reliability.ps1 -Check
+      - name: Check generated feature catalog
+        shell: pwsh
+        run: ./scripts/make_features.ps1 -Check
+      - name: Check inventory and generator behavior
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: ./scripts/check_inventory_test.ps1
       - name: Check runner failure paths
+        if: ${{ !cancelled() }}
         shell: pwsh
         run: ./scripts/check_runner.ps1
+      - name: Check include expansion and recovery
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: ./scripts/zoi_check.ps1
       - name: Full regression
         if: ${{ !cancelled() }}
         shell: pwsh

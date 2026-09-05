@@ -4,7 +4,7 @@ $root = Split-Path -Parent $PSScriptRoot
 if (-not $BuildRoot) { $BuildRoot = Join-Path $root '.zoi-checks' }
 $fixture = Join-Path ([IO.Path]::GetFullPath($BuildRoot)) ('runner-test-' + [Guid]::NewGuid().ToString('N'))
 foreach ($dir in @('scripts', 'zoi', 'algorithms')) { New-Item -ItemType Directory -Path (Join-Path $fixture $dir) -Force | Out-Null }
-foreach ($file in @('run_checks.ps1', 'check_process.ps1')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $file) -Destination (Join-Path $fixture 'scripts') }
+foreach ($file in @('run_checks.ps1', 'check_process.ps1', 'check_inventory.ps1')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $file) -Destination (Join-Path $fixture 'scripts') }
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 function Put([string]$Name, [string]$Body) { [IO.File]::WriteAllText((Join-Path $fixture $Name), $Body, $utf8) }
 Put 'algorithms/engine.cpp' "// zoi: tiny`n"

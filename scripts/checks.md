@@ -10,6 +10,7 @@
 ./scripts/run_checks.ps1 -Mode Syntax
 ./scripts/run_checks.ps1 -Sanitize -Compiler g++-13 -TimeoutSec 180 -CompileTimeoutSec 180
 ./scripts/check_runner.ps1
+./scripts/zoi_check.ps1
 ```
 
 - 默认只跑回归，`Filter` 是套件文件名中的普通子串，匹配不到会失败；它不按模板依赖自动选测试。
@@ -38,4 +39,23 @@ push、PR 和手动运行触发 CI；普通回归与 sanitizer 各一个作业�
 
 `check_runner.ps1` 在独立小仓库中实际制造编译错误、警告、断言失败、超时、零匹配、缺 catalog、错跳板和重复条目，检查这些情况不会被入口误报成功。它只验证测试入口，不代替算法对拍。
 
+`zoi_check.ps1` 单独验证头文件展开与恢复：钻石依赖、重复展开后加 include、保留题解修改、生成块冲突、旧状态迁移、故障恢复和并发锁；再用真实 seg/bit/hld 组合编译运行紧凑态与展开态。CI 普通作业也运行它。可传 `-Compiler`、`-BuildRoot`；每次夹具和子进程日志留在 `.zoi-checks/expand-test-*`，其中故意构造的冲突和孤儿备份是测试证据，不是你的题目存档。脚本禁止测试时写剪贴板。
+
 每次报告只证明本次源码通过相应检查。已发布提交的 CI 绿灯不覆盖工作区未提交的改动。
+
+## 自动生成测试资产总览
+
+`scripts/check_inventory.ps1` 是 runner 和总览的共用事实来源：校验 catalog/跳板/戳/豁免，收集当前 C++、笔记、对拍文件和直接 include 关系。`TEST GAP` 与总览 B 组使用同一份映射，仍只提示，不代表行为覆盖，也不作为失败门禁。
+
+```powershell
+./scripts/make_reliability.ps1
+./scripts/make_reliability.ps1 -Check
+./scripts/check_inventory_test.ps1
+```
+
+第一条更新 `rules/reliability.md`；第二条只比较，过期返回非零、不改文件；第三条在隔离目录验证映射与生成器。CI 校验生成物并运行自检。普通 `run_checks` 不改总览；仅修改算法正文无需重生成，增加/删除源文件、catalog 或测试引用关系后才需要。
+
+A/B/C 分别是带直接引用的 catalog 引擎、未发现直接引用的引擎、纯文本笔记；豁免 C++ 单列。注释和原始字符串中的示例不计入，条件 include 只记静态关系，宏式与传递 include 不统计。套件列提供文件链接，不推断独立暴力或所有 API 覆盖。旧手工表已完整归档至 sweep-history，历史标记不继承为当前正确性评级。实际通过情况仍查运行报告。
+## 安装与卸载自检
+
+./scripts/check_setup.ps1 覆盖全新 Profile、重复安装/卸载、JSONC 注释与嵌套同名键、既有 -I 参数、后续用户修改、安装状态异常、写入中断恢复和受管包自删除。Windows CI 使用 PS5.1 与 PS7 各跑一遍，日志保留在 .zoi-checks/setup-test-*。真实 Win11 的插件或编译器不由安装器安装，使用说明见 [队友安装说明](../docs/setup/README.md)。

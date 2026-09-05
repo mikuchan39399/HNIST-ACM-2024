@@ -38,3 +38,9 @@ Release/
 # Local regression logs and isolated test workspaces
 .zoi-checks/
 .ci-results/
+
+# Local distribution archives and personal recovery snapshots
+/docs/backups/*
+!/docs/backups/README.md
+/docs/releases/*
+!/docs/releases/README.md
