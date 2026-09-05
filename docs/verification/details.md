@@ -1,0 +1,120 @@
+# AI 验证明细
+
+自动生成. include 只表示静态关联, 行为范围由 verification.json 登记, 运行证据由 runner 记录.
+
+| 模板 | 套件 | API | 独立参照 | 数据与边界 | 限制 |
+|---|---|---|---|---|---|
+| [algorithms/数据结构/线段树/泛型线段树.cpp](<../../algorithms/数据结构/线段树/泛型线段树.cpp>) | [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../../algorithms/数据结构/线段树/对拍/seg_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/泛型动态线段树.cpp](<../../algorithms/数据结构/线段树/泛型动态线段树.cpp>) | [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../../algorithms/数据结构/线段树/对拍/seg_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/可持久化线段树/主席树.cpp](<../../algorithms/数据结构/线段树/可持久化线段树/主席树.cpp>) | [algorithms/数据结构/线段树/对拍/pst_check.cpp](<../../algorithms/数据结构/线段树/对拍/pst_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/线段树合并分裂/线段树按值域分裂.cpp](<../../algorithms/数据结构/线段树/线段树合并分裂/线段树按值域分裂.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/线段树合并分裂/线段树分裂解决区间排序后单点查询问题.cpp](<../../algorithms/数据结构/线段树/线段树合并分裂/线段树分裂解决区间排序后单点查询问题.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/线段树合并分裂/线段树合并解决树上查分词频问题.cpp](<../../algorithms/数据结构/线段树/线段树合并分裂/线段树合并解决树上查分词频问题.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp](<../../algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp>) | [algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp](<../../algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/堆/左偏树/左偏树.cpp](<../../algorithms/数据结构/堆/左偏树/左偏树.cpp>) | [algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp](<../../algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/并查集/DSU.cpp](<../../algorithms/数据结构/并查集/DSU.cpp>) | [algorithms/数据结构/并查集/对拍/dsu_check.cpp](<../../algorithms/数据结构/并查集/对拍/dsu_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/并查集/WDSU.cpp](<../../algorithms/数据结构/并查集/WDSU.cpp>) | [algorithms/数据结构/并查集/对拍/dsu_check.cpp](<../../algorithms/数据结构/并查集/对拍/dsu_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/单调队列/单调队列.cpp](<../../algorithms/数据结构/单调队列/单调队列.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../../algorithms/杂项/对拍/misc_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/树状数组/树状数组.cpp](<../../algorithms/数据结构/树状数组/树状数组.cpp>) | [algorithms/数据结构/树状数组/对拍/bit_check.cpp](<../../algorithms/数据结构/树状数组/对拍/bit_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/树状数组/二维树状数组.cpp](<../../algorithms/数据结构/树状数组/二维树状数组.cpp>) | [algorithms/数据结构/树状数组/对拍/bit_check.cpp](<../../algorithms/数据结构/树状数组/对拍/bit_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp](<../../algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/ST表/ST表.cpp](<../../algorithms/数据结构/ST表/ST表.cpp>) | [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../../algorithms/数据结构/线段树/对拍/seg_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/有序表与平衡树/跳表.cpp](<../../algorithms/数据结构/有序表与平衡树/跳表.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/有序表与平衡树/AVL.cpp](<../../algorithms/数据结构/有序表与平衡树/AVL.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/有序表与平衡树/Treap.cpp](<../../algorithms/数据结构/有序表与平衡树/Treap.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/有序表与平衡树/FHQ_Treap.cpp](<../../algorithms/数据结构/有序表与平衡树/FHQ_Treap.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/有序表与平衡树/FHQ_Treap_序列.cpp](<../../algorithms/数据结构/有序表与平衡树/FHQ_Treap_序列.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/有序表与平衡树/替罪羊树.cpp](<../../algorithms/数据结构/有序表与平衡树/替罪羊树.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp](<../../algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/有序表与平衡树/Splay.cpp](<../../algorithms/数据结构/有序表与平衡树/Splay.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/动态规划/背包DP/树上背包/dfn序.cpp](<../../algorithms/动态规划/背包DP/树上背包/dfn序.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/动态规划/背包DP/树上背包/上下界.cpp](<../../algorithms/动态规划/背包DP/树上背包/上下界.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/图的存储/Graph.cpp](<../../algorithms/图论/图的存储/Graph.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/连通性相关/Tarjan_SCC.cpp](<../../algorithms/图论/连通性相关/Tarjan_SCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../../algorithms/图论/连通性相关/对拍/conn_check.cpp>) | build, build_dag, build_dag_unique | Warshall 与跨分量边多重集 | 1775 组小图, 含穷举和 3 个固定种子; 2000 点链/星/环/空图, 大小交替复位; 满容量, 带权 Graph | 未测完整 SegGraph 应用流水线; 深链只到 2000 点 |
+| [algorithms/图论/连通性相关/Tarjan_EBCC.cpp](<../../algorithms/图论/连通性相关/Tarjan_EBCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../../algorithms/图论/连通性相关/对拍/conn_check.cpp>) | build, get_bridges, build_tree | 逐边删除、去桥连通块与成员集合 | 2346 组小图, 含穷举和 3 个固定种子; 2000 点链/星/环/空图, 大小交替复位; 满容量, 带权 Graph | 深链只到 2000 点, 更长链仍受递归栈限制 |
+| [algorithms/图论/连通性相关/Tarjan_VBCC.cpp](<../../algorithms/图论/连通性相关/Tarjan_VBCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../../algorithms/图论/连通性相关/对拍/conn_check.cpp>) | build, build(root), build_tree, get_bel_vbccs, get_cuts_vbcc | 逐点删除与枚举极大点双集合 | 2344 组小图, 含穷举和 3 个固定种子; 2000 点链/星/环/空图, 大小交替复位; 满容量, 带权 Graph | 不接收自环; 深链只到 2000 点 |
+| [algorithms/图论/连通性相关/圆方树/BCT.cpp](<../../algorithms/图论/连通性相关/圆方树/BCT.cpp>) | [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>) | build, build(root), build_tree, get_bel_vbccs, get_cuts_vbcc | 逐点删除与枚举极大点双集合 | 2344 组小图, 含穷举和 3 个固定种子; 2000 点链/星/环/空图, 大小交替复位; 满容量, 带权 Graph | 不接收自环; 深链只到 2000 点 |
+| [algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp](<../../algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp](<../../algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/最近公共祖先/树上倍增LCA.cpp](<../../algorithms/图论/树上问题/最近公共祖先/树上倍增LCA.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/最近公共祖先/欧拉序LCA.cpp](<../../algorithms/图论/树上问题/最近公共祖先/欧拉序LCA.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/最近公共祖先/tarjan.cpp](<../../algorithms/图论/树上问题/最近公共祖先/tarjan.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/树链剖分/HLD.cpp](<../../algorithms/图论/树上问题/树链剖分/HLD.cpp>) | [algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp](<../../algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/虚树/二次排序.cpp](<../../algorithms/图论/树上问题/虚树/二次排序.cpp>) | [algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/虚树/单调栈.cpp](<../../algorithms/图论/树上问题/虚树/单调栈.cpp>) | [algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/树的直径/两次dfs.cpp](<../../algorithms/图论/树上问题/树的直径/两次dfs.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/树的直径/树形dp法.cpp](<../../algorithms/图论/树上问题/树的直径/树形dp法.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/树上问题/树的重心/树的重心.cpp](<../../algorithms/图论/树上问题/树的重心/树的重心.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/无向图欧拉边路径.cpp](<../../algorithms/图论/欧拉图/无向图欧拉边路径.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/有向图欧拉边路径.cpp](<../../algorithms/图论/欧拉图/有向图欧拉边路径.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/无向图欧拉点路径.cpp](<../../algorithms/图论/欧拉图/无向图欧拉点路径.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/有向图欧拉点路径.cpp](<../../algorithms/图论/欧拉图/有向图欧拉点路径.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/拓扑排序/拓扑排序.cpp](<../../algorithms/图论/拓扑排序/拓扑排序.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/优化建图/线段树优化建图.cpp](<../../algorithms/图论/优化建图/线段树优化建图.cpp>) | [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../../algorithms/图论/优化建图/对拍/seggraph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp](<../../algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp>) | [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../../algorithms/图论/优化建图/对拍/seggraph_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp](<../../algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp](<../../algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp](<../../algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/最短路问题/判断负环/bf_-ring.cpp](<../../algorithms/图论/最短路问题/判断负环/bf_-ring.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp](<../../algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/最短路问题/全源最短路径/floyd.cpp](<../../algorithms/图论/最短路问题/全源最短路径/floyd.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/字符串/字典树/字典树.cpp](<../../algorithms/字符串/字典树/字典树.cpp>) | [algorithms/字符串/字典树/对拍/trie_check.cpp](<../../algorithms/字符串/字典树/对拍/trie_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/字符串/字典树/可持久化字典树.cpp](<../../algorithms/字符串/字典树/可持久化字典树.cpp>) | [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)<br>[algorithms/字符串/字典树/对拍/trie_check.cpp](<../../algorithms/字符串/字典树/对拍/trie_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/数论/mint.cpp](<../../algorithms/数学/数论/mint.cpp>) | [algorithms/数学/数论/对拍/mint_check.cpp](<../../algorithms/数学/数论/对拍/mint_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/数论/区间筛质数.cpp](<../../algorithms/数学/数论/区间筛质数.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../../algorithms/数学/数论/对拍/number_boundary_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/数论/整数开方.cpp](<../../algorithms/数学/数论/整数开方.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../../algorithms/数学/数论/对拍/number_boundary_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/数论/约数个数及约数和公式法.cpp](<../../algorithms/数学/数论/约数个数及约数和公式法.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../../algorithms/数学/数论/对拍/number_boundary_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/数论/除法上下取整.cpp](<../../algorithms/数学/数论/除法上下取整.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/高精度计算/高精度.cpp](<../../algorithms/数学/高精度计算/高精度.cpp>) | [algorithms/数学/高精度计算/对拍/bigint_check.cpp](<../../algorithms/数学/高精度计算/对拍/bigint_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/组合数学/卢卡斯定理求组合数.cpp](<../../algorithms/数学/组合数学/卢卡斯定理求组合数.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/组合数学/循环求组合数.cpp](<../../algorithms/数学/组合数学/循环求组合数.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/组合数学/打表杨辉三角求组合数.cpp](<../../algorithms/数学/组合数学/打表杨辉三角求组合数.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp](<../../algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/杂项/utils/utils.cpp](<../../algorithms/杂项/utils/utils.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/杂项/快读快写/快读快写.cpp](<../../algorithms/杂项/快读快写/快读快写.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../../algorithms/杂项/对拍/misc_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/杂项/128位整数/128int.cpp](<../../algorithms/杂项/128位整数/128int.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/杂项/随机数/z_rnd.cpp](<../../algorithms/杂项/随机数/z_rnd.cpp>) | [algorithms/杂项/随机数/对拍/rnd_check.cpp](<../../algorithms/杂项/随机数/对拍/rnd_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/杂项/防卡/哈希防卡.cpp](<../../algorithms/杂项/防卡/哈希防卡.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../../algorithms/杂项/对拍/misc_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/杂项/离散化/离散化.cpp](<../../algorithms/杂项/离散化/离散化.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../../algorithms/杂项/对拍/misc_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/杂项/主元素问题/Misra-Gries.cpp](<../../algorithms/杂项/主元素问题/Misra-Gries.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/最短路问题/全源最短路径/P6125 无向图的最小环.cpp](<../../algorithms/图论/最短路问题/全源最短路径/P6125 无向图的最小环.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/例题/Libre10105.cpp](<../../algorithms/图论/欧拉图/例题/Libre10105.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/例题/Luogu_P_1127.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_1127.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/例题/Luogu_P_1333.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_1333.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/例题/Luogu_P_1341.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_1341.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/例题/Luogu_P_2731.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_2731.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/例题/Luogu_P_3520.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_3520.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/例题/Luogu_P_6066.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_6066.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/图论/欧拉图/例题/Luogu_P_7771.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_7771.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/堆/左偏树/k短路未维护.cpp](<../../algorithms/数据结构/堆/左偏树/k短路未维护.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/泛型插件/P2572 序列操作.cpp](<../../algorithms/数据结构/线段树/泛型插件/P2572 序列操作.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/泛型插件/主席树/主席树单点修改范围求和.cpp](<../../algorithms/数据结构/线段树/泛型插件/主席树/主席树单点修改范围求和.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp](<../../algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp](<../../algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+| [algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp](<../../algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
+
+## 各环境最新运行
+
+| 套件 | 环境 | 当前判断 | 实际结果 | UTC 时间 | 编译器与参数 | 证据编号与指纹 | 日志位置 |
+|---|---|---|---|---|---|---|---|
+| [algorithms/数据结构/并查集/对拍/dsu_check.cpp](<../../algorithms/数据结构/并查集/对拍/dsu_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 1fd6dc142feb5f8ddaeb374f9823553c085f173e79aa647bfe61345842d95457 | .ci-results/pre-push |
+| [algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp](<../../algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 7839ebfd86e6598e1538041696d4285c4a571a2d32d89ea20eb6745c96e5a5ed | .ci-results/pre-push |
+| [algorithms/数据结构/树状数组/对拍/bit_check.cpp](<../../algorithms/数据结构/树状数组/对拍/bit_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 65c8f25093d17e0d6b82413c216cc565021ded58ef5b9de7aa7b356a4bd49bae | .ci-results/pre-push |
+| [algorithms/数据结构/线段树/对拍/pst_check.cpp](<../../algorithms/数据结构/线段树/对拍/pst_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 46622ada97b0c1b94aa3a21e2730b37c648e3e47f545dd97742d05d054a43004 | .ci-results/pre-push |
+| [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../../algorithms/数据结构/线段树/对拍/seg_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 50f1f4213d261e22a5ce779bcc301125b334a81958203c74c5cfcdc1f67f5e18 | .ci-results/pre-push |
+| [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 2d30856614335dc7f3c765a2c9d374cd85278e6b8f6f11ac32f9c71d45b61905 | .ci-results/pre-push |
+| [algorithms/数学/高精度计算/对拍/bigint_check.cpp](<../../algorithms/数学/高精度计算/对拍/bigint_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 71612838974633f27a953597b3ae610bd32d5139d954a3df40aefce13bba20ad | .ci-results/pre-push |
+| [algorithms/数学/数论/对拍/mint_check.cpp](<../../algorithms/数学/数论/对拍/mint_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / b8554c0a9671215a0ba10b220116f9d9ed5eab8257010ea8f8054d2c0e0c748a | .ci-results/pre-push |
+| [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../../algorithms/数学/数论/对拍/number_boundary_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 2dec10f9e546202b3fc5267041c4bc535f9988702503f2e41adc9c7428cf23b0 | .ci-results/pre-push |
+| [algorithms/图论/对拍/graph_check.cpp](<../../algorithms/图论/对拍/graph_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 5e41cac5fa0ac3b85b2ded2562fb2515b39c22cd3b9191c2a96d352beda41de9 | .ci-results/pre-push |
+| [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 502e94db847c4ee9a6b2574724f5d7dbff439e8f26ed4d609e98ea16b9bd9501 | .ci-results/pre-push |
+| [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../../algorithms/图论/连通性相关/对拍/conn_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 0882da8d9c63e2981fff87885508a7790ee1c39b4fd51387eca8049de7c2ddaf | .ci-results/pre-push |
+| [algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp](<../../algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / cd3d459982ac047bb490110c12bcd93f2dad0c46ead4aa976ea956c904feb38f | .ci-results/pre-push |
+| [algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 44bceeeec0b58fd73cc87c6ddf021117c4924b7a10bfbc38fa18db68590b7a8b | .ci-results/pre-push |
+| [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../../algorithms/图论/优化建图/对拍/seggraph_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 00e15d148e9a13075390edf430c61286d57450e1f31efaab239a58a5e12a9c56 | .ci-results/pre-push |
+| [algorithms/杂项/对拍/misc_check.cpp](<../../algorithms/杂项/对拍/misc_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 48c439175eaf4491b109923355506139edd6638ba7dc3abe831b1b01180fb13b | .ci-results/pre-push |
+| [algorithms/杂项/随机数/对拍/rnd_check.cpp](<../../algorithms/杂项/随机数/对拍/rnd_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 1d0a0890ed124727218ef13f51c3bde81d1b5056c55ad8968f5469f76648739c | .ci-results/pre-push |
+| [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 6fe80d658312680242ec710b6441d241fc1afd36be434c0bfda1a8973f1fff19 | .ci-results/pre-push |
+| [algorithms/字符串/字典树/对拍/trie_check.cpp](<../../algorithms/字符串/字典树/对拍/trie_check.cpp>) | Windows 普通回归 | 当前源码通过 | 通过 | 2026-09-05T19:18:29.9941511Z | g++.exe (Rev8, Built by MSYS2 project) 15.2.0 / -std=c++20 -Wall -Wextra -Werror -UNDEBUG -O2 | 7a65d455b226411fb46fddef19a3cd5f / 20fc96676efbb0c1c59d72fa0cb430fb845bdb8e00f974e1db0cbb2fa9233b1f | .ci-results/pre-push |
+
+JSON 证据保留完整依赖指纹. 同环境最新失败不会被旧通过覆盖. 语法检查不算对拍通过. 运行期间源码变化则待重验.

@@ -20,8 +20,7 @@ rules/sweep-history.md, 板上不留已完成记录; 悬赏池就是待办名单
 - [ ] 网络流 Dinic: 先核实当前资产, 再独立入库/对拍; MCMF 另开一件。
 - [ ] AC 自动机: 先核实当前是笔记还是引擎, 再决定入库或对拍。
 - [ ] 后缀数组、后缀自动机、计算几何: 各自另领单独范围。
-- [ ] SCC/连通性注释: GLM 标记语义分歧, astra 未动, 留用户裁决。
-- [ ] CI Action 升级在线验证：checkout v5 / upload-artifact v6 已通过本地 actionlint，待推送后核实三个作业与 Node 20 警告。旧提交 e8eef2c 三作业成功已移档。
+- [ ] 两层验证表的 CI 在线验证: 本地自检与全库 107 项通过, 待本轮推送后核实新增自检与报告产物; 前次 Action 升级三作业已通过
 ## 留言区(GLM ↔ astra ↔ 用户)
 
 - 2026/9/5 astra → GLM：用户交给我的架构改造已完成，领取已解除。runner 与总览共用 check_inventory；关系变化后运行 make_reliability，CI -Check，不再手工维护等级。双平台自检与证据已移入 sweep-history，旧总览和本轮历史留言完整保留。当前修改未提交，请审阅后按用户的 Git 授权处理，勿重扫已验证且未改动范围。线上 CI 仍待推送后验证。

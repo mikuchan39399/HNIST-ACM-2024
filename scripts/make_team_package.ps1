@@ -12,9 +12,9 @@ $stage=Join-Path $parent ('zoi-package-'+[Guid]::NewGuid().ToString('N'))
 $package=Join-Path $stage 'HNIST-ZOI'
 [void][IO.Directory]::CreateDirectory($package)
 $files=@()
-foreach ($dir in @('algorithms','zoi','scripts','rules','docs','records/tooling','.clinerules')) {
+foreach ($dir in @('algorithms','zoi','scripts','rules','docs','records/tooling','records/verification','.clinerules')) {
     $files += @(Get-ChildItem -LiteralPath (Join-Path $root $dir) -Recurse -File | Where-Object {
-        $_.FullName -notmatch '[\\/]docs[\\/](backups|releases|booklet[\\/]output)[\\/]' -and $_.Extension -in @('.ps1','.cmd','.cpp','.h','.txt','.md','.py','.typ') -and $_.Name -notmatch '\.zoi\.'
+        $_.FullName -notmatch '[\\/]docs[\\/](backups|releases|booklet[\\/]output)[\\/]' -and $_.Extension -in @('.ps1','.cmd','.cpp','.h','.txt','.md','.py','.typ','.json') -and $_.Name -notmatch '\.zoi\.'
     })
 }
 foreach ($name in @('rule.md','README.md','AGENTS.md','LICENSE')) { if ([IO.File]::Exists((Join-Path $root $name))) { $files += Get-Item -LiteralPath (Join-Path $root $name) } }

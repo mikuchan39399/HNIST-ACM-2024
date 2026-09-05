@@ -315,3 +315,43 @@ forget 新增支持合法旧 SHA 配对，当前源码不改；缺 SHA 或缺源
 ## 2026/9/6 astra：CI Action 运行时升级（本地完成，未提交）
 
 核实官方 action.yml 后，将三个作业中的 checkout v4 升至 v5、upload-artifact v4 升至 v6，六处均使用 Node.js 24；upload-artifact v5 仍默认 Node 20，因此跳过。Windows 本地 actionlint 与 git diff --check 通过，测试步骤及上传参数保留；scripts/checks.md 补齐第三个安装卸载作业的说明。先前 GitHub run 33983266325（e8eef2c）已完成且 setup/regression/sanitizer 全部成功，仅有旧 Action 运行时警告；此结果不覆盖本轮升级，新版待推送后线上验证。未改算法与学习状态。
+
+
+## 2026/9/6 astra：连通性四件套加强对拍与赛场注释（完成，未提交）
+
+用户明确授权本轮注释风格，旧语义分歧据此收束；保留图注入/权值处理，纠正 EBCC 半边方向与圆方森林孤立点预算。SCC 1775、EBCC 2346、VBCC/BCT 各2344小图，另加2000点容量复位及满边DAG；Windows GCC15.2统一入口2/2、WSL GCC13.1 ASan/UBSan 2/2通过。四件引擎实现token未变，没有发现新的算法反例。测试总览更新，学习状态未推断；用户确认删除CF786B例题后清理失效豁免并保留学习记录。详见 [完整范围与证据](../records/tooling/conn-20260906.md)。
+
+
+## 2026/9/6 astra : 四件套 Usage 与标点整理 (完成 , 未提交)
+
+四份 Usage 改成可编译 main() , GCC 15.2 严格编译及两组输入运行通过 ; 注释统一英文半角标点 , 数字 / 标识符间隔和公式运算符空格 , rule.md 同步格式偏好. 证据见 records/tooling/conn-20260906.md 与 .zoi-checks/conn-review/usage .
+
+
+## 2026/9/6 astra : BCT 独立类型 (完成 , 未提交)
+
+BCT 独立类型与守卫 , 保留内部点双实现及原 API , 更新 Usage 和规则. Windows / Linux sanitizer 完整对拍通过 , 双类型共存与实例复位隔离通过 , 证据见 records/tooling/conn-20260906.md .
+
+
+## 2026/9/6 astra: 注释标点间隔纠正
+
+用户明确格式为 "原图外置, 需 g[u]". 四份连通性模板的注释去掉逗号/分号/冒号前的空格, 后留一个空格; rule.md 同步纠正先前误解. 去注释后的内容完全不变, 未重跑算法测试.
+
+
+## 2026/9/6 astra: 注释末尾不加句号
+
+按用户要求去掉四份连通性模板注释末尾句号, rule.md 同步格式约定, 去注释后的内容不变
+
+
+## 2026/9/6 astra: 两层验证表与自动证据 (完成, 未提交)
+
+用户口语表与 AI 明细同源生成, runner 自动存依赖指纹与结果, CI 随 artifact 输出, 四件套登记与真实 Windows 记录已落地. 自检 PS5.1/PS7、原 runner 九项、actionlint、打包内容检查通过. 详见 records/tooling/verification-20260906.md, 使用入口 docs/verification/README.md. 学习状态未修改
+
+
+## 2026/9/6 astra: 两层验证表的双向文档同步 (完成, 未提交)
+
+补齐用户 README 目录树、功能总览与使用边界, AI 的 AGENTS / rule / collab / workflow 与维护表统一链接到验证指南. Cline 入口沿用 AGENTS 路由, 不复制规则. 链接与 AI 维护章节锚点检查通过, 纯文档修改未重跑算法测试
+
+
+## 2026/9/6 astra: 总体检查与推送前验证
+
+Windows GCC 15.2 全库 -Mode All 通过 107/107, 包含 19 套回归与 88 个语法目标, 全部运行前后指纹稳定. 证据自动入库, 原始日志 .ci-results/pre-push. 两个资产生成表 -Check、actionlint、diff 检查通过, 新增证据路径已核对, 不提交临时日志与打包产物. 前次 c30af87 的 CI run 33983884319 三作业全部成功, 本轮新 CI 待推送后运行

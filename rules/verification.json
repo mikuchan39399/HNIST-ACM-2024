@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "coverage": [
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+      "suite": "algorithms/图论/连通性相关/对拍/conn_check.cpp",
+      "api": [
+        "build",
+        "build_dag",
+        "build_dag_unique"
+      ],
+      "oracle": "Warshall 与跨分量边多重集",
+      "cases": [
+        "1775 组小图, 含穷举和 3 个固定种子",
+        "2000 点链/星/环/空图, 大小交替复位",
+        "满容量, 带权 Graph"
+      ],
+      "summary": "划分、两种缩点和带权输入都测了",
+      "limitations": "未测完整 SegGraph 应用流水线; 深链只到 2000 点"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+      "suite": "algorithms/图论/连通性相关/对拍/conn_check.cpp",
+      "api": [
+        "build",
+        "get_bridges",
+        "build_tree"
+      ],
+      "oracle": "逐边删除、去桥连通块与成员集合",
+      "cases": [
+        "2346 组小图, 含穷举和 3 个固定种子",
+        "2000 点链/星/环/空图, 大小交替复位",
+        "满容量, 带权 Graph"
+      ],
+      "summary": "桥编号、边双、桥森林、重边和自环都测了",
+      "limitations": "深链只到 2000 点, 更长链仍受递归栈限制"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+      "suite": "algorithms/图论/连通性相关/对拍/conn_check.cpp",
+      "api": [
+        "build",
+        "build(root)",
+        "build_tree",
+        "get_bel_vbccs",
+        "get_cuts_vbcc"
+      ],
+      "oracle": "逐点删除与枚举极大点双集合",
+      "cases": [
+        "2344 组小图, 含穷举和 3 个固定种子",
+        "2000 点链/星/环/空图, 大小交替复位",
+        "满容量, 带权 Graph"
+      ],
+      "summary": "点双、割点、指定根、反查和圆方森林都测了",
+      "limitations": "不接收自环; 深链只到 2000 点"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+      "suite": "algorithms/图论/连通性相关/对拍/conn_bct_check.cpp",
+      "api": [
+        "build",
+        "build(root)",
+        "build_tree",
+        "get_bel_vbccs",
+        "get_cuts_vbcc"
+      ],
+      "oracle": "逐点删除与枚举极大点双集合",
+      "cases": [
+        "2344 组小图, 含穷举和 3 个固定种子",
+        "2000 点链/星/环/空图, 大小交替复位",
+        "满容量, 带权 Graph"
+      ],
+      "summary": "独立 BCT 已对拍, 与 VBCC 共存和复位隔离也测了",
+      "limitations": "不接收自环; 深链只到 2000 点"
+    }
+  ]
+}

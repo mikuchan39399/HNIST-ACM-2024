@@ -34,8 +34,8 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [graph - algorithms/图论/图的存储/Graph.cpp](<../algorithms/图论/图的存储/Graph.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [scc - algorithms/图论/连通性相关/Tarjan_SCC.cpp](<../algorithms/图论/连通性相关/Tarjan_SCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
 | [ebcc - algorithms/图论/连通性相关/Tarjan_EBCC.cpp](<../algorithms/图论/连通性相关/Tarjan_EBCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
-| [vbcc - algorithms/图论/连通性相关/Tarjan_VBCC.cpp](<../algorithms/图论/连通性相关/Tarjan_VBCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
-| [bct - algorithms/图论/连通性相关/圆方树/BCT.cpp](<../algorithms/图论/连通性相关/圆方树/BCT.cpp>) | [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
+| [vbcc - algorithms/图论/连通性相关/Tarjan_VBCC.cpp](<../algorithms/图论/连通性相关/Tarjan_VBCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
+| [bct - algorithms/图论/连通性相关/圆方树/BCT.cpp](<../algorithms/图论/连通性相关/圆方树/BCT.cpp>) | [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
 | [lca - algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp](<../algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
 | [hldlca - algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp](<../algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [hld - algorithms/图论/树上问题/树链剖分/HLD.cpp](<../algorithms/图论/树上问题/树链剖分/HLD.cpp>) | [algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp](<../algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp>) |
@@ -113,11 +113,10 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [convex - algorithms/计算几何/凸包/凸包.txt](<../algorithms/计算几何/凸包/凸包.txt>) | 不适用（笔记） |
 | [hpi - algorithms/计算几何/半平面交/半平面交.txt](<../algorithms/计算几何/半平面交/半平面交.txt>) | 不适用（笔记） |
 
-## 豁免代码：无目录跳板的 C++ 文件（不等同于笔记） [16]
+## 豁免代码：无目录跳板的 C++ 文件（不等同于笔记） [15]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
-| [algorithms/图论/优化建图/例题/CF786B_Legacy.cpp](<../algorithms/图论/优化建图/例题/CF786B_Legacy.cpp>) | 未发现直接引用 |
 | [algorithms/图论/最短路问题/全源最短路径/P6125 无向图的最小环.cpp](<../algorithms/图论/最短路问题/全源最短路径/P6125%20无向图的最小环.cpp>) | 未发现直接引用 |
 | [algorithms/图论/欧拉图/例题/Libre10105.cpp](<../algorithms/图论/欧拉图/例题/Libre10105.cpp>) | 未发现直接引用 |
 | [algorithms/图论/欧拉图/例题/Luogu_P_1127.cpp](<../algorithms/图论/欧拉图/例题/Luogu_P_1127.cpp>) | 未发现直接引用 |
@@ -134,12 +133,13 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp](<../algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp>) | 未发现直接引用 |
 | [algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp>) | 未发现直接引用 |
 
-## 已发现的对拍套件 [18]
+## 已发现的对拍套件 [19]
 
 - [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../algorithms/图论/优化建图/对拍/seggraph_check.cpp>)
 - [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)
 - [algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp](<../algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp>)
 - [algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>)
+- [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)
 - [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>)
 - [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)
 - [algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>)

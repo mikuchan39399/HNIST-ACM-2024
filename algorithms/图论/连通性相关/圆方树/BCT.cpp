@@ -1,6 +1,6 @@
 // zoi: bct
-#ifndef Z_OI_VBCC
-#define Z_OI_VBCC
+#ifndef Z_OI_BCT
+#define Z_OI_BCT
 
 #include <vector>
 #include <algorithm>
@@ -11,20 +11,29 @@
 
 using namespace std;
 
-struct VBCC
+// 独立圆方森林引擎, 内部求点双; cut[u] 判割点, vbcc_cir[i] 存第 i 个点双的原图点, 孤立点自成一块
+// 圆点 1 .. n, 方点 n + i, 总点数最多 2 * n; 接 HLD 等算法时按 n + vbcc_cnt 建树
+// 原图外置, 只读邻接 e.v; 允许重边, 自环须过滤, 递归深度最坏 n
+struct BCT
 {
     int n;
     int dfn_idx, vbcc_cnt;
-    Graph<false, Empty> tree;   // 圆方树, 方点 = n+1..n+vbcc_cnt
+    Graph<false, Empty> tree;
     VI dfn, low, sta, cut;
-    VVI vbcc_cir;               // 各 VBCC 的圆点表
-    VBCC(int max_n = 0) : n(max_n), dfn_idx(0), vbcc_cnt(0),
+    VVI vbcc_cir;
+    // N 取原图最大点数; 圆方森林已预留 2 * N 点, 2 * N 条无向边, 原图另建 Graph(N, M)
+    // 64 位 GCC 基础预留约 72 * N B (N = 2e5 约 14.4 MB), 另加成员表 24 * C + 4 * S B
+    // C / S 为外层 / 各内层 vector 的容量总数; 不含原图, 分配器开销与递归栈
+    // 时间 O(N) | 空间 O(N)
+    BCT(int max_n = 0) : n(max_n), dfn_idx(0), vbcc_cnt(0),
         tree(max_n * 2, max_n * 2),
         dfn(max_n + 10, 0), low(max_n + 10, 0), cut(max_n + 10, 0),
         vbcc_cir(1, VI{})
     {
         sta.reserve(max_n + 10);
     }
+    // 复位本轮结果与内部图; n 不超过构造时的 N, 原图需另行 clear()
+    // 时间 O(n + 上轮点数) | 额外空间 O(1)
     void init(int _n)
     {
         n = _n;
@@ -34,7 +43,7 @@ struct VBCC
         sta.clear();
         vbcc_cir.assign(1, VI{});
     }
-    // 点双+割点; g 任意无向邻接(只读 e.v); root = -1 扫全图
+    // 求点双与割点; 先 init(n), root = -1 扫全图, 否则只扫 root 所在连通块
     // 时间: O(n + m) | 空间: O(n)
     template <class G>
     void build(G& g, int _n, int root = -1)
@@ -48,7 +57,8 @@ struct VBCC
         for (int i = 1; i <= n; i++)
             if (!dfn[i]) tarjan(g, i, i);
     }
-    // 构建圆方树
+    // 向 tree 追加圆方森林, 每个方点连接该点双的全部圆点; 重建先 tree.clear()
+    // 时间 O(n) | 额外空间 O(n)
     void build_tree()
     {
         for (int i = 1; i <= vbcc_cnt; i++)
@@ -58,7 +68,8 @@ struct VBCC
                 tree.add(u, v);
         }
     }
-    // u 参与的 VBCC 编号表
+    // 返回 u 所属点双编号 (1-based, 无序); 须先 build_tree(), 孤立点也返回一项
+    // 时间 O(返回项数) | 额外空间 O(返回项数)
     VI get_bel_vbccs(int u)
     {
         VI res;
@@ -66,7 +77,8 @@ struct VBCC
             res.push_back(e.v - n);
         return res;
     }
-    // 第 i 个 VBCC 的割点表
+    // 返回第 i 个点双中的原图割点编号 (无序), i 越界返回空表; 无需 build_tree()
+    // 时间 O(该点双大小) | 额外空间 O(返回项数)
     VI get_cuts_vbcc(int i)
     {
         VI res;
@@ -118,25 +130,29 @@ private:
 };
 #endif
 
-/* Usage:
- * =====================================================================================
- * Block-Cut Tree (圆方树)
- *
- * [拓扑结构]
- * - 圆点 (Round) : 原图节点，编号 1 ~ n。
- * - 方点 (Square): VBCC，编号 n+1 ~ n+vbcc_cnt。
- * - 边权性质     : 圆方树为二分图。连边必为 (圆, 方)，无 (圆, 圆) 或 (方, 方)。
- * - 空间警告     : 节点总数极值 2N-1 (原图为树时)，所有树上数组(head, sz, fa) 必开 2 倍！
- *
- * [连通与转化]
- * - 割点判定 : 圆点度数 >= 2  <=> 该点为割点。
- * - 必经点   : 原图 u->v 路径上的所有必经点 == 圆方树 u->v 简单路径上的所有【圆点】。
- * - 割边性质 : 原图中的孤立割边，对应大小为 2 的 VBCC (2个圆点 + 1个方点)。
- * - 内部路径 : 大小 >=3 的 VBCC 内，任取三点 a,b,c，必存在简单路径 a -> b -> c。
- *
- * [树上维护高频 Trick (树剖 / LCT)]
- * - 菊花图退化 : 若用方点维护其包含的所有圆点，改圆点时更新周围方点会导致 O(N) 退化。
- * - 【标准解法】: 方点仅维护其在圆方树上的【子节点(圆点)】信息。
- * - 【LCA 特判】: 树上查询 u->v 时，若 LCA 为方点，必须额外并入 LCA 的父节点(圆点)贡献！
- * =====================================================================================
- */
+// Usage:
+/*
+int main()
+{
+    int n, m;
+    cin >> n >> m;
+    BCT bct(n);
+    Graph<false> g(n, m);
+    bct.init(n);
+    for (int i = 1; i <= m; i++)
+    {
+        int u, v;
+        cin >> u >> v;
+        if (u != v) g.add(u, v); // 过滤自环, 保留重边
+    }
+    bct.build(g, n);
+    bct.build_tree();
+    int tot = n + bct.vbcc_cnt; // 下游树算法使用这个点数
+    for (int u = n + 1; u <= tot; u++)
+        for (auto e : bct.tree[u]) cout << u << ' ' << e.v << '\n'; // 方点与原图点的连边
+    return 0;
+}
+// 圆点度数 >= 2 当且仅当它是割点; 原图 u - v 的必经点对应树路径上的圆点
+// 一条桥形成二点块; 至少三点的点双内, 任意不同 a, b, c 存在经过 b 的简单 a - c 路径
+// 方点维护子圆点信息, 避免修改割点时遍历所有相邻方点; LCA 为方点时另计其父圆点
+*/

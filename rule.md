@@ -1,6 +1,6 @@
 # Z-OI 模板开发规则 —— AI 协作开发竞赛模板的宪法
 本文件是算法模板契约的现行正文；交互与操作规则由 AGENTS.md 路由到各自正文。
-最近一轮: 规则分卷、对拍边界与 CI 检查改进；协作状态统一记录到 rules/sweep-board.md。
+最近一轮: 连通性四件套独立验证、赛场注释与两层验证表; 协作状态见 rules/sweep-board.md
 更早裁决与原文在 records/tooling/rule_history.md，按需查阅。
 
 ## 适用范围与阅读顺序
@@ -29,7 +29,8 @@
 统一见 [协作与执行约定](rules/collab.md)，不在算法契约中重复维护。
 
 ## 2. 码风
-- 注释全中文。万物 1-based: 数组开 n+1, 循环 for (i = 1; i <= n; i++)。
+- 注释用中文表述, 标点用英文半角; 中文与数字或标识符之间留空格, 逗号/分号/冒号紧贴前文且后留一个空格, 运算符两侧留空格, API 名称保持原写法, 注释末尾不加句号
+- 万物 1-based: 数组开 n+1, 循环 for (i = 1; i <= n; i++)。
 - 注释 = 侵入式使用面标记: 只给"外部要用的接口"写注释, 首行一句话
   (作用+返回值约定 id>0 / -1=不存在 / ±INF=无解), 次行时间|空间。
   看见注释 = 可侵入式使用; 无注释/private = 别碰。数据成员不写接口注释
@@ -107,8 +108,9 @@
 现役清单唯一真相源 = zoi\_catalog.txt(跳板目录), 本节不再维护清单副本。
 新建、整理、移动或撤下模板时，收尾必须执行 [学习与入库进度同步](docs/progress/README.md#ai-何时询问如何同步)：客观整理状态按证据更新，个人学习状态按用户确认；二者不混为一谈。
 家族注记: 替罪羊 α=0.75 真删除+原位重建; LCA 主力 = DFN_LCA;
-  连通性四件(SCC/EBCC/VBCC/BCT)鸭子注入 build(g,n), EBCC 桥 = 树方向
-  半边 id(端点经 g.edges 取), SCC 可直接吃 SegGraph 的带权图;
+  连通性四件(SCC/EBCC/VBCC/BCT)鸭子注入 build(g,n), EBCC 桥 = 原图偶数
+  半边 id（0-based，不保证 DFS 方向；端点经 g.edges 取）, SCC 可直接吃 SegGraph 的带权图;
+  BCT 独立类型配 Z_OI_BCT 守卫 , 不依赖或复用 VBCC 类型 , 两者可以同场实例化.
   轻件(最短路/欧拉/拓扑等应用件)不强求对拍; k 短路弃置留档不回归。
 禁做: 任何摊还结构 × 可持久化 = 禁(版本回放摧毁势能)——Splay/LCT/
   势能线段树/哈希表/桶的持久化版全灭。例外: 可持久化并查集(按秩合并+
@@ -134,7 +136,7 @@ PersSegTree 红线: Tag 永久化只限加法类可交换标记; find_kth 只在
   函数式引擎同样禁止静默扩容(fork 已接 assert——本地 RE 好过赛场
   静默 realloc 之后 MLE)。
 - 铁律: 绝不静默扩容。预算公式 = (build?2n:0) + m*(ceil(log2 n)+2),
-  范围修改再 ×2。Graph::edges 预留 m*(Dir?1:2)+10。圆方树 2n 点 4m 半边。
+  范围修改再 ×2。Graph::edges 预留 m*(Dir?1:2)+10。圆方森林最多 2n 点、4n 半边预算（含孤立点）。
 - 引用安全全靠"永不扩容": DySegTree、Graph 遍历这类 int& 回写引擎
   依赖容量不变。新写引用风格的代码, 同样受这条约束。
 - 遍历邻接表或持有 vector 元素引用期间, 禁止任何 push_back。
@@ -210,6 +212,11 @@ vector 口径: build 传 1-based a[1..m](a.size()=m+1); 其余 vector 入参
 catalog、源文件名单或测试 include 关系变化后重新生成, CI 用 -Check 校验。
 不再手工同步等级行; A/B/C 仅表示直接引用资产/未发现直接引用/笔记,
 不等于行为覆盖或运行通过。实际验证仍查对应源码、环境与参数的运行报告。
+两层验证表同源生成: [用户概览](docs/verification/status.md) 用口语说已测内容与缺口,
+[AI 明细](docs/verification/details.md) 保留 API、参照、边界和环境证据
+rules/verification.json 只登记经审查的范围, runner 自动记录指纹与结果, 不手填通过
+模板、依赖或测试变化后执行 [验证同步流程](docs/verification/README.md#ai-维护顺序),
+未跑环境不标通过, 无指纹历史不冒充当前证据; 学习进度另记
 统一入口 scripts/run_checks.ps1, 日常 -Filter 家族名, 里程碑和赛前 -Mode All;
 -Mode Syntax 只做语法扫描, -Sanitize 做 ASan/UBSan 与标准库边界检查。
 测试数以入口输出为准, 不在规则中维护副本; 具体参数与复现方法见 scripts/checks.md。

@@ -7,18 +7,23 @@
 |---|---|
 | 母版登记、跳板名称 | 更新 zoi/_catalog.txt，运行 scripts/make_stubs.ps1；遵守模板契约 |
 | catalog 或测试 include 关系 | 运行 scripts/make_reliability.ps1，再运行 scripts/make_features.ps1 |
+| 模板实现或传递依赖 | 重跑相关套件; 暂不跑时用 scripts/make_verification.ps1 刷新待重验状态 |
+| 测试行为、API 或边界用例 | 核对 rules/verification.json 的对应范围, 运行相关套件后查看自动生成的两层表 |
+| 指纹、证据或两层表生成器 | 运行 scripts/check_verification_test.ps1, 同时验证 PS5.1 / PS7 |
 | 展开/恢复 | 运行 scripts/zoi_check.ps1 |
 | 安装/卸载 | 运行 scripts/check_setup.ps1，使用隔离配置 |
 | 资产扫描/测试入口 | 运行 scripts/check_inventory_test.ps1 / scripts/check_runner.ps1 |
 | 分享队友包 | scripts/make_team_package.ps1 -OutputPath ./docs/releases/HNIST-ZOI.zip（目标须不存在） |
 
 功能细目由 make_features 复用 check_inventory 生成；-Check 只检查且过期失败。概括性功能介绍在 docs/features/README.md，新增或撤下整个功能时同步描述，不手填数量或测试通过等级。
-所有脚本放 scripts，库根从 PSScriptRoot 推导，不写本机绝对路径。打包只收源码与受管文档，排除个人记录、恢复备份、测试日志和已有发布包。
+所有脚本放 scripts，库根从 PSScriptRoot 推导，不写本机绝对路径。打包收源码、受管文档、验证范围 JSON 与自动运行证据, 排除恢复备份、原始测试日志和已有发布包
 
 ## CI 与报告
 
 push、PR 或手动触发 CI。普通回归、语法扫描、sanitizer 与 Windows 安装脚本检查分工见 [测试说明](../../scripts/checks.md) 和 [CI 配置](../../.github/workflows/ci.yml)。
 报告绑定当次源码、环境、参数和范围；本地绿和已发布提交的绿不能代替未提交改动的验证。日志无权限时不猜原因，尽量本地复现。没有运行的环境不标通过。
+
+两层表的数据分工、失效条件、CI 附件导入与 AI 收尾流程统一见 [验证指南](../verification/README.md), 不在这里复制状态规则. 新增功能时同步用户功能总览和 AI 路由, 不只改实施记录
 
 ## 跳板生成约定
 

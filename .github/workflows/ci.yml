@@ -54,6 +54,10 @@ jobs:
         if: ${{ !cancelled() }}
         shell: pwsh
         run: ./scripts/check_inventory_test.ps1
+      - name: Check verification evidence and tables
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: ./scripts/check_verification_test.ps1
       - name: Check runner failure paths
         if: ${{ !cancelled() }}
         shell: pwsh

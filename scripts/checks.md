@@ -59,3 +59,8 @@ A/B/C 分别是带直接引用的 catalog 引擎、未发现直接引用的引�
 ## 安装与卸载自检
 
 ./scripts/check_setup.ps1 覆盖全新 Profile、重复安装/卸载、JSONC 注释与嵌套同名键、既有 -I 参数、后续用户修改、安装状态异常、写入中断恢复和受管包自删除。Windows CI 使用 PS5.1 与 PS7 各跑一遍，日志保留在 .zoi-checks/setup-test-*。真实 Win11 的插件或编译器不由安装器安装，使用说明见 [队友安装说明](../docs/setup/README.md)。
+
+
+## 自动汇总验证现状
+
+runner 自动记录源码与依赖指纹、环境和运行结果, 并生成 [口语概览](../docs/verification/status.md) 与 [AI 明细](../docs/verification/details.md). 只重新判断当前源码是否仍被旧结果覆盖时运行 `./scripts/make_verification.ps1`. 具体范围登记、CI 导入和状态规则见 [指南](../docs/verification/README.md). 原 reliability 表继续只负责静态资产关联.

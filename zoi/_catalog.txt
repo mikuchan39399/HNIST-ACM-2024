@@ -93,7 +93,6 @@ misraGries	algorithms/杂项/主元素问题/Misra-Gries.cpp
 # exemptions: engines deliberately WITHOUT a booklet entry (glob; sync check
 # requires every engine cpp to be a catalog target above or matched by one of
 # these -- 例题 problem solutions, 对拍 harnesses, unmaintained WIP, plugins)
-!algorithms/图论/优化建图/例题/*
 !algorithms/图论/欧拉图/例题/*
 !algorithms/图论/最短路问题/全源最短路径/P6125 无向图的最小环.cpp
 !algorithms/数据结构/堆/左偏树/k短路未维护.cpp

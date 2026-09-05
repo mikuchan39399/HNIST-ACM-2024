@@ -9,6 +9,7 @@
 | 展开、恢复、状态清理 | [刷题指南](../docs/expand/README.md) |
 | 打印手册 | [手册指南](../docs/booklet/README.md) |
 | 脚本实现、跳板、事务、CI 与目录生成 | [工具维护说明](../docs/maintenance/README.md) |
+| 对拍现状、行为范围与运行证据 | [两层表使用与维护](../docs/verification/README.md) |
 | 回归与失败定位 | [测试说明](../scripts/checks.md) |
 
 修改工具时必须读对应使用契约和维护约定。迁移前原文保存在 records/tooling/docs-20260906-pass2，历史不作为并行规则。

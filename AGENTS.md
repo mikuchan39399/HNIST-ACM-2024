@@ -7,11 +7,12 @@
 | 本次任务 | 必读正文 |
 |---|---|
 | 算法讲解、陪练、学习状态更新 | [学习进度同步约定](docs/progress/README.md#ai-何时询问如何同步)及对应方向表 |
-| 算法模板、底座、catalog、跳板生成 | [模板契约](rule.md)；涉及工具时加读维护流程 |
-| 对拍、测试入口、CI | [验证标准](rule.md#9-验证标准)、[对拍坑位](rules/pitfalls.md)、[测试说明](scripts/checks.md) |
+| 算法模板、底座、catalog、跳板生成 | [模板契约](rule.md); 实现或依赖变化时执行 [验证同步](docs/verification/README.md#ai-维护顺序); 涉及工具时加读维护流程 |
+| 对拍、测试入口、CI | [验证标准](rule.md#9-验证标准)、[对拍坑位](rules/pitfalls.md)、[测试说明](scripts/checks.md)、[两层验证表维护](docs/verification/README.md) |
 | 安装、展开、恢复、打包、手册脚本 | [文档目录](docs/README.md) 中对应指南、[维护流程](rules/workflow.md) |
 | 文档整理 | 将要修改的正文及引用它的入口；保留约束与历史，不重复编写第二套规则 |
 
 用户明确要求优先。各正文只管自己的范围，入口不复制条款；冲突先查实现和现行正文，无法判定时向用户说明。
 rule.md 与 records/tooling/rule_history.md 仍需用户明确授权才可改动。已读且未变化的正文不用重复加载；缺文件先查路径，仍找不到再询问用户。
-历史方案和运行证据在 records/tooling、records/tooling/rule_history.md、rules/sweep-history.md，只有追溯特定问题时才读。
+当前验证先查 [AI 明细](docs/verification/details.md) 中相关条目, 必要时读 records/verification/runs 的对应证据; 不默认加载全部运行记录
+历史方案在 records/tooling、records/tooling/rule_history.md、rules/sweep-history.md, 只有追溯特定问题时才读

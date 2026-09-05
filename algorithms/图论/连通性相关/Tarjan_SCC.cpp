@@ -11,12 +11,17 @@
 
 using namespace std;
 
+// 强连通分量; bel[u] 为 1 .. scc_cnt, 跨分量边从大编号指向小编号, dag 恒无权
+// 原图外置, build 可接带权图 (含 SegGraph), 只读邻接中的 e.v; 递归深度最坏 n
 struct SCC
 {
     int n;
     int dfn_idx, scc_cnt;
-    Graph<true, Empty> dag;    // 缩点 DAG
+    Graph<true, Empty> dag;
     VI dfn, low, bel, in_stk, sta;
+    // N 取原图最大点数, M 取缩点后最多保留的有向边数 (直接取原图 m 即可)
+    // 64 位 GCC, int = 4 B 时预留约 36 * N + 8 * M B; N = M = 2e5 约 8.8 MB, 不含原图与递归栈
+    // 时间 O(N) | 空间 O(N + M)
     SCC(int max_n = 0, int max_m = 0) : n(max_n), dfn_idx(0), scc_cnt(0),
         dag(max_n, max_m),
         dfn(max_n + 10, 0), low(max_n + 10, 0),
@@ -24,6 +29,8 @@ struct SCC
     {
         sta.reserve(max_n + 10);
     }
+    // 复位本轮结果与内部图; n 不超过构造时的 N, 原图需另行 clear()
+    // 时间 O(n + 上轮点数) | 额外空间 O(1)
     void init(int _n)
     {
         n = _n;
@@ -32,7 +39,7 @@ struct SCC
         dfn_idx = scc_cnt = 0;
         sta.clear();
     }
-    // 强连通分量
+    // 将 g 的 1 .. n 点划分到 bel; 每轮先 init(n), 边权不参与计算
     // 时间: O(n + m) | 空间: O(n)
     template <class G>
     void build(G& g, int _n)
@@ -41,7 +48,8 @@ struct SCC
         for (int i = 1; i <= n; i++)
             if (!dfn[i]) tarjan(g, i);
     }
-    // 缩点 DAG
+    // 向 dag 追加跨分量边, 保留重边, 丢弃权值; 重建先 dag.clear()
+    // 时间 O(n + m) | 额外空间 O(m)
     template <class G>
     void build_dag(G& g)
     {
@@ -54,7 +62,8 @@ struct SCC
             }
         }
     }
-    // 去重边 DAG
+    // 向 dag 追加去重后的跨分量边; 与 build_dag 二选一, 重建先 dag.clear()
+    // 时间 O(n + m log m) | 额外空间 O(m)
     template <class G>
     void build_dag_unique(G& g)
     {
@@ -108,15 +117,25 @@ private:
 #endif
 // Usage:
 /*
-SCC scc(N, M);
-Graph<true> g(N, M);
-scc.init(n); g.clear();
-for (int i = 1; i <= m; i++) { int u, v; cin >> u >> v; g.add(u, v); }
-
-scc.build(g, n);    // bel[u] = 所在 SCC 编号, 编号越大拓扑序越靠前
-scc.build_dag(g);   // 可选: 缩点 DAG, 原图带权直接喂不受影响
-
-// DAG DP 沿 scc_cnt 降序即拓扑序:
-for (int u = scc.scc_cnt; u >= 1; u--)
-    for (auto& e : scc.dag[u]) ...
+int main()
+{
+    int n, m;
+    cin >> n >> m;
+    SCC scc(n, m);
+    Graph<true> g(n, m);
+    scc.init(n);
+    for (int i = 1; i <= m; i++)
+    {
+        int u, v;
+        cin >> u >> v;
+        g.add(u, v);
+    }
+    scc.build(g, n);
+    for (int u = 1; u <= n; u++) cout << scc.bel[u] << ' '; // 输出各点的分量号
+    cout << '\n';
+    scc.build_dag_unique(g); // 保留重边时改用 build_dag(g)
+    for (int u = scc.scc_cnt; u >= 1; u--) // 按拓扑序遍历缩点图
+        for (auto e : scc.dag[u]) cout << u << ' ' << e.v << '\n';
+    return 0;
+}
 */

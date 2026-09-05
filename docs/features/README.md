@@ -19,7 +19,7 @@
 
 目前 catalog 中的网络流（Dinic/MCMF）、AC 自动机、后缀数组/自动机、FFT、莫比乌斯反演、矩阵树定理、计算几何及多数 DP 条目登记为笔记，没有可直接 include 的跳板。不要把笔记、目录骨架当成已交付引擎。
 
-登记为代码只表示库里有这个实现。对拍资产看 [测试资产表](../../rules/reliability.md)，当次通过结果看运行报告；待补与待裁决项看 [工作板](../../rules/sweep-board.md)。示例、插件和未维护代码等豁免项不列为现役跳板，仍可从 [源码目录](../../algorithms) 和 catalog 豁免行追溯。
+登记为代码只表示库里有这个实现。想知道测得怎样看 [口语概览](../verification/status.md), 具体 API、边界和运行证据看 [AI 明细](../verification/details.md); [测试资产表](../../rules/reliability.md) 只列模板与套件的静态关联; 待补与待裁决项看 [工作板](../../rules/sweep-board.md)。示例、插件和未维护代码等豁免项不列为现役跳板，仍可从 [源码目录](../../algorithms) 和 catalog 豁免行追溯。
 
 ## 辅助工具
 
@@ -30,9 +30,12 @@
 | 展开提交 | 原地展开依赖、钻石去重、复制源码；再次展开可处理新 include | [展开与恢复](../expand/README.md) |
 | 恢复与清理 | 恢复 include、保留块外题解修改；status 查看状态，forget 保留代码并解除管理 | [展开与恢复](../expand/README.md) |
 | 对拍与 CI | 回归、语法/警告检查、sanitizer、超时和失败日志，脚本自身回归 | [测试说明](../../scripts/checks.md) |
+| 对拍现状 | 跑完自动更新两层表, 显示已测内容、剩余缺口及运行环境; 重新生成时检查是否需要重验 | [口语概览](../verification/status.md) / [使用说明](../verification/README.md) |
 | 纸质手册 | 按 catalog 生成带目录和代码指纹的 PDF，可筛条目 | [打印手册](../booklet/README.md) |
 | 库维护 | 生成跳板、更新目录和测试资产表、生成队友 ZIP | [维护说明](../maintenance/README.md) |
 
 安装包不附带 VS Code、插件、编译器或 Typst；按你实际使用的功能准备对应工具。
+
+验证范围需要逐项核实登记, 没登记的模板会直接说明未知, 不把有对拍文件当成测透. CI 的本次表格随日志附件提供, 仓库内概览不会因为远程 CI 完成而自动更新
 
 学习与整理进度另见 [学习与入库进度表](../progress/README.md)，有代码不等于本人学过。

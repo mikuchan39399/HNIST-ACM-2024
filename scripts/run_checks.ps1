@@ -19,6 +19,10 @@ if ($Filter -and $Mode -ne 'Regression') { throw '-Filter applies only to Regres
 $root = Split-Path -Parent $PSScriptRoot   # scripts/ -> library root
 . (Join-Path $PSScriptRoot 'check_inventory.ps1')
 $inventory = Get-CheckInventory $root
+. (Join-Path $PSScriptRoot 'check_verification.ps1')
+$trackVerification = Test-Path -LiteralPath (Join-Path $root 'rules/verification.json')
+if ($trackVerification) { $null=Read-VSpec $root $inventory }
+$startedUtc=[DateTime]::UtcNow.ToString('o')
 $gaps = @($inventory.entries | Where-Object { $_.kind -eq 'engine' -and $_.suites.Count -eq 0 })
 foreach ($gap in $gaps) { Write-Host ('[TEST GAP] no direct test include: ' + $gap.path) -ForegroundColor Yellow }
 if ($gaps.Count) { Write-Host ('[NOTE] ' + $gaps.Count + ' engines have no direct test include (warn only; not a behavior coverage metric)') -ForegroundColor Yellow }
@@ -61,6 +65,7 @@ foreach ($source in $sources) {
     $compileArgs = $flags + @($source.FullName)
     if ($isCheck) { $compileArgs += @('-o', $exe) } else { $compileArgs += '-fsyntax-only' }
     Write-Host ('[START] ' + $relative)
+    $before = Get-VSnapshot $root $relative
     $compiled = Invoke-CheckProcess $compilerPath $compileArgs $runDir $CompileTimeoutSec (Join-Path $ReportDir ($label + '-compile'))
     $status = 'PASS'
     $exitCode = $compiled.ExitCode
@@ -75,12 +80,25 @@ foreach ($source in $sources) {
         elseif ($exitCode -ne 0) { $status = 'RUN FAIL' }
     }
     if (Test-Path -LiteralPath $exe) { Remove-Item -LiteralPath $exe -Force }
-    $results += [pscustomobject]@{ path=$relative; phase=$(if ($isCheck) {'regression'} else {'syntax'}); status=$status; exitCode=$exitCode; seconds=[Math]::Round($elapsed, 3) }
+    $after = Get-VSnapshot $root $relative
+    $results += [pscustomobject]@{fingerprint=$before.hash; files=$before.files; stable=($before.hash -ceq $after.hash);  path=$relative; phase=$(if ($isCheck) {'regression'} else {'syntax'}); status=$status; exitCode=$exitCode; seconds=[Math]::Round($elapsed, 3) }
     Write-Host ('[' + $status + '] ' + $relative)
 }
 $failed = @($results | Where-Object { $_.status -ne 'PASS' }).Count
 $summary = [ordered]@{ compiler=$compilerPath; flags=$flags; mode=$Mode; filter=$Filter; sanitize=[bool]$Sanitize; total=$results.Count; failed=$failed; results=$results }
-[IO.File]::WriteAllText((Join-Path $ReportDir 'summary.json'), ($summary | ConvertTo-Json -Depth 5), $utf8)
+[IO.File]::WriteAllText((Join-Path $ReportDir 'summary.json'), ($summary | ConvertTo-Json -Depth 8), $utf8)
+if ($trackVerification) {
+    $id=[Guid]::NewGuid().ToString('N')
+    $logs=$ReportDir
+    if ($logs.StartsWith($root,[StringComparison]::OrdinalIgnoreCase)) { $logs=$logs.Substring($root.Length+1).Replace('\','/') }
+    $evidence=[ordered]@{schema=1; id=$id; startedUtc=$startedUtc; finishedUtc=[DateTime]::UtcNow.ToString('o'); os=$(if([IO.Path]::DirectorySeparatorChar -eq '\'){'Windows'}else{'Linux'}); compilerVersion=(Read-VText (Join-Path $ReportDir 'compiler.stdout.log')).Split("`n")[0]; flags=$flags; sanitize=[bool]$Sanitize; logs=$logs; results=$results}
+    $store=Join-Path $root 'records/verification/runs'
+    $output=Join-Path $root 'docs/verification'
+    if ($env:GITHUB_ACTIONS -eq 'true') { $store=Join-Path $ReportDir 'verification-runs'; $output=Join-Path $ReportDir 'verification' }
+    [void][IO.Directory]::CreateDirectory($store)
+    [IO.File]::WriteAllText((Join-Path $store ($id+'.json')),($evidence | ConvertTo-Json -Depth 10),$utf8)
+    & (Join-Path $PSScriptRoot 'make_verification.ps1') -RunDir $store -OutputDir $output
+}
 Write-Host ('total: {0}, failed: {1}; logs: {2}' -f $results.Count, $failed, $ReportDir)
 if ($failed) { exit 1 }
 exit 0

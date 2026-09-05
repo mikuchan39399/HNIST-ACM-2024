@@ -8,3 +8,7 @@
 - 文档整理：[迁移对照与原文快照](docs-20260906/README.md)。
 - 持续交接：[协作历史](../../rules/sweep-history.md)；早期裁决：[规则历史](rule_history.md)。
 - 功能总览与指南分离：[第二轮迁移记录](docs-20260906-pass2/README.md)。
+
+- 连通性四件套：[验证与注释整理](conn-20260906.md)。
+
+- 两层验证表: [实施与验证](verification-20260906.md)
