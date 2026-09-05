@@ -34,7 +34,7 @@ Generate
 $p=Join-Path $fixture 'rules/reliability.md'; $snapshot=[IO.File]::ReadAllText($p); $stamp=(Get-Item -LiteralPath $p).LastWriteTimeUtc
 Generate; Generate -Check
 Assert ((Get-Item -LiteralPath $p).LastWriteTimeUtc -eq $stamp) 'No-op generation rewrote file'
-Assert ($snapshot.Contains('C - Catalog prose') -and $snapshot.Contains('Exempt C++') -and $snapshot.Contains('example.cpp')) 'Prose/exempt source missing'
+Assert ($snapshot.Contains((-join @([char]0x43,[char]0x20,[char]0x7c7b,[char]0xff1a,[char]0x7b14,[char]0x8bb0,[char]0x6761,[char]0x76ee))) -and $snapshot.Contains((-join @([char]0x8c41,[char]0x514d,[char]0x4ee3,[char]0x7801))) -and $snapshot.Contains('example.cpp')) 'Prose/exempt source missing'
 Write-Host '[PASS] complete inventory / distinct same basename / duplicate reference / stable generation'
 
 Put 'algorithms/tests/a_check.cpp' "/*`n#include `"../one.cpp`"`n*/`nconst char* text=R`"(`n#include `"../one.cpp`"`n)`";`n// continued \`n#include `"../one.cpp`"`n#if 0`n#include `"../../zoi/two.h`"`n#endif`n"

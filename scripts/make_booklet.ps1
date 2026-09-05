@@ -49,6 +49,7 @@ foreach ($l in $catLines) {
         Cn = [IO.Path]::GetFileNameWithoutExtension($parts[1].Trim())
         Prose = $prose }
 }
+$allEntries = @($entries)
 if ($Filter -ne '') {
     $entries = @($entries | Where-Object { $_.Domain -like "*$Filter*" -or $_.Sub -like "*$Filter*" -or $_.Name -like "*$Filter*" -or $_.Cn -like "*$Filter*" })
 }
@@ -56,7 +57,7 @@ if ($entries.Count -eq 0) { throw 'no catalog entries matched' }
 
 # basename -> stub map for local include rewrite
 $stubByFile = @{}
-foreach ($e in $entries) { $stubByFile[[IO.Path]::GetFileName($e.Rel)] = $e.Name }
+foreach ($e in $allEntries) { if (-not $e.Prose) { $stubByFile[[IO.Path]::GetFullPath((Join-Path $root $e.Rel))] = $e.Name } }
 
 # ---- library walk: every knowledge-point folder must surface in the booklet ----
 # knowledge folder = depth >= 2 dir whose path avoids the aux layers (duipai /
@@ -135,11 +136,11 @@ $script:stubKeys = @($stubByFile.Keys)
 function Convert-Entry($e) {
     $text = [IO.File]::ReadAllText((Join-Path $root ($e.Rel.Replace('\', '/'))), $enc)
     $ev = [System.Text.RegularExpressions.MatchEvaluator]{ param($m)
-        $base = $m.Groups[2].Value
+        $base = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent (Join-Path $root $e.Rel)) $m.Groups[2].Value))
         if ($script:stubKeys -contains $base) { $m.Groups[1].Value + $script:stubMap[$base] + '.h"' }
         else { $script:warn += ($e.Name + ': unresolved include ' + $base); $m.Value }
     }
-    $rew = [regex]::Replace($text, '(?m)^(\s*#\s*include\s+")(?:[^"]*[/\\])?([^"/\\]+\.cpp)"', $ev)
+    $rew = [regex]::Replace($text, '(?m)^(\s*#\s*include\s+")([^"]+\.cpp)"', $ev)
     $norm = ($rew -replace "`r`n", "`n").TrimEnd()
     # trim decorative '='/'-' banner lines to the column width before hashing:
     # a code column fits ~70 chars of 6pt Consolas inside the raw box inset,
@@ -198,17 +199,18 @@ foreach ($ab in $autoBlocks) { $ordered += [pscustomobject]@{ D = $domRank[$ab.M
 $blocks = @($ordered | Sort-Object D, S, T, I | ForEach-Object { $_.B })
 
 # ---- assemble typst source ----
+function Zh([string]$hex) { -join @($hex.Split(' ') | ForEach-Object { [char][Convert]::ToInt32($_,16) }) }
 function Esc([string]$t) { return ($t -replace '([_\*\[\]#`$\\@<>])', '\$1') }   # typst markup escape
 $s = New-Object System.Text.StringBuilder
 [void]$s.AppendLine('#set page(paper: "a4", flipped: true, margin: (x: 0.8cm, y: 1.0cm, top: 1.5cm), numbering: (..a) => text(size: 6pt, fill: luma(120), { let n = a.pos().at(0); let t = if a.pos().len() > 1 { a.pos().at(1) } else { none }; if t == none { str(n) } else { str(n) + " / " + str(t) } }))')
 [void]$s.AppendLine('#set text(font: ("Source Sans Pro", "Noto Sans SC"), size: 7.5pt, lang: "zh", region: "cn", cjk-latin-spacing: auto)')
 [void]$s.AppendLine('#set par(leading: 0.52em, spacing: 0.85em, justify: false)')
 [void]$s.AppendLine('#set heading(numbering: none)')
-[void]$s.AppendLine('#show heading.where(level: 1): it => block(above: 2.4em, below: 1.1em, width: 100%)[#text(size: 13pt, weight: "bold", fill: rgb("#1f4e79"), it.body) #v(0.5em) #line(length: 100%, stroke: 1pt + rgb("#1f4e79"))]')
+[void]$s.AppendLine('#show heading.where(level: 1): it => block(above: 0.5em, below: 0.65em, width: 100%)[#text(size: 13pt, weight: "bold", fill: rgb("#1f4e79"), it.body) #v(0.5em) #line(length: 100%, stroke: 1pt + rgb("#1f4e79"))]')
 [void]$s.AppendLine('#show raw: set text(font: ("Consolas", "Noto Sans SC"), size: 6pt)')
-[void]$s.AppendLine('#show raw.where(block: true): it => block(width: 100%, fill: luma(249), stroke: (left: 1.1pt + luma(150), top: 0.35pt + luma(215), right: 0.35pt + luma(215), bottom: 0.35pt + luma(215)), inset: (x: 5pt, y: 3.5pt), radius: (top-right: 2pt, bottom-right: 2pt), it)')
+[void]$s.AppendLine('#show raw.where(block: true): it => block(width: 100%, fill: none, stroke: (left: 1.1pt + luma(150), top: 0.35pt + luma(215), right: 0.35pt + luma(215), bottom: 0.35pt + luma(215)), inset: (x: 5pt, y: 3.5pt), radius: (top-right: 2pt, bottom-right: 2pt), it)')
 [void]$s.AppendLine('#show heading.where(level: 2): it => block(above: 1.3em, below: 0.3em, text(weight: "bold", size: 7.8pt, fill: luma(25), it.body))')
-[void]$s.AppendLine('#let subsep(b) = block(above: 1.9em, below: 0.55em, width: 100%)[#text(size: 9.5pt, weight: "bold", fill: rgb("#2e6da4"), b) #v(0.4em) #line(length: 100%, stroke: 0.7pt + luma(165))]')
+[void]$s.AppendLine('#let subsep(b) = block(above: 1.0em, below: 0.45em, width: 100%)[#text(size: 9.5pt, weight: "bold", fill: rgb("#2e6da4"), b) #v(0.4em) #line(length: 100%, stroke: 0.7pt + luma(165))]')
 [void]$s.AppendLine('#let subintro(b) = block(above: 0em, below: 0.8em, width: 100%, fill: luma(246), inset: (x: 4.5pt, y: 3.5pt), radius: 2pt)[#text(size: 6.2pt, fill: luma(105), b)]')
 [void]$s.AppendLine('#show outline: set text(size: 7pt)')
 [void]$s.AppendLine('#show outline.entry: set par(leading: 0.5em)')
@@ -216,10 +218,10 @@ $s = New-Object System.Text.StringBuilder
 [void]$s.AppendLine('#show outline.entry.where(level: 2): it => { set text(size: 6.4pt, fill: luma(75)); it }')
 [void]$s.AppendLine('#let pagehead = context {')
 [void]$s.AppendLine('  let pg = here().page()')
-[void]$s.AppendLine('  let doms = query(heading.where(level: 1).before(here()))')
-[void]$s.AppendLine('  let dom = if doms.len() > 0 { doms.last().body } else { [--] }')
-[void]$s.AppendLine('  let ents = query(heading.where(level: 2).before(here())).filter(h => h.has(str(label)))')
-[void]$s.AppendLine('  let flowing = if ents.len() > 0 { ents.last().body } else { [--] }')
+[void]$s.AppendLine('  let doms = query(heading.where(level: 1)).filter(h => h.location().page() <= pg)')
+[void]$s.AppendLine('  let dom = if doms.filter(h => h.location().page() == pg).len() > 0 { doms.filter(h => h.location().page() == pg).first().body } else if doms.len() > 0 { doms.last().body } else { [--] }')
+[void]$s.AppendLine('  let ents = query(heading).filter(h => h.has(str(label)) and h.location().page() <= pg)')
+[void]$s.AppendLine('  let flowing = if ents.filter(h => h.location().page() == pg).len() > 0 { ents.filter(h => h.location().page() == pg).first().body } else if ents.len() > 0 { ents.last().body } else { [--] }')
 [void]$s.AppendLine('  grid(columns: (auto, 1fr, auto), text(size: 6pt, fill: luma(110))[#dom], align(center, text(size: 6pt, fill: luma(110), flowing)), text(size: 6pt, fill: luma(110))[zoi booklet])')
 [void]$s.AppendLine('  v(0.3em)')
 [void]$s.AppendLine('  line(length: 100%, stroke: 0.3pt + luma(205))')
@@ -227,9 +229,11 @@ $s = New-Object System.Text.StringBuilder
 [void]$s.AppendLine('#let colrule = [#place(line(start: (33.34%, 0%), end: (33.34%, 100%), stroke: 0.4pt + luma(210))) #place(line(start: (66.67%, 0%), end: (66.67%, 100%), stroke: 0.4pt + luma(210)))]')
 [void]$s.AppendLine('')
 [void]$s.AppendLine('#v(1fr)')
-[void]$s.AppendLine('#align(center, text(size: 24pt, weight: "bold")[zoi Contest Booklet])')
+[void]$s.AppendLine('#align(center, text(size: 26pt, weight: "bold")[' + (Zh '48 4e 49 53 54 20 7b97 6cd5 7ade 8d5b 624b 518c') + '])')
 [void]$s.AppendLine('#v(0.5em)')
-[void]$s.AppendLine('#align(center, text(size: 7pt, fill: luma(100))[' + $realCount + ' catalog entries + ' + $autoBlocks.Count + ' skeleton entries (' + $kDirs.Count + ' knowledge folders, coverage audited) + ' + $plugBlocks.Count + ' algebra plugins - hash = SHA256 first 8 hex over LF-normalized text, includes rewritten to stub names. On-site check: count lines, then hash after LF save.])')
+[void]$s.AppendLine('#align(center, text(size: 9pt, fill: luma(65))[' + $realCount + (Zh '20 4e2a 767b 8bb0 6761 76ee 20 b7 20') + $autoBlocks.Count + (Zh '20 4e2a 76ee 5f55 6761 76ee 20 b7 20') + $plugBlocks.Count + (Zh '20 4e2a 4ee3 6570 63d2 4ef6') + '])')
+[void]$s.AppendLine('#v(1em)')
+[void]$s.AppendLine('#align(center, block(width: 72%)[#text(size: 8pt, fill: luma(85))[' + (Zh '5148 6309 76ee 5f55 627e 9875 7801 ff0c 518d 770b 9875 7709 5b9a 4f4d 6761 76ee 3002 4ee3 7801 65c1 6807 6ce8 8df3 677f 77ed 540d 3001 884c 6570 53ca 20 53 48 41 32 35 36 20 524d 20 38 20 4f4d ff1b 6307 7eb9 5bf9 5e94 6362 884c 5f52 4e00 5316 5e76 6539 5199 20 69 6e 63 6c 75 64 65 20 540e 7684 6b63 6587 3002') + ']])')
 [void]$s.AppendLine('#v(1em)')
 [void]$s.AppendLine('#align(center, line(length: 55%, stroke: 1.1pt + rgb("#1f4e79")))')
 [void]$s.AppendLine('#v(1fr)')
@@ -263,7 +267,7 @@ foreach ($b in $blocks) {
         [void]$s.AppendLine('= ' + (Esc $b.Meta.Domain))
         $lastDom = $b.Meta.Domain
     }
-    elseif (-not $b.Auto) { [void]$s.AppendLine($pbPage) }   # real entries: one page each
+    elseif (-not $b.Auto) { [void]$s.AppendLine($(if ($SoloMin -gt 0 -and $b.Lines -ge $SoloMin) { $pbOdd } else { $pbPage })) }   # real entries: one page each
     elseif (-not $prevAuto) { [void]$s.AppendLine($pbPage) } # skeleton runs start on a fresh page too
     if ($newSub) {
         [void]$s.AppendLine('#subsep[' + (Esc $b.Meta.Sub) + ']')
@@ -272,12 +276,12 @@ foreach ($b in $blocks) {
         $lastSub = $b.Meta.Sub
     }
     $tag = ''
-    if ($b.Meta.Prose -and (-not $b.Auto -or $b.Lines -eq 0)) {
+    if ($b.Meta.Prose -and ($b.Lines -eq 0 -or $b.Text -match ('^' + (Zh '5360 4f4d') + '[:\uFF1A]') -or $b.Text.Contains((Zh '9aa8 67b6 7a7a 76ee 5f55')))) {
         $tag = ' #text(fill: luma(165), size: 0.72em)[' + $tobu + ']'   # catalog prose + empty shells carry the marker
     }
     [void]$s.AppendLine('== ' + (Esc $b.Meta.Cn) + $tag + ' <e-' + $b.Meta.Name + '>')
     if ($b.Lines -gt 0) {
-        [void]$s.AppendLine('#align(right, text(size: 5.4pt, fill: luma(105))[' + $b.Lines + ' ln -- sha256 ' + $b.Hash + '])')
+        [void]$s.AppendLine('#align(right, text(size: 5.4pt, fill: luma(105))[' + $(if (-not $b.Meta.Prose -and $b.Meta.PSObject.Properties['Domain']) { (Esc ($b.Meta.Name + '.h')) + ' | ' } else { '' }) + $b.Lines + (Zh '20 884c 20 7c 20 53 48 41 32 35 36 20')  + $b.Hash + '])')
         if ($b.Meta.Prose) {
             [void]$s.AppendLine('#set par(justify: true)')
             [void]$s.AppendLine((Esc $b.Text))
@@ -297,10 +301,10 @@ if ($plugBlocks.Count -gt 0) {
     $pi = 0
     foreach ($b in $plugBlocks) {
         $brk = if ($SoloMin -gt 0 -and $b.Lines -ge $SoloMin) { $pbOdd } else { $pbPage }
-        if ($firstPlug) { [void]$s.AppendLine($brk); [void]$s.AppendLine('== Appendix / algebra plugins'); $firstPlug = $false }
+        if ($firstPlug) { [void]$s.AppendLine($brk); [void]$s.AppendLine('= ' + (Zh '9644 5f55 ff1a 4ee3 6570 63d2 4ef6')); $firstPlug = $false }
         else { [void]$s.AppendLine($brk) }
         [void]$s.AppendLine('=== ' + (Esc $b.Meta.Name) + ' <e-plug' + $pi + '>')
-        [void]$s.AppendLine('#align(right, text(size: 5.4pt, fill: luma(105))[' + $b.Lines + ' ln -- sha256 ' + $b.Hash + '])')
+        [void]$s.AppendLine('#align(right, text(size: 5.4pt, fill: luma(105))[' + $(if (-not $b.Meta.Prose -and $b.Meta.PSObject.Properties['Domain']) { (Esc ($b.Meta.Name + '.h')) + ' | ' } else { '' }) + $b.Lines + (Zh '20 884c 20 7c 20 53 48 41 32 35 36 20')  + $b.Hash + '])')
         [void]$s.AppendLine('```cpp')
         [void]$s.AppendLine($b.Text)
         [void]$s.AppendLine('```')
@@ -372,6 +376,7 @@ foreach ($m in [regex]::Matches(($evalOut -join ' '), '"<(e-[a-zA-Z0-9]+)>",(\d+
         }
     }
 }
+if ($bigHits -ne $bigset.Count) { throw 'Parity audit missed expected big-entry anchors' }
 if ($hits -eq 0) { Write-Host '[FAIL] parity audit matched no entry anchors (eval broken?)'; exit 1 }
 if ($viol -eq 0) { Write-Host ('[OK] parity: ' + $bigHits + '/' + $bigset.Count + ' big entries start on odd pages (sheet fronts)') }
 else { Write-Host ('[FAIL] parity violations: ' + $viol); exit 1 }
