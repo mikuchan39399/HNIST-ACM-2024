@@ -212,9 +212,13 @@ vector 口径: build 传 1-based a[1..m](a.size()=m+1); 其余 vector 入参
 catalog、源文件名单或测试 include 关系变化后重新生成, CI 用 -Check 校验。
 不再手工同步等级行; A/B/C 仅表示直接引用资产/未发现直接引用/笔记,
 不等于行为覆盖或运行通过。实际验证仍查对应源码、环境与参数的运行报告。
+两层表的模板行仅收 catalog 登记的引擎, 例题、临时题解、笔记与其他豁免代码不列入
 两层验证表同源生成: [用户概览](docs/verification/status.md) 用口语说已测内容与缺口,
 [AI 明细](docs/verification/details.md) 保留 API、参照、边界和环境证据
-rules/verification.json 只登记经审查的范围, runner 自动记录指纹与结果, 不手填通过
+rules/verification.json 的 API、暴力与边界由维护者或 AI 核实登记, 不从代码自动猜覆盖
+run_checks.ps1 完成运行后自动存证据并调用 make_verification.ps1 更新两表, 无需 AI 手工填结果
+只改源码没有监听刷新, 须运行 make_verification.ps1 重算状态或重新对拍
+CI 只生成本次附件, 不自动回写仓库; 导入 CI 证据后再生成合并表, 不手填通过
 模板、依赖或测试变化后执行 [验证同步流程](docs/verification/README.md#ai-维护顺序),
 未跑环境不标通过, 无指纹历史不冒充当前证据; 学习进度另记
 统一入口 scripts/run_checks.ps1, 日常 -Filter 家族名, 里程碑和赛前 -Mode All;

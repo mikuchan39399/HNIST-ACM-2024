@@ -13,7 +13,8 @@ function U([string]$hex) { -join @($hex.Split(' ') | ForEach-Object {[char][Conv
 Put 'algorithms/dep.h' "#pragma once`ninline int value() { return 1; }`n"
 Put 'algorithms/engine.cpp' "// zoi: tiny`n#include `"dep.h`"`n"
 Put 'algorithms/one_check.cpp' "#include `"engine.cpp`"`nint main(){return value()-1;}`n"
-Put 'zoi/_catalog.txt' "tiny`talgorithms/engine.cpp`n"
+Put 'algorithms/CF_fixture.cpp' 'int solution;'
+Put 'zoi/_catalog.txt' "tiny`talgorithms/engine.cpp`n!algorithms/CF_fixture.cpp`n"
 Put 'zoi/tiny.h' '#include "../algorithms/engine.cpp"'
 Put 'rules/verification.json' '{"schema":1,"coverage":[{"template":"algorithms/engine.cpp","suite":"algorithms/one_check.cpp","api":["value"],"oracle":"constant","cases":["single"],"summary":"value","limitations":"tiny fixture"}]}'
 $a=Get-VSnapshot $fixture 'algorithms/one_check.cpp'
@@ -43,6 +44,10 @@ try {
  Run 'run_checks.ps1' @('-Compiler',$Compiler) 0
  $e=@(Get-ChildItem (Join-Path $fixture 'records/verification/runs') -Filter '*.json')
  Assert ($e.Count -eq 1) 'Evidence not persisted'
+ foreach($table in @('status.md','details.md')) {
+  $tableText=Read-VText (Join-Path $fixture ('docs/verification/'+$table))
+  Assert (-not $tableText.Contains('CF_fixture.cpp')) 'Exempt solution leaked into template table'
+ }
  $saved=(Read-VText $e[0].FullName) | ConvertFrom-Json
  Assert ($saved.results[0].files.path -contains 'algorithms/dep.h') 'Missing transitive dependency in evidence'
  Put 'algorithms/one_check.cpp' "#include `"engine.cpp`"`nint main(){return value();}`n"

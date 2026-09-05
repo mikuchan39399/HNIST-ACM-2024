@@ -77,21 +77,6 @@
 | [algorithms/杂项/防卡/哈希防卡.cpp](<../../algorithms/杂项/防卡/哈希防卡.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../../algorithms/杂项/对拍/misc_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
 | [algorithms/杂项/离散化/离散化.cpp](<../../algorithms/杂项/离散化/离散化.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../../algorithms/杂项/对拍/misc_check.cpp>) | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
 | [algorithms/杂项/主元素问题/Misra-Gries.cpp](<../../algorithms/杂项/主元素问题/Misra-Gries.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/图论/最短路问题/全源最短路径/P6125 无向图的最小环.cpp](<../../algorithms/图论/最短路问题/全源最短路径/P6125 无向图的最小环.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/图论/欧拉图/例题/Libre10105.cpp](<../../algorithms/图论/欧拉图/例题/Libre10105.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/图论/欧拉图/例题/Luogu_P_1127.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_1127.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/图论/欧拉图/例题/Luogu_P_1333.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_1333.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/图论/欧拉图/例题/Luogu_P_1341.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_1341.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/图论/欧拉图/例题/Luogu_P_2731.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_2731.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/图论/欧拉图/例题/Luogu_P_3520.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_3520.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/图论/欧拉图/例题/Luogu_P_6066.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_6066.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/图论/欧拉图/例题/Luogu_P_7771.cpp](<../../algorithms/图论/欧拉图/例题/Luogu_P_7771.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/数据结构/堆/左偏树/k短路未维护.cpp](<../../algorithms/数据结构/堆/左偏树/k短路未维护.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/数据结构/线段树/泛型插件/P2572 序列操作.cpp](<../../algorithms/数据结构/线段树/泛型插件/P2572 序列操作.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/数据结构/线段树/泛型插件/主席树/主席树单点修改范围求和.cpp](<../../algorithms/数据结构/线段树/泛型插件/主席树/主席树单点修改范围求和.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp](<../../algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp](<../../algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
-| [algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp](<../../algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp>) |  | 未登记 | 未核实 | 未核实 | 不能从静态关联推断行为覆盖 |
 
 ## 各环境最新运行
 

@@ -43,7 +43,7 @@ $detail.Add((U '81ea 52a8 751f 6210 2e 20 69 6e 63 6c 75 64 65 20 53ea 8868 793a
 $detail.Add((U '7c 20 6a21 677f 20 7c 20 5957 4ef6 20 7c 20 41 50 49 20 7c 20 72ec 7acb 53c2 7167 20 7c 20 6570 636e 4e0e 8fb9 754c 20 7c 20 9650 5236 20 7c')); $detail.Add('|---|---|---|---|---|---|')
 $snapshots=@{}
 foreach ($e in $inventory.entries) {
- if ($e.kind -eq 'note') { continue }
+ if ($e.kind -ne 'engine') { continue }
  $scopes=@($spec.coverage | Where-Object { $_.template -ceq $e.path })
  $states=@(); $profiles=@()
  foreach ($suite in @($scopes | ForEach-Object {$_.suite} | Sort-Object -Unique)) {
