@@ -47,7 +47,7 @@ void test_hld_single()
     static SegTree<InfoH, TagH> tr{61};
     for (int tc = 0; tc < 300; tc++)
     {
-        int n = 1 + rng() % 60;
+        int n = tc == 0 ? 1 : (tc <= 3 ? 61 : 1 + rng() % 60);
         Graph<false, Empty> g{n, n};
         vector<LL> ref(n + 1);
         VI par(n + 1, 0), depn(n + 1, 0);
@@ -55,7 +55,7 @@ void test_hld_single()
         for (int i = 1; i <= n; i++) ref[i] = (LL)(rng() % 41) - 20;
         for (int v = 2; v <= n; v++)
         {
-            int u = 1 + rng() % (v - 1);
+            int u = tc == 1 ? v - 1 : (tc == 2 ? 1 : (tc == 3 ? v / 2 : 1 + rng() % (v - 1)));
             par[v] = u;
             depn[v] = depn[u] + 1;
             ch[u].push_back(v);
@@ -151,7 +151,7 @@ void test_hld_forest()
         {
             if (rng() % 2)
             {
-                int u = 1 + rng() % (v - 1);
+                int u = tc == 1 ? v - 1 : (tc == 2 ? 1 : (tc == 3 ? v / 2 : 1 + rng() % (v - 1)));
                 par[v] = u;
                 depn[v] = depn[u] + 1;
                 rt[v] = rt[u];

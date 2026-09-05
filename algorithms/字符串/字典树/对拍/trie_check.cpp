@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits>
 #include <cassert>
 #include <iostream>
 #include <random>
@@ -295,8 +296,46 @@ void test_pers_trie_kth()
     }
 }
 
+// 空串、完整字符集、高位数、空差集和重复值均用确定性数据触发
+void test_boundaries()
+{
+    Trie<62> words(100);
+    string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    words.insert("");
+    for (char c : chars) words.insert(string(1, c));
+    assert(words.count_word("") == 1 && words.count_prefix("") == 63);
+    for (char c : chars) assert(words.count_word(string(1, c)) == 1);
+    words.clear();
+    assert(words.count_prefix("") == 0 && words.count_word("") == 0);
+    vector<LL> values{0, 1, (1LL << 62), numeric_limits<LL>::max(), 0};
+    Trie<2> tr(400);
+    PersTrie<> pt(400);
+    vector<int> roots{0};
+    assert(tr.max_xor(0) == -1 && pt.max_xor(0, 0) == -1);
+    for (LL v : values) { tr.insert_num(v); roots.push_back(pt.insert(roots.back(), v)); }
+    for (LL x : values)
+    {
+        LL best = 0;
+        for (LL y : values) best = max(best, x ^ y);
+        assert(tr.max_xor(x) == best && pt.max_xor(roots.back(), x) == best);
+        for (int i = 1; i <= (int)values.size(); i++)
+        {
+            vector<LL> expected;
+            for (int j = 0; j < i; j++) expected.push_back(x ^ values[j]);
+            sort(expected.rbegin(), expected.rend());
+            for (int k = 1; k <= i; k++)
+                assert(pt.kth_xor(roots[i], 0, {x}, k) == expected[k - 1]);
+            assert(pt.max_xor({roots[i]}, {roots[i]}, x) == -1);
+        }
+    }
+    assert(pt.kth_xor(roots.back(), 0, {}, 1) == -1);
+    assert(pt.kth_xor(roots.back(), 0, {0}, 0) == -1);
+    assert(pt.kth_xor(roots.back(), 0, {0}, 6) == -1);
+}
+
 int main()
 {
+    test_boundaries();
     test_trie();
     test_trie_xor();
     test_pers_trie();

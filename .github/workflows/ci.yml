@@ -5,31 +5,63 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   regression:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Toolchain
         run: |
-          g++ --version | head -1
+          g++ --version
           pwsh --version
-      - name: Full regression (rule.md section 9)
+      - name: Check runner failure paths
         shell: pwsh
-        run: ./scripts/run_checks.ps1
-      - name: Syntax sweep (engines + examples, checks excluded)
+        run: ./scripts/check_runner.ps1
+      - name: Full regression
+        if: ${{ !cancelled() }}
         shell: pwsh
-        run: |
-          $fail = 0
-          $total = 0
-          Get-ChildItem algorithms -Recurse -Filter *.cpp | Where-Object { $_.Name -notlike '*_check.cpp' } | ForEach-Object {
-              $total++
-              g++ -std=c++20 -fsyntax-only $_.FullName
-              if ($LASTEXITCODE -ne 0) { Write-Host ("[SYNTAX FAIL] " + $_.FullName); $fail++ }
-          }
-          Write-Host ("syntax sweep: " + $total + " files, failed: " + $fail)
-          if ($fail -gt 0) { exit 1 }
+        run: ./scripts/run_checks.ps1 -ReportDir .ci-results/regression
+      - name: Syntax sweep (including warnings)
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: ./scripts/run_checks.ps1 -Mode Syntax -ReportDir .ci-results/syntax
+      - name: Keep reports and diagnostics
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .ci-results/
+            .zoi-checks/**/*.log
+            .zoi-checks/**/summary.json
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: warn
+
+  sanitizer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: g++ --version
+      - name: ASan and UBSan regression
+        shell: pwsh
+        run: ./scripts/run_checks.ps1 -Sanitize -TimeoutSec 180 -CompileTimeoutSec 180 -ReportDir .ci-results/sanitizer
+      - name: Keep sanitizer diagnostics
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanitizer-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci-results/
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: warn

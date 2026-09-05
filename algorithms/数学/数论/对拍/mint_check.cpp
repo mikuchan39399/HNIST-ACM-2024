@@ -76,11 +76,11 @@ void run_mod(mt19937& rng)
         else mint::init_fact(210);                                          // 合数: spf 全域有效
         inited = true;
     }
-    auto rll = [&]() { return ((LL)rng() << 32) | (LL)rng(); }; // 64 位随机
+    auto rll = [&]() { return (LL)(((unsigned long long)rng() << 32) | rng()); }; // 64 位随机
     for (int t = 0; t < 40; t++)
     {
-        LL a = (LL)(rng() % (unsigned long long)M);
-        LL b = (LL)(rng() % (unsigned long long)M);
+        LL a = t == 0 ? M - 1 : (LL)((unsigned long long)rll() % (unsigned long long)M);
+        LL b = t == 0 ? M - 1 : (LL)((unsigned long long)rll() % (unsigned long long)M);
         mint ma(a), mb(b);
         assert(ma.val() == a && mb.val() == b);
         // 四则与负号
@@ -98,7 +98,7 @@ void run_mod(mt19937& rng)
         LL raw = (rll() >> 2) - (1LL << 60);
         mint mraw(raw);
         assert(mraw.val() == norm_val(raw, M));
-        i128 big = ((i128)rll() << 64) | (unsigned long long)rll();
+        i128 big = (i128)((((unsigned __int128)(unsigned long long)rll() << 64) | (unsigned long long)rll()) >> 1);
         if (rng() & 1) big = -big;
         mint mbig(big);
         i128 vb = big % M;

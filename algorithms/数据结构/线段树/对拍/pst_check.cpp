@@ -112,7 +112,7 @@ void test_pers_seg_tree()
                 a[i].sum = a[i].mx = rng() % 11;
             }
 
-            PersSegTree<InfoB, TagB> s(sn, (sn + 1) * 64);
+            PersSegTree<InfoB, TagB> s(sn, 2 * sn + 80 * 20);
             vector<int> rts;
             vector<vector<LL>> snaps;
 
@@ -132,16 +132,17 @@ void test_pers_seg_tree()
                     int l = 1 + rng() % sn, r = 1 + rng() % sn;
                     if (l > r) swap(l, r);
                     LL v = (int)(rng() % 9) - 4;
-                    vector<LL> cur = snaps.back();
+                    int base = rng() % rts.size(); // 从任意旧版本分叉, 不只延长最新版本
+                    vector<LL> cur = snaps[base];
 
                     if (op == 0)
                     {
-                        rts.push_back(s.modify(rts.back(), l, r, {v}));
+                        rts.push_back(s.modify(rts[base], l, r, {v}));
                         for (int i = l; i <= r; i++) cur[i] += v;
                     }
                     else
                     {
-                        rts.push_back(s.modify(rts.back(), l, l, {v}));
+                        rts.push_back(s.modify(rts[base], l, l, {v}));
                         cur[l] += v;
                     }
                     snaps.push_back(cur);

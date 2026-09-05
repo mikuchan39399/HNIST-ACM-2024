@@ -10,15 +10,16 @@
 
 using namespace std;
 
-// ==========================================
+// 可持久化字典树: 每次插入返回新根, 旧版本仍可查询, 根句柄由调用方保存
 // 模板参数 K:
 //   - K = 2  : 01-Trie
 //   - K = 26 : 小写字母字符串
 //   - K = 62 : 大小写字母 + 数字
 // 模板参数 HB: 整数位深(最高位下标), 默认 63;
 //   值 < 2^31 时传 30, 结点数与 cap 近似减半
-// 预算: 存整数 = 插入次数 * (HB + 2) + 10; 存字符串 = 串总长 + 10
-// ==========================================
+// 预算按累计分配算: 整数插入次数*(HB+2), 字符串总长+插入次数, 删除版本不回收
+// 每结点 (4K+4)B; K=2 时 4e6 个结点约 48MB, 另留一个空根哨兵
+// 差集查询按出现次数相减, 每个值的剩余次数必须非负; 字符串须落在 K 对应字符集内
 template <int K = 2, int HB = 63>
 struct PersTrie
 {
@@ -30,9 +31,11 @@ struct PersTrie
     int cap;
     int tot = 0;
     vector<Node> tr;
+    // 预留 max_nodes 个可分配结点和一个空根, 初始没有任何版本内容
+    // 时间: O(1) | 空间: (max_nodes+1)*sizeof(Node) 字节预留
     PersTrie(int max_nodes = 4000010) : cap(max_nodes)
     {
-        tr.reserve(max_nodes);
+        tr.reserve(max_nodes + 1);
         tr.push_back(Node{});
     }
     // 多测清空, 复用已分配内存
@@ -44,14 +47,14 @@ struct PersTrie
         tr.push_back(Node{});
     }
     // 在版本 rt 上插入非负整数 x, 返回新版本根句柄 —— 仅 K ∈ [2, 10] 编译
-    // 时间: O(HB + 1) | 空间: 至多 HB + 1 个新结点
+    // 时间: O(HB + 1) | 空间: HB + 2 个新结点
     int insert(int rt, LL x)
     {
         static_assert(K >= 2 && K <= 10, "insert(数值) 仅 K <= 10 可用");
         return insert(rt, x, HB);
     }
     // 在版本 rt 上插入单词 s, 返回新版本根句柄
-    // 时间: O(|s|) | 空间: 至多 |s| 个新结点
+    // 时间: O(|s|) | 空间: |s| + 1 个新结点
     int insert(int rt, const string& s) { return insert(rt, s, 0); }
     // 版本 rt 中与 x 异或的最大值; 空版本返回 -1
     // 时间: O(HB + 1) | 空间: O(1)
@@ -170,7 +173,7 @@ struct PersTrie
         }
         return len;
     }
-    // 版本 rt 中的整数个数
+    // 返回版本 rt 中插入的元素个数, 重复整数或单词分别计数
     // 时间: O(1) | 空间: O(1)
     int size(int rt) const { return tr[rt].cnt; }
 private:
@@ -219,7 +222,7 @@ private:
  * Usage: PersTrie
  * ---------------------------------------------------------
  * [1] 01-Trie: 区间最大异或和
- * static PersTrie pt(64 * (n + Q) + 10); // cap: 插入次数*(HB+2)+10
+ * static PersTrie<> pt(65 * (n + Q) + 10); // 默认检查第 63..0 位
  * VI rt(n + 1, 0);
  * for (int i = 1; i <= n; i++) rt[i] = pt.insert(rt[i - 1], a[i]);
  * pt.max_xor(rt[i], y);                  // 前i个数与y的最大异或, 空树返回-1
@@ -227,7 +230,7 @@ private:
  * pt.size(rt[i]);                        // 版本i包含的元素总数
  * ---------------------------------------------------------
  * [2] Char-Trie: 字符串区间前缀 / LCP
- * static PersTrie<26> ps(100010);        // cap: 插入串总长+10
+ * static PersTrie<26> ps(100010);        // 插入后把新根存入 rs
  * VI rs(n + 1, 0);
  * for (int i = 1; i <= n; i++) rs[i] = ps.insert(rs[i - 1], s[i]);
  * ps.count_prefix({rs[r]}, {rs[l - 1]}, t); // 区间s[l..r]中以t为前缀的个数
@@ -238,7 +241,7 @@ private:
  * pt.max_xor({rt[u], rt[v]}, {rt[lca], rt[fa_lca]}, x);
  * ---------------------------------------------------------
  * [4] 01-Trie: 子矩阵异或第 k 大 (P5795)
- * static PersTrie<2, 30> pt(32 * (m + 1) + 10); // 值 < 2^31: HB=30, cap 减半
+ * static PersTrie<2, 30> pt(32 * (m + 1) + 10); // 值 < 2^31, 只检查第 30..0 位
  * VI rt(m + 1, 0);
  * for (int j = 1; j <= m; j++) rt[j] = pt.insert(rt[j - 1], y[j]);
  * vector<LL> xs(x + u, x + d + 1);             // 行切片 x[u..d] (x 为 LL 数组)

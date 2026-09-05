@@ -6,20 +6,24 @@
 
 using namespace std;
 
+// 返回 a[1..n] 每个长度为 k 的窗口最值, 结果从下标 0 开始存
 struct MonotonicQueue
 {
     vector<LL> q;
 
+    // 一次分配 max_n 的工作空间, 后续查询的 n 不超过 max_n; 每个位置 8B
+    // 时间: O(max_n) | 空间: 8*(max_n+10) 字节
     MonotonicQueue(int max_n)
     {
         q.resize(max_n + 10, 0);
     }
 
-    void init()
-    {
-        q.clear();
-    }
+    // 多测复用入口; 队头队尾在每次查询中重置, 无需清空工作数组
+    // 时间: O(1) | 空间: O(1)
+    void init() {}
 
+    // 返回所有长度为 k 的窗口最小值, 要求 1 <= k <= n
+    // 时间: O(n) | 空间: O(n-k+1) 返回数组
     vector<LL> get_min(VLL& a, int n, int k)
     {
         vector<LL> res;
@@ -52,6 +56,8 @@ struct MonotonicQueue
         return res;
     }
 
+    // 返回所有长度为 k 的窗口最大值, 要求 1 <= k <= n
+    // 时间: O(n) | 空间: O(n-k+1) 返回数组
     vector<LL> get_max(VLL& a, int n, int k)
     {
         vector<LL> res;

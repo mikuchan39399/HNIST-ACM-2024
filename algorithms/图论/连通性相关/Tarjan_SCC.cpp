@@ -32,7 +32,7 @@ struct SCC
         dfn_idx = scc_cnt = 0;
         sta.clear();
     }
-    // 强连通分量; g 任意有向邻接(只读 e.v), SegGraph 带权图直喂
+    // 强连通分量
     // 时间: O(n + m) | 空间: O(n)
     template <class G>
     void build(G& g, int _n)
@@ -41,7 +41,7 @@ struct SCC
         for (int i = 1; i <= n; i++)
             if (!dfn[i]) tarjan(g, i);
     }
-    // 缩点 DAG(恒无权 Graph<true>)
+    // 缩点 DAG
     template <class G>
     void build_dag(G& g)
     {

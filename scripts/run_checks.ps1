@@ -1,4 +1,16 @@
-param([string]$Filter = '')
+param(
+    [string]$Filter = '',
+    [ValidateSet('Regression', 'Syntax', 'All')][string]$Mode = 'Regression',
+    [string]$Compiler = 'g++',
+    [switch]$Sanitize,
+    [ValidateRange(1, 3600)][int]$TimeoutSec = 120,
+    [ValidateRange(1, 3600)][int]$CompileTimeoutSec = 120,
+    [string]$BuildRoot = '',
+    [string]$ReportDir = ''
+)
+$ErrorActionPreference = 'Stop'
+if ($Filter -and $Mode -ne 'Regression') { throw '-Filter applies only to Regression mode.' }
+
 # run_checks.ps1 - one-shot regression runner (rule.md section 9)
 # Usage: powershell -ExecutionPolicy Bypass -File run_checks.ps1              -> full regression
 #        powershell -ExecutionPolicy Bypass -File run_checks.ps1 -Filter oset -> scoped (name contains 'oset')
@@ -15,6 +27,7 @@ $root = Split-Path -Parent $PSScriptRoot   # scripts/ -> library root
 # catalog line formats: "name<TAB>relpath" = stub entry, "!glob" = exemption
 $zoiDir = Join-Path $root 'zoi'
 $cat = Join-Path $zoiDir '_catalog.txt'
+if (-not (Test-Path -LiteralPath $cat)) { throw 'Catalog missing; preflight cannot be skipped.' }
 if (Test-Path -LiteralPath $cat) {
     $enc2 = New-Object System.Text.UTF8Encoding($false)
     $names = @{}
@@ -47,6 +60,10 @@ if (Test-Path -LiteralPath $cat) {
             $bad++
             continue
         }
+        if ($names.ContainsKey($name) -or $targets.ContainsKey($rel.Replace('\', '/'))) {
+            Write-Host ('[CATALOG DUPLICATE] ' + $t)
+            $bad++
+        }
         $names[$name] = $true
         if (-not (Test-Path -LiteralPath (Join-Path $root $rel))) {
             Write-Host ('[STUB BROKEN] catalog target missing: ' + $rel) -ForegroundColor Red
@@ -56,12 +73,22 @@ if (Test-Path -LiteralPath $cat) {
             Write-Host ('[STUB STALE] stub file missing, rerun make_stubs: ' + $name) -ForegroundColor Red
             $bad++
         }
+        $stubPath = Join-Path $zoiDir ($name + '.h')
+        if (Test-Path -LiteralPath $stubPath) {
+            $stubLines = [IO.File]::ReadAllLines($stubPath, $enc2)
+            $expected = '#include "../' + $rel + '"'
+            $actual = @($stubLines | Where-Object { $_ -match '^\s*#\s*include' })
+            if ($actual.Count -ne 1 -or $actual[0].Trim() -cne $expected) {
+                Write-Host ('[STUB STALE] wrong include target: ' + $name)
+                $bad++
+            }
+        }
         $relN = $rel.Replace('\', '/')
         $targets[$relN] = $true
         # 7th check data: engine first line must be '// zoi: <name>' (stamp)
         $engFirst = ''
         $engPath = Join-Path $root ($rel.Replace('\', '/'))
-        $engFirst = ([IO.File]::ReadAllLines($engPath, $enc2) | Select-Object -First 1)
+        if (Test-Path -LiteralPath $engPath) { $engFirst = ([IO.File]::ReadAllLines($engPath, $enc2) | Select-Object -First 1) }
         if ($engFirst -ne ('// zoi: ' + $name)) {
             Write-Host ('[STUB MISMATCH] engine stamp wrong or missing (rerun make_stubs): ' + $rel + ' -> ' + $name) -ForegroundColor Red
             $bad++
@@ -97,53 +124,91 @@ if (Test-Path -LiteralPath $cat) {
         }
     }
     # sixth check (WARN level, not a gate): stubbed engines whose basename is
-    # not directly included by any *_check.cpp. Exact basename match only --
+    # not directly included by any *_check.cpp. Resolved direct include paths only --
     # no substring matching (rule: grep hit != code call). Light pieces may
     # legitimately lack a suite, so this is a dashboard, not a failure.
     $covered = @{}
     foreach ($cf in Get-ChildItem -LiteralPath (Join-Path $root 'algorithms') -Recurse -Filter '*_check.cpp') {
         foreach ($cl in [IO.File]::ReadAllLines($cf.FullName, $enc2)) {
             if ($cl -match '^\s*#\s*include\s*"([^"]+)"') {
-                $covered[[IO.Path]::GetFileName($Matches[1])] = $true
+                $included = [IO.Path]::GetFullPath((Join-Path $cf.DirectoryName $Matches[1]))
+                $covered[$included] = $true
             }
         }
     }
     $gaps = 0
     foreach ($tv in $targets.Keys) {
-        if (-not $covered.ContainsKey([IO.Path]::GetFileName($tv))) {
-            Write-Host ('[TEST GAP] stubbed engine not covered by any check: ' + $tv) -ForegroundColor Yellow
+        if (-not $covered.ContainsKey([IO.Path]::GetFullPath((Join-Path $root $tv)))) {
+            Write-Host ('[TEST GAP] no direct test include: ' + $tv) -ForegroundColor Yellow
             $gaps++
         }
     }
     if ($gaps -gt 0) {
-        Write-Host ('[NOTE] ' + $gaps.ToString() + ' stubbed engines lack a stress suite (warn only; light pieces need none per rule)') -ForegroundColor Yellow
+        Write-Host ('[NOTE] ' + $gaps.ToString() + ' engines have no direct test include (warn only; not a behavior coverage metric)') -ForegroundColor Yellow
     }
+    if ($targets.Count -eq 0) { throw 'Catalog has no engines.' }
     if ($bad -gt 0) { Write-Host ('scaffold sync failed: ' + $bad + ' problem(s)'); exit 1 }
-    Write-Host ('[OK] scaffold sync: ' + $targets.Count.ToString() + ' stubs, ' + $exempt.Count.ToString() + ' exemptions, full coverage')
+    Write-Host ('[OK] scaffold sync: ' + $targets.Count.ToString() + ' stubs checked, ' + $exempt.Count.ToString() + ' exemptions, catalog coverage')
 }
-$pattern = '*_check.cpp'
-if ($Filter -ne '') { $pattern = '*' + $Filter + '*_check.cpp' }
-$tmp = if ($env:TEMP) { $env:TEMP } else { [IO.Path]::GetTempPath() }
-$checks = Get-ChildItem (Join-Path $root 'algorithms') -Recurse -Filter $pattern | Sort-Object FullName
-$fail = 0
-foreach ($c in $checks) {
-    Push-Location $c.DirectoryName
-    $exe = Join-Path $tmp ($c.BaseName + '_run.exe')
-    g++ -std=c++20 -Wall -Wextra -O2 $c.Name -o $exe
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host ("[COMPILE FAIL] " + $c.FullName.Substring($root.Length + 1)) -ForegroundColor Red
-        $fail++
-    } else {
-        & $exe
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host ("[PASS] " + $c.FullName.Substring($root.Length + 1)) -ForegroundColor Green
-        } else {
-            Write-Host ("[RUN FAIL] " + $c.FullName.Substring($root.Length + 1)) -ForegroundColor Red
-            $fail++
-        }
+$checks = @(Get-ChildItem (Join-Path $root 'algorithms') -Recurse -Filter '*_check.cpp' | Sort-Object FullName)
+if ($Filter) { $checks = @($checks | Where-Object { $_.BaseName.IndexOf($Filter, [StringComparison]::OrdinalIgnoreCase) -ge 0 }) }
+$sources = @()
+if ($Mode -ne 'Syntax') {
+    if ($checks.Count -eq 0) { throw 'No regression suite selected; check -Filter.' }
+    $sources += $checks
+}
+if ($Mode -ne 'Regression') {
+    $syntax = @(Get-ChildItem (Join-Path $root 'algorithms') -Recurse -Filter '*.cpp' | Where-Object { $_.Name -notlike '*_check.cpp' } | Sort-Object FullName)
+    if ($syntax.Count -eq 0) { throw 'No syntax targets found.' }
+    $sources += $syntax
+}
+$compilerPath = (Get-Command $Compiler -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
+if (-not $BuildRoot) { $BuildRoot = Join-Path $root '.zoi-checks' }
+$BuildRoot = [IO.Path]::GetFullPath($BuildRoot)
+$runDir = Join-Path $BuildRoot ([Guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $runDir -Force | Out-Null
+if (-not $ReportDir) { $ReportDir = Join-Path $runDir 'logs' }
+$ReportDir = [IO.Path]::GetFullPath($ReportDir)
+New-Item -ItemType Directory -Path $ReportDir -Force | Out-Null
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+. (Join-Path $PSScriptRoot 'check_process.ps1')
+$version = Invoke-CheckProcess $compilerPath @('--version') $runDir 30 (Join-Path $ReportDir 'compiler')
+if ($version.ExitCode -ne 0) { throw 'Compiler version probe failed.' }
+$flags = @('-std=c++20', '-Wall', '-Wextra', '-Werror', '-UNDEBUG')
+if ($Sanitize) {
+    $flags += @('-O1', '-g', '-fsanitize=address,undefined', '-fno-sanitize-recover=all', '-fno-omit-frame-pointer', '-D_GLIBCXX_ASSERTIONS')
+} else { $flags += '-O2' }
+$results = @()
+$index = 0
+foreach ($source in $sources) {
+    $index++
+    $relative = $source.FullName.Substring($root.Length + 1).Replace('\', '/')
+    $isCheck = $source.Name.EndsWith('_check.cpp')
+    $label = '{0:D3}-{1}' -f $index, $source.BaseName
+    $exe = Join-Path $runDir ($label + '.exe')
+    $compileArgs = $flags + @($source.FullName)
+    if ($isCheck) { $compileArgs += @('-o', $exe) } else { $compileArgs += '-fsyntax-only' }
+    Write-Host ('[START] ' + $relative)
+    $compiled = Invoke-CheckProcess $compilerPath $compileArgs $runDir $CompileTimeoutSec (Join-Path $ReportDir ($label + '-compile'))
+    $status = 'PASS'
+    $exitCode = $compiled.ExitCode
+    $elapsed = $compiled.Seconds
+    if ($compiled.TimedOut) { $status = 'COMPILE TIMEOUT' }
+    elseif ($exitCode -ne 0) { $status = 'COMPILE FAIL' }
+    elseif ($isCheck) {
+        $ran = Invoke-CheckProcess $exe @() $runDir $TimeoutSec (Join-Path $ReportDir ($label + '-run'))
+        $exitCode = $ran.ExitCode
+        $elapsed += $ran.Seconds
+        if ($ran.TimedOut) { $status = 'RUN TIMEOUT' }
+        elseif ($exitCode -ne 0) { $status = 'RUN FAIL' }
     }
-    Pop-Location
+    if (Test-Path -LiteralPath $exe) { Remove-Item -LiteralPath $exe -Force }
+    $results += [pscustomobject]@{ path=$relative; phase=$(if ($isCheck) {'regression'} else {'syntax'}); status=$status; exitCode=$exitCode; seconds=[Math]::Round($elapsed, 3) }
+    Write-Host ('[' + $status + '] ' + $relative)
 }
-Write-Host ""
-Write-Host ("total: $($checks.Count), failed: $fail")
-exit $fail
+$failed = @($results | Where-Object { $_.status -ne 'PASS' }).Count
+$summary = [ordered]@{ compiler=$compilerPath; flags=$flags; mode=$Mode; filter=$Filter; sanitize=[bool]$Sanitize; total=$results.Count; failed=$failed; results=$results }
+[IO.File]::WriteAllText((Join-Path $ReportDir 'summary.json'), ($summary | ConvertTo-Json -Depth 5), $utf8)
+Write-Host ('total: {0}, failed: {1}; logs: {2}' -f $results.Count, $failed, $ReportDir)
+if ($failed) { exit 1 }
+exit 0

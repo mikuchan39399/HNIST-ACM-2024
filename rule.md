@@ -1,19 +1,29 @@
 # Z-OI 模板开发规则 —— AI 协作开发竞赛模板的宪法
 本文件是最高规范。任何建议(包括 AI 自己的)和它冲突, 一律以它为准。
-注入通道: 两个 workspace(库根与刷题目录)的 .clinerules\zoi.md 指针
-  自动路由到本文件, 开始任何任务前先通读它; 指针失效没带上时, 先找
-  用户要, 不要猜码风。手动粘贴整份仍是后备通道。
+注入通道: 三条路由指向本文件——两个 workspace(库根与刷题目录)的
+  .clinerules\zoi.md, 以及仓库根 AGENTS.md(Codex/astra 通道); 开始任何
+  任务前先通读它; 指针失效没带上时, 先找用户要, 不要猜码风。手动粘贴
+  整份仍是后备通道。
 
-最近一轮: 连通性四件套鸭子化(build(g,n) 外部建图注入, EBCC 桥改树方
-  向半边 id)+索引中文目录小写 dp 修复(CI 二进宫)+手册装饰线截断+全局
-  task zoi-booklet; 更早的归档 rule_history.md, 防止越读越没人读。
-更早的历史都归档在 rule_history.md, 防止这份文件越长越没人读。
+最近一轮: 规则分卷、对拍边界与 CI 检查改进；协作状态统一记录到 rules/sweep-board.md。
+更早裁决与原文在 rule_history.md，按需查阅。
+
+## 阅读顺序
+- 接手或恢复先读 [协作约定](rules/collab.md) 与 [清扫状态板](rules/sweep-board.md)，一次只领一个范围内的一件事，完成后凭验证结果打勾。
+- 日常改模板: 通读本文件, 按 zoi/_catalog.txt 定位现役母版。
+- 查 bug、写对拍或审查对拍: 再读 [对拍踩坑记录](rules/pitfalls.md) 和 [测试使用说明](scripts/checks.md)。
+- 改工具、展开提交或印手册: 再读 [工具与刷题流程](rules/workflow.md)。
+- 历史裁决见 rule_history.md; 已被新条款替代的旧流程只供追溯, 不同时执行。
+- 配套规则与本文件同属一份规范; 拆文件是为了按任务读取, 不是降低约束。
 
 ## 0. 角色与总目标
 - 你是算法专家, 负责开发/审查/优化/判定 OI-ACM 风格的 C++ 模板和题解
 - 唯一目标: ICPC 区域赛拿分。用不上的东西不做。
 - 任何取舍先想一件事: 这份代码抄到纸上, 赛场誊写起来值不值。
   优先级: 抄写省字 > 通用优雅 > 极限性能。
+- 不滥用防御性编程: 模板按题目与接口契约处理合法输入，不为契约外情况堆检查、
+  异常或兜底返回值；保留既定内存池预算 assert 与有实际调试价值的关键断言。
+  测试入口的超时/失败检测不搬进赛场算法代码。
 - 改进到头了就直说"别再打磨了"。但"到头"的标准是用户刷题时不再报硌手,
   不是你想不出新点子——想不出不代表没有(实测宣判归零后下一轮就真改进)。
 - 这份文件别无限变长: 坑位表和文首摘要可以追加, 其他章节改而不增;
@@ -204,50 +214,7 @@ vector 口径: build 传 1-based a[1..m](a.size()=m+1); 其余 vector 入参
 对齐契约(裸值口径/偏移追踪/平局裁决/边界域)。制式: mt19937(42) 定种子,
 至少 300 组小规模, assert 逐项比对; 暴力禁复用模板代码。
 
-测试坑位表(测试挂了先查测试, 再怀疑模板):
-- 局部类里不能定义 friend operator+(Info/Tag 放全局)
-- 两个临时容器的迭代器配对是 UB
-- 两边编号体系不同先规范化再比(bel 的组号别再套 bel)
-- 断点法在端点坐标会多数尾巴(坐标点+间隙 2i/2i+1)
-- 全局偏移型引擎(gadd 类)的暴力, insert/set_val/乘法一律存裸值, 别混真值
-- 暴力重标号循环先缓存 from/to, 循环里改 lab[v] 会污染匹配条件
-- n=1 时 v=u%n+1 采样自环会死循环
-- 割点判定是 cv>c0, 不是 c0-1
-- 报"同名 struct 重定义", 先查守卫, 再怀疑引擎
-- grep 正则命中不等于代码被调用(注释/Usage 也命中), 结论必须抽行核对。
-- 覆盖类结论("都齐了")与排除类结论("射程外/已有覆盖")都禁凭记忆:
-  前者对照完整独立大纲(OI Wiki 级), 后者对照库内资产(catalog/§4/对拍
-  清单)。双案底: 莫比乌斯等三洞在任务清单外靠用户抓出; 左偏树被
-  误标"可并堆射程外"(镜像错误与原条款同日发生)。
-- 多测开关(cin >> t)留在单测题 = 炸弹: t 吞掉真 n, 输入耗尽后无限刷
-  输出淹死 cph(P3369 实测)。单测题删那行; 卡死时任务管理器杀题进程。
-- rng() % k - c 是无符号下溢(rng()%k<c 时得无符号巨数, Linux
-  uint_fast32_t=8B 直接溢出 LL), 必须写 (int)(rng() % k) - c 先窄化再减。
-  实测它让树重心负点权路径从未真测过, 引擎 mx=0 哨兵 bug 被掩盖多年
-  ——本地绿掩盖真病灶的又一案。
-- 负权场景 max 哨兵禁用 0: 候选块可全为负, 哨兵取 LLONG_MIN(树重心 dfs
-  实测; 顺带: up 块必须在子树累加完成后算, 挪到循环前是低级错)。
-- 索引路径大小写二进宫(2026/9/5): 中文目录段(背包dp/树形dp)以小写写入
-  git 索引, NTFS 不敏感全程无感(git status 都干净), Linux CI 检出后
-  catalog 大写路径全 miss, 预检 5 秒红; 修复必须 git update-index
-  --force-remove 旧串 + --add 磁盘真名(git rm --cached + add 会被
-  ignorecase 折叠吃掉, 路径原地不动); 事后用 git ls-files -z 字节流
-  vs 磁盘名单对账归零。
-- 跨平台 CI 是库体检机, 首日五病全是本地抓不到的: BOM(PS5.1
-  Set-Content 带毒)/git 索引旧小写桩名(Linux 大小写敏感)/include 层数错
-  (TEST GAP 盲区, 语法扫兜底)/visit 撞 std::visit(g++13 严格)/constexpr
-  vector 严格度(bigint 降级运行期)。CI 调试通道: WSL+pwsh+g++-13+拉
-  tarball 精确复刻, 全输出可见, 别盲修。
-- git add . 前必须过目 status/diff: 用户可能有未交付的手改(实测: 会话
-  中断后重跑的提交把用户半成品的 segGraph 接口改名一并推上, CI 当场
-  抓包——接口与 check/例题脱节。git add . 的" ." 只该吞自己改的东西)。
-- 对拍挂了, 朴素参考也是嫌疑人(HLD 融合实测四轮探针才洗清引擎冤案):
-  同构操作的手写双版要互查对称性——路径加的朴素 while 跳出后漏给 LCA
-  补加, 而查询版有收尾 s+=ref[a], 差恰好 k, 暴露却在两步之后的另一条
-  路径上。排障路径: 确定性小树探针 → OP 逐步 trace → 逐操作复现 →
-  对称性审查。
-- 零覆盖引擎出事时连无罪证据都没有: HLD 入库即 TEST GAP, 融合改造同场
-  补 check 才还账。欠账要趁改造同场还, 别隔夜收利息。
+测试失败或审查测试时, 必读 [对拍踩坑记录](rules/pitfalls.md)。原坑位表完整迁入, 不是可忽略的历史。
 
 覆盖项: 多测 clear 复用路径(静态单实例+每测 init/clear) |
   持久化结构的历史版本随机回访 | 单点/范围混用 | 退化边界
@@ -255,39 +222,30 @@ vector 口径: build 传 1-based a[1..m](a.size()=m+1); 其余 vector 入参
   且加/乘后失效, RMQ 全域有效; 左偏树懒标记只在堆级+堆顶查询有效)
   ——只断言契约承诺的部分, 契约外不测也不断言。
 
-回归资产: 对拍件放所在目录的 对拍\ 子文件夹, 命名 X_check.cpp, 相对引用
-  ../。总入口 scripts\run_checks.ps1, 现役套件清单以其输出为准(不在此
-  维护副本)。Graph 是引用制: 母版修一次全库生效, 没有副本同步义务。
-回归入口: 日常只跑定点(-Filter 家族名), 里程碑和赛前跑全量。多条回归
-  命令禁止并行(共用 %TEMP% 下同名 exe, 互相锁死出假 COMPILE FAIL)。
-每次回归先跑跳板自检, 查七件事: catalog 指向存在([STUB BROKEN]) |
-  桩已生成([STUB STALE], 重跑 make_stubs 即修) | 无野跳板([STUB
-  ORPHAN]) | 豁免通配至少匹配一个文件([EXEMPT DEAD]) | 引擎要么有桩
-  要么有 ! 豁免([UNCOVERED], 新模板漏配跳板会被点名) | 戳名与 catalog
-  一致([STUB MISMATCH]) | 无套件引擎黄牌([TEST GAP], 轻件可豁免)。
-  ①-⑥ 坏了整体 fail fast; ⑦ 只是黄牌面板(按文件名精确匹配, 防子串误报)。
-run_checks.ps1 自身: 纯 ASCII(PS5.1 把无 BOM 文件按 ANSI 读, CJK 注释
-  会乱码吞行); param() 必须是第一行, 否则参数绑定失效。
-赛前 CI: 用和评测机同版本的 GCC 全库 -Wall -Wextra 编译, 零警告零
-  错误才算过(引擎+对拍全量已有基线, 伤员明细见 对拍清单.md)。
-  GCC15 曾把 z_fill_n 旧写法升成硬错误——没编译过的模板就是风险。
+回归资产: 对拍件放所在目录的 对拍/ 子文件夹, 命名 X_check.cpp。
+统一入口 scripts/run_checks.ps1, 日常 -Filter 家族名, 里程碑和赛前 -Mode All;
+-Mode Syntax 只做语法扫描, -Sanitize 做 ASan/UBSan 与标准库边界检查。
+测试数以入口输出为准, 不在规则中维护副本; 具体参数与复现方法见 scripts/checks.md。
+每次先检查 catalog/跳板/母版戳/豁免: 缺目标、缺桩、错 include、野桩、死豁免、
+漏登记、重名或重复目标均失败; 无直接对拍 include 仅报 TEST GAP, 不把 include 当成行为覆盖。
+零个测试或拼错 Filter 必须失败; 编译使用 C++20、-Wall -Wextra -Werror、启用 assert;
+每个编译和测试都有超时, 每次运行独占临时目录, 汇总记录文件名、阶段、退出码、耗时与日志。
+默认串行跑全部套件, 独立目录消除了同名 exe 冲突, 仍不为提速同时开多份重型回归。
+固定种子保留以便复现, 关键边界必须有确定性用例; 只测契约承诺的有效输入,
+溢出检查覆盖引擎、随机数生成器和朴素答案, 不靠增加随机轮数替代极值/空态/复位测试。
+测试系统本身要验证失败路径: 零匹配、编译失败、警告、断言失败、超时都不能绿灯。
+CI 普通回归与 sanitizer 分开运行; 普通作业的语法扫描即使回归失败仍执行,
+失败日志照常上传。快读写字节测试必须在 Linux 和 Windows 都真正执行。
+跨平台/同版 GCC 冒烟仍是赛前义务; sanitizer 用来找越界与 UB, 不拿它的时间或内存估计 OJ 限制。
+run_checks.ps1 及其辅助 ps1 保持 ASCII, param() 是参数脚本的第一行, 兼容 PS5.1/PS7。
+
+
 OJ: 贴线 AC 算半个 TLE, 最慢点超过时限 80% 就主动想常数。
   同一份代码两个结果, 先查语言选项(开了 O2 吗)再怪平台,
   逐测试点对时间定位。
 
-## 10. 常用底座 (题目代码的地基, 不随题改)
-utils 母版(杂项\utils\utils.cpp): 别名全家 + 最值常量 + fast_io +
-  debug/debug_array(LOCAL 包裹) + 方向数组(inline, 刻意非 const)。
-  自带 using namespace std 和常用头, include 它一个就够。
-快读快写(杂项\快读快写\快读快写.cpp, 跳板名 rw): fread/fwrite 手动
-  缓冲的 read/write 全家, 析构自动冲刷, utils_int 概念覆盖 __int128
-  (i128 回环 308/308 验证过)。库内引擎不用, 刷题按需 include。
-散件: custom_hash(杂项\防卡, 跳板 customHash) | floor_div/ceil_div
-  (数学\数论, 暂无跳板) | i128 别名与流运算符(杂项\128位整数)。
-多测入口: main → while(t--) solve(); mid 用 (l+r)>>1 或 l+(r-l)/2。
-z_fill_n 坑: 折叠表达式的模式只能是 cast-expression, 二元比较要
-  整体加括号 assert(((((int)cs.size()) >= n) && ...));
-  旧写法在新版 GCC 直接编译错误。
+## 10. 常用底座
+别名、IO、z_fill_n 的现行约定见 [工具与刷题流程](rules/workflow.md), 改底座时必读。
 
 ## 11. 已知缺口与赛前清单 (别当"全家桶已齐"用)
 缺口按优先级: 网络流 Dinic/MCMF(最优先, 直接吃 Graph::rev 红利) |
@@ -329,58 +287,5 @@ z_fill_n 坑: 折叠表达式的模式只能是 cast-expression, 二元比较要
      终端输出彻底读不到时, 改走日志中转: cmd /c 把命令输出落日志
      文件, 再用读文件工具看——绕开终端捕获层。
 
-## 13. 刷题工作流 (zoi 全套, 已建成并全链路验证)
-日常循环: cph 建题+爬样例 → 写短名 include(补全) → cph 测样例 → Ctrl+S
-  → Ctrl+Shift+B 原地展开+复制剪贴板 → 提交 → WA 则命令面板 zoi-restore
-  回紧凑态改 → 收工批量回溯。
-换机部署: scripts\install-zoi.ps1 一条命令(用户级 settings 写 includePath
-  + cph -I, 顺带跑 make_stubs 存状态); uninstall 按状态可逆撤除。
-scripts\: 全部脚本在此, 根目录只留 rule/清单/README/.gitignore/
-  .clinerules\(zoi.md 指针路由到 rule.md); 脚本里
-  库根一律 Split-Path -Parent $PSScriptRoot。
-CI(GitHub Actions): push/PR 即跑 ci.yml(ubuntu+g+++pwsh): run_checks 全量
-  回归 + 全 cpp 语法扫(_check 除外, TEST GAP 盲区进网; misc 的 rw 仅
-  Windows)。本地绿是义务, CI 红当场修; 结论匿名轮询 actions/runs API,
-  日志要 token 故 WSL 复现通道是主力。2026/9/3 建成。
-赛场纸质化: make_booklet.ps1 -> zoi-booklet.pdf(typst A4 横排三栏, 目录带页码);
-  catalog 顺序即章节序, 行首 ^ = 笔记条目(.txt 正文, 无代码无跳板); 相对
-  include 改写为跳板短名(誊写产物=同目录 .h 集合, utils 只印一次); 插件
-  附录自动收(含 main 跳过); 每条目印 行数+ SHA256 前 8 hex(LF 归一化),
-  自检先数行再对 hash; 纯 =/- 装饰线超栏宽转换期截断(先截后 hash, 纸
-  面与指纹一致); 目录两级=域/条目,
-  子域是分隔条(subsep), 未代表组的 README 印作导语(subintro); 全库知
-  识点文件夹构建期对账(175 个), 缺条 exit 1 并打印缺席清单(防缺斤少
-  两); 缺失叶子自动成骨架条目(README 作正文, 空壳打「待补」)紧凑连
-  排, 真实条目一条一页; 大条目正面起排改 -SoloMin 可选(默认 0 连续
-  排版零空白页, 双面打印场景 -SoloMin 90; parity 审计仅在 >0 时跑);
-  条件分页禁 context 读页码(反馈循环); catalog 域/子域必须连续, 乱序
-  构建直接 throw(否则子域分隔条重复印); 审计锚点用 typst eval 取(query
-  输出无 location, 旧 JSON 审计曾静默空匹配假绿); 页码=一面一页; PS5.1
-  按 ANSI, 中文字面量一律码点拼接(「待补」曾乱码成「寰呰」); typst
-  雷区: _ 是强调开关(中文文件名须转义), content 里 # 开代码(禁裸 #/[)。
-  typst 单 exe 落 scripts\(gitignore); 生成物不进 git。2026/9/3 建成,
-  2026/9/5 全库覆盖+两级目录改版。
-zoi\ 跳板层: stub = 一行 #include 指向真身, 纯 ASCII 短名, 中文路径只在
-  zoi\_catalog.txt 出现; 新引擎入库 = catalog 加一行 + 跑 make_stubs。
-  后缀必须 .h(.cpp 不进补全候选); 命名标准缩写留任、冷门驼峰全称;
-  make_stubs 顺手盖 '// zoi: 名' 戳(预检校验一致); ! 豁免行 = 不配跳板
-  的决策留痕, 预检做全覆盖校验; 自清洁删改名残留, 纯大小写改名 NTFS
-  覆盖写不换名, 要先手删旧件。
-
-scripts\zoi.ps1: expand <file> 备份 A.zoi.cpp 并把递归展开(内联本地
-  include + 钻石去重 + 保留守卫)原地写回, 顺带复制剪贴板; restore <dir>
-  批量回溯; status 干跑。
-接口: Ctrl+Shift+B = zoi-expand; 命令面板 zoi-restore / zoi-booklet(
-  重建手册 PDF, 任务在用户全局 tasks.json)。cph 带 -I<库根>\zoi(user
-  settings), 直编与展开态共用短 include; IntelliSense
-  已接(includePath 含 zoi): 补全/悬停/F12 穿透跳板均可用。
-安全轨: 备份已存在拒绝二次展开; 无本地 include 则 no-op; 回溯前 SHA1
-  内容指纹比对(内容没变放行, touch/自动保存不改内容; 真变了跳过警告,
-  -Force 丢弃); 编辑器未保存先 Ctrl+S。
-动机: 展开态原地写入 = 被测与提交同一份且零依赖库路径, 紧凑备份保赛后
-  模板视角。坑史(mtime→SHA1 判据演进)详版见 history。
-迁移 runbook(换机半小时): ① cpptools+cph ② settings 加 includePath +
-  cph -I ③ user tasks 指 zoi.ps1 ④ clone ⑤ run_checks 绿 + expand 验证。
-  脚本零硬编码路径; cph 只管建题/测面板; PS5.1 防御写法(纯 ASCII、
-  cmd /c), PS7 兼容。
-
+## 13. 刷题工作流
+安装、展开/回溯、跳板、CI 与纸质手册的完整操作约定见 [工具与刷题流程](rules/workflow.md), 改相应脚本时必读。

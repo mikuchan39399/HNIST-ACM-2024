@@ -16,13 +16,13 @@ struct BIT2D
 {
     int n, m;
     vector<VLL> t1, t2, t3, t4;
-    // 构造: 预算 max_n×max_m 的四棵 BIT
+    // 创建 max_n 行 max_m 列的全零矩阵, 四张表的数据约占 32*(max_n+2)*(max_m+2) 字节
     // 时间: O(max_n*max_m) | 空间: 32B/格
     BIT2D(int max_n = 0, int max_m = 0) : n(max_n), m(max_m),
         t1(max_n + 2, VLL(max_m + 2, 0)), t2(max_n + 2, VLL(max_m + 2, 0)),
         t3(max_n + 2, VLL(max_m + 2, 0)), t4(max_n + 2, VLL(max_m + 2, 0))
     {}
-    // 多测复位: n*m 重配, 四棵清 [0..n+1]×[0..m+1]
+    // 清空矩阵并设置本轮行列数, _n 和 _m 分别不能超过构造时的 max_n 和 max_m
     // 时间: O(n*m) | 空间: O(1)
     void init(int _n, int _m)
     {

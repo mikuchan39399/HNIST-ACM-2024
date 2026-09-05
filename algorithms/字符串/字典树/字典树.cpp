@@ -12,7 +12,7 @@ using namespace std;
 
 // ============ 字典树 (前缀计数 + 单词计数) ============
 // 字符集 K: 26 = 小写 | 62 = a-z A-Z 0-9 | <=10 = 数字(含 01-Trie)
-// 内存: 每结点 (4K+8)B; 预算 = 插入串总长 + 1
+// 每结点 (4K+8)B; max_nodes 包含 0 号根, 按累计插入串总长+1 预留, K=26 时 1e6 约 112MB
 // 契约: 输入字符必须落在声明的字符集内, 越界行为未定义
 template <int K = 26>
 struct Trie
@@ -24,6 +24,8 @@ struct Trie
     };
     vector<Node> tr;
     int cap;
+    // 预留 max_nodes 个结点, 包含已创建的 0 号根; 删除单词不会回收结点
+    // 时间: O(1) | 空间: max_nodes*sizeof(Node) 字节预留
     Trie(int max_nodes = 1000010) : cap(max_nodes)
     {
         tr.reserve(max_nodes);

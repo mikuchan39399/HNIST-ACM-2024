@@ -17,10 +17,10 @@ struct BIT
 {
     int n;
     VLL b1, b2;
-    // 构造: 预算 max_n 的两棵 BIT
+    // 创建长度为 max_n 的全零数组, 一次分配两张表, 合计约 16*(max_n+10) 字节
     // 时间: O(max_n) | 空间: 16B/位
     BIT(int max_n = 0) : n(max_n), b1(max_n + 10, 0), b2(max_n + 10, 0) {}
-    // 多测复位: n 重配, 两 BIT 清 [0..n+1]
+    // 清空数组并把本轮长度设为 _n, _n 不能超过构造时的 max_n
     // 时间: O(n) | 空间: O(1)
     void init(int _n)
     {
@@ -56,13 +56,14 @@ private:
     }
 };
 
-// 后缀版: 坐标镜像 x -> n+1-x 复用 BIT, 查后缀和
+// 后缀树状数组: 支持区间加、后缀和与区间和, 下标为 1..n, 内部复用 BIT
 struct BITR
 {
     BIT t;
-    // 构造: 预算 max_n
+    // 创建长度为 max_n 的全零数组, 合计约 16*(max_n+10) 字节
+    // 时间: O(max_n) | 空间: O(max_n)
     BITR(int max_n = 0) : t(max_n) {}
-    // 多测复位: 同 BIT
+    // 清空数组并设置本轮长度 _n, _n 不能超过构造时的 max_n
     // 时间: O(n) | 空间: O(1)
     void init(int _n) { t.init(_n); }
     // [l, r] 整体加 k

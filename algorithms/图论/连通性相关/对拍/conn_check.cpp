@@ -231,7 +231,7 @@ static void test_vbcc(mt19937& rng)
         }
         vbcc.build(g, n);
 
-        // 暴力割点: 删 v 后块数 > 原块数 - 1
+        // 暴力割点: 删 v 后块数 > 原块数
         VI lab0 = undirected_comp(n, es, 0, VI(m, 0));
         VI cut_exp(n + 1, 0);
         for (int v = 1; v <= n; v++)

@@ -8,20 +8,22 @@
 
 using namespace std;
 
-// ============ 线段树 (支持懒标记、线段树上二分) ============
-//   1. 结构解耦: 基于 Info (区间信息) 和 Tag (懒标记) 的代数结构解耦，只需修改两者的结构体即可适配不同题目。
-//   2. 编译期优化: 使用 if constexpr 自动推导并适配是否需要拆分标记 (split_tag) 或萃取有效标记 (get_real_tag)。
-//   3. 二分查找: 内置 find_first 和 find_last，支持传入 Pred 谓词进行 O(log N) 的线段树上二分定位。
-// 内存: 4n 结点 × (sizeof(Info) + sizeof(Tag))
+// 线段树维护 a[1..n], Info 决定区间存什么, Tag 决定怎样修改, 支持区间修改、查询和找位置
+// 每结点 sizeof(Info)+sizeof(Tag) 字节; 预留 4*max_n+10 个, 每结点 32B 时 n=2e5 约 25.6MB
+// find_first/find_last 的 pred 判断区间内是否存在答案, 无答案的整段必须返回 false
 template<class Info, class Tag>
 struct SegTree
 {
     int n;
     vector<Info> info;
     vector<Tag> tag;
+    // 一次分配长度上限 max_n 所需的表; 使用前 build(a), a[0] 不参与建树
+    // 时间: O(max_n) | 空间: O(max_n)
     SegTree(int max_n) :
         n(max_n), info(4 * max_n + 10), tag(4 * max_n + 10)
     {}
+    // 清空信息和标记并设置本轮长度 _n, _n 不超过构造上限; 随后重新 build
+    // 时间: O(n) | 空间: O(1)
     void init(int _n)
     {
         n = _n;
@@ -31,21 +33,25 @@ struct SegTree
             tag[i] = Tag{};
         }
     }
-    // --- 外部 API ---
-    // 区间 [x, y] 应用标记 v
+    // 把标记 v 应用到闭区间 [x,y], 单点修改传 x==y
+    // 时间: 普通懒标记 O(log n), 势能修改按题分析 | 空间: O(log n)
     void modify(int x, int y, const Tag& v) { modify(1, 1, n, x, y, v); }
-    // 查询区间 [x, y] 的信息
+    // 返回闭区间 [x,y] 合并后的 Info
+    // 时间: O(log n) | 空间: O(log n)
     Info query(int x, int y) { return query(1, 1, n, x, y); }
-    // 根据 a 数组构建线段树 (a 为 1-base)
+    // 用 a[1..n] 建树, a[0] 不用; 重建前先 init(n) 清除旧标记
+    // 时间: O(n) | 空间: O(log n)
     void build(const vector<Info>& a) { build(1, 1, n, a); }
-    // 查找下标 >= start 且满足 pred 条件的第一个位置
+    // 返回 [start,n] 内满足 pred 的最左位置, 不存在或 start 越界返回 -1
+    // 时间: 可正确剪枝时 O(log n) | 空间: O(log n)
     template<class Pred>
     int find_first(int start, Pred pred)
     {
         if (start < 1 || start > n) return -1;
         return find_first(1, 1, n, start, pred);
     }
-    // 查找下标 <= end 且满足 pred 条件的最后一个位置
+    // 返回 [1,end] 内满足 pred 的最右位置, 不存在或 end 越界返回 -1
+    // 时间: 可正确剪枝时 O(log n) | 空间: O(log n)
     template<class Pred>
     int find_last(int end, Pred pred)
     {

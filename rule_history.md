@@ -114,3 +114,40 @@
 - meta 教训: run_commands 超时弃等后进程仍在跑, 判断副作用必须对账实
   际状态(文件在不在/内容新不新), 不能假设成败; Start-Process 异步 +
   输出落文件 + read 轮询是终端失效时的可靠三板斧。
+
+
+## 2026-09-05 规则拆分与对拍入口更新
+
+原第 10、13 节移至 rules/workflow.md, 测试坑位表移至 rules/pitfalls.md, 章节号保留。
+以下执行条款已由 rule.md 第 9 节与新 CI 流程替代, 原文保留供追溯, 不再按旧条款执行。
+
+回归资产: 对拍件放所在目录的 对拍\ 子文件夹, 命名 X_check.cpp, 相对引用
+  ../。总入口 scripts\run_checks.ps1, 现役套件清单以其输出为准(不在此
+  维护副本)。Graph 是引用制: 母版修一次全库生效, 没有副本同步义务。
+回归入口: 日常只跑定点(-Filter 家族名), 里程碑和赛前跑全量。多条回归
+  命令禁止并行(共用 %TEMP% 下同名 exe, 互相锁死出假 COMPILE FAIL)。
+每次回归先跑跳板自检, 查七件事: catalog 指向存在([STUB BROKEN]) |
+  桩已生成([STUB STALE], 重跑 make_stubs 即修) | 无野跳板([STUB
+  ORPHAN]) | 豁免通配至少匹配一个文件([EXEMPT DEAD]) | 引擎要么有桩
+  要么有 ! 豁免([UNCOVERED], 新模板漏配跳板会被点名) | 戳名与 catalog
+  一致([STUB MISMATCH]) | 无套件引擎黄牌([TEST GAP], 轻件可豁免)。
+  ①-⑥ 坏了整体 fail fast; ⑦ 只是黄牌面板(按文件名精确匹配, 防子串误报)。
+run_checks.ps1 自身: 纯 ASCII(PS5.1 把无 BOM 文件按 ANSI 读, CJK 注释
+  会乱码吞行); param() 必须是第一行, 否则参数绑定失效。
+赛前 CI: 用和评测机同版本的 GCC 全库 -Wall -Wextra 编译, 零警告零
+  错误才算过(引擎+对拍全量已有基线, 伤员明细见 对拍清单.md)。
+  GCC15 曾把 z_fill_n 旧写法升成硬错误——没编译过的模板就是风险。
+
+CI(GitHub Actions): push/PR 即跑 ci.yml(ubuntu+g+++pwsh): run_checks 全量
+  回归 + 全 cpp 语法扫(_check 除外, TEST GAP 盲区进网; misc 的 rw 仅
+  Windows)。本地绿是义务, CI 红当场修; 结论匿名轮询 actions/runs API,
+  日志要 token 故 WSL 复现通道是主力。2026/9/3 建成。
+
+## 2026-09-05 协作规则收尾
+
+将旧文首摘要归档，正文约定保留；补协作路由、按范围记录验证与不过度防御的原则。
+
+最近一轮: 连通性四件套鸭子化(build(g,n) 外部建图注入, EBCC 桥改树方
+  向半边 id)+索引中文目录小写 dp 修复(CI 二进宫)+手册装饰线截断+全局
+  task zoi-booklet; 更早的归档 rule_history.md, 防止越读越没人读。
+更早的历史都归档在 rule_history.md, 防止这份文件越长越没人读。

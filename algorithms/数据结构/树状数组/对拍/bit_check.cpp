@@ -100,8 +100,45 @@ void test_bit_2d()
     }
 }
 
+// 明确覆盖单格、完整容量、贴边更新、64位和、大-小-大复位
+void test_boundaries()
+{
+    BIT bit(60);
+    BITR br(60);
+    const LL k = 1000000000000LL;
+    for (int n : {60, 1, 60})
+    {
+        bit.init(n); br.init(n);
+        assert(bit.pre(0) == 0 && br.suf(n + 1) == 0);
+        assert(bit.query(1, n) == 0 && br.query(1, n) == 0);
+        bit.add(1, n, k); br.add(1, n, k);
+        bit.add(n, n, -2 * k); br.add(n, n, -2 * k);
+        for (int l = 1; l <= n; l++)
+            for (int r = l; r <= n; r++)
+            {
+                LL ref = (r - l + 1) * k - (r == n ? 2 * k : 0);
+                assert(bit.query(l, r) == ref && br.query(l, r) == ref);
+            }
+    }
+    BIT2D grid(30, 30);
+    for (auto [n, m] : vector<pair<int,int>>{{30,30},{1,1},{1,30},{30,1},{30,30}})
+    {
+        grid.init(n, m);
+        assert(grid.query(1, 1, n, m) == 0);
+        grid.add(1, 1, n, m, k);
+        grid.add(n, m, n, m, -2 * k);
+        for (int x = 1; x <= n; x++)
+            for (int y = 1; y <= m; y++)
+            {
+                assert(grid.query(x, y, x, y) == ((x == n && y == m) ? -k : k));
+                assert(grid.query(1, 1, x, y) == (LL)x * y * k - ((x == n && y == m) ? 2 * k : 0));
+            }
+    }
+}
+
 int main()
 {
+    test_boundaries();
     test_bit_1d();
     test_bit_2d();
     cout << "bit_check passed: BIT pre/suf + BIT2D matrix all tests ok\n";
