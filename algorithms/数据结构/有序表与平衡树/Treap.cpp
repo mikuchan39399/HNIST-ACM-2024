@@ -2,21 +2,14 @@
 #ifndef Z_OI_TREAP
 #define Z_OI_TREAP
 
-#include <vector>
-#include <cassert>
-#include <climits>
 #include "../../杂项/随机数/z_rnd.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ Treap 旋转平衡树 (可重复集合) ============
 // 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继期望 O(log n)
 // 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
 // 内存: 每结点 32B; 预算 = 总插入次数(删除不回收), 4e6 结点 ≈ 128MB
 struct Treap
 {
-    static constexpr LL INF = 0x3f3f3f3f3f3f3f3f;
     struct node
     {
         int lc = 0, rc = 0, cnt = 0, sz = 0, rd = 0;
@@ -33,7 +26,7 @@ struct Treap
     }
     // 从升序 a[1..m] 笛卡尔树(右脊栈)线性建树, 替换现有集合 (a.size() = m + 1)
     // 契约: a[1..m] 已升序(允许重复, 相邻等值合并进 cnt), 违约触发 assert
-    // 时间: O(m) | 空间: 右脊栈, 期望 O(log m)
+    // 时间: O(m) | 额外空间: O(m), 栈容器按 m 预留
     void build(const VLL& a)
     {
         clear();
@@ -65,10 +58,10 @@ struct Treap
         finish(root);
     }
     // 插入 v (允许重复)
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 时间: 期望 O(log n) | 额外空间: O(log n)
     void insert(LL v) { insert(root, v); }
     // 删除一个 v, 返回是否存在并删除
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 时间: 期望 O(log n) | 额外空间: O(log n)
     bool erase(LL v)
     {
         int b = tr[root].sz;
@@ -76,26 +69,26 @@ struct Treap
         return tr[root].sz < b;
     }
     // 返回 < v 的元素个数 (含重复)
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 时间: 期望 O(log n) | 额外空间: O(log n)
     int get_rank(LL v) { return rank_of(root, v); }
     // 返回第 k 小 (1-based 含重复), k 越界返回 INF
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 时间: 期望 O(log n) | 额外空间: O(log n)
     LL get_kth(int k)
     {
         if (k < 1 || k > tr[root].sz) return INF;
         return kth_of(root, k);
     }
     // 返回 < v 的最大值, 无前驱返回 -INF
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 时间: 期望 O(log n) | 额外空间: O(log n)
     LL get_pre(LL v) { return pre_of(root, v); }
     // 返回 > v 的最小值, 无后继返回 INF
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 时间: 期望 O(log n) | 额外空间: O(log n)
     LL get_suf(LL v) { return suf_of(root, v); }
     // 返回元素个数 (含重复)
     // 时间: O(1) | 空间: O(1)
     int size() { return tr[root].sz; }
     // 多测复位: 清全部元素, 容量保留
-    // 时间: O(1) | 空间: O(1)
+    // 时间: O(idx) | 空间: O(1)
     void clear()
     {
         idx = 0;
@@ -214,15 +207,16 @@ private:
     }
 };
 #endif
+
 /* Usage:
-    Treap trp;                     // 默认预算 4e6 结点
-    trp.build(a);                  // 升序 a[1..m] 线性建树(替换现有)
-    trp.insert(x);                 // 允许重复
-    trp.erase(x);                  // 删一个, 返回 bool
-    trp.get_rank(x);               // <x 的元素个数(含重复)
-    trp.get_kth(k);                // 第 k 小, 越界返回 INF
-    trp.get_pre(x);                // 严格前驱, 无则 -INF
-    trp.get_suf(x);                // 严格后继, 无则 INF
-    trp.size();                    // 元素个数(含重复)
-    trp.clear();                   // 多测复位, 容量保留
+int main()
+{
+    Treap s(16);
+    s.build(VLL{0, 2, 2, 5});
+    cout << s.get_rank(5) << " " << s.get_kth(2) << "\n"; // 2 2
+    s.erase(2);                      // 只删一个 2
+    cout << s.get_pre(5) << " " << s.get_suf(2) << "\n"; // 2 5
+    s.clear();
+    cout << s.size() << "\n"; // 0
+}
 */

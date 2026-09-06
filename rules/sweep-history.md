@@ -1,5 +1,30 @@
 # 清扫历史代记
 
+## 2026-09-07 Codex: 队友部署与缓存治理（9 月 6 日启动）
+
+- 移除误跟踪的私人旧安装状态；安装 v3 兼容 v2 升级，管理三份配置快照、九任务及可用快捷键，支持显式接管本库手写任务；真实用户配置已升级并保留原手册任务
+- 新增 zoi-configure/doctor 修复项目 includePath 覆盖并诊断补全；已知尖括号跳板支持展开与原拼写恢复，零块输出增加说明
+- zoi-package 默认生成正式 docs/releases 时间戳 ZIP；修复绝对路径过滤漏源、指南漏包和 stage 临时占用误报，私有状态及产物不入包
+- 成功测试现场每类保留三份，清理加独占锁，未知/失败/人工现场保留；115 个旧目录先归档校验后移除，下载包与临时运行时按项清理
+- Windows 全库 112 项零失败；PS5.1/PS7 安装各 7 组、部署各 20 命令通过；展开三环境覆盖 18 组，Linux 入口故障 9 项通过；生成表检查和 actionlint 通过
+- CI 自动新增双 PowerShell 部署验证，rule、功能表、用户指南、测试说明均同步；[完整记录](../records/tooling/deployment-audit-20260906.md)。未提交推送，未声称队友 UI 或本轮远程 CI 已验收；下一项 P10
+
+## 2026-09-06 Codex: P09 左偏树双件最终验证
+
+- 20 万递减值连续合并后查最早点, 原 find_root 在 Windows 栈溢出; Linux 8 MiB ASan 同探针通过。用户批准仅查根改迭代路径压缩, 左偏树合并保留递归, 默认套件保留反例
+- 补普通大小根堆 20 万点/10 万混合修改、惰删弹空、10 万堆级操作; 持久化双堆型三形态各 20 万版本/弹空, 300 组历史快照与旧结点字段不变、自定义载荷、共享合并及复位, 保留原两域暴力
+- 先完成修复后增强基线 Windows/Linux 普通及 sanitizer, 再统一 utils、润色注释与 Usage; 纠正查根复杂度和 merge_raw 独占条件, 补堆 README 并修复父目录过期占位说明
+- 最终 Windows 23 套回归、Linux 普通/ASan+UBSan 8 MiB 栈、Usage 重复 include 及 PS7/PS5.1 生成目录检查通过; [完整证据](../records/verification/leftist-20260906.md)
+- 同步 rule、用户功能页、覆盖登记/两层表与测试说明; 所有新用例自动进入默认普通/sanitizer CI, 学习状态无新确认保持原值, 未提交推送; 下一件 P10
+
+## 2026-09-06 Codex: P08 树状数组三引擎最终验证
+
+- 保留一维/二维各 300 组数组暴力, 默认 bit_check 新增 20 万长度两轮各 20 万修改/查询的独立分块参照, 2000×2000 在线矩形交集及 10 万任意修改/10 万查询的离线前缀和; 覆盖退化行列、正负大数和大—小—大复位
+- 原模板 Windows 与 Linux 普通/sanitizer 增强基线先通过, 再整理注释; 无算法错误, 保持接口, 标准头和命名空间集中到 utils, 明确坐标乘积等全部中间值须不溢出 LL, 补完整 Usage
+- 最终 Windows 23 套全部 PASS; Linux GCC 13.1 普通约 1.89 秒、ASan/UBSan 约 6.60 秒, 8 MiB 栈通过且哈希稳定; PS7/PS5.1 生成目录/资产表检查及 Usage 重复 include 编译通过
+- 同步 rule、功能页、README、测试说明和验证登记/两层表; 默认无参数运行自动进入普通/sanitizer CI, 无需增加工作流参数; 学习状态未有新确认, 保留原值
+- 证据见 [P08 记录](../records/verification/bit-20260906.md); 本轮未提交推送, 不把本地结果当在线 CI; 保留 P05-P07 改动, 解除领取, 下一件 P09 左偏树双件
+
 ## 2026-09-06 Codex: P04 SegGraph 最终对拍与注释
 
 - 原 300 组小测试两边共用 Dijkstra, Empty 只比数量。补 400 组独立矩阵 Floyd 全点对、BFS 可达性和 SCC 等价关系; 原点及返回中继点均作源, 加零权/负权 DAG/INF-1 固定用例
@@ -499,3 +524,25 @@ Windows GCC 15.2 全库 -Mode All 通过 107/107, 包含 19 套回归与 88 个�
 - PS7 与 Windows PS5.1 默认整本重建均通过: 91 catalog 条目、106 骨架条目、5 插件, 175/175 知识目录覆盖。整本 127 页, 提取文本确认 MIKU 仅出现在物理第 39 页, 最新 SegGraph max_extra 等接口位于第 70 页, TreeCenter 已收录; 封面、目录、39/70 页渲染抽查通过
 - 同步 rule、用户功能表、打印指南及维护说明; 筛选示例另存库内临时区。VS Code 全局 zoi-booklet 任务没有覆盖 OutFile, 已修正其过期路径描述。make_features -Check 与 git diff --check 通过
 - 日志和检查脚本: .zoi-checks/codex-work/booklet-current.log、booklet-ps51.log、booklet-check.py、booklet-current-audit.json。源码修改后仍需运行重建, 不宣称 PDF 实时更新; 本轮未改算法, 未提交、未推送, 下一件仍 P05
+
+## 2026-09-06 Codex: P05 线段树双件与 ST 最终对拍
+
+- 升级原 seg_check 无参数入口, 先过 Windows/Linux 普通与 sanitizer 的独立小暴力和 20 万规模, 再整理模板; 仿射非交换叠加、split_tag/get_real_tag、巨大虚值域、稀疏 20 万插点、ST 极值及全区间暴力覆盖详见 records/verification/seg-20260906.md
+- 用户批准 DySegTree 补 clear/init、build 自动清空; 补预算恰好用满后的反复重建、大-小-大及哨兵复位验证。查询/find 也可能开点和零值 Info 语义已明确; 三份模板标准头统一 utils, 修正静态版误导性的 sum 查找 Usage, 三份示例实际编译与输出核对通过
+- 最终 Windows 23 套全部通过; Linux GCC 13.1 普通 2.25 秒、ASan/UBSan 10.47 秒, 默认 8 MiB 栈均 PASS/stable, 证据与两层表已同步。新用例默认自动进入现有普通/sanitizer CI, 未声称本轮在线通过
+- rule/用户功能页/README/测试说明/覆盖登记及生成器已同步, PS7/PS5.1 资产与功能 -Check、diff 通过。用户确认三件学过, 记学过待复习; 未扩大到泛型插件逐份验收。未提交、未推送, 下一件 P06
+
+## 2026-09-06 Codex: P06 平衡树八件最终对拍
+
+- 原 oset_check 补六类集合的 20 万初始插入/10 万混合操作三形态、独立计数 Fenwick 参照, FHQ 序列 20 万次循环坐标变换公式, Cartesian 20 万点双堆退化形态与 BST 映射。保留原 set/multiset/vector/朴素 BST 小暴力, 补池复用、重建、底层 split/merge/walk 及合法极值
+- 修复 Splay 前后继未伸展最后触点导致的重复长链扫描, FHQ_Seq 的 LLONG_MIN/4 哨兵压过合法极负值。先通过 Windows/Linux 普通与 sanitizer 再润色; 详见 records/verification/oset-20260906.md
+- 八份模板标准头/namespace/公共 INF 集中 utils, 修正空间与内存说明, 八份 Usage 实际独立编译及重复 include/输出核对通过。Cartesian 单点显式用 ct.n, 序列最大子段和保留原加乘限制
+- 最终 Windows 23 套全通过; Linux GCC 13.1 普通 5.66 秒、ASan/UBSan 26.01 秒, 8 MiB 栈均 PASS/stable。结构化证据与生成两层表已更新, PS7/PS5.1 功能/资产 -Check 和 diff 通过; Windows 基线写表暂时被文件映射占用, 重试生成成功
+- rule、功能表、使用指南、测试说明、八条覆盖登记同步。用户确认八件全学过, 记学过待复习。全部增强用例默认自动进 CI, 未提交未推送, 不冒称在线通过; 下一件 P07
+
+## 2026-09-06 Codex: P07 主席树最终对拍
+
+- 原 pst_check 默认入口补 400 组历史快照和旧池不变检查、400 组独立树路径多根 kth、20 万前缀版本三形态及 20 万基线/范围分支版本, 巨大坐标、数值边界、复位和查询零开点。证据见 records/verification/pst-20260906.md
+- 先通过 Windows/Linux 普通与 sanitizer 再润色, 未发现需改算法的问题。修正“不能查最值”和模糊的单调性说明, 明确 build 追加、值域变化后的根生命周期、逐坐标非负计数; 标准头集中 utils, Usage 实际重复 include 编译及输出通过
+- 最终 Windows 23 套全通过; Linux GCC 13.1 普通/ASan/UBSan 默认 8 MiB 栈均 PASS/stable, 原始摘要已保存。两版 PowerShell 的资产/功能 -Check、diff 通过, rule/功能页/README/覆盖登记/生成表同步
+- 用户确认学过待复习, 已落学习表。新增用例无参数自动进普通与 sanitizer CI; 未提交、未推送, 不冒称在线通过; 下一件 P08

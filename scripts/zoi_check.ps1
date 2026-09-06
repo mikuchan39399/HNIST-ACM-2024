@@ -221,4 +221,12 @@ if ([IO.File]::Exists((Join-Path $root 'zoi/seg.h'))) {
     Run restore 'problems/real.cpp' -Real; Clean real
     Pass 'real seg + bit + hld shared utils compile and run in both forms'
 } else { throw 'Real library fixture missing: zoi/seg.h' }
+Put 'problems/angle.cpp' "#include <b.h>`n#include <vector>`nint main() { return left()==7 ? 0 : 1; }`n"
+Put 'problems/b.h' '#error Angle include must not resolve from the source directory'
+$angle=Read 'problems/angle.cpp'
+Compile-Run 'problems/angle.cpp'; Run expand 'problems/angle.cpp'; Compile-Run 'problems/angle.cpp'
+Assert ((Read 'problems/angle.cpp').Contains('#include <vector>')) 'Standard angle include changed'
+Run restore 'problems/angle.cpp'; Equal (Read 'problems/angle.cpp') $angle
+Pass 'known angle stub expands; standard header and original spelling survive round-trip'
 Write-Host "zoi self-test: $script:passed groups passed ($script:calls commands); logs: $fixture"
+Complete-CheckWorkspace $fixture 'expand'

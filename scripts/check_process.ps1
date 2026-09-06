@@ -1,5 +1,17 @@
 # Bounded native process execution shared by regression and runner self-tests.
 # ASCII only; compatible with Windows PowerShell 5.1 and PowerShell 7.
+function Complete-CheckWorkspace([string]$Path,[string]$Kind,[bool]$Passed=$true) {
+    $pathFull=[IO.Path]::GetFullPath($Path)
+    $data=@{format=1;path=$pathFull;kind=$Kind;status=$(if ($Passed) {'PASS'} else {'FAIL'});completedUtc=[DateTime]::UtcNow.ToString('o')}
+    [IO.File]::WriteAllText((Join-Path $pathFull '.zoi-run.json'),($data | ConvertTo-Json),(New-Object Text.UTF8Encoding($false)))
+    $base=Split-Path -Parent $pathFull
+    $default=Join-Path (Split-Path -Parent $PSScriptRoot) '.zoi-checks'
+    $clean=Join-Path $PSScriptRoot 'clean_checks.ps1'
+    if ($Passed -and $base -eq $default -and [IO.File]::Exists($clean)) {
+        # Best-effort maintenance never changes a test's verdict.
+        try { & $clean -BuildRoot $base -KeepLast 3 -Apply } catch { Write-Host ('[WARN] cache cleanup: '+$_.Exception.Message) }
+    }
+}
 function Invoke-CheckProcess {
     param([string]$File, [string[]]$Arguments, [string]$WorkingDirectory, [int]$Seconds, [string]$LogPrefix)
     $psi = New-Object System.Diagnostics.ProcessStartInfo

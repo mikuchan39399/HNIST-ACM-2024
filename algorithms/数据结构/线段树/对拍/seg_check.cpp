@@ -386,8 +386,317 @@ void test_st_table()
     }
 }
 
+// Affine composition includes assignment (mul=0) and sign reversal.
+struct TagA
+{
+    LL mul=1, add=0;
+    void apply(const TagA& t) { mul*=t.mul; add=add*t.mul+t.add; }
+    void clear() { *this={}; }
+    bool has_tag() const { return mul!=1 || add!=0; }
+};
+struct InfoA
+{
+    LL len=0, sum=0, lo=0, hi=0;
+    bool break_cond(const TagA&) const { return false; }
+    bool tag_cond(const TagA&) const { return true; }
+    void apply(const TagA& t)
+    {
+        sum=sum*t.mul+len*t.add;
+        LL x=lo*t.mul+t.add, y=hi*t.mul+t.add;
+        lo=min(x,y); hi=max(x,y);
+    }
+    friend InfoA operator+(const InfoA& a,const InfoA& b)
+    {
+        if (!a.len) return b;
+        if (!b.len) return a;
+        return {a.len+b.len,a.sum+b.sum,min(a.lo,b.lo),max(a.hi,b.hi)};
+    }
+};
+// Local arithmetic progression, split_tag must shift the right child's origin.
+struct TagP
+{
+    LL first=0, step=0;
+    void apply(const TagP& t) { first+=t.first; step+=t.step; }
+    void clear() { *this={}; }
+    bool has_tag() const { return first || step; }
+};
+struct InfoP
+{
+    LL len=0, sum=0;
+    bool break_cond(const TagP&) const { return false; }
+    bool tag_cond(const TagP&) const { return true; }
+    void apply(const TagP& t) { sum+=len*t.first+len*(len-1)/2*t.step; }
+    pair<TagP,TagP> split_tag(const TagP& t,const InfoP& l,const InfoP&) const
+    { return {t,{t.first+l.len*t.step,t.step}}; }
+    friend InfoP operator+(const InfoP& a,const InfoP& b) { return {a.len+b.len,a.sum+b.sum}; }
+};
+// chmin reaches leaves when mixed; get_real_tag converts cap to a lazy delta.
+struct TagB
+{
+    LL value=0;
+    void apply(const TagB& t) { value+=t.value; }
+    void clear() { value=0; }
+    bool has_tag() const { return value!=0; }
+};
+struct InfoB
+{
+    LL len=0, sum=0, lo=0, hi=0;
+    bool break_cond(const TagB& t) const { return hi<=t.value; }
+    bool tag_cond(const TagB&) const { return lo==hi; }
+    TagB get_real_tag(const TagB& t) const { return {t.value-hi}; }
+    void apply(const TagB& t) { sum+=len*t.value; lo+=t.value; hi+=t.value; }
+    friend InfoB operator+(const InfoB& a,const InfoB& b)
+    {
+        if (!a.len) return b;
+        if (!b.len) return a;
+        return {a.len+b.len,a.sum+b.sum,min(a.lo,b.lo),max(a.hi,b.hi)};
+    }
+};
+
+template<class Tree>
+void affine_case(Tree& s, vector<LL> a, mt19937& rng)
+{
+    int n=(int)a.size()-1;
+    for(int op=0;op<100;op++)
+    {
+        int l=1+rng()%n, r=1+rng()%n;
+        if(l>r) swap(l,r);
+        if(op%7==0) { l=1; r=n; }
+        TagA t{(int)(rng()%3)-1,(int)(rng()%41)-20};
+        s.modify(l,r,t);
+        for(int i=l;i<=r;i++) a[i]=a[i]*t.mul+t.add;
+        l=1+rng()%n; r=1+rng()%n;
+        if(l>r) swap(l,r);
+        LL sum=0,lo=LLONG_MAX,hi=LLONG_MIN;
+        for(int i=l;i<=r;i++) { sum+=a[i]; lo=min(lo,a[i]); hi=max(hi,a[i]); }
+        auto v=s.query(l,r);
+        assert(v.len==r-l+1 && v.sum==sum && v.lo==lo && v.hi==hi);
+        LL k=(int)(rng()%81)-40;
+        int first=-1,last=-1;
+        for(int i=l;i<=n;i++) if(a[i]>=k) { first=i; break; }
+        for(int i=r;i>=1;i--) if(a[i]>=k) { last=i; break; }
+        auto pred=[k](const InfoA& x){return x.hi>=k;};
+        assert(s.find_first(l,pred)==first && s.find_last(r,pred)==last);
+        assert(s.find_first(0,pred)==-1 && s.find_first(n+1,pred)==-1);
+        assert(s.find_last(0,pred)==-1 && s.find_last(n+1,pred)==-1);
+    }
+}
+void test_advanced()
+{
+    mt19937 rng(42);
+    SegTree<InfoA,TagA> fixed(65);
+    for(int tc=0;tc<400;tc++)
+    {
+        int n=tc<4 ? (1<<tc) : 1+rng()%65;
+        vector<LL> a(n+1);
+        vector<InfoA> info(n+1);
+        for(int i=1;i<=n;i++) { a[i]=(int)(rng()%101)-50; info[i]={1,a[i],a[i],a[i]}; }
+        fixed.init(n); fixed.build(info);
+        affine_case(fixed,a,rng);
+        DySegTree<InfoA,TagA> dyn(n,2*n-1);
+        if(tc%2) dyn.build(info); else fill(a.begin(),a.end(),0);
+        affine_case(dyn,a,rng);
+    }
+    for(int tc=0;tc<400;tc++)
+    {
+        int n=1+rng()%65;
+        SegTree<InfoP,TagP> s(n);
+        DySegTree<InfoP,TagP> d(n,2*n-1);
+        vector<InfoP> info(n+1); s.build(info);
+        vector<LL> ref(n+1);
+        for(int op=0;op<60;op++)
+        {
+            TagP t{(int)(rng()%21)-10,(int)(rng()%7)-3};
+            // Whole-domain AP; arbitrary queries force repeated lazy splitting.
+            s.modify(1,n,t); d.modify(1,n,t);
+            for(int i=1;i<=n;i++) ref[i]+=t.first+(i-1)*t.step;
+            int l=1+rng()%n,r=1+rng()%n; if(l>r) swap(l,r);
+            LL sum=0; for(int i=l;i<=r;i++) sum+=ref[i];
+            assert(s.query(l,r).sum==sum && d.query(l,r).sum==sum);
+        }
+        SegTree<InfoB,TagB> b(n);
+        DySegTree<InfoB,TagB> db(n,2*n-1);
+        vector<InfoB> bi(n+1);
+        for(int i=1;i<=n;i++) { ref[i]=(int)(rng()%101)-50; bi[i]={1,ref[i],ref[i],ref[i]}; }
+        b.build(bi); db.build(bi);
+        for(int op=0;op<60;op++)
+        {
+            int l=1+rng()%n,r=1+rng()%n; if(l>r) swap(l,r);
+            LL cap=(int)(rng()%161)-80;
+            b.modify(l,r,{cap}); db.modify(l,r,{cap});
+            for(int i=l;i<=r;i++) ref[i]=min(ref[i],cap);
+            l=1+rng()%n; r=1+rng()%n; if(l>r) swap(l,r);
+            LL sum=0,lo=LLONG_MAX,hi=LLONG_MIN;
+            for(int i=l;i<=r;i++) { sum+=ref[i]; lo=min(lo,ref[i]); hi=max(hi,ref[i]); }
+            for(auto v:{b.query(l,r),db.query(l,r)}) assert(v.sum==sum && v.lo==lo && v.hi==hi && v.len==r-l+1);
+        }
+    }
+}
+// Independent difference Fenwick: range additions and prefix integrals.
+struct RefBIT
+{
+    int n; vector<LL> a,b;
+    RefBIT(int n):n(n),a(n+2),b(n+2) {}
+    void point(int p,LL v) { for(int i=p;i<=n;i+=i&-i) {a[i]+=v;b[i]+=v*(p-1);} }
+    void add(int l,int r,LL v) {point(l,v);point(r+1,-v);}
+    LL prefix(int p) { LL x=0,y=0;for(int i=p;i;i-=i&-i){x+=a[i];y+=b[i];}return x*p-y; }
+};
+void test_target_scale()
+{
+    constexpr int n=200000;
+    mt19937 rng(42);
+    SegTree<InfoS,TagS> s(n);
+    DySegTree<InfoS,TagS> d(n,2*n-1);
+    vector<InfoS> a(n+1); s.build(a); d.build(a);
+    assert(d.idx==2*n-1);
+    RefBIT ref(n);
+    for(int op=0;op<200000;op++)
+    {
+        int l=1+rng()%n,r=1+rng()%n; if(l>r) swap(l,r);
+        if(op%13==0) {l=1;r=n;}
+        LL v=(int)(rng()%2001)-1000;
+        s.modify(l,r,{v}); d.modify(l,r,{v}); ref.add(l,r,v);
+        l=1+rng()%n; r=1+rng()%n; if(l>r) swap(l,r);
+        LL sum=ref.prefix(r)-ref.prefix(l-1);
+        auto x=s.query(l,r),y=d.query(l,r);
+        assert(x.sum==sum && y.sum==sum && x.len==r-l+1 && y.len==r-l+1);
+    }
+    for(int m:{1,2,65537,n})
+    {
+        s.init(m); a.assign(m+1,{});
+        for(int i=1;i<=m;i++) a[i]={1,i,i};
+        s.build(a); s.modify(1,m,{-1000000000000LL});
+        for(int q=0;q<25000;q++)
+        {
+            int k=1+rng()%m;
+            auto pred=[k](const InfoS& x){return x.mx>=k-1000000000000LL;};
+            assert(s.find_first(1,pred)==k && s.find_last(m,pred)==m);
+            assert(s.find_last(k,pred)==k);
+        }
+    }
+}
+void test_st_extreme()
+{
+    mt19937 rng(42); ST st;
+    for(int tc=0;tc<400;tc++)
+    {
+        int n=1+rng()%65; VLL a(n+1);
+        for(int i=1;i<=n;i++) a[i]=tc%3 ? (int)(rng()%101)-50 : -7;
+        a[1]=LLONG_MIN; a[n]=LLONG_MAX;
+        for(bool mode:{false,true})
+        {
+            st.build(a,mode);
+            for(int l=1;l<=n;l++)
+            {
+                LL v=a[l];
+                for(int r=l;r<=n;r++) {v=mode?max(v,a[r]):min(v,a[r]);assert(st.query(l,r)==v);}
+            }
+        }
+    }
+    for(int n:{200000,1,2,65537,200000})
+    {
+        VLL a(n+1); for(int i=1;i<=n;i++) a[i]=i-1000000000000LL;
+        for(bool mode:{false,true})
+        {
+            st.build(a,mode);
+            for(int q=0;q<100000;q++)
+            {
+                int l=1+rng()%n,r=1+rng()%n; if(l>r) swap(l,r);
+                assert(st.query(l,r)==a[mode?r:l]);
+            }
+        }
+    }
+}
+void test_wide_domain()
+{
+    // LL coordinate arithmetic at its supported endpoint, no nonzero huge sum.
+    DySegTree<InfoS,TagS> s(LLONG_MAX,400);
+    auto nonnegative=[](const InfoS& x){return x.mx>=0;};
+    assert(s.query(2,LLONG_MAX-1).len==LLONG_MAX-2 && s.idx==0);
+    assert(s.find_first(LLONG_MAX,nonnegative)==LLONG_MAX);
+    assert(s.find_last(LLONG_MAX,nonnegative)==LLONG_MAX && s.idx==0);
+    s.modify(LLONG_MAX,LLONG_MAX,{-7});
+    assert(s.query(LLONG_MAX,LLONG_MAX).sum==-7);
+    assert(s.find_last(LLONG_MAX,nonnegative)==LLONG_MAX-1);
+    assert(s.query(1,LLONG_MAX).sum==-7 && s.tr[0].lc==0 && s.tr[0].rc==0);
+    // Entire huge range tagged, then descend into previously virtual nodes.
+    DySegTree<InfoS,TagS> t(1000000000000LL,2000);
+    t.modify(1,t.n,{-2}); t.modify(t.n,t.n,{5});
+    assert(t.query(1,t.n).sum==-2*t.n+5 && t.query(1,t.n).mx==3);
+    auto positive=[](const InfoS& x){return x.mx>0;};
+    assert(t.find_first(1,positive)==t.n && t.find_last(t.n,positive)==t.n);
+    assert(t.query(2,t.n-1).sum==-2*(t.n-2));
+}
+
+void test_sparse_scale()
+{
+    constexpr LL n=1000000000000LL, step=4096;
+    constexpr int q=200000;
+    DySegTree<InfoS,TagS> s(n,4000010);
+    mt19937 rng(42);
+    for(int i=1;i<=q;i++)
+    {
+        LL p=step*i;
+        s.modify(p,p,{1});
+        LL l=1+(LL)(rng()%((unsigned long long)p+step));
+        LL r=1+(LL)(rng()%((unsigned long long)p+step));
+        if(l>r) swap(l,r);
+        LL left=max(1LL,(l+step-1)/step),right=min<LL>(i,r/step);
+        LL count=max(0LL,right-left+1);
+        auto v=s.query(l,r);
+        assert(v.len==r-l+1 && v.sum==count && v.mx==(count?1:0));
+        auto pred=[](const InfoS& x){return x.mx>0;};
+        LL first=max(1LL,(l+step-1)/step),last=min<LL>(i,r/step);
+        assert(s.find_first(l,pred)==(first<=i?first*step:-1));
+        assert(s.find_last(r,pred)==(last>=1?last*step:-1));
+    }
+    assert(s.query(1,n).sum==q && s.tr[0].info.len==0);
+    cout << "sparse scale: nodes=" << s.idx << ", node_bytes=" << sizeof(s.tr[0]) << '\n';
+}
+
+void test_reset()
+{
+    constexpr int cap=399999;
+    DySegTree<InfoA,TagA> s(200000,cap);
+    auto capacity=s.tr.capacity();
+    for(int n:{200000,1,2,65537,200000,200000})
+    {
+        vector<InfoA> a(n+1);
+        for(int i=1;i<=n;i++) a[i]={1,-i,-i,-i};
+        s.build(a);
+        assert(s.n==n && s.idx==2*n-1 && s.tr.capacity()==capacity);
+        assert(s.query(1,n).sum==-(LL)n*(n+1)/2);
+        s.modify(1,n,{0,7});
+        assert(s.query(n,n).sum==7);
+        s.clear();
+        assert(s.n==n && s.idx==0 && s.root==0 && s.tr.size()==1 && s.tr.capacity()==capacity);
+        assert(s.query(1,n).sum==0 && s.query(1,n).len==n && s.idx==0);
+        assert(s.find_first(1,[](const InfoA& v){return v.hi>=0;})==1);
+        s.modify(1,n,{1,2});
+        assert(s.query(1,n).sum==2LL*n);
+    }
+    s.init(1000000000000LL);
+    assert(s.n==1000000000000LL && !s.idx && !s.root);
+    s.modify(s.n,s.n,{0,-9});
+    assert(s.query(s.n,s.n).sum==-9 && s.query(1,s.n).hi==0);
+    s.init(1);
+    assert(s.query(1,1).sum==0 && !s.idx);
+    DySegTree<InfoS,TagS> exact(1,1);
+    for(int i=0;i<100;i++)
+    {
+        exact.build(vector<InfoS>{{},{1,i,i}});
+        assert(exact.idx==1 && exact.query(1,1).sum==i);
+    }
+}
+
 int main()
 {
+    test_reset();
+    test_sparse_scale();
+    test_advanced();
+    test_target_scale();
+    test_st_extreme();
+    test_wide_domain();
     test_seg_tree();
     test_dy_seg_tree();
     test_st_table();

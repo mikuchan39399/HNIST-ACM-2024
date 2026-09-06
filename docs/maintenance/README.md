@@ -11,12 +11,22 @@
 | 测试行为、API 或边界用例 | 核对 rules/verification.json 的对应范围, 运行相关套件后查看自动生成的两层表 |
 | 指纹、证据或两层表生成器 | 运行 scripts/check_verification_test.ps1, 同时验证 PS5.1 / PS7 |
 | 展开/恢复 | 运行 scripts/zoi_check.ps1 |
-| 安装/卸载 | 运行 scripts/check_setup.ps1，使用隔离配置 |
+| 安装/卸载、工作区配置、打包、清理 | 运行 scripts/check_setup.ps1 与 scripts/check_deployment.ps1, PS5.1/PS7 各验, 使用隔离配置 |
 | 资产扫描/测试入口 | 运行 scripts/check_inventory_test.ps1 / scripts/check_runner.ps1 |
-| 分享队友包 | scripts/make_team_package.ps1 -OutputPath ./docs/releases/HNIST-ZOI.zip（目标须不存在） |
+| 分享队友包 | VS Code 的 zoi-package 或 scripts/make_team_package.ps1, 默认 docs/releases/时间戳 ZIP |
 
 功能细目由 make_features 复用 check_inventory 生成；-Check 只检查且过期失败。每次功能新增、修改或撤下均执行 [rule 双向同步要求](../../rule.md#适用范围与阅读顺序), 核对 LLM 规则与 docs/features/README.md 的用户说明, 不限于新增整个功能; 不手填生成数量或测试通过等级。
 所有脚本放 scripts，库根从 PSScriptRoot 推导，不写本机绝对路径。打包收源码、受管文档、验证范围 JSON、自动运行证据及压力入口依赖的 .github 配置, 排除恢复备份、原始测试日志和已有发布包。
+
+安装 v3 管理 settings/tasks/keybindings 三个文档, v2 原快照可升级, 重装检查并补缺项;
+卸载精确恢复原文或保留后续无关修改。未知旧状态仍保留, 不猜测归属。AdoptExistingTasks 是显式的手写任务迁移,
+只接管指向当前库相应脚本的已知任务, 保留原快照供卸载恢复, 不自动接管冲突命令。
+启用补全/错误提示时记录旧值; 不安装扩展, 不改编译器 PATH。项目显式 includePath 可能覆盖用户默认值,
+configure-zoi 只处理调用方指定的工作区, 多个 C/C++ 配置逐一补路径; 手动改过的局部配置不强制回滚。
+快捷键冲突保留, 用 Ctrl+Alt+T / Ctrl+Alt+Z 提供固定入口, 不篡改 VS Code 的命令历史或抢占 Ctrl+Shift+P。
+打包排除规则必须相对库根计算, 不能因为库本身位于 .zoi-checks 或 releases 下就排空全部源码;
+拒绝跟随链接, 排除个人状态, 完成 ZIP 后再公布正式文件, 清理临时目录有有限重试。
+部署自检必须实际解压发布包并安装, 不能只检查 ZIP 名称。CI setup 作业自动跑两版 PowerShell 的部署自检。
 
 ## CI 与报告
 
@@ -45,8 +55,8 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
   状态只放 A.zoi.state.json, 请与 A.cpp 一起保留到恢复或解除管理。
 接口: 安装器仅在原先没有默认构建任务时将 zoi-expand 设为默认；任务面板可直接选择 zoi-expand / zoi-restore。手动配置的 zoi-booklet(
   重建手册 PDF, 任务在用户全局 tasks.json)。cph 带 -I<库根>\zoi(user
-  settings), 直编与展开态共用短 include; IntelliSense
-  已接(includePath 含 zoi): 补全/悬停/F12 穿透跳板均可用。
+  settings), 直编与展开态共用短 include; IntelliSense 还需启用 Microsoft C/C++ 并确认当前项目配置,
+  用户默认 includePath 不能证明实际生效, 工作区设置/编译数据库优先时按安装指南诊断。
 操作约定: 编辑器先 Ctrl+S; 新增 include 和题解修改放在生成块外。
   restore <file.cpp|dir> 只折回生成块, 保留 solve 等块外修改; 批量时
   每题独立处理。status <file.cpp|dir> 只读报告可恢复、冲突或孤儿状态。
@@ -60,7 +70,8 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 支持边界: 普通无条件本地 include、标准 #ifndef/#define/#endif 守卫、
   文件开头的 #pragma once。条件分支内的本地 include、宏式 include、
   #undef、反斜杠续行、被块注释拆开的本地 include 和无法解析的本地
-  路径在写入前报错; 标准库 <...> include 原样保留。不模拟完整预处理器,
+  路径在写入前报错; 库内已知短名 <name.h> 从 zoi 解析, 不被源目录同名文件遮蔽;
+  其他标准库 <...> include 原样保留。不模拟完整预处理器,
   符号链接别名暂不承诺去重。
 恢复与清理: 成功 restore/forget 删除本题状态; 写入中断会留下
   A.zoi.pending.json, 下次修改命令先完成事务。如果中断后源码又改过,
@@ -117,5 +128,23 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 纸质化回归须检查：筛选条目的 include 仍按完整 catalog 和相对目标路径改写；同名源文件不按 basename 混淆；SoloMin 的正文和插件均按阈值从奇数页开始，审计不得漏掉应检查锚点。版式修改后核对代码块、目录覆盖与页数，并渲染检查目录、正文、笔记和附录。
 
 工作目录、子进程临时文件与长期交接统一执行 [工作区与沉淀](../../rules/collab.md#工作区与沉淀)。
+
+## 测试缓存保留
+
+`.zoi-checks` 是隔离测试的编译产物、临时输入、配置副本和诊断现场, 不参与模板 include 或安装后的正常刷题。
+run_checks/check_setup/zoi_check/check_runner/check_deployment 完成后写 `.zoi-run.json`,
+只有 PASS、路径吻合、类型已知的完成目录才可自动清理, 每类保留最近三份。
+同一缓存根用临时独占锁串行清理, 同时完成的另一测试跳过本次清理, 避免争删同一现场。
+异常退出无完成标记、FAIL、含链接的目录与 codex-work 均保留, 不靠目录名猜成功。
+
+```powershell
+./scripts/clean_checks.ps1              # 只预览
+./scripts/clean_checks.ps1 -Apply       # 执行清理, 与 zoi-clean-checks 相同
+```
+
+长期证据先写 records/verification 或 records/tooling; 两层验证表不依赖本地原始日志存活。
+旧版无标记现场由维护者审计后处理, 清理器不批量认领。`.ci-results`、正式 ZIP、私人备份不自动删除。
+跨 Windows/WSL 的绝对路径不同, 各环境只清理路径与自身一致的现场; 不把异平台路径猜映射后删除。
+人工工作区里的下载包、工具和复现脚本需确认用途及证据沉淀后按项清理, 不能把整个目录直接删掉。
 
 根目录只保留 README.md、AGENTS.md、rule.md 和 .gitignore 等必要入口。旧规则历史位于 records/tooling/rule_history.md；手册 PDF 及同名 .typ 默认生成到 docs/booklet/output，指定 OutFile 时两者跟随该路径，不能重新把默认生成物散落到根目录。打包排除手册 output，仍保留历史正文。

@@ -8,7 +8,7 @@ rules/sweep-history.md, 板上不留已完成记录; 悬赏池就是待办名单
 
 ## 当前领取
 
-暂无领取; 下一件 P05。
+无。队友部署修复已移入历史；保留 P05–P09 未提交改动，算法队列下一件仍为 P10。
 
 ## 悬赏池(一次只领一件; 领取改 🔒 署名)
 
@@ -19,11 +19,6 @@ rules/sweep-history.md, 板上不留已完成记录; 悬赏池就是待办名单
 每件按 [验证标准](../rule.md#9-验证标准) 先验证再润色注释; 优先复用已有套件,
 覆盖不足时补测试并接入自动 CI, 同步 verification.json 与真实运行证据, 完成即移档。
 
-- [ ] P05 seg_check: SegTree / DySegTree / ST 表。
-- [ ] P06 oset_check: 平衡树八件(跳表/AVL/Treap/FHQ/FHQ_Seq/替罪羊/笛卡尔树/Splay)。
-- [ ] P07 pst_check: 主席树。
-- [ ] P08 bit_check: 树状数组 / 二维。
-- [ ] P09 leftist_check: 左偏树双件。
 - [ ] P10 dsu_check: DSU / WDSU。
 - [ ] P11 monoQueue: misc 套件内的数据结构件单独登记。
 

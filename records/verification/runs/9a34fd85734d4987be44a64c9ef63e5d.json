@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "id": "9a34fd85734d4987be44a64c9ef63e5d",
+  "startedUtc": "2026-09-06T13:23:16.0987208Z",
+  "finishedUtc": "2026-09-06T13:23:20.8290740Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/p07-baseline",
+  "results": [
+    {
+      "fingerprint": "a5e1705d9e4bbc96fcf410b8d310e8f1c86b435497f92a9a74db454b61c687c8",
+      "files": [
+        {
+          "path": "algorithms/数据结构/线段树/可持久化线段树/主席树.cpp",
+          "hash": "9c6f41f6e171758920c1a96ef2eb51058f1a2b46c9284bcc8ea6c367d5393b5c"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/对拍/pst_check.cpp",
+          "hash": "5a31550c98cb5948a41adc4faac886fb08457c8bb2d032e2acc18cf897019c5b"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "1d9669c9d6cf8fa017abbdb23b8a8ed7042aeebebeaa6ca04492b6038a7c1452"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "5f15a88c946073ae78bdb994b9ad4ee7de4e66436a8bcdbfd4aa4eb83b775910"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "c34d612df1c5c9e9775473ddebc37b57798135e5367755716106c76f1ff5f7e4"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/线段树/对拍/pst_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.468
+    }
+  ]
+}

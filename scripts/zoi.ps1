@@ -165,13 +165,18 @@ function Scan([string]$text, [string]$path) {
         }
         if ($l -match '^\s*#\s*include\b(.*)$') {
             $operand=$Matches[1].Trim()
-            if ($operand -match '^<[^>]+>$') { continue }
-            if ($operand -notmatch '^"([^"]+)"$') { throw "Macro/complex include unsupported: ${path}:$($i+1)" }
-            $inc=$Matches[1]; $allowed=0; if ($guard -ne '') { $allowed=1 }
+            $inc=$null
+            if ($operand -match '^<([^>]+)>$') {
+                $candidate=$Matches[1]
+                if ($candidate -notmatch '^[A-Za-z0-9_]+\.h$' -or -not [IO.File]::Exists((Join-Path (Join-Path $Root 'zoi') $candidate))) { continue }
+                $inc=Join-Path (Join-Path $Root 'zoi') $candidate
+            } elseif ($operand -match '^"([^"]+)"$') { $inc=$Matches[1] }
+            else { throw "Macro/complex include unsupported: ${path}:$($i+1)" }
+            $allowed=0; if ($guard -ne '') { $allowed=1 }
             if ($depth -ne $allowed) { throw "Conditional local include unsupported: ${path}:$($i+1)" }
             # A block comment spanning this directive's line cannot be removed
             # with the include without changing the surrounding comment scope.
-            if ($originalLines[$i] -notmatch '^\s*#\s*include\s*"[^"]+"\s*(?://[^\r\n]*)?\s*$') {
+            if ($originalLines[$i] -notmatch '^\s*#\s*include\s*(?:"[^"]+"|<[^>]+>)\s*(?://[^\r\n]*)?\s*$') {
                 throw "Comment-split local include unsupported: ${path}:$($i+1)"
             }
             $incs[$i]=$inc
@@ -281,6 +286,7 @@ function Process-File([string]$src) {
             catch { Write-Host '[WARN] clipboard unavailable' }
         }
         Write-Host "[OK] expanded: $src ($($r.state.blocks.Count) blocks)"
+        if ($r.state.blocks.Count -eq 0) { Write-Host '[NOTE] No template includes found. Save the active .cpp and add a ZOI header such as #include "bit.h".' }
     } elseif ($null -ne $state -or $legacy) {
         Commit $src $before $compact $null $legacy
         Write-Host "[OK] ${Action}: $src"

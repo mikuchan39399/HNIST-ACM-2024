@@ -1,0 +1,83 @@
+{
+  "schema": "seg-manual-linux-1",
+  "sources_sha256": {
+    ".github/workflows/ci.yml": "42bbe4093d0f49ca046ba757c96cd31654e2fa8c9f23fcea0344a894cdeb0404",
+    "algorithms/数据结构/ST表/ST表.cpp": "04b869f7b16094214c288a4be3c7e44a5b38cbc6b60e183c6a60865fde86c4c1",
+    "algorithms/数据结构/线段树/对拍/seg_check.cpp": "665326d039898fef591ef7b03760df55044139d743fb644a938a00b14c12a556",
+    "algorithms/数据结构/线段树/泛型动态线段树.cpp": "ff7d84d8b54806f6cd8419deb96ce9edfdd9aa634f79e19fbd4dbdc34803dd38",
+    "algorithms/数据结构/线段树/泛型线段树.cpp": "06dc78be2a8ecb4c1a31fb752652896483c907f55c29db5a87b58045317a8fc0",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "scripts/check_lca_vt_extreme.py": "91ddffc70547d537aaeb8f0e331975b0b2aef2de15d19cd640e144c603b0e545"
+  },
+  "stable": true,
+  "results": [
+    {
+      "name": "compile-normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 4.146,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "algorithms/数据结构/线段树/对拍/seg_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p05-linux/normal"
+      ]
+    },
+    {
+      "name": "normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 1.588,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p05-linux/normal"
+      ]
+    },
+    {
+      "name": "compile-sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 6.596,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "algorithms/数据结构/线段树/对拍/seg_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p05-linux/sanitizer"
+      ]
+    },
+    {
+      "name": "sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 9.407,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p05-linux/sanitizer"
+      ]
+    }
+  ],
+  "failed": false
+}

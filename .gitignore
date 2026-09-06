@@ -38,6 +38,12 @@ Release/
 # Local regression logs and isolated test workspaces
 .zoi-checks/
 .ci-results/
+scripts/.zoi-install-state.json*
+*.zoi-state
+*.zoi-tmp
+*.zoi.state.json
+*.zoi.pending.json
+.zoi-workspace-state.json
 
 # Local distribution archives and personal recovery snapshots
 /docs/backups/*

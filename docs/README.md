@@ -11,6 +11,7 @@
 | 跑对拍、定位失败 | [测试说明](../scripts/checks.md) |
 | 打印比赛手册 | [生成 PDF](booklet/README.md) |
 | 改脚本、维护跳板或制作分享包 | [维护说明](maintenance/README.md) |
+| 用 VS Code 任务生成队友 ZIP | [正式发布目录](releases/README.md) |
 
 AI 接手看 [AGENTS.md](../AGENTS.md)，修改模板看 [模板契约](../rule.md)，追溯方案看 [历史目录](../records/tooling/README.md)。
-本地 ZIP 放 docs/releases/，私人恢复备份放 docs/backups/；它们不提交，也不进入队友包。
+本地 ZIP 放 docs/releases/，私人恢复备份放 docs/backups/；这些产物不提交，也不进入队友包，目录里的 README 指南仍随包交付。

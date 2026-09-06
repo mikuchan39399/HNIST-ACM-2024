@@ -1,0 +1,82 @@
+{
+  "schema": "bit-manual-linux-1",
+  "sources_sha256": {
+    ".github/workflows/ci.yml": "42bbe4093d0f49ca046ba757c96cd31654e2fa8c9f23fcea0344a894cdeb0404",
+    "algorithms/数据结构/树状数组/二维树状数组.cpp": "8a643f6dbe9a2a646dd34690de4b56972d343c502b8daedc14d770235b9a14b7",
+    "algorithms/数据结构/树状数组/对拍/bit_check.cpp": "8d1df4e5908832e9f860f2ad5a634687dbebf927d1c52c4833ff1ac71092828d",
+    "algorithms/数据结构/树状数组/树状数组.cpp": "9fdbc83b942bdfbbe354ef250ca6e9b73292eac6977e773be7fa2bd68d5b3e62",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "scripts/check_lca_vt_extreme.py": "91ddffc70547d537aaeb8f0e331975b0b2aef2de15d19cd640e144c603b0e545"
+  },
+  "stable": true,
+  "results": [
+    {
+      "name": "compile-normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 3.648,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p08-linux/normal"
+      ]
+    },
+    {
+      "name": "normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.197,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p08-linux/normal"
+      ]
+    },
+    {
+      "name": "compile-sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 4.846,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p08-linux/sanitizer"
+      ]
+    },
+    {
+      "name": "sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 7.458,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p08-linux/sanitizer"
+      ]
+    }
+  ],
+  "failed": false
+}

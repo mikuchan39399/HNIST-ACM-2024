@@ -2,23 +2,16 @@
 #ifndef Z_OI_SGT
 #define Z_OI_SGT
 
-#include <vector>
-#include <cassert>
-#include <climits>
 #include "../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ SGTree 替罪羊树 (可重复集合) ============
 // 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继均摊 O(log n)
 // 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
 // 平衡机制: α = 0.75, 条件 4*max(lc.sz, rc.sz) > 3*sz 触发子树原位重建
 //   (插入/删除回溯均检查, 删小侧同样可触发); 重建 = 中序拍平 + 完美平衡二分,
-//   原位复用结点 id; 高度恒 ≤ log(n)/log(4/3), 递归栈深安全
+//   原位复用结点 id; 高度 O(log n)
 // 内存: 每结点 24B; 预算 = 峰值存活(删除/重建均回收), 1e6 ≈ 24MB
 struct SGTree
 {
-    static constexpr LL INF = 0x3f3f3f3f3f3f3f3f;
     struct node
     {
         int lc = 0, rc = 0, sz = 0;
@@ -37,10 +30,10 @@ struct SGTree
         rub.reserve(budget);
     }
     // 插入 v (允许重复)
-    // 时间: 均摊 O(log n) | 空间: O(1)
+    // 时间: 均摊 O(log n) | 额外空间: O(n), 重建时展开子树
     void insert(LL v) { root = insert_at(root, v); }
     // 删除一个 v, 返回是否存在并删除
-    // 时间: 均摊 O(log n) | 空间: O(1)
+    // 时间: 均摊 O(log n) | 额外空间: O(n), 重建时展开子树
     bool erase(LL v)
     {
         bool ok = false;
@@ -119,7 +112,7 @@ struct SGTree
     // 时间: O(1) | 空间: O(1)
     int size() { return tr[root].sz; }
     // 多测复位
-    // 时间: O(1) | 空间: O(1)
+    // 时间: O(idx) | 空间: O(1)
     void clear()
     {
         idx = 0;
@@ -216,14 +209,16 @@ private:
     }
 };
 #endif
+
 /* Usage:
-    SGTree sgt;                    // 默认预算 1e6 结点(峰值存活计)
-    sgt.insert(x);                 // 允许重复
-    sgt.erase(x);                  // 删一个, 返回 bool
-    sgt.get_rank(x);               // <x 的元素个数(含重复)
-    sgt.get_kth(k);                // 第 k 小, 越界返回 INF
-    sgt.get_pre(x);                // 严格前驱, 无则 -INF
-    sgt.get_suf(x);                // 严格后继, 无则 INF
-    sgt.size();                    // 元素个数(含重复)
-    sgt.clear();                   // 多测复位, 容量保留
+int main()
+{
+    SGTree s(16);
+    for (LL v : {2LL, 2LL, 5LL}) s.insert(v);
+    cout << s.get_rank(5) << " " << s.get_kth(2) << "\n"; // 2 2
+    s.erase(2);                      // 只删一个 2
+    cout << s.get_pre(5) << " " << s.get_suf(2) << "\n"; // 2 5
+    s.clear();
+    cout << s.size() << "\n"; // 0
+}
 */

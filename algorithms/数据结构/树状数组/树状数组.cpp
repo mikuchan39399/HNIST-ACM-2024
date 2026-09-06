@@ -2,17 +2,14 @@
 #ifndef Z_OI_BIT
 #define Z_OI_BIT
 
-#include <vector>
-#include <algorithm>
 #include "../../杂项/utils/utils.cpp"
-
-using namespace std;
 
 // ============ 树状数组 区间加 + 区间和 (差分双 BIT) ============
 // 1-based; 区间加 [l,r] 走差分 d[l]+=k, d[r+1]-=k, 前缀和
 //   pre(x) = Σ d[i]*(x+1-i) = (x+1)*Σd[i] - Σd[i]*i,
 //   b1/b2 两棵 BIT 分别维护 d 与 d*i
 // 内存: 两棵 LL BIT 共 16B/位; 预算 = max_n, 2e5 ≈ 3.2MB
+// 区间合法非空; 增量取负、坐标乘积、表内累积与查询中间值均须在 LL 内
 struct BIT
 {
     int n;
@@ -27,14 +24,14 @@ struct BIT
         n = _n;
         z_fill_n(n, 0, b1, b2);
     }
-    // [l, r] 整体加 k (r = n 时差分右端越界, 内部循环自动丢弃)
+    // 把 a[l..r] 整体加 k, 1 <= l <= r <= n
     // 时间: O(log n) | 空间: O(1)
     void add(int l, int r, LL k)
     {
         upd(l, k);
         upd(r + 1, -k);
     }
-    // 返回 a[1..x] 之和 (x = 0 返回 0)
+    // 返回 a[1..x] 之和, 0 <= x <= n, x = 0 返回 0
     // 时间: O(log n) | 空间: O(1)
     LL pre(int x)
     {
@@ -69,7 +66,7 @@ struct BITR
     // [l, r] 整体加 k
     // 时间: O(log n) | 空间: O(1)
     void add(int l, int r, LL k) { t.add(t.n + 1 - r, t.n + 1 - l, k); }
-    // 返回 a[x..n] 之和 (x 越上界返回 0)
+    // 返回 a[x..n] 之和, 1 <= x <= n+1, x = n+1 返回 0
     // 时间: O(log n) | 空间: O(1)
     LL suf(int x) { return t.pre(t.n + 1 - x); }
     // 返回 a[l..r] 之和
@@ -79,12 +76,16 @@ struct BITR
 #endif
 /*
  * Usage:
- * BIT bit(n);              // 预算 n
- * bit.init(n);             // 多测复位
- * bit.add(l, r, k);        // [l,r] 整体加 k
- * bit.pre(x);              // a[1..x] 之和
- * bit.query(l, r);         // a[l..r] 之和
- * BITR br(n);              // 后缀版(同款 add/init)
- * br.suf(x);               // a[x..n] 之和
- * br.query(l, r);          // a[l..r] 之和
+ * int main()
+ * {
+ *     BIT bit(5);
+ *     BITR br(5);
+ *     bit.add(2, 4, 3);
+ *     br.add(2, 4, 3);
+ *     cout << bit.pre(3) << ' ' << br.suf(3) << endl; // 6 6
+ *     cout << bit.query(3, 5) << ' ' << br.query(3, 5) << endl; // 6 6
+ *     bit.init(3); // 新一轮长度为 3, 原数据清空
+ *     br.init(3);
+ *     cout << bit.query(1, 3) << ' ' << br.query(1, 3) << endl; // 0 0
+ * }
  */

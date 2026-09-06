@@ -2,11 +2,13 @@
 #ifndef Z_OI_DYSEG
 #define Z_OI_DYSEG
 
-#include <cassert>
-#include <vector>
-using namespace std;
-using LL = long long;
-// 预算 = 操作数 * log2(值域) 结点, 1e6 次操作 ≈ 3e7
+#include "../../杂项/utils/utils.cpp"
+
+// 动态线段树维护 [1, n], 0 号为空指针; 虚区间由 Info{} 补 len 表示, 须对应初始零值区间
+// root 为当前根, idx 为已用结点数; 查询和 find 下传标记也会开点, clear/build 后旧编号失效
+// 每结点含两个 int、Info 和 Tag 并按类型对齐; 40 B/结点时预算 4e6 约 160 MB
+// 预算按两次复位间累计开点计算, build 用 2n-1 个, 普通修改/查询/查找每次另计 O(log n)
+// 区间非空且在 [1, n] 内; find 的 pred 必须等价于区间内存在满足条件的点, 不累积前缀
 template<class Info, class Tag>
 struct DySegTree
 {
@@ -21,21 +23,47 @@ struct DySegTree
     int idx;
     vector<Node> tr;
     int budget = 0;
+    // 设置值域上界 _n 并预留 _budget 个实结点, 初始全域取 Info 的零值
+    // 时间: O(1) | 空间: O(_budget) 预留
     DySegTree(LL _n = 1e9, int _budget = 4000010) : n(_n), root(0), idx(0), budget(_budget)
     {
         tr.reserve(budget + 1);
         tr.push_back(Node{});
     }
-    // 对外接口
+    // 清空结点并恢复哨兵, 保留值域 n 和池容量
+    // 时间: O(idx) | 空间: O(1)
+    void clear()
+    {
+        root = idx = 0;
+        tr.clear();
+        tr.push_back(Node{});
+    }
+    // 清空旧树并把值域改为 [1, _n], _n >= 1, 保留池容量
+    // 时间: O(idx) | 空间: O(1)
+    void init(LL _n)
+    {
+        clear();
+        n = _n;
+    }
+    // 把标记 v 应用到闭区间 [x, y], 单点传 x == y
+    // 时间: 普通懒标记 O(log n), 势能修改按题分析 | 额外空间: 普通修改 O(log n)
     void modify(LL x, LL y, const Tag& v) { modify(root, 1, n, x, y, v); }
+    // 返回闭区间 [x, y] 的 Info, 未开点区间按初始零值参与合并
+    // 时间: O(log n) | 额外空间: O(log n)
     Info query(LL x, LL y) { return query(root, 1, n, x, y); }
-    void build(const vector<Info>& a) { n = a.size() - 1; build(root, 1, n, a); }
+    // 清空旧树并用 a[1..m] 建树, 值域改为 [1, m], m >= 1
+    // 时间: O(idx + m) | 额外空间: O(m)
+    void build(const vector<Info>& a) { init(a.size() - 1); build(root, 1, n, a); }
+    // 返回 [start, n] 内满足 pred 的最左位置, 不存在或 start 越界返回 -1
+    // 时间: O(log n) | 额外空间: O(log n)
     template<class Pred>
     LL find_first(LL start, Pred pred)
     {
         if (start < 1 || start > n) return -1;
         return find_first(root, 1, n, start, pred);
     }
+    // 返回 [1, end] 内满足 pred 的最右位置, 不存在或 end 越界返回 -1
+    // 时间: O(log n) | 额外空间: O(log n)
     template<class Pred>
     LL find_last(LL end, Pred pred)
     {
@@ -155,3 +183,39 @@ private:
     }
 };
 #endif
+
+/* Usage: 区间加、区间和与最大值, 按题改 Info/Tag
+struct Tag
+{
+    LL add = 0;
+    void apply(const Tag& t) { add += t.add; }
+    void clear() { add = 0; }
+    bool has_tag() const { return add != 0; }
+};
+struct Info
+{
+    LL len = 0, sum = 0, mx = 0;
+    bool break_cond(const Tag&) const { return false; }
+    bool tag_cond(const Tag&) const { return true; }
+    void apply(const Tag& t) { sum += len * t.add; mx += t.add; }
+    friend Info operator+(const Info& a, const Info& b)
+    {
+        if (!a.len) return b;
+        if (!b.len) return a;
+        return {a.len + b.len, a.sum + b.sum, max(a.mx, b.mx)};
+    }
+};
+int main()
+{
+    DySegTree<Info, Tag> seg(1000000000LL, 256);
+    seg.modify(2, 4, {3});
+    cout << seg.query(1, 5).sum << "\n"; // 9
+    auto pred = [](const Info& v) { return v.mx > 0; };
+    cout << seg.find_first(1, pred) << " " << seg.find_last(5, pred) << "\n"; // 2 4
+    seg.clear();                     // 保留值域, 回到全零树
+    seg.init(10);                    // 清空并改为 [1, 10]
+    vector<Info> a = {{}, {1, 2, 2}, {1, -1, -1}, {1, 4, 4}};
+    seg.build(a);                    // 自动清空并改为 [1, 3]
+    cout << seg.query(1, 3).sum << "\n"; // 5
+}
+*/

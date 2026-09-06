@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "id": "43db8d0d79074f9d92ceaf231a7e6b3d",
+  "startedUtc": "2026-09-06T13:08:41.0953528Z",
+  "finishedUtc": "2026-09-06T13:08:51.9674217Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/p06-before-comments",
+  "results": [
+    {
+      "fingerprint": "18ed6610f4eb753ad36a2e3e76bea70b3d2f9d2abd95526a9c8ab8aa7219cfd5",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/AVL.cpp",
+          "hash": "7855ffe66706df508c4f4bb452715248e92f7a89605785c57e7d80ff3230bd38"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/FHQ_Treap.cpp",
+          "hash": "0916080cda47c5794dc447fb38e7ba57d5acedac4be7890c1523884800d55a73"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/FHQ_Treap_序列.cpp",
+          "hash": "ea935d52d21e2f5fce4a98aafc74374597d495a25b7136476019a0beda7b069e"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/Splay.cpp",
+          "hash": "fd4abe63fed80c50d84ae5e9fa366e166d6293dd00e98c83b8df2be6f8bf5385"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/Treap.cpp",
+          "hash": "0463a8753880516feb2f03047cc3cd1bece5351d1372cec0126e5f23514fe84b"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+          "hash": "6ebd824a66a09899b737ff2c57682ab867d633abfff7a4d2ce0d2d41306e6d25"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/替罪羊树.cpp",
+          "hash": "7f912acc472e3081aca50926e189025171960ad0c3984b1d758c495db62aa772"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp",
+          "hash": "1af38df96a98d6639bc639ae20534bfc17c21fa42e38abf01024101d4f3b6ab5"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/跳表.cpp",
+          "hash": "f340c20bf4d2ba2ff632a4035ff93efc9543429f33db0b655ae507f55b372550"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "algorithms/杂项/随机数/z_rnd.cpp",
+          "hash": "fec6d8cd84c7ff92241cc11a5b976fe9833cf60057ae71ee85e3e6fa279f2c0a"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "ab4779f669a7512562ee89c6ed7ee1ab293835535bf6e5db9766e62777687ab3"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "5f15a88c946073ae78bdb994b9ad4ee7de4e66436a8bcdbfd4aa4eb83b775910"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "c34d612df1c5c9e9775473ddebc37b57798135e5367755716106c76f1ff5f7e4"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 10.404
+    }
+  ]
+}

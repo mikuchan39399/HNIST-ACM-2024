@@ -2,15 +2,11 @@
 #ifndef Z_OI_SEG
 #define Z_OI_SEG
 
-#include <vector>
-#include <algorithm>
 #include "../../杂项/utils/utils.cpp"
-
-using namespace std;
 
 // 线段树维护 a[1..n], Info 决定区间存什么, Tag 决定怎样修改, 支持区间修改、查询和找位置
 // 每结点 sizeof(Info)+sizeof(Tag) 字节; 预留 4*max_n+10 个, 每结点 32B 时 n=2e5 约 25.6MB
-// find_first/find_last 的 pred 判断区间内是否存在答案, 无答案的整段必须返回 false
+// 区间非空且在 [1, n] 内; find 的 pred 必须等价于区间内存在满足条件的点, 不累积前缀
 template<class Info, class Tag>
 struct SegTree
 {
@@ -42,16 +38,16 @@ struct SegTree
     // 用 a[1..n] 建树, a[0] 不用; 重建前先 init(n) 清除旧标记
     // 时间: O(n) | 空间: O(log n)
     void build(const vector<Info>& a) { build(1, 1, n, a); }
-    // 返回 [start,n] 内满足 pred 的最左位置, 不存在或 start 越界返回 -1
-    // 时间: 可正确剪枝时 O(log n) | 空间: O(log n)
+    // 返回 [start, n] 内满足 pred 的最左位置, 不存在或 start 越界返回 -1
+    // 时间: O(log n) | 空间: O(log n)
     template<class Pred>
     int find_first(int start, Pred pred)
     {
         if (start < 1 || start > n) return -1;
         return find_first(1, 1, n, start, pred);
     }
-    // 返回 [1,end] 内满足 pred 的最右位置, 不存在或 end 越界返回 -1
-    // 时间: 可正确剪枝时 O(log n) | 空间: O(log n)
+    // 返回 [1, end] 内满足 pred 的最右位置, 不存在或 end 越界返回 -1
+    // 时间: O(log n) | 空间: O(log n)
     template<class Pred>
     int find_last(int end, Pred pred)
     {
@@ -152,33 +148,36 @@ private:
 };
 #endif
 
-/*
- * Usage:
- * // 1. 初始化
- * // N 为最大可能区间长度
- * SegTree<Info, Tag> seg(N);
- * vector<Info> a(n + 1);
- * for (int i = 1; i <= n; i++)
- * {
- *     a[i] = {w[i], 1};  // w 数组为初始权值，len 固定设为 1
- * }
- * seg.init(n);
- * seg.build(a);
- *
- * // 2. 核心操作 (x, y 均为 1-base 的逻辑区间下标)
- * seg.modify(x, y, {k}); // 区间 [x, y] 统一加上 k (Tag的初始化列表)
- * Info res = seg.query(x, y); // 查询区间 [x, y] 的合并信息
- * LL ans = res.sum; // 从返回的 Info 结构体中提取所需属性
- *
- * // 3. 线段树上二分
- * // 例: 查找下标 >= 1 且区间和 >= k 的第一个叶子节点位置
- * auto pred = [&](const Info& info)
- * {
- *     return info.sum >= k;
- * };
- * int pos = seg.find_first(1, pred);
- *
- * // 4. 定制化 (应对不同题目)
- * // - 代数层自备: 现成件抄 数据结构/线段树/泛型插件/ (区间加区间和、
- *   区间历史最值), 按题改字段; Info 管信息合并(operator+), Tag 管标记叠加(apply)。
- */
+/* Usage: 区间加、区间和与最大值, 按题改 Info/Tag
+struct Tag
+{
+    LL add = 0;
+    void apply(const Tag& t) { add += t.add; }
+    void clear() { add = 0; }
+    bool has_tag() const { return add != 0; }
+};
+struct Info
+{
+    LL len = 0, sum = 0, mx = 0;
+    bool break_cond(const Tag&) const { return false; }
+    bool tag_cond(const Tag&) const { return true; }
+    void apply(const Tag& t) { sum += len * t.add; mx += t.add; }
+    friend Info operator+(const Info& a, const Info& b)
+    {
+        if (!a.len) return b;
+        if (!b.len) return a;
+        return {a.len + b.len, a.sum + b.sum, max(a.mx, b.mx)};
+    }
+};
+int main()
+{
+    SegTree<Info, Tag> seg(5);
+    vector<Info> a = {{}, {1, 2, 2}, {1, -1, -1}, {1, 4, 4}};
+    seg.init(3);
+    seg.build(a);
+    seg.modify(1, 2, {3});
+    cout << seg.query(1, 3).sum << "\n"; // 11
+    auto pred = [](const Info& v) { return v.mx >= 4; };
+    cout << seg.find_first(2, pred) << " " << seg.find_last(3, pred) << "\n"; // 3 3
+}
+*/

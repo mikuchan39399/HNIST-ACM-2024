@@ -2,6 +2,263 @@
   "schema": 1,
   "coverage": [
     {
+      "template": "algorithms/数据结构/堆/左偏树/左偏树.cpp",
+      "suite": "algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp",
+      "api": ["init/alive/same/merge/insert/pop/erase", "set_val/add_val/get_val 单点域", "heap_add/heap_mul/add_all 堆级域", "get_top_id/get_top_val/get_size/get_heap_sum/get_heap_count/get_roots_id"],
+      "oracle": "原两域各 300 组朴素成员表; 大数据独立 set 值编号排序及独立总和/偏移; 递减序列按编号与仿射公式核对",
+      "cases": ["大小根堆各 20 万-1-20 万复位, 大轮各 10 万次单点覆盖/增量/全局偏移, 惰删偶数点后弹空", "20 万点递减权连续合并形成线性父链, 查最早点; 10 万堆级加/全局加及正倍乘后弹空", "300 次小容量重建, 同值按小编号, 死点返回值, 插入/弹空, 大小零复位"],
+      "limitations": "逻辑编号合法; heap_add/heap_mul 后仅堆级操作, 不对受影响堆用 get_val/set_val/add_val/erase; heap_mul 正数且全部中间值不溢出; RV 注释扩展未测; 查根迭代但单次仍可能线性",
+      "summary": "20 万点混合操作与父链退化已验, 修复 Windows 递归查根栈溢出"
+    },
+    {
+      "template": "algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp",
+      "suite": "algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp",
+      "api": ["构造/init/new_node/insert/merge/pop", "empty/size/top/sum/top_pay", "merge_raw 独占无重叠建堆"],
+      "oracle": "300 组 multiset 历史快照; 另 300 组任意历史分叉并逐字段核对全部旧结点; 大数据单调/同值序列闭式答案",
+      "cases": ["大小根堆各三形态 20 万前缀版本及完整弹空, 历史 size/sum 回访, 单调键核对载荷, 最大使用 6987157 结点", "共享版本/自身合并、查询零分配、init 池复用、单点预算 300 次重建、自定义载荷、正负大数", "独占两堆 merge_raw 后再函数式共享; 自合并 30 次逻辑大小 2^30"],
+      "limitations": "所有旧根在 init 后停用; merge_raw 禁止共享或重叠输入, 仅小独占构造用例; 同值载荷不保证顺序; 逻辑大小须在 int 内, 求和不溢出; 800 万预留约 288 MB",
+      "summary": "双堆型 20 万版本与历史不可变性已验, 明确原地合并的独占条件"
+    },
+    {
+      "template": "algorithms/数据结构/树状数组/树状数组.cpp",
+      "suite": "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
+      "api": ["BIT/BITR 构造/init/add/query", "BIT.pre/BITR.suf"],
+      "oracle": "原 300 组朴素数组逐点展开; 新增独立分块数组, 按元素与整块求和, 不使用 lowbit 或差分树",
+      "cases": [
+        "20 万-1-31-32-33-20 万复位, 两轮各 20 万随机/首尾/单点修改及随机查询, 最终逐点核对全部前后缀",
+        "构造直接使用、默认零容量复位、pre(0)/suf(n+1)、完整容量、LLONG_MAX/32 正负增量抵消"
+      ],
+      "limitations": "下标 1-based, 区间合法非空, init 不超过原容量; 差分取负、坐标乘积、累积与查询中间值均不溢出 LL",
+      "summary": "一维及后缀版 20 万长度混合操作与多测复位已验"
+    },
+    {
+      "template": "algorithms/数据结构/树状数组/二维树状数组.cpp",
+      "suite": "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
+      "api": ["BIT2D 构造/init/add/query"],
+      "oracle": "原 300 组朴素矩阵; 在线按 12 个基矩形交集面积求和; 任意矩形批量修改后普通二维差分还原并建静态前缀和",
+      "cases": [
+        "2000×2000 两轮各 10 万在线修改/查询, 中间 1×2000/2000×1/1×1 复位; 贴边行列、末格与全域",
+        "2000×2000 另做 10 万任意矩形修改及 10 万任意矩形查询, 静态前缀和独立核对",
+        "构造直接使用、零容量复位、大数正负抵消、全格点小矩阵对账"
+      ],
+      "limitations": "稠密存储约 32 B/格, 合法非空矩形, init 各维不超过原容量; 全部中间值须不溢出 LL; 大规模任意更新为离线阶段, 任意在线交错由小暴力覆盖",
+      "summary": "2000×2000 在线结构化及离线任意矩形、退化行列与复位已验"
+    },
+    {
+      "template": "algorithms/数据结构/线段树/可持久化线段树/主席树.cpp",
+      "suite": "algorithms/数据结构/线段树/对拍/pst_check.cpp",
+      "api": [
+        "构造/clear/set_n/build",
+        "modify/query",
+        "find_first/find_last",
+        "find_kth 多根加减",
+        "旧结点不变与查询零分配"
+      ],
+      "oracle": "原 300 组数组/nth_element; 新 400 组完整版本快照逐点展开并核对旧池字段; 独立父表爬路径排序; 大数据单调序列/分段常值闭式答案",
+      "cases": [
+        "400 组 100 次任意历史根分叉, 零树/负值/全区间/单点; 每次检查所有旧结点字段不变, 查询和 find 无新结点",
+        "400 组独立父树路径, 两个 plus 两个 minus, 首尾及随机 kth, 输入根表不变",
+        "默认 20 万点修改前缀版本及每形态 20 万查询, 正序/倒序/全同值, 前两类各 3737856 结点",
+        "20 万长度, 10 万全域基线与 10 万任意范围分支共 20 万版本, 回访后按分段常值核对 sum/mx/find, 4808264 结点",
+        "LLONG_MAX 坐标与 LL 两端单点, 空根、恰好用满三结点预算的 100 次 clear 复用; build 追加同值域基线, 大小值域切换"
+      ],
+      "limitations": "只测加法与计数代数, 数值及中间运算不溢出; find 必须是存在性判据; kth 仅点修改计数且逐位置合成非负/k 合法; set_n/build 改值域后不得访问旧值域根; build 不清池",
+      "summary": "历史分叉/多根第 k 小与 20 万版本已验, 查询和 find 零开点; 加法最值支持"
+    },
+    {
+      "template": "algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp",
+      "suite": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "api": [
+        "build min/max",
+        "build_bst EqLeft 双约定",
+        "rt/n/tree/key/orig"
+      ],
+      "oracle": "原小数组全子树最值与独立朴素 BST 插入; 大树迭代核对连通/子树区间/堆序, 退化 BST 用插入编号相邻链公式",
+      "cases": [
+        "20 万点递增/递减/全等/随机, 双堆型, 迭代检查不让测试自身爆栈",
+        "20 万-1-0-2-20 万 build_bst 重建, 正序/倒序/全等, EqLeft 两种映射与边拓扑"
+      ],
+      "limitations": "Graph.node_cnt 不含孤点, 调用方用 ct.n; key/orig 仅最近调用 build_bst 后有效; BST 构造排序 O(n log n), 不承诺平衡, 下游递归深度单独预算",
+      "summary": "双堆型/BST 映射与 20 万退化树已验"
+    },
+    {
+      "template": "algorithms/数据结构/有序表与平衡树/FHQ_Treap_序列.cpp",
+      "suite": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "api": [
+        "build/insert 单值与 vector/erase/clear",
+        "modify/mul/assign/reverse/move_interval",
+        "get_sum/get_max/get_min/get_max_sum 两类重载",
+        "collect/walk/split_rank/merge/size"
+      ],
+      "oracle": "原仿射域与覆盖域 vector 逐点暴力/Kadane; 大序列循环坐标与等差求和/端点公式",
+      "cases": [
+        "保留原两域随机操作; LLONG_MIN/LLONG_MIN除2/LLONG_MAX 单点最大子段和确定性反例",
+        "20 万长度/20 万次全域翻转、循环移动、乘负一、加法, 每步任意区间 sum/min/max 公式核对",
+        "全覆盖恢复最大子段和; 恰满池整批删插三轮, 100 容量 300 轮回收; split_rank/walk 追加/merge; 大小空重建"
+      ],
+      "limitations": "区间合法非空且所有中间运算不溢出; 加乘后不查受影响最大子段和, 全覆盖恢复; 大规模变换为结构化全域, 任意区间混合由原小暴力覆盖",
+      "summary": "序列双语义域及 20 万规模已验, 修复极负数最大子段和哨兵"
+    },
+    {
+      "template": "algorithms/数据结构/有序表与平衡树/跳表.cpp",
+      "suite": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "api": [
+        "insert/erase",
+        "get_rank/get_kth/get_pre/get_suf/size",
+        "clear"
+      ],
+      "oracle": "原 300 组 multiset/set 小暴力; 新增独立计数 Fenwick 秩/select 与前后继参照",
+      "cases": [
+        "种子 42, 每实例 20 万初始插入后 10 万混合操作, 正序/倒序/64 值重复三种形态, clear 复用",
+        "空集、非法 kth、-INF+1/INF-1、重复与缺失删除; 原随机小数据全部保留",
+        "仅 100 个结点预算, 300 轮整批插删验证回收复用"
+      ],
+      "limitations": "去重集合, erase 返回 id/-1, 删除后 id 可复用; 默认 K=20 与小 K=5 旧用例, 层数须匹配规模; 键在 (-INF, INF)",
+      "summary": "集合语义、三种 20 万插入形态及混合操作已验"
+    },
+    {
+      "template": "algorithms/数据结构/有序表与平衡树/Splay.cpp",
+      "suite": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "api": [
+        "insert/erase",
+        "get_rank/get_kth/get_pre/get_suf/size",
+        "clear",
+        "build"
+      ],
+      "oracle": "原 300 组 multiset/set 小暴力; 新增独立计数 Fenwick 秩/select 与前后继参照",
+      "cases": [
+        "种子 42, 每实例 20 万初始插入后 10 万混合操作, 正序/倒序/64 值重复三种形态, clear 复用",
+        "空集、非法 kth、-INF+1/INF-1、重复与缺失删除; 原随机小数据全部保留",
+        "20 万-1-0-65537-20 万升序带重复数组重建, kth 全量核对",
+        "正倒序建 20 万点链, 各 10 万次无解前驱/后继; 修复未伸展最后触点导致的重复线性扫描"
+      ],
+      "limitations": "元素在 (-INF, INF), 排名为严格小于的数量; 随机结构内部优先级沿用时间种子, 操作流固定; 不承诺所有随机树形最坏对数",
+      "summary": "集合语义、三种 20 万插入形态及混合操作已验"
+    },
+    {
+      "template": "algorithms/数据结构/有序表与平衡树/替罪羊树.cpp",
+      "suite": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "api": [
+        "insert/erase",
+        "get_rank/get_kth/get_pre/get_suf/size",
+        "clear"
+      ],
+      "oracle": "原 300 组 multiset/set 小暴力; 新增独立计数 Fenwick 秩/select 与前后继参照",
+      "cases": [
+        "种子 42, 每实例 20 万初始插入后 10 万混合操作, 正序/倒序/64 值重复三种形态, clear 复用",
+        "空集、非法 kth、-INF+1/INF-1、重复与缺失删除; 原随机小数据全部保留",
+        "仅 100 个结点预算, 300 轮整批插删验证回收复用"
+      ],
+      "limitations": "元素在 (-INF, INF), 排名为严格小于的数量; 随机结构内部优先级沿用时间种子, 操作流固定; 不承诺所有随机树形最坏对数",
+      "summary": "集合语义、三种 20 万插入形态及混合操作已验"
+    },
+    {
+      "template": "algorithms/数据结构/有序表与平衡树/FHQ_Treap.cpp",
+      "suite": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "api": [
+        "insert/erase",
+        "get_rank/get_kth/get_pre/get_suf/size",
+        "clear",
+        "build",
+        "split/merge/kth_of"
+      ],
+      "oracle": "原 300 组 multiset/set 小暴力; 新增独立计数 Fenwick 秩/select 与前后继参照",
+      "cases": [
+        "种子 42, 每实例 20 万初始插入后 10 万混合操作, 正序/倒序/64 值重复三种形态, clear 复用",
+        "空集、非法 kth、-INF+1/INF-1、重复与缺失删除; 原随机小数据全部保留",
+        "20 万-1-0-65537-20 万升序带重复数组重建, kth 全量核对",
+        "边界切值分裂, 独立 upper_bound 核对分量大小及有效子树 kth, 合并还原"
+      ],
+      "limitations": "元素在 (-INF, INF), 排名为严格小于的数量; 随机结构内部优先级沿用时间种子, 操作流固定; 不承诺所有随机树形最坏对数",
+      "summary": "集合语义、三种 20 万插入形态及混合操作已验"
+    },
+    {
+      "template": "algorithms/数据结构/有序表与平衡树/Treap.cpp",
+      "suite": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "api": [
+        "insert/erase",
+        "get_rank/get_kth/get_pre/get_suf/size",
+        "clear",
+        "build"
+      ],
+      "oracle": "原 300 组 multiset/set 小暴力; 新增独立计数 Fenwick 秩/select 与前后继参照",
+      "cases": [
+        "种子 42, 每实例 20 万初始插入后 10 万混合操作, 正序/倒序/64 值重复三种形态, clear 复用",
+        "空集、非法 kth、-INF+1/INF-1、重复与缺失删除; 原随机小数据全部保留",
+        "20 万-1-0-65537-20 万升序带重复数组重建, kth 全量核对"
+      ],
+      "limitations": "元素在 (-INF, INF), 排名为严格小于的数量; 随机结构内部优先级沿用时间种子, 操作流固定; 不承诺所有随机树形最坏对数",
+      "summary": "集合语义、三种 20 万插入形态及混合操作已验"
+    },
+    {
+      "template": "algorithms/数据结构/有序表与平衡树/AVL.cpp",
+      "suite": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "api": [
+        "insert/erase",
+        "get_rank/get_kth/get_pre/get_suf/size",
+        "clear"
+      ],
+      "oracle": "原 300 组 multiset/set 小暴力; 新增独立计数 Fenwick 秩/select 与前后继参照",
+      "cases": [
+        "种子 42, 每实例 20 万初始插入后 10 万混合操作, 正序/倒序/64 值重复三种形态, clear 复用",
+        "空集、非法 kth、-INF+1/INF-1、重复与缺失删除; 原随机小数据全部保留"
+      ],
+      "limitations": "元素在 (-INF, INF), 排名为严格小于的数量; 随机结构内部优先级沿用时间种子, 操作流固定; 不承诺所有随机树形最坏对数",
+      "summary": "集合语义、三种 20 万插入形态及混合操作已验"
+    },
+    {
+      "template": "algorithms/数据结构/ST表/ST表.cpp",
+      "suite": "algorithms/数据结构/线段树/对拍/seg_check.cpp",
+      "api": [
+        "构造/build/query",
+        "max/min 切换与扩容重建"
+      ],
+      "oracle": "400 组所有子区间逐点 min/max; 大单调数组端点闭式答案",
+      "cases": [
+        "保留旧 200 组; 新增种子 42 的 400 组全区间 max/min, LLONG_MIN/MAX、全同值",
+        "默认 20 万-1-2-65537-20 万同实例重建及模式切换, 每规模每模式 10 万次查询"
+      ],
+      "limitations": "非空 1-based 输入, 仅静态 max/min; 不承诺 sum 等非幂等操作或修改原数组后自动更新",
+      "summary": "两种最值、全区间边界和 20 万点重建已验"
+    },
+    {
+      "template": "algorithms/数据结构/线段树/泛型动态线段树.cpp",
+      "suite": "algorithms/数据结构/线段树/对拍/seg_check.cpp",
+      "api": [
+        "构造/clear/init/build",
+        "modify/query",
+        "find_first/find_last",
+        "虚结点/哨兵/预算复用",
+        "split_tag/get_real_tag"
+      ],
+      "oracle": "小数组逐点展开及 map; 大范围和用差分 Fenwick; 大值域稀疏插点用等差坐标计数公式",
+      "cases": [
+        "保留旧常规/稀疏随机; 400 组仿射、400 组整域等差 split_tag、400 组 chmin get_real_tag",
+        "20 万长度/20 万范围操作, build 恰用 2n-1; 1e12 值域 20 万稀疏插点和逐步 query/find, 实际 2799978 个结点",
+        "LLONG_MAX 坐标末端、空虚树/负权/全域懒标记/零哨兵; clear/init/build 大小交替, 相同预算反复用满, 容量保留"
+      ],
+      "limitations": "Info{} 补 len 必须表示初始零值区间; 查询/find 下传也可能开点; 正值域/合法区间, 数值运算不溢出; find 不累积前缀; 不验所有自定义代数及现有插件",
+      "summary": "稀疏/完整树及 20 万操作已验; clear/init 和 build 自动清空可复用预算"
+    },
+    {
+      "template": "algorithms/数据结构/线段树/泛型线段树.cpp",
+      "suite": "algorithms/数据结构/线段树/对拍/seg_check.cpp",
+      "api": [
+        "构造/init/build",
+        "modify/query",
+        "find_first/find_last",
+        "split_tag/get_real_tag"
+      ],
+      "oracle": "小数组逐点展开并扫描; 大范围加和用独立差分 Fenwick 积分; 单调数组找位置用编号公式",
+      "cases": [
+        "保留旧随机加法/赋值; mt19937(42) 400 组仿射含赋值/取负非交换叠加, len/sum/min/max 和左右查找",
+        "400 组整域等差标记分裂与子区间查询; 400 组 chmin 剪枝及 get_real_tag 转换",
+        "20 万长度、20 万次区间修改及查询; 大-1-2-65537-大 init/build 和 1e12 负偏移找位置"
+      ],
+      "limitations": "区间非空且合法, 重建前 init; find 是区间存在性判据, 不累积前缀; 势能复杂度由代数保证; 等差用例只向整域施加局部标记",
+      "summary": "区间代数、左右查找及 20 万规模已验; 重建前 init"
+    },
+    {
       "template": "algorithms/图论/优化建图/线段树优化建图.cpp",
       "api": [
         "构造 max_n/max_m/max_extra",
@@ -262,142 +519,308 @@
     {
       "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
       "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
-      "api": ["init/build", "lca(u,v)", "lca(nodes)", "dist", "jump", "dep/dis/rt/sz/dfn/rnk/fa[0]", "虚树双实现组装"],
+      "api": [
+        "init/build",
+        "lca(u,v)",
+        "lca(nodes)",
+        "dist",
+        "jump",
+        "dep/dis/rt/sz/dfn/rnk/fa[0]",
+        "虚树双实现组装"
+      ],
       "oracle": "独立父表爬链与路径权和; 大链用编号闭式答案; 虚树以原父树删枝、必选点及多有效儿子分叉点构造, 不调用被测 LCA",
-      "cases": ["默认 mt19937(42), 400 组最多 40 点带权树/森林全点对, 另有 3 个固定零权/LL 两端权和样例, 跳转负/零/路径中点/终点/越过终点", "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 init 复用", "默认 20 万点星/二叉/随机树/64 点链块森林, 每形态 10 万次查询, 四种 LCA 与虚树组合核对", "全点、2n 长重复输入、空集、单点、稀疏关键点及大-小-大重建; 百万点/增栈深链/默认栈探针由独立 CI stress 作业执行, 专项报告单列"],
+      "cases": [
+        "默认 mt19937(42), 400 组最多 40 点带权树/森林全点对, 另有 3 个固定零权/LL 两端权和样例, 跳转负/零/路径中点/终点/越过终点",
+        "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 init 复用",
+        "默认 20 万点星/二叉/随机树/64 点链块森林, 每形态 10 万次查询, 四种 LCA 与虚树组合核对",
+        "全点、2n 长重复输入、空集、单点、稀疏关键点及大-小-大重建; 百万点/增栈深链/默认栈探针由独立 CI stress 作业执行, 专项报告单列"
+      ],
       "summary": "带权全点对、跳转、成员表与虚树双实现组装已测, 默认压力到 20 万点",
       "limitations": "保留递归; 深链不在本套件无参数回归中, 独立 CI stress 作业记录栈探针和增栈百万点结果, 不承诺默认栈通过; 未逐项核对完整 rmq/fa 倍增表"
     },
     {
       "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
       "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
-      "api": ["init/build", "build(g,root)", "lca(u,v)", "lca(nodes)", "dist", "dep/dis/rt/sz/dfn/fa", "虚树双实现组装"],
+      "api": [
+        "init/build",
+        "build(g,root)",
+        "lca(u,v)",
+        "lca(nodes)",
+        "dist",
+        "dep/dis/rt/sz/dfn/fa",
+        "虚树双实现组装"
+      ],
       "oracle": "独立父表爬链与路径权和, 指定根由原边表独立 BFS 重建父表; 虚树以父树删枝构造, 不调用被测 LCA",
-      "cases": ["默认 mt19937(42), 400 组最多 40 点带权树/森林全点对, 其中 200 组连通树再测随机指定根与两种虚树, 另测零权及逼近 LL 两端的权和", "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 init 复用", "默认 20 万点星/二叉/随机树/64 点链块森林, 每形态 10 万次查询, 四种 LCA 与虚树组合核对", "全点、2n 长重复输入、空集、单点、稀疏关键点及大-小-大重建; 独立 CI stress 作业另列百万点和栈探针报告"],
+      "cases": [
+        "默认 mt19937(42), 400 组最多 40 点带权树/森林全点对, 其中 200 组连通树再测随机指定根与两种虚树, 另测零权及逼近 LL 两端的权和",
+        "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 init 复用",
+        "默认 20 万点星/二叉/随机树/64 点链块森林, 每形态 10 万次查询, 四种 LCA 与虚树组合核对",
+        "全点、2n 长重复输入、空集、单点、稀疏关键点及大-小-大重建; 独立 CI stress 作业另列百万点和栈探针报告"
+      ],
       "summary": "带权全点对、任意根、成员表与虚树双实现组装已测, 默认压力到 20 万点",
       "limitations": "保留递归, 默认回归不跑大深链; 默认栈限制由独立 CI stress 作业另列探针结果, 不承诺深链通过; 指定根只测连通树, son/top 未逐项核对"
     },
     {
       "template": "algorithms/图论/树上问题/虚树/二次排序.cpp",
       "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
-      "api": ["build(nodes,lca,root)", "tree 边端点/权值", "输入不变", "build 自带复位"],
+      "api": [
+        "build(nodes,lca,root)",
+        "tree 边端点/权值",
+        "输入不变",
+        "build 自带复位"
+      ],
       "oracle": "在独立父树上剪除无关键点分支, 保留必选点及至少两个有效儿子的分叉点, 连最近保留祖先; 不用 LCA/DFS 序/单调栈",
-      "cases": ["同时搭配 DFN_LCA 和 HLD_LCA, 400 组带权小树/森林及 3 个零权/LL 边界样例, 其中 200 组另测 HLD 任意根", "默认 20 万点星/二叉/随机树/64 点链块森林, 全点和 2n 长重复点集", "清空后单点、稀疏点集、任意必选 root、跨分量及大-小-大复用"],
+      "cases": [
+        "同时搭配 DFN_LCA 和 HLD_LCA, 400 组带权小树/森林及 3 个零权/LL 边界样例, 其中 200 组另测 HLD 任意根",
+        "默认 20 万点星/二叉/随机树/64 点链块森林, 全点和 2n 长重复点集",
+        "清空后单点、稀疏点集、任意必选 root、跨分量及大-小-大复用"
+      ],
       "summary": "两份 LCA 组装及独立删枝参照已测, 全点/重复输入压力到 20 万点",
       "limitations": "默认结构化压力不含大深链, LCA 递归受栈限制; 百万点及增栈深链由独立 CI stress 作业自动执行并另出报告, 不冒充本套件无参数回归范围"
     },
     {
       "template": "algorithms/图论/树上问题/虚树/单调栈.cpp",
       "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
-      "api": ["build(nodes,lca,root)", "tree 边端点/权值", "输入不变", "build 自带复位"],
+      "api": [
+        "build(nodes,lca,root)",
+        "tree 边端点/权值",
+        "输入不变",
+        "build 自带复位"
+      ],
       "oracle": "在独立父树上剪除无关键点分支, 保留必选点及至少两个有效儿子的分叉点, 连最近保留祖先; 不用 LCA/DFS 序/单调栈",
-      "cases": ["同时搭配 DFN_LCA 和 HLD_LCA, 400 组带权小树/森林及 3 个零权/LL 边界样例, 其中 200 组另测 HLD 任意根", "默认 20 万点星/二叉/随机树/64 点链块森林, 全点和 2n 长重复点集", "清空后单点、稀疏点集、任意必选 root、跨分量及大-小-大复用"],
+      "cases": [
+        "同时搭配 DFN_LCA 和 HLD_LCA, 400 组带权小树/森林及 3 个零权/LL 边界样例, 其中 200 组另测 HLD 任意根",
+        "默认 20 万点星/二叉/随机树/64 点链块森林, 全点和 2n 长重复点集",
+        "清空后单点、稀疏点集、任意必选 root、跨分量及大-小-大复用"
+      ],
       "summary": "两份 LCA 组装及独立删枝参照已测, 全点/重复输入压力到 20 万点",
       "limitations": "默认结构化压力不含大深链, LCA 递归受栈限制; 百万点及增栈深链由独立 CI stress 作业自动执行并另出报告, 不冒充本套件无参数回归范围"
     },
     {
       "template": "algorithms/图论/树上问题/虚树/二次排序.cpp",
       "suite": "algorithms/图论/树上问题/虚树/对拍/vt_check.cpp",
-      "api": ["build(nodes,lca)", "build(nodes,lca,root)", "clear", "tree 边端点/权值/used", "输入点集不变"],
+      "api": [
+        "build(nodes,lca)",
+        "build(nodes,lca,root)",
+        "clear",
+        "tree 边端点/权值/used",
+        "输入点集不变"
+      ],
       "oracle": "独立原始边表建父表, 爬父链求两两 LCA 闭包, 每点连向闭包内最近祖先并取路径权和; 比较规范边集, 不以双实现互拍代替暴力",
-      "cases": ["mt19937(42), 原 300 组 1 到 12 点无权树/含孤立点森林, 默认 root=1, 静态对象 build 复用", "300 组 1 到 24 点随机重标号带权森林, 每组各测任意点集与同分量点集, 任意 root、重复点、正负及零权", "10 个固定样例: 重复点、非祖先 root、分支、负/零/1e12 权、跨树清空、空集和单点、64 点链/星及大-小-大复用", "新增样例核对输入不变、used, 显式 clear 后边/used/head/deg 清空, const 点集重建"],
+      "cases": [
+        "mt19937(42), 原 300 组 1 到 12 点无权树/含孤立点森林, 默认 root=1, 静态对象 build 复用",
+        "300 组 1 到 24 点随机重标号带权森林, 每组各测任意点集与同分量点集, 任意 root、重复点、正负及零权",
+        "10 个固定样例: 重复点、非祖先 root、分支、负/零/1e12 权、跨树清空、空集和单点、64 点链/星及大-小-大复用",
+        "新增样例核对输入不变、used, 显式 clear 后边/used/head/deg 清空, const 点集重建"
+      ],
       "summary": "两版虚树的压缩边与权值、任意必选 root、重复点、跨树清空和复用已对拍",
       "limitations": "本套件仅搭配 DFN_LCA 且最多 64 点, HLD_LCA 与大规模见 lca_vt_stress_check; 空集不保留 root, 单点无边且不进入 Graph.used, 不提供独立虚树点集或重定根结果"
     },
     {
       "template": "algorithms/图论/树上问题/虚树/单调栈.cpp",
       "suite": "algorithms/图论/树上问题/虚树/对拍/vt_check.cpp",
-      "api": ["build(nodes,lca)", "build(nodes,lca,root)", "clear", "tree 边端点/权值/used", "输入点集不变"],
+      "api": [
+        "build(nodes,lca)",
+        "build(nodes,lca,root)",
+        "clear",
+        "tree 边端点/权值/used",
+        "输入点集不变"
+      ],
       "oracle": "独立原始边表建父表, 爬父链求两两 LCA 闭包, 每点连向闭包内最近祖先并取路径权和; 比较规范边集, 不以双实现互拍代替暴力",
-      "cases": ["mt19937(42), 原 300 组 1 到 12 点无权树/含孤立点森林, 默认 root=1, 静态对象 build 复用", "300 组 1 到 24 点随机重标号带权森林, 每组各测任意点集与同分量点集, 任意 root、重复点、正负及零权", "10 个固定样例: 重复点、非祖先 root、分支、负/零/1e12 权、跨树清空、空集和单点、64 点链/星及大-小-大复用", "新增样例核对输入不变、used, 显式 clear 后边/used/head/deg 清空, const 点集重建"],
+      "cases": [
+        "mt19937(42), 原 300 组 1 到 12 点无权树/含孤立点森林, 默认 root=1, 静态对象 build 复用",
+        "300 组 1 到 24 点随机重标号带权森林, 每组各测任意点集与同分量点集, 任意 root、重复点、正负及零权",
+        "10 个固定样例: 重复点、非祖先 root、分支、负/零/1e12 权、跨树清空、空集和单点、64 点链/星及大-小-大复用",
+        "新增样例核对输入不变、used, 显式 clear 后边/used/head/deg 清空, const 点集重建"
+      ],
       "summary": "两版虚树的压缩边与权值、任意必选 root、重复点、跨树清空和复用已对拍",
       "limitations": "本套件仅搭配 DFN_LCA 且最多 64 点, HLD_LCA 与大规模见 lca_vt_stress_check; 空集不保留 root, 单点无边且不进入 Graph.used, 栈工作状态未逐项核对"
     },
     {
       "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
       "suite": "algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp",
-      "api": ["init", "build(g,1)", "build(g)", "dfn/seg", "modify_path", "query_path", "modify_subtree", "query_subtree"],
+      "api": [
+        "init",
+        "build(g,1)",
+        "build(g)",
+        "dfn/seg",
+        "modify_path",
+        "query_path",
+        "modify_subtree",
+        "query_subtree"
+      ],
       "oracle": "独立父表逐级爬链与儿子表遍历, 朴素点权数组逐点加和",
-      "cases": ["单树 300 组, 每组 60 次混合操作, 固定种子 20260903", "固定单点及 61 点链/星/二叉树, 其余随机树最多 60 点", "森林 150 组, 每组 60 次操作尝试, 跨分量路径跳过, 种子 3369", "正负点权与正负增量, 静态 HLD/SegTree 跨组 init, 每棵树根子树尾对账"],
+      "cases": [
+        "单树 300 组, 每组 60 次混合操作, 固定种子 20260903",
+        "固定单点及 61 点链/星/二叉树, 其余随机树最多 60 点",
+        "森林 150 组, 每组 60 次操作尝试, 跨分量路径跳过, 种子 3369",
+        "正负点权与正负增量, 静态 HLD/SegTree 跨组 init, 每棵树根子树尾对账"
+      ],
       "summary": "单树与森林的点权路径/子树加和查询及多测复位已对拍",
       "limitations": "仅测加和代数, 指定根仅测 1, 查询只核对 sum; 未直接测其他代数、边权映射、任意根、空森林或长于 61 的深链, 剖链成员表未逐项核对"
     },
     {
       "template": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
       "suite": "algorithms/图论/树上问题/树的中心/对拍/center_check.cpp",
-      "api": ["build", "centers", "radius", "ecc", "end_u/end_v", "diameter"],
+      "api": [
+        "build",
+        "centers",
+        "radius",
+        "ecc",
+        "end_u/end_v",
+        "diameter"
+      ],
       "oracle": "独立 Floyd 全源距离, 逐点取最远距离并枚举全部最小值点; 大链/星使用闭式答案",
-      "cases": ["mt19937(42), 400 组 1 到 24 点随机重标号树, 每组分别测试 Empty 与 LL", "8 个固定小例: 单点、奇偶链、长边、全零星、零权分支、1e12 边权", "2000/1/2/1999 点链交替复位与 2000 点星, 核对全部 ecc 与中心"],
+      "cases": [
+        "mt19937(42), 400 组 1 到 24 点随机重标号树, 每组分别测试 Empty 与 LL",
+        "8 个固定小例: 单点、奇偶链、长边、全零星、零权分支、1e12 边权",
+        "2000/1/2/1999 点链交替复位与 2000 点星, 核对全部 ecc 与中心"
+      ],
       "summary": "无权/非负权顶点中心、半径、每点最远距离和直径端点均已对拍",
       "limitations": "仅支持无向连通树及 Empty/非负整数权, 不求边内部中心; 深链测至 2000 点, 路径权和须在 LL 内"
     },
     {
       "template": "algorithms/图论/图的存储/Graph.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
-      "api": ["add", "clear", "node_cnt", "edge_cnt", "operator[]", "拷贝/移动赋值"],
+      "api": [
+        "add",
+        "clear",
+        "node_cnt",
+        "edge_cnt",
+        "operator[]",
+        "拷贝/移动赋值"
+      ],
       "oracle": "逐边账本核对邻接多重集和度数, 赋值前后逐点邻接快照",
-      "cases": ["300 组无权有向/无向小图, 自环重边与 clear 后重建, 种子 777", "300 组赋值测试, 有向 Empty/LL 与无向 LL 拷贝, 种子 42", "副本加边清空后原图不变, 有向移动赋值及自赋值, nothrow 静态检查"],
+      "cases": [
+        "300 组无权有向/无向小图, 自环重边与 clear 后重建, 种子 777",
+        "300 组赋值测试, 有向 Empty/LL 与无向 LL 拷贝, 种子 42",
+        "副本加边清空后原图不变, 有向移动赋值及自赋值, nothrow 静态检查"
+      ],
       "summary": "图论组装套件核对存图、复位与赋值, 另有独立本体套件",
       "limitations": "本套件的赋值快照不比较边权, 未直接验证 id/rev 和扩容; 这些由 graph_core_check 单独登记"
     },
     {
       "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
-      "api": ["init", "build", "lca(u,v)", "lca(nodes)", "dist", "jump", "sz"],
+      "api": [
+        "init",
+        "build",
+        "lca(u,v)",
+        "lca(nodes)",
+        "dist",
+        "jump",
+        "sz"
+      ],
       "oracle": "独立父表逐级爬链, 递归计子树大小, 路径步数模拟",
-      "cases": ["300 组 1 到 50 点无权森林, mt19937(42)", "静态实例 init 复用, 每组 40 次随机点对与跳转", "1 到 6 个点的点集查询, 跨树返回值, 非正步数及超路长跳转"],
+      "cases": [
+        "300 组 1 到 50 点无权森林, mt19937(42)",
+        "静态实例 init 复用, 每组 40 次随机点对与跳转",
+        "1 到 6 个点的点集查询, 跨树返回值, 非正步数及超路长跳转"
+      ],
       "summary": "无权森林的单点对/点集 LCA、距离、跳转和子树大小已对拍",
       "limitations": "本套件仅测无权小森林, 带权/空态/大规模见 lca_vt_stress_check; 完整 rmq/fa 表未逐项核对"
     },
     {
       "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
-      "api": ["init", "build(g)", "lca(u,v)", "lca(nodes)", "dist"],
+      "api": [
+        "init",
+        "build(g)",
+        "lca(u,v)",
+        "lca(nodes)",
+        "dist"
+      ],
       "oracle": "独立父表逐级爬链与路径步数",
-      "cases": ["300 组 1 到 50 点无权森林, mt19937(42)", "静态实例 init 复用, 每组 40 次随机点对", "1 到 6 个点的点集查询及跨树返回值"],
+      "cases": [
+        "300 组 1 到 50 点无权森林, mt19937(42)",
+        "静态实例 init 复用, 每组 40 次随机点对",
+        "1 到 6 个点的点集查询及跨树返回值"
+      ],
       "summary": "默认根无权森林的单点对/点集 LCA 与距离已对拍",
       "limitations": "本套件仅测默认根无权小森林, 指定根/带权/空态/大规模见 lca_vt_stress_check; son/top 未逐项核对"
     },
     {
       "template": "algorithms/图论/拓扑排序/拓扑排序.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
-      "api": ["build", "get"],
+      "api": [
+        "build",
+        "get"
+      ],
       "oracle": "独立三色 DFS 判环, 拓扑序排列与逐边前后关系",
-      "cases": ["300 组 1 到 40 点、0 到 120 边有向图, mt19937(42)", "自环重边, 静态实例重复 build", "核对原图入度不变, 成功时每点恰好一次, 失败时出队不足 n 点"],
+      "cases": [
+        "300 组 1 到 40 点、0 到 120 边有向图, mt19937(42)",
+        "自环重边, 静态实例重复 build",
+        "核对原图入度不变, 成功时每点恰好一次, 失败时出队不足 n 点"
+      ],
       "summary": "判环、合法拓扑序、重复构建与原图入度保护已测",
       "limitations": "未直接测 n=0 或大规模; 不要求字典序最小, 不验证失败时部分序列的具体顺序"
     },
     {
       "template": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
-      "api": ["build", "len", "end_u/end_v", "path"],
+      "api": [
+        "build",
+        "len",
+        "end_u/end_v",
+        "path"
+      ],
       "oracle": "独立枚举起点的全路径权和, 父表核对返回路径邻接与权和",
-      "cases": ["200 组 1 到 50 点非负边权树及其无权形态, mt19937(42)", "静态实例重复 build, 边权 0 到 6", "带权路径的首尾、相邻结点和权和核对"],
+      "cases": [
+        "200 组 1 到 50 点非负边权树及其无权形态, mt19937(42)",
+        "静态实例重复 build, 边权 0 到 6",
+        "带权路径的首尾、相邻结点和权和核对"
+      ],
       "summary": "非负权直径长度、端点和路径已对拍, 无权长度另行核对",
       "limitations": "未直接测森林、深链或大规模; 无权路径和完整 pre 表未逐项检查; 负边权不在契约内"
     },
     {
       "template": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
-      "api": ["build"],
+      "api": [
+        "build"
+      ],
       "oracle": "独立枚举所有起点的路径权和, 允许零长度单点路径",
-      "cases": ["300 组 1 到 50 点树, 其中 100 组允许 -5 到 5 的负边权, mt19937(42)", "其余 200 组非负权并额外核对无权形态", "静态实例重复 build"],
+      "cases": [
+        "300 组 1 到 50 点树, 其中 100 组允许 -5 到 5 的负边权, mt19937(42)",
+        "其余 200 组非负权并额外核对无权形态",
+        "静态实例重复 build"
+      ],
       "summary": "有权及无权直径长度已对拍, 包含负边权",
       "limitations": "未直接测森林、深链、大规模或固定全负树; down 表未逐项核对; 不承诺非空边路径"
     },
     {
       "template": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
-      "api": ["init", "pt", "build", "centroids", "min_max_part"],
+      "api": [
+        "init",
+        "pt",
+        "build",
+        "centroids",
+        "min_max_part"
+      ],
       "oracle": "独立逐点删除后扫描连通块, 汇总各块权和并枚举全部最优删点",
-      "cases": ["300 组 1 到 50 点树, 点权 -2 到 6, mt19937(42), 静态实例 init 复用", "两点均为 -1 的根空块反例, 单点负权树", "六点全零链返回全部点, 全 1 链返回两个重心"],
+      "cases": [
+        "300 组 1 到 50 点树, 点权 -2 到 6, mt19937(42), 静态实例 init 复用",
+        "两点均为 -1 的根空块反例, 单点负权树",
+        "六点全零链返回全部点, 全 1 链返回两个重心"
+      ],
       "summary": "正/零/负点权的最优值和全部答案已用删点暴力核对",
       "limitations": "仅支持无向连通树, 未测深链、大规模或权和极值; sz 表未逐项核对; 单点删完约定为 0"
     },
     {
       "template": "algorithms/图论/图的存储/Graph.cpp",
       "suite": "algorithms/图论/对拍/graph_core_check.cpp",
-      "api": ["Graph", "add", "clear", "node_cnt", "edge_cnt", "id", "rev", "operator[]", "拷贝与移动"],
+      "api": [
+        "Graph",
+        "add",
+        "clear",
+        "node_cnt",
+        "edge_cnt",
+        "id",
+        "rev",
+        "operator[]",
+        "拷贝与移动"
+      ],
       "oracle": "独立逻辑边账本逐点扫描, 按插入次序反向枚举邻接边",
       "cases": [
         "有向/无向与 Empty/LL 四种组合, 各 304 组, mt19937(42)",

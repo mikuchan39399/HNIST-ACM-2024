@@ -2,29 +2,24 @@
 #ifndef Z_OI_CARTESIAN
 #define Z_OI_CARTESIAN
 
-#include <vector>
 #include "../../图论/图的存储/Graph.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ 笛卡尔树 ============
-// 笛卡尔建树为线性建树, 一个节点有两个属性, value 与 idx: 
-// value 用于控制建成树中序遍历, idx 在建成树上呈堆; 单调栈内部单调方向决定什么堆,
-// 单调不下降 idx 建成小根堆, 单调不上升 idx 建成大根堆
-// value 单调递增则能建成 BST
-// Treap/FHQ 的 build 按原句用: 排序的 value 定 BST, 随机权 rd 当 idx 保证平衡。
-// 性质: 中序还原数组顺序; 子树的根是子树那段的最小值, 所以
-//       min(a[l..r]) = l 和 r 在树上的 LCA 的值。
+// 笛卡尔树线性建树, 下标控制中序次序, a[i] 决定堆序, 右脊栈不下降建小根堆, 不上升建大根堆
+// 等权点保留原顺序; 小根堆中区间最小值等于两端点 LCA 的权值, 大根堆对偶
+// tree 为无向图, 总点数用 n, 单点时 Graph::node_cnt() 为 0; key/orig 仅在最近调用 build_bst 后有效
+// 图边每半边 8 B, 点表约 12n B, 临时栈 4n B; build_bst 的映射和排序数组另计 O(n)
 struct Cartesian
 {
     int n, rt;
     Graph<false> tree;
     VLL key;   // build_bst 后: 节点 r 的键(第 r 小的值)
     VI orig;   // build_bst 后: 节点 r 的原数组下标(插入时间)
+    // 预分配 max_n 点的图容器, build 可自动扩容
+    // 时间: O(max_n) | 空间: O(max_n)
     Cartesian(int max_n = 0) : n(0), rt(0), tree(max_n, max_n)
     {}
-    // 用 a[1..n] 建一颗序列 BST, min_heap 选堆型缺省小根, 返回根(空数组返回 0)
+    // 用 a[1..n] 建笛卡尔树, min_heap 为 true 建小根堆, 返回根, n=0 返回 0
     // 树存 tree(无向边), 孩子方向看编号: 孩子 < 父 = 左子
     // 时间: O(n) | 空间: 右脊栈 O(n)
     int build(const VLL& a, bool min_heap = true)
@@ -54,7 +49,7 @@ struct Cartesian
     }
     // a[1..n] 顺序插入空 BST 的拓扑: 值当中序, 插入时间当小根堆
     // EqLeft 路由等值去向: false 往右插(先插者居左), true 往左插;
-    // 时间: O(n log n) (值为排列可桶排 O(n)) | 空间: O(n)
+    // 时间: O(n log n) | 空间: O(n)
     template <bool EqLeft = false>
     int build_bst(const VLL& a)
     {
@@ -80,14 +75,17 @@ struct Cartesian
     }
 };
 #endif
-/*
- * Usage:
- * Cartesian ct(n);                // 预算 n 个点, 不够自动扩
- * int root = ct.build(a);         // 建树返回根, 缺省小根堆; build(a, false) 大根堆
- * ct.tree / ct.rt;                // 普通树视图, 直接喂 DFN_LCA
- * // 孩子方向: 遍历 ct.tree[u], 编号比 u 小的是左子
- * // 小根堆: min(a[l..r]) = l 和 r 的 LCA 的值; 大根堆对偶查区间最大
- * // Treap 的 O(n) 建树: a 换成随机权数组, 同一个 build
- * int r = ct.build_bst(a);         // a 顺序插入空 BST 的拓扑(等值往右)
- * ct.build_bst<true>(a);           // 等值往左版; key[r]/orig[r] 回读键与原下标
- */
+
+/* Usage:
+int main()
+{
+    Cartesian ct;
+    VLL a = {0, 3, 1, 2};
+    cout << ct.build(a) << "\n"; // 2, 下标为 2 的点是小根堆根
+    cout << ct.build(a, false) << "\n"; // 1, 大根堆根
+    int rt = ct.build_bst(a);
+    cout << ct.orig[rt] << " " << ct.key[rt] << "\n"; // 1 3, 插入时间与原键
+    ct.build_bst<true>(VLL{0, 2, 2}); // 等值向左插, 结点编号按键的排序次序
+    // tree 可接树算法, 总点数显式传 ct.n, 单点图没有边
+}
+*/

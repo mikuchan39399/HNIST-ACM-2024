@@ -2,16 +2,14 @@
 #ifndef Z_OI_LEFTIST_TREE
 #define Z_OI_LEFTIST_TREE
 
-#include <vector>
-#include <algorithm>
-#include <set>
-#include <iostream>
-#include <functional>
-#include <cassert>
 #include "../../../杂项/utils/utils.cpp"
 
-using namespace std;
 
+// 逻辑编号保持不变, 点修改废弃旧物理点; less 为小根堆, greater 为大根堆, 同值取小编号
+// 调用 heap_add/heap_mul 后只用堆级操作, 不再调用 get_val/set_val/add_val/erase; add_all 不受此限
+// h 为本次查根的父链长度, P 为累计物理点数, d 为本次清理死点数; 查根迭代压缩, 不保证单次对数
+// LL 物理点约 64 B 加 deleted 位表, 逻辑点另 4 B; P <= 初始点数 + insert + set_val/add_val 次数
+// 所有值、偏移、标记复合与求和中间值须在 T 内, heap_mul 只接受正数
 template <class T = LL, class Comp = less<T>>
 struct LeftistTree
 {
@@ -30,6 +28,7 @@ struct LeftistTree
     multiset<T> root_vals;  // 所有堆顶的值(不含 gadd)   [RV] 需全局查询时解封
     T root_sum;             // 全部堆顶之和(不含 gadd)   [RV] 需全局查询时解封
     // 预算: max_n = n + insert 次数; max_ops = set_val + add_val + insert 次数
+    // 时间: O(max_n+max_ops) | 空间: O(max_n+max_ops)
     LeftistTree(int max_n = 0, int max_ops = 0) : n(0), tot(0),
         pos(max_n + 10, 0), id(max_n + max_ops + 10, 0),
         lc(max_n + max_ops + 10, 0), rc(max_n + max_ops + 10, 0),
@@ -43,6 +42,8 @@ struct LeftistTree
     {
         roots.reserve(max_n + max_ops + 10);
     }
+    // 清空并建立 _n 个独立堆, 初值取 1-based init_vals[1.._n], 空表取零, _n <= max_n
+    // 时间: O(_n+旧堆数) | 空间: O(1)
     void init(int _n, const vector<T>& init_vals = {})
     {
         n = tot = _n;
@@ -68,18 +69,14 @@ struct LeftistTree
         }
         for (int i = 1; i <= n; i++) { add_root(i); }
     }
-public:
-    // ===== 外部接口传参皆为逻辑节点 =====
-    // --- 状态判定 API ---
     // 查询逻辑点 x 是否存活
     // 时间: O(1) | 空间: O(1)
     bool alive(int x) { int p = pos[x]; return p && !deleted[p]; }
     // 查询 x, y 是否存活且同堆
-    // 时间: O(α(N)) | 空间: O(1)
+    // 时间: O(h) | 空间: O(1)
     bool same(int x, int y) { return alive(x) && alive(y) && find_root(pos[x]) == find_root(pos[y]); }
-    // --- 结构变更 API ---
-    // 合并 x, y 所在堆，返回新堆顶逻辑编号
-    // 时间: O(log N) | 空间: O(1)
+    // 合并 x, y 所在堆, 返回堆顶逻辑编号, 死点或同堆返回 -1
+    // 时间: O(h+log P) | 递归空间: O(log P)
     int merge(int x, int y)
     {
         int px = pos[x], py = pos[y];
@@ -94,8 +91,8 @@ public:
         add_root(rt);
         return to_logical(rt);
     }
-    // 往 x 所在堆插入值为 v 的新节点，返回新节点逻辑编号(x 失效则独立成堆)
-    // 时间: O(log N) | 空间: O(1)
+    // 向 x 所在堆插入真实值 v, 返回新逻辑编号; x 为 0 或死点则独立成堆
+    // 时间: O(h+log P) | 新物理点: 1, 递归空间: O(log P)
     int insert(int x, T v)
     {
         assert(n + 1 < (int)pos.size() && "max_n 需覆盖 insert 总次数");
@@ -125,8 +122,8 @@ public:
         else add_root(new_p);
         return nid;
     }
-    // 删除 x (懒惰删除, 死点清理由后续操作分摊)
-    // 时间: 均摊 O(log N) | 空间: O(1)
+    // 删除 x, 返回剩余堆顶逻辑编号, 空堆为 0, 死点为 -1; 不用于整堆懒标记之后
+    // 时间: O(h+(d+1)log P) | 递归空间: O(log P)
     int erase(int x)
     {
         int p = pos[x];
@@ -145,8 +142,8 @@ public:
         if (rt) add_root(rt);
         return to_logical(rt);
     }
-    // 删除 x 所在堆的堆顶 (死点清理由后续操作分摊)
-    // 时间: 均摊 O(log N) | 空间: O(1)
+    // 删除 x 所在堆的堆顶, 返回剩余堆顶逻辑编号, 空堆为 0, 死点为 -1
+    // 时间: O(h+(d+1)log P) | 递归空间: O(log P)
     int pop(int x)
     {
         int p = pos[x];
@@ -160,8 +157,8 @@ public:
         if (nrt) { sz[nrt] = sz[rt]; hsum[nrt] = hsum[rt]; add_root(nrt); }
         return to_logical(nrt);
     }
-    // 覆盖修改 x 的真实值 (废弃旧点开新点, 死点清理由后续操作分摊)
-    // 时间: 均摊 O(log N) | 空间: O(1)
+    // 把 x 的真实值改为 v, 返回新堆顶逻辑编号, 死点为 -1; 不用于整堆懒标记之后
+    // 时间: O(h+(d+1)log P) | 新物理点: 1, 递归空间: O(log P)
     int set_val(int x, T v)
     {
         int p = pos[x];
@@ -205,17 +202,16 @@ public:
             return to_logical(new_p);
         }
     }
-    // 点 x 增加 k
-    // 时间: 均摊 O(log N) | 空间: O(1)
+    // 把 x 的值增加 k, 返回新堆顶逻辑编号, 死点为 -1; 不用于整堆懒标记之后
+    // 时间: O(h+(d+1)log P) | 新物理点: 1, 递归空间: O(log P)
     int add_val(int x, T k)
     {
         int p = pos[x];
         if (!p || deleted[p]) return -1;
         return set_val(x, val[p] + gadd + k);
     }
-    // --- 懒标记 API ---
-    // 点 x 所在整堆 + k
-    // 时间: O(α(N)) | 空间: O(1)
+    // 把 x 所在堆整体加 k, 返回堆顶逻辑编号, 死点为 -1
+    // 时间: O(h) | 空间: O(1)
     int heap_add(int x, T k)
     {
         int p = pos[x];
@@ -228,8 +224,8 @@ public:
         add_root(rt);
         return to_logical(rt);
     }
-    // 逻辑点 x 所在整堆真实值 * m (m > 0)
-    // 时间: O(α(N)) | 空间: O(1)
+    // 把 x 所在堆的真实值乘 m, m > 0, 返回堆顶逻辑编号, 死点为 -1
+    // 时间: O(h) | 空间: O(1)
     int heap_mul(int x, T m)
     {
         assert(m > 0);
@@ -248,12 +244,23 @@ public:
     // 全体存活堆 + k
     // 时间: O(1) | 空间: O(1)
     void add_all(T k) { gadd += k; }
-    // --- 查询 API (入参全为逻辑编号，出口全为含全局偏移的真实值) ---
+    // 返回 x 所在堆顶的逻辑编号, 死点为 -1
+    // 时间: O(h) | 空间: O(1)
     int get_top_id(int x)  { int p = pos[x]; return (!p || deleted[p]) ? -1 : id[find_root(p)]; }
+    // 返回 x 所在堆顶的真实值, 死点为 T()
+    // 时间: O(h) | 空间: O(1)
     T   get_top_val(int x) { int p = pos[x]; return (!p || deleted[p]) ? T() : val[find_root(p)] + gadd; }
+    // 返回 x 的真实值, 死点为 T(); 不用于整堆懒标记之后
+    // 时间: O(1) | 空间: O(1)
     T   get_val(int x)     { int p = pos[x]; return (!p || deleted[p]) ? T() : val[p] + gadd; }
+    // 返回 x 所在堆的存活元素数, 死点为 0
+    // 时间: O(h) | 空间: O(1)
     int get_size(int x)    { int p = pos[x]; return (!p || deleted[p]) ? 0 : sz[find_root(p)]; }
+    // 返回非空堆数
+    // 时间: O(1) | 空间: O(1)
     int get_heap_count() const { return (int)roots.size(); }
+    // 返回 x 所在堆的真实值之和, 死点为 T()
+    // 时间: O(h) | 空间: O(1)
     T get_heap_sum(int x)
     {
         int p = pos[x];
@@ -261,6 +268,8 @@ public:
         int r = find_root(p);
         return hsum[r] + gadd * (T)sz[r];
     }
+    // 返回所有堆顶逻辑编号, 顺序不固定
+    // 时间: O(堆数) | 空间: O(堆数)
     VI get_roots_id() const
     {
         VI res; res.reserve(roots.size());
@@ -274,8 +283,15 @@ public:
 private:
     int find_root(int p)
     {
-        if (!p || fa_dsu[p] == p) return p;
-        return fa_dsu[p] = find_root(fa_dsu[p]);
+        int r = p;
+        while (fa_dsu[r] != r) r = fa_dsu[r];
+        while (p != r)
+        {
+            int q = fa_dsu[p];
+            fa_dsu[p] = r;
+            p = q;
+        }
+        return r;
     }
     int to_logical(int p) const { return p ? id[p] : 0; }
     void pushdown(int p)
@@ -347,30 +363,20 @@ private:
 #endif
 /*
  * Usage:
- * // 1. 初始化
- * LeftistTree<LL, greater<LL>> lt(N, Q); // 例: 大根堆
- * lt.init(n, a); // a 为 1-base 的 vector，初始赋值 a[1] ~ a[n]
- *
- * // 2. 核心操作 (x, y 均为初始生成的逻辑编号 1~n)
- * lt.merge(x, y);       // 合并逻辑点 x 和 y 所在的堆
- * lt.pop(x);            // 弹出逻辑点 x 所在堆的堆顶
- * lt.erase(x);          // 删除逻辑点 x (将懒惰删除, 并在到根时清理)
- * lt.set_val(x, v);     // 单点覆盖: 将逻辑点 x 的值设为 v (开新物理节点)
- * lt.add_val(x, k);     // 单点修改: 将逻辑点 x 的值增加 k
- *
- * // 3. 懒标记操作 (注意: 调用后，非堆顶元素的单点 get_val 会失效)
- * lt.heap_add(x, k);    // x 所在堆的所有元素 +k
- * lt.heap_mul(x, m);    // x 所在堆的所有元素 *m (m必须为正数)
- * lt.add_all(k);        // 全局所有堆的所有元素 +k
- *
- * // 4. 查询操作
- * bool ok = lt.alive(x) && lt.same(x, y); // 判断 x 是否存活且与 y 同堆
- * int rt_id = lt.get_top_id(x);           // 获取 x 所在堆顶的逻辑编号
- * LL rt_val = lt.get_top_val(x);          // 获取 x 所在堆顶的最值
- * LL h_sum = lt.get_heap_sum(x);          // 获取 x 所在堆的元素总和
- * int h_sz = lt.get_size(x);              // 获取 x 所在堆的存活节点数
- *
- * // 5. 全局查最值 (P3273 棘手的操作)
- * // 需在模板中解封含有 [RV] 的代码行。卡常时需将 root_vals 改为对顶优先队列。
- * // cout << lt.get_max_top() << endl;
+ * int main()
+ * {
+ *     LeftistTree<> t(4, 2);
+ *     t.init(3, VLL{0, 5, 2, 8});
+ *     t.merge(1, 2);
+ *     cout << t.get_top_id(1) << endl; // 2
+ *     t.set_val(1, 1);
+ *     cout << t.get_top_val(2) << endl; // 1
+ *     t.pop(2);
+ *     cout << t.alive(1) << ' ' << t.get_top_id(2) << endl; // 0 2
+ *     t.heap_add(2, 3); // 从此只用堆级操作
+ *     int x = t.insert(2, 4);
+ *     cout << t.get_top_id(2) << ' ' << t.get_heap_sum(x) << endl; // 4 9
+ *     t.init(1);
+ *     cout << t.get_top_val(1) << endl; // 0
+ * }
  */

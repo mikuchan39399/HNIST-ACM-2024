@@ -2,19 +2,13 @@
 #ifndef Z_OI_AVL
 #define Z_OI_AVL
 
-#include <vector>
-#include <cassert>
 #include "../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ AVL 平衡二叉搜索树 (可重复集合) ============
 // 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继 O(log n)
 // 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
 // 内存: 每结点 32B; 预算 = 总插入次数(删除不回收), 4e6 结点 ≈ 128MB
 struct AVL
 {
-    static constexpr LL INF = 0x3f3f3f3f3f3f3f3f;
     struct node
     {
         int lc = 0, rc = 0, cnt = 0, h = 0, sz = 0;
@@ -30,13 +24,13 @@ struct AVL
         tr.push_back(node());
     }
     // 插入 v (允许重复)
-    // 时间: O(log n) | 空间: O(1)
+    // 时间: O(log n) | 额外空间: O(log n)
     void insert(LL v)
     {
         insert(root, v);
     }
     // 删除一个 v, 返回是否存在并删除
-    // 时间: O(log n) | 空间: O(1)
+    // 时间: O(log n) | 额外空间: O(log n)
     bool erase(LL v)
     {
         int b = tr[root].sz;
@@ -44,26 +38,26 @@ struct AVL
         return tr[root].sz < b;
     }
     // 返回 < v 的元素个数 (含重复)
-    // 时间: O(log n) | 空间: O(1)
+    // 时间: O(log n) | 额外空间: O(log n)
     int get_rank(LL v)
     {
         return rank_of(root, v);
     }
     // 返回第 k 小 (1-based 含重复), k 越界返回 INF
-    // 时间: O(log n) | 空间: O(1)
+    // 时间: O(log n) | 额外空间: O(log n)
     LL get_kth(int k)
     {
         if (k < 1 || k > tr[root].sz) return INF;
         return kth_of(root, k);
     }
     // 返回 < v 的最大值, 无前驱返回 -INF
-    // 时间: O(log n) | 空间: O(1)
+    // 时间: O(log n) | 额外空间: O(log n)
     LL get_pre(LL v)
     {
         return pre_of(root, v);
     }
     // 返回 > v 的最小值, 无后继返回 INF
-    // 时间: O(log n) | 空间: O(1)
+    // 时间: O(log n) | 额外空间: O(log n)
     LL get_suf(LL v)
     {
         return suf_of(root, v);
@@ -75,7 +69,7 @@ struct AVL
         return tr[root].sz;
     }
     // 多测复位: 清全部元素, 容量保留
-    // 时间: O(1) | 空间: O(1)
+    // 时间: O(idx) | 空间: O(1)
     void clear()
     {
         idx = 0;
@@ -200,14 +194,16 @@ private:
     }
 };
 #endif
+
 /* Usage:
-    AVL avl;                       // 默认预算 4e6 结点
-    avl.insert(x);                 // 允许重复
-    avl.erase(x);                  // 删一个, 返回 bool
-    avl.get_rank(x);               // <x 的元素个数(含重复)
-    avl.get_kth(k);                // 第 k 小, 越界返回 INF
-    avl.get_pre(x);                // 严格前驱, 无则 -INF
-    avl.get_suf(x);                // 严格后继, 无则 INF
-    avl.size();                    // 元素个数(含重复)
-    avl.clear();                   // 多测复位, 容量保留
+int main()
+{
+    AVL s(16);
+    for (LL v : {2LL, 2LL, 5LL}) s.insert(v);
+    cout << s.get_rank(5) << " " << s.get_kth(2) << "\n"; // 2 2
+    s.erase(2);                      // 只删一个 2
+    cout << s.get_pre(5) << " " << s.get_suf(2) << "\n"; // 2 5
+    s.clear();
+    cout << s.size() << "\n"; // 0
+}
 */

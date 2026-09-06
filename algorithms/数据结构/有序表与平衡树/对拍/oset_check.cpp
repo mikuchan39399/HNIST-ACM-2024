@@ -68,8 +68,150 @@ static void bst_ref(const VLL& a, VI& lcp, VI& rcp, bool eq_left)
     }
 }
 
+struct CountRef
+{
+    int n; VI bit,cnt;
+    CountRef(int n):n(n),bit(n+1),cnt(n+1){}
+    void add(int x,int d){cnt[x]+=d;for(int p=x;p<=n;p+=p&-p)bit[p]+=d;}
+    int sum(int x){int v=0;for(;x;x-=x&-x)v+=bit[x];return v;}
+    int kth(int k){int p=0;for(int b=1<<18;b;b>>=1)if(p+b<=n&&bit[p+b]<k){p+=b;k-=bit[p];}return p+1;}
+};
+template<class T, bool Unique=false>
+void large_set(const char* name)
+{
+    constexpr int n=200000;
+    T s(400010); mt19937 rng(42);
+    for(int mode=0;mode<3;mode++)
+    {
+        s.clear(); CountRef ref(n);
+        for(int i=1;i<=n;i++)
+        {
+            int p=mode==0?i:mode==1?n+1-i:1+(i%64);
+            s.insert(p);
+            if(!Unique||!ref.cnt[p])ref.add(p,1);
+        }
+        for(int q=0;q<100000;q++)
+        {
+            int p=1+rng()%n;
+            if(q%3==0){bool had=ref.cnt[p]>0;auto got=s.erase(p);if constexpr(Unique)assert((got!=-1)==had);else assert(got==had);if(had)ref.add(p,-1);}
+            else if(q%3==1){s.insert(p);if(!Unique||!ref.cnt[p])ref.add(p,1);}
+            int rank=ref.sum(p-1),all=ref.sum(n),upto=ref.sum(p);
+            assert(s.size()==all && s.get_rank(p)==rank);
+            assert(s.get_pre(p)==(rank?ref.kth(rank):-INF));
+            assert(s.get_suf(p)==(upto<all?ref.kth(upto+1):INF));
+            if(all){int k=1+rng()%all;assert(s.get_kth(k)==ref.kth(k));}
+            assert(s.get_kth(0)==INF && s.get_kth(all+1)==INF);
+        }
+    }
+    s.clear();
+    for(LL v:{-INF+1,0LL,INF-1})s.insert(v);
+    assert(s.get_pre(-INF+1)==-INF&&s.get_suf(INF-1)==INF);
+    assert(s.get_kth(1)==-INF+1&&s.get_kth(3)==INF-1);
+    s.clear();assert(!s.size()&&s.get_pre(0)==-INF&&s.get_suf(0)==INF);
+    printf("large set %s passed\n",name);
+}
+void extra_sets()
+{
+    large_set<AVL>("AVL");large_set<Treap>("Treap");large_set<FHQ_Treap>("FHQ");
+    large_set<SGTree>("SGTree");large_set<Splay>("Splay");large_set<SkipList<20>,true>("SkipList");
+    constexpr int n=200000;
+    Splay sp(n);
+    for(int mode=0;mode<2;mode++)
+    {
+        sp.clear();for(int i=1;i<=n;i++)sp.insert(mode?n-i+1:i);
+        for(int q=0;q<100000;q++)assert(mode?sp.get_suf(n+1)==INF:sp.get_pre(0)==-INF);
+    }
+    Treap tr(n);FHQ_Treap fh(n);
+    for(int m:{n,1,0,65537,n})
+    {
+        VLL a(m+1);for(int i=1;i<=m;i++)a[i]=(i-1)/3;
+        tr.build(a);fh.build(a);sp.build(a);
+        for(int k=1;k<=m;k++)assert(tr.get_kth(k)==a[k]&&fh.get_kth(k)==a[k]&&sp.get_kth(k)==a[k]);
+        for(LL v:{-INF,0LL,12345LL,INF})
+        {
+            int x,y;fh.split(fh.root,v,x,y);
+            int k=upper_bound(a.begin()+1,a.end(),v)-(a.begin()+1);
+            assert(fh.tr[x].sz==k&&fh.tr[y].sz==m-k);
+            if(k)assert(fh.kth_of(x,k)==a[k]);
+            fh.root=fh.merge(x,y);assert(fh.size()==m);
+        }
+    }
+    SGTree sg(100);SkipList<20> sl(100);FHQ_Seq sq(100);
+    for(int cycle=0;cycle<300;cycle++)
+    {
+        for(int i=1;i<=100;i++){sg.insert(i);sl.insert(i);sq.insert(i,i);}
+        for(int i=1;i<=100;i++){assert(sg.erase(i));assert(sl.erase(i)>0);}
+        sq.erase(1,100);assert(!sq.size()&&sg.idx<=100&&sl.tot<=100&&sq.idx<=100);
+    }
+}
+void extra_cartesian()
+{
+    constexpr int n=200000;Cartesian ct;mt19937 rng(42);
+    for(int mode=0;mode<4;mode++)for(bool mn:{true,false})
+    {
+        VLL a(n+1);for(int i=1;i<=n;i++)a[i]=mode==0?i:mode==1?-i:mode==2?7:(LL)rng();
+        int rt=ct.build(a,mn);VI parent(n+1),order{rt};
+        for(size_t k=0;k<order.size();k++)for(auto e:ct.tree[order[k]])if(e.v!=parent[order[k]]){assert(!parent[e.v]&&e.v!=rt);parent[e.v]=order[k];order.push_back(e.v);}
+        assert(order.size()==n && ct.tree.edge_cnt()==n-1);
+        VI lo(n+1),hi(n+1),sz(n+1);for(int i=1;i<=n;i++)lo[i]=hi[i]=i;
+        for(auto it=order.rbegin();it!=order.rend();++it)
+        {
+            int u=*it;sz[u]++;assert(hi[u]-lo[u]+1==sz[u]);
+            if(parent[u]){int p=parent[u];assert(mn?a[p]<=a[u]:a[p]>=a[u]);lo[p]=min(lo[p],lo[u]);hi[p]=max(hi[p],hi[u]);sz[p]+=sz[u];}
+        }
+        LL extreme=mn?*min_element(a.begin()+1,a.end()):*max_element(a.begin()+1,a.end());assert(a[rt]==extreme);
+    }
+    for(int m:{n,1,0,2,n})for(int mode=0;mode<3;mode++)for(bool eq:{false,true})
+    {
+        VLL a(m+1);for(int i=1;i<=m;i++)a[i]=mode==0?i:mode==1?-i:7;
+        int rt=eq?ct.build_bst<true>(a):ct.build_bst<false>(a);
+        assert(ct.n==m&&ct.tree.edge_cnt()==max(0,m-1));
+        if(m)assert(ct.orig[rt]==1);else assert(!rt);
+        for(size_t i=0;i<ct.tree.edges.size();i+=2){int x=ct.orig[ct.tree.edges[i].v],y=ct.orig[ct.tree.edges[i+1].v];assert(abs(x-y)==1);}
+        for(int i=1;i<=m;i++)assert(ct.key[i]==a[ct.orig[i]]);
+    }
+}
+void extra_seq()
+{
+    FHQ_Seq s(200000);mt19937 rng(42);
+    for(LL value:{LLONG_MIN,LLONG_MIN/2,LLONG_MAX})
+    {
+        s.build(VLL{0,value});assert(s.get_max_sum()==value&&s.get_sum(1,1)==value);
+        s.assign(1,1,value);assert(s.get_max_sum(1,1)==value);
+    }
+    constexpr int n=200000;VLL a(n+1);for(int i=1;i<=n;i++)a[i]=i;
+    s.build(a);LL shift=0,dir=1,sign=1,bias=0;
+    auto mod=[](LL x){x%=n;if(x<0)x+=n;return x;};
+    for(int q=0;q<200000;q++)
+    {
+        int op=q%4;
+        if(op==0){s.reverse(1,n);shift=mod(shift+dir*(n-1));dir=-dir;}
+        if(op==1){int k=1+rng()%(n-1);s.move_interval(1,k,n-k);shift=mod(shift+dir*k);}
+        if(op==2){s.mul(1,n,-1);sign=-sign;bias=-bias;}
+        if(op==3){s.modify(1,n,3);bias+=3;}
+        int l=1+rng()%n,r=1+rng()%n;if(l>r)swap(l,r);
+        LL len=r-l+1,start=mod(shift+dir*(l-1));if(dir<0)start=mod(start-len+1);
+        LL take=min(len,n-start),rest=len-take;
+        LL sum=(start+1+start+take)*take/2+rest*(rest+1)/2;
+        LL low=rest?1:start+1,high=rest?n:start+len;
+        assert(s.get_sum(l,r)==sign*sum+bias*len);
+        assert(s.get_min(l,r)==min(sign*low+bias,sign*high+bias));
+        assert(s.get_max(l,r)==max(sign*low+bias,sign*high+bias));
+    }
+    s.assign(1,n,-3);assert(s.get_max_sum()==-3);s.assign(2,3,7);assert(s.get_max_sum()==14);
+    for(int cycle=0;cycle<3;cycle++)
+    {
+        s.erase(1,s.size());s.insert(1,VLL(n,2));assert(s.size()==n&&s.idx<=n&&s.get_max_sum()==2LL*n);
+        int x,y;s.split_rank(s.root,n/2,x,y);VLL out{-99};s.walk(x,out);assert(out.size()==n/2+1&&out.front()==-99&&out.back()==2);s.root=s.merge(x,y);
+    }
+    for(int m:{1,0,65537,n}){s.build(VLL(m+1,-2));assert(s.size()==m);if(m)assert(s.get_max_sum()==-2);}
+}
+
 int main()
 {
+    extra_sets();
+    extra_cartesian();
+    extra_seq();
     mt19937 par(42);
     for (int t = 0; t < 300; t++)
     {

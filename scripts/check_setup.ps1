@@ -34,7 +34,7 @@ Run install fresh
 $st=Setup-Read ((File fresh)+'.zoi-state')
 Run install fresh
 Assert ((Setup-Read ((File fresh)+'.zoi-state')) -ceq $st) 'Reinstall overwrote original snapshots'
-$data=JC-Value (Setup-Read (Tasks fresh)); Assert ($data.tasks.Count -eq 5 -and $data.tasks[0].type -eq 'process') 'Missing user tasks'
+$data=JC-Value (Setup-Read (Tasks fresh)); Assert ($data.tasks.Count -eq 9 -and $data.tasks[0].type -eq 'process') 'Missing user tasks'
 Run uninstall fresh; Clean fresh
 Assert (-not [IO.Directory]::Exists((Split-Path -Parent (File fresh)))) 'Fresh profile directories remained'
 Run uninstall fresh
@@ -89,7 +89,7 @@ Run uninstall legacy 1
 Assert ([IO.File]::Exists(((File legacy)+'.zoi-state'))) 'Unknown state was deleted'
 Pass 'invalid JSONC / task label collision / legacy state are preserved'
 
-foreach ($fault in @('file1','file2')) {
+foreach ($fault in @('file1','file2','file3')) {
     $name='failure-'+$fault; $old=$env:ZOI_SETUP_TEST_FAULT
     try { $env:ZOI_SETUP_TEST_FAULT=$fault; Run install $name 1 }
     finally { $env:ZOI_SETUP_TEST_FAULT=$old }
@@ -143,8 +143,9 @@ try {
     foreach($required in @('.github/workflows/ci.yml','scripts/check_lca_vt_extreme.py','rules/verification.json','.zoi-package.json')) {
         Assert ($names -ccontains ('HNIST-ZOI/'+$required)) ('Missing package dependency: '+$required)
     }
-    Assert (@($names | Where-Object { $_ -match '/(\.git|\.zoi-checks|\.ci-results|backups|releases)/|/booklet/output/|\.exe$' }).Count -eq 0) 'Private or generated assets leaked into package'
+    Assert (@($names | Where-Object { $_ -match '/(\.git|\.zoi-checks|\.ci-results)/|/(backups|releases)/(?!README\.md$)|/booklet/output/|\.exe$|\.zoi-install-state|\.zoi-workspace-state|\.zoi[.-](state|pending)' }).Count -eq 0) 'Private or generated assets leaked into package'
 } finally { $zip.Dispose() }
 $script:calls++
 Pass 'real team package includes stress configuration and excludes local artifacts'
 Write-Host "Setup self-test: $script:groups groups passed ($script:calls commands); logs: $fixture"
+Complete-CheckWorkspace $fixture 'setup'

@@ -2,13 +2,13 @@
 #ifndef Z_OI_PERS_SEG_TREE
 #define Z_OI_PERS_SEG_TREE
 
-#include <vector>
-#include <cassert>
 #include "../../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-
+// 可持久化线段树维护 [1, n], 根由调用方保存, 0 为初始零值树, 修改复制路径而不改变旧结点
+// 标记永久化只支持加法类可交换标记, Info.apply 须与合并相容; 虚区间由 Info{} 补 len 表示
+// 查询和 find 不分配结点; find 的 pred 等价于区间内存在合格点, 不累积前缀
+// 每结点含两个 int、Info 和 Tag 并按类型对齐; 计数代数 32 B/结点, 4e6 约 128 MB
+// 预算按累计新建计: 一次 build 用 2n-1, 每次点改至多 ceil(log2 n)+1, 范围改保守按 4ceil(log2 n)+1
 template<class Info, class Tag>
 struct PersSegTree
 {
@@ -22,65 +22,62 @@ struct PersSegTree
     int tot = 0;
     int cap = 2;
     vector<Node> tr;
-    // 预算 = (n+1)(log2 m+1) 结点; n=2e5 静态第k小 ≈ 3.8e6, 更大规模显式传
+    // 设置值域上界 max_n 并预留 max_nodes 个实结点, 根 0 表示全零版本
+    // 时间: O(1) | 空间: O(max_nodes) 预留
     PersSegTree(LL max_n = 1, int max_nodes = 4000010) : n(max_n)
     {
         cap = max_nodes + 1;
         tr.reserve(max_nodes + 1);
         tr.push_back(Node{});
     }
+    // 清空所有版本并恢复哨兵, 保留值域和池容量, 旧根失效
+    // 时间: O(tot) | 空间: O(1)
     void clear()
     {
         tot = 0;
         tr.clear();
         tr.push_back(Node{});
     }
+    // 只改值域上界为 _n, 不清池; 不再使用旧值域的根后才能改为不同值域
+    // 时间: O(1) | 空间: O(1)
     void set_n(LL _n) { n = _n; }
-public:
-    // 由一维数组 a[1..n] 直接生成版本 0 的根结点
-    // 返回值: 生成的新版本根结点编号
-    // 时间: O(n) | 空间: O(n)
+    // 用非空 a[1..m] 新建一棵树并返回根, n 改为 m; 不清池, 同值域旧版本仍有效
+    // 时间: O(m) | 额外空间: O(m)
     int build(const vector<Info>& a)
     {
         assert((int)a.size() >= 2);
         n = (LL)a.size() - 1;
         return build(1, n, a);
     }
-    // 在版本 rt 的区间 [x, y] 应用增量 v (Tag), 单点修改令 x == y 即可
-    // 基于 Tag 永久化, 范围修改仅支持同时满足交换律与结合律的操作
-    // 返回值: 生成的新版本根结点编号
-    // 时间: O(log V) | 空间: O(log V)
+    // 在 rt 的闭区间 [x, y] 应用增量 v 并返回新根, 旧版本不变, 单点传 x == y
+    // 时间: O(log V) | 额外空间: O(log V), V = n
     int modify(int rt, LL x, LL y, const Tag& v)
     {
         assert(1 <= x && x <= y && y <= n);
         return modify(rt, 1, n, x, y, v);
     }
-    // 查询版本 rt 中区间 [x, y] 的聚合信息, 单点查询令 x == y 即可, 不能查最值
-    // 返回值: 区间聚合后的 Info
-    // 时间: O(log V) | 空间: O(log V)
+    // 返回 rt 在合法闭区间 [x, y] 的 Info, 加法代数可维护和或最值
+    // 时间: O(log V) | 额外空间: O(log V) 递归栈, 不开点
     Info query(int rt, LL x, LL y) { return query(rt, 1, n, x, y, Tag{}); }
-    // 在版本 rt 中寻找 >= start 且满足谓词 pred 的第一个叶子位置, pred 必须具备单调性
-    // 返回值: 符合条件的位置，无解返回 -1
-    // 时间: O(log V) | 空间: O(log V) 递归栈，零结点分配
+    // 返回 rt 的 [start, n] 内符合 pred 的最左位置, 无解或 start 越界返回 -1
+    // 时间: O(log V) | 额外空间: O(log V) 递归栈, 不开点
     template<class Pred>
     LL find_first(int rt, LL start, Pred pred)
     {
         if (start < 1 || start > n) return -1;
         return find_first(rt, 1, n, start, Tag{}, pred);
     }
-    // 在版本 rt 中寻找 <= end 且满足谓词 pred 的最后一个叶子位置
-    // 返回值: 符合条件的位置，无解返回 -1
-    // 时间: O(log V) | 空间: O(log V)
+    // 返回 rt 的 [1, end] 内符合 pred 的最右位置, 无解或 end 越界返回 -1
+    // 时间: O(log V) | 额外空间: O(log V) 递归栈, 不开点
     template<class Pred>
     LL find_last(int rt, LL end, Pred pred)
     {
         if (end < 1 || end > n) return -1;
         return find_last(rt, 1, n, end, Tag{}, pred);
     }
-    // 在 Σplus − Σminus 的线段树叠加结构上定位第 k 小, 返回值域下标。
-    // 要求: Info 结构体中包含 cnt 字段，且 k ∈ [1, 总计数]
-    // 限制: 仅用于点修改 (x == y) 构建的版本, 范围修改与第 k 小不要混用
-    // 时间: O((|plus|+|minus|) * log V) | 空间: O(|plus|+|minus|)
+    // 返回 Σplus - Σminus 的第 k 小值域下标, 不修改传入根表
+    // 仅用于点修改计数版本, Info 含 cnt; 每个位置的合成计数非负, 1 <= k <= 总计数
+    // 时间: O((|plus| + |minus|) * log V) | 额外空间: O(|plus| + |minus|), 不开点
     LL find_kth(VI plus, VI minus, LL k)
     {
         LL l = 1, r = n;
@@ -212,63 +209,38 @@ private:
 };
 #endif
 
-/*
-Usage:
-// 1. 结构定义示例 (区间计数)
+/* Usage:
 struct Tag
 {
-    LL c = 0;
-    void apply(const Tag& t)
-    {
-        c += t.c;
-    }
+    LL add = 0;
+    void apply(const Tag& t) { add += t.add; }
 };
 struct Info
 {
-    LL len = 0;
-    LL cnt = 0;
-    void apply(const Tag& t) { cnt += t.c * len; }
+    LL len = 0, cnt = 0;
+    void apply(const Tag& t) { cnt += t.add * len; }
     friend Info operator+(const Info& a, const Info& b)
     {
-        if (a.len == 0) return b;
-        if (b.len == 0) return a;
-        Info r;
-        r.len = a.len + b.len;
-        r.cnt = a.cnt + b.cnt;
-        return r;
+        return {a.len + b.len, a.cnt + b.cnt};
     }
 };
-
-// 2. 用法 A: 权值模式 (经典静态区间/树上第 k 小)
-// 版本 0 是空树，通过外置版本数组 rt 管理每个时刻的根。
-//
-// 预处理离散化后，设 m 为离散化后值域大小:
-// PersSegTree<Info, Tag> seg(m, (n + 1) * 20);
-// VI rt(n + 1, 0);
-//
-// for (int i = 1; i <= n; i++)
-// {
-//     int pos = id(a[i]);
-//     rt[i] = seg.modify(rt[i - 1], pos, pos, {1});
-// }
-//
-// 查询静态区间 [l, r] 第 k 小对应的离散化前原值:
-// LL pos = seg.find_kth({rt[r]}, {rt[l - 1]}, k);
-// ans = vals[pos - 1];
-//
-// 树上路径 [u, v] 第 k 小:
-// seg.find_kth({rt[u], rt[v]}, {rt[lca], rt[fa_lca]}, k);
-
-// 3. 用法 B: 数组模式 (可持久化数组 / 历史版本访问)
-// 传入原数组一键建树，并保存基准版本号。
-//
-// int v0 = seg.build(a);                    // 根据 a[1..n] 建立初始版本 0
-// int v1 = seg.modify(v0, pos, pos, {v});   // 在版本 v0 基础上修改，产生新版本 v1, v0 不受影响
-// Info res = seg.query(v0, l, r);           // 穿梭时空，访问任意历史版本
-
-// 4. 用法 C: 范围修改模式 (标记永久化, 只支持加法类可交换标记)
-// int v2 = seg.modify(v1, L, R, {k});       // 版本 v1 上 [L,R] 整体加 k, 生成新版本 v2
-// Info r1 = seg.query(v1, L, R);            // 查询任意历史版本, v1 时代不受 v2 影响
-// 二分接口 pred 判定的已是含标记的真实信息, 用法与普通线段树一致
-================================================================================
+int main()
+{
+    PersSegTree<Info, Tag> seg(5, 128);
+    VI rt(5);
+    VI a = {0, 3, 1, 3, 5};          // 已映射到值域下标
+    for (int i = 1; i <= 4; i++)
+        rt[i] = seg.modify(rt[i - 1], a[i], a[i], {1});
+    cout << seg.find_kth({rt[4]}, {rt[1]}, 2) << "\n"; // 原数组 [2, 4] 第 2 小为 3
+    // 树上路径第 k 小用 {rt[u], rt[v]} 减 {rt[lca], rt[parent_lca]}
+    int branch = seg.modify(rt[4], 2, 4, {2}); // 范围增量分支, 此根不再用于 find_kth
+    cout << seg.query(rt[4], 1, 5).cnt << " " << seg.query(branch, 1, 5).cnt << "\n"; // 4 10
+    auto pred = [](const Info& v) { return v.cnt > 0; }; // 此处逐点计数非负, 可作存在性判据
+    cout << seg.find_first(rt[4], 2, pred) << " " << seg.find_last(rt[4], 4, pred) << "\n"; // 3 3
+    seg.clear();                    // rt 和 branch 全部失效
+    vector<Info> b = {{}, {1, 7}, {1, -2}};
+    int base = seg.build(b);         // build 改值域为 [1, 2], 返回新根
+    int newer = seg.modify(base, 1, 2, {3});
+    cout << seg.query(base, 1, 2).cnt << " " << seg.query(newer, 1, 2).cnt << "\n"; // 5 11
+}
 */

@@ -2,21 +2,14 @@
 #ifndef Z_OI_SPLAY
 #define Z_OI_SPLAY
 
-#include <vector>
-#include <cassert>
 #include "../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ Splay 伸展树 (可重复集合) ============
 // 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继均摊 O(log n)
 // 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
-// 机制: 访问即伸展 —— 每次操作把触到的结点 splay 到根; 双旋(父子同侧先旋父)
-//   把访问路径对折, 均摊 O(log n); erase 用"前驱旋到根旁"接右子的习语
+// 查询伸展最后访问结点, 有答案时再伸展答案; 无解查询也调整树形以维持均摊复杂度
 // 内存: 每结点 24B, 预算 = 总插入次数(删除不回收), 4e6 ≈ 96MB
 struct Splay
 {
-    static constexpr LL INF = 0x3f3f3f3f3f3f3f3f;
     struct node
     {
         int ch[2];
@@ -25,6 +18,8 @@ struct Splay
     };
     vector<node> tr;
     int idx, root, budget;
+    // 预留 max_nodes 个实结点, 按累计新建结点预算
+    // 时间: O(1) | 空间: O(max_nodes) 预留
     Splay(int max_nodes = 4000010) : idx(0), root(0), budget(max_nodes)
     {
         tr.reserve(budget + 1);
@@ -100,12 +95,14 @@ struct Splay
     // 时间: 均摊 O(log n) | 空间: O(1)
     LL get_pre(LL v)
     {
-        int cur = root, hit = 0;
+        int cur = root, hit = 0, last = 0;
         while (cur)
         {
+            last = cur;
             if (tr[cur].val < v) { hit = cur; cur = tr[cur].ch[1]; }
             else cur = tr[cur].ch[0];
         }
+        if (last) splay(last);
         if (!hit) return -INF;
         splay(hit);
         return tr[hit].val;
@@ -114,12 +111,14 @@ struct Splay
     // 时间: 均摊 O(log n) | 空间: O(1)
     LL get_suf(LL v)
     {
-        int cur = root, hit = 0;
+        int cur = root, hit = 0, last = 0;
         while (cur)
         {
+            last = cur;
             if (tr[cur].val > v) { hit = cur; cur = tr[cur].ch[0]; }
             else cur = tr[cur].ch[1];
         }
+        if (last) splay(last);
         if (!hit) return INF;
         splay(hit);
         return tr[hit].val;
@@ -138,7 +137,7 @@ struct Splay
         root = build_range(a, 1, m, 0);
     }
     // 多测复位: 清全部元素, 容量保留
-    // 时间: O(1) | 空间: O(1)
+    // 时间: O(idx) | 空间: O(1)
     void clear()
     {
         idx = 0;
@@ -160,9 +159,7 @@ private:
     {
         tr[x].sz = tr[tr[x].ch[0]].sz + tr[tr[x].ch[1]].sz + 1;
     }
-    // x 是 fa[x] 的哪个孩子: 0 左 1 右
     bool get(int x) { return x == tr[tr[x].fa].ch[1]; }
-    // 把 x 向上转一格, 左旋右旋合一(k = get(x) 定方向)
     void rotate(int x)
     {
         int y = tr[x].fa, z = tr[y].fa;
@@ -176,8 +173,6 @@ private:
         pushup(y);
         pushup(x);
     }
-    // 把 x 双旋到 goal 的孩子位, goal = 0 代表旋到根
-    // 同侧(get 相同)先旋父再旋己, 异侧连旋两次己
     void splay(int x, int goal = 0)
     {
         while (tr[x].fa != goal)
@@ -192,7 +187,6 @@ private:
         }
         if (!goal) root = x;
     }
-    // 中序排名为 rnk 的结点 (1-based), rnk 保证合法
     int find(int rnk)
     {
         int cur = root;
@@ -208,7 +202,6 @@ private:
         }
         return 0;
     }
-    // 值 v 的结点: 找到则 splay 到根并返回; 找不到 splay 最后触点返回 0
     int find_val(LL v)
     {
         int cur = root, last = 0;
@@ -225,7 +218,6 @@ private:
         if (last) splay(last);
         return 0;
     }
-    // [l, r] 完美平衡二分建子树挂 f 下, 返回子树根
     int build_range(const VLL& a, int l, int r, int f)
     {
         if (l > r) return 0;
@@ -239,18 +231,16 @@ private:
     }
 };
 #endif
-/*
- * Usage:
- * Splay sp;                        // 默认预算 4e6 结点
- * sp.build(a);                     // 升序 a[1..m] O(n) 建树(替换现有)
- * sp.insert(x);                    // 允许重复
- * sp.erase(x);                     // 删一个, 返回 bool
- * sp.get_rank(x);                  // <x 的元素个数(含重复)
- * sp.get_kth(k);                   // 第 k 小, 越界返回 INF
- * sp.get_pre(x);                   // 严格前驱, 无则 -INF
- * sp.get_suf(x);                   // 严格后继, 无则 INF
- * sp.size();                       // 元素个数(含重复)
- * sp.clear();                      // 多测复位, 容量保留
- * // P_3369: 排名查询输出 get_rank(x) + 1; 第 k 小输出 get_kth(k)
- */
 
+/* Usage:
+int main()
+{
+    Splay s(16);
+    s.build(VLL{0, 2, 2, 5});
+    cout << s.get_rank(5) << " " << s.get_kth(2) << "\n"; // 2 2
+    s.erase(2);                      // 只删一个 2
+    cout << s.get_pre(5) << " " << s.get_suf(2) << "\n"; // 2 5
+    s.clear();
+    cout << s.size() << "\n"; // 0
+}
+*/

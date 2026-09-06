@@ -44,4 +44,5 @@ foreach ($case in $cases) {
     Write-Host ('[SELFTEST PASS] ' + $case.name)
 }
 Write-Host ('Runner self-test: ' + $cases.Count + ' passed; logs: ' + $fixture)
+Complete-CheckWorkspace $fixture 'runner'
 exit 0

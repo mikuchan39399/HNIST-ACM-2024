@@ -1,0 +1,90 @@
+{
+  "schema": "oset-manual-linux-1",
+  "sources_sha256": {
+    ".github/workflows/ci.yml": "42bbe4093d0f49ca046ba757c96cd31654e2fa8c9f23fcea0344a894cdeb0404",
+    "algorithms/图论/图的存储/Graph.cpp": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48",
+    "algorithms/数据结构/有序表与平衡树/AVL.cpp": "7855ffe66706df508c4f4bb452715248e92f7a89605785c57e7d80ff3230bd38",
+    "algorithms/数据结构/有序表与平衡树/FHQ_Treap.cpp": "0916080cda47c5794dc447fb38e7ba57d5acedac4be7890c1523884800d55a73",
+    "algorithms/数据结构/有序表与平衡树/FHQ_Treap_序列.cpp": "ea935d52d21e2f5fce4a98aafc74374597d495a25b7136476019a0beda7b069e",
+    "algorithms/数据结构/有序表与平衡树/Splay.cpp": "fd4abe63fed80c50d84ae5e9fa366e166d6293dd00e98c83b8df2be6f8bf5385",
+    "algorithms/数据结构/有序表与平衡树/Treap.cpp": "0463a8753880516feb2f03047cc3cd1bece5351d1372cec0126e5f23514fe84b",
+    "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp": "6ebd824a66a09899b737ff2c57682ab867d633abfff7a4d2ce0d2d41306e6d25",
+    "algorithms/数据结构/有序表与平衡树/替罪羊树.cpp": "7f912acc472e3081aca50926e189025171960ad0c3984b1d758c495db62aa772",
+    "algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp": "1af38df96a98d6639bc639ae20534bfc17c21fa42e38abf01024101d4f3b6ab5",
+    "algorithms/数据结构/有序表与平衡树/跳表.cpp": "f340c20bf4d2ba2ff632a4035ff93efc9543429f33db0b655ae507f55b372550",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "algorithms/杂项/随机数/z_rnd.cpp": "fec6d8cd84c7ff92241cc11a5b976fe9833cf60057ae71ee85e3e6fa279f2c0a",
+    "scripts/check_lca_vt_extreme.py": "91ddffc70547d537aaeb8f0e331975b0b2aef2de15d19cd640e144c603b0e545"
+  },
+  "stable": true,
+  "results": [
+    {
+      "name": "compile-normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 6.061,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p06-linux/normal"
+      ]
+    },
+    {
+      "name": "normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 5.054,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p06-linux/normal"
+      ]
+    },
+    {
+      "name": "compile-sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 12.467,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p06-linux/sanitizer"
+      ]
+    },
+    {
+      "name": "sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 25.056,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p06-linux/sanitizer"
+      ]
+    }
+  ],
+  "failed": false
+}

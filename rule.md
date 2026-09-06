@@ -11,6 +11,10 @@
 工具行为见 [使用文档](docs/README.md) 与 [维护流程](rules/workflow.md)。历史只供追溯，不与现行规则并行生效。
 临时文件位置与长期交接执行 [工作区与沉淀](rules/collab.md#工作区与沉淀), 不依赖会话记忆保存项目结论。
 工具交付须包含运行所需的配置依赖; 队友包与安装自检的现行范围见维护流程, 不只检查脚本文件存在。
+部署工具须验证真实 ZIP 解压安装、旧状态升级、项目 includePath 覆盖与快捷键冲突;
+  用户级默认值不等于项目实际生效, 用 zoi-configure/doctor 显式处理当前刷题目录, 不扫描其他项目。
+  安装注册九任务及可用快捷键, 打包默认输出 docs/releases, 私人安装/展开状态不得进入版本控制或队友包。
+  测试工作区只自动清理有 PASS 完成标记的旧现场, 每类保留三份; 失败、未知及 codex-work 保留, 清理规则见维护指南。
 
 LLM 每次新增、修改或撤下模板、工具、测试、CI 功能, 收尾必须同时核对本文件与
 [用户功能总览](docs/features/README.md)及其[生成明细](docs/features/catalog.md)。
@@ -120,6 +124,8 @@ LLM 每次新增、修改或撤下模板、工具、测试、CI 功能, 收尾�
 现役清单唯一真相源 = zoi\_catalog.txt(跳板目录), 本节不再维护清单副本。
 新建、整理、移动或撤下模板时，收尾必须执行 [学习与入库进度同步](docs/progress/README.md#ai-何时询问如何同步)：客观整理状态按证据更新，个人学习状态按用户确认；二者不混为一谈。
 家族注记: 替罪羊 α=0.75 真删除+原位重建; LCA 主力 = DFN_LCA;
+  有序集合 get_rank 返回严格小于的数量, 跳表去重而五种值域树允许重复; Splay 无解查找也伸展最后触点。
+  FHQ_Seq 最大子段和哨兵为 LLONG_MIN, 加乘后仍按原语义域限制查询, 所有中间运算须不溢出。
   连通性四件(SCC/EBCC/VBCC/BCT)鸭子注入 build(g,n), EBCC 桥 = 原图偶数
   半边 id（0-based，不保证 DFS 方向；端点经 g.edges 取）, SCC 可直接吃 SegGraph 的带权图;
   SegGraph 分开预算原点与中继点: 第三参数 max_extra 默认取 max_n, r2r/r2new/p2new 各耗一个;
@@ -130,8 +136,13 @@ LLM 每次新增、修改或撤下模板、工具、测试、CI 功能, 收尾�
   势能线段树/哈希表/桶的持久化版全灭。例外: 可持久化并查集(按秩合并+
   无路径压缩, 纯最坏 O(log n) 无摊还); 真正禁的是"带路径压缩的持久化"。
 PersSegTree 红线: Tag 永久化只限加法类可交换标记; find_kth 只在点修改
-  版本上有; 区间赋值不做; 单点就是 x==y 的区间, 不做专属接口。
+  计数版本上有, 逐位置合成计数非负且 k 合法; 区间赋值不做; 单点就是 x==y 的区间, 不做专属接口。
+  根外置, build 追加而不清池, 改值域后旧域根停用; query/find 不开点, 加法 Info 可维护和/最值。
 左偏树: 私有 merge_trees/find_root(树级) + 公开 merge/alive(逻辑编号级)。
+  find_root 经用户批准采用迭代路径压缩, 合并保持递归; 父链可线性, 不承诺单次 α(N)。
+  整堆懒标记后禁用单点 get_val/set_val/add_val/erase; 持久化 merge_raw 仅独占无重叠堆, init 使旧根失效。
+树状数组: BIT/BITR 区间加与区间和, BIT2D 稠密矩形加与矩形和; 构造即全零, init 在原容量内复位;
+  差分取负、坐标乘积和查询中间值均须不溢出 LL, 默认 bit_check 自动验证 20 万长度与 2000×2000 矩阵。
 编译基线: 本库就是 C++20, requires/if constexpr/concepts/<bit> 随便用;
   存量 C++17 写法不回改。赛前确认评测机 GCC 版本号(-std 一样不代表
   库特性齐, z_fill_n 旧写法在老 GCC 直接报错就是教训)。
@@ -195,6 +206,8 @@ z_fill_n 口径: 调用方永远传 n, 补齐(pad)是工具自己的事
 Info 必写三样: LL len=0(判空单位元+虚拟结点长度) | void apply(Tag) |
       friend operator+(两方任一 len==0 直接返回另一方)
       SegTree/DySegTree 的 modify 要求 break_cond/tag_cond, 非势能题也须提供恒 false/true;
+      两者 find 的 pred 判断区间中是否存在合格点, 不做前缀累积; DySegTree 的 Info{} 补 len 须表示零值区间,
+      query/find 下传也可能开点; clear 保留值域, init 改值域, build 自带清空, SegTree 重建仍先 init。
       其他引擎按实际调用契约提供, 不把所有 Info 都强制做成同一个接口全集。
 Tag 必写: void apply(Tag) 叠加。pushdown 型引擎还要 clear()/has_tag()。
       可选 split_tag/get_real_tag——引擎用 if constexpr(requires{...})

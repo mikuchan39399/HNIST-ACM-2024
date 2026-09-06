@@ -2,16 +2,14 @@
 #ifndef Z_OI_BIT2D
 #define Z_OI_BIT2D
 
-#include <vector>
 #include "../../杂项/utils/utils.cpp"
-
-using namespace std;
 
 // ============ 二维树状数组 矩阵加 + 矩阵和 (差分四 BIT) ============
 // 1-based; 矩阵加走二维差分, 前缀和 pre(x,y) = Σ D[i][j]*(x+1-i)*(y+1-j)
 //   展开成 (x+1)(y+1)*D - (y+1)*D*i - (x+1)*D*j + D*i*j,
 //   t1/t2/t3/t4 四棵 BIT 分别维护 D / D*i / D*j / D*i*j
 // 内存: 四棵 LL BIT 共 32B/格; 预算 = n*m, 2000×2000 ≈ 128MB
+// 矩形合法非空; 增量取负、坐标乘积、表内累积与查询中间值均须在 LL 内
 struct BIT2D
 {
     int n, m;
@@ -36,7 +34,7 @@ struct BIT2D
             fill(t4[i].begin(), t4[i].begin() + m + 2, 0);
         }
     }
-    // 矩阵 (x1,y1)-(x2,y2) 整体加 k (贴边时差分越界端自动丢弃)
+    // 把矩形 [x1,x2] × [y1,y2] 整体加 k, 坐标在 1..n × 1..m 内
     // 时间: O(log n·log m) | 空间: O(1)
     void add(int x1, int y1, int x2, int y2, LL k)
     {
@@ -45,7 +43,7 @@ struct BIT2D
         upd(x2 + 1, y1, -k);
         upd(x2 + 1, y2 + 1, k);
     }
-    // 返回矩阵 (x1,y1)-(x2,y2) 之和
+    // 返回矩形 [x1,x2] × [y1,y2] 内的元素和
     // 时间: O(log n·log m) | 空间: O(1)
     LL query(int x1, int y1, int x2, int y2)
     {
@@ -78,8 +76,14 @@ private:
 #endif
 /*
  * Usage:
- * BIT2D t(n, m);                // 预算 n×m
- * t.init(n, m);                 // 多测复位
- * t.add(x1, y1, x2, y2, k);     // 矩阵整体加 k
- * t.query(x1, y1, x2, y2);      // 矩阵和
+ * int main()
+ * {
+ *     BIT2D t(3, 4);
+ *     t.add(1, 2, 3, 4, 2);
+ *     t.add(3, 4, 3, 4, -5);
+ *     cout << t.query(1, 1, 3, 4) << endl; // 13
+ *     cout << t.query(3, 4, 3, 4) << endl; // -3
+ *     t.init(1, 4); // 新一轮 1 行 4 列, 原数据清空
+ *     cout << t.query(1, 1, 1, 4) << endl; // 0
+ * }
  */

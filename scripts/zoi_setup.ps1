@@ -129,21 +129,24 @@ function Setup-Snapshot([string]$p) {
     return @{exists=$false; text=''}
 }
 function Setup-Same($a,$b) { return $a.exists -eq $b.exists -and $a.text -ceq $b.text }
-function Setup-Paths([string]$settings,[string]$tasks) {
+function Setup-Paths([string]$settings,[string]$tasks,[string]$keys='') {
     if (-not $settings) { $settings=Join-Path $env:APPDATA 'Code/User/settings.json' }
     $settings=[IO.Path]::GetFullPath($settings)
     if (-not $tasks) { $tasks=Join-Path (Split-Path -Parent $settings) 'tasks.json' }
     $tasks=[IO.Path]::GetFullPath($tasks)
-    if ($settings -eq $tasks) { throw 'Settings and tasks must be different files' }
-    return @{settings=$settings; tasks=$tasks; state=($settings+'.zoi-state')}
+    if (-not $keys) { $keys=Join-Path (Split-Path -Parent $settings) 'keybindings.json' }
+    $keys=[IO.Path]::GetFullPath($keys)
+    if ($settings -eq $tasks -or $keys -eq $settings -or $keys -eq $tasks) { throw 'Settings, tasks and keybindings must be different files' }
+    return @{settings=$settings; tasks=$tasks; keys=$keys; state=($settings+'.zoi-state')}
 }
 function Setup-State([string]$path,[string]$root,$paths) {
     $state=(Setup-Read $path) | ConvertFrom-Json
-    if ($state.version -ne 2 -or $state.root -ne $root -or $state.settings -ne $paths.settings -or $state.tasks -ne $paths.tasks -or
-        $state.phase -notin @('installing','installed','removing') -or $state.docs.Count -ne 2) {
+    if ($state.version -notin @(2,3) -or $state.root -ne $root -or $state.settings -ne $paths.settings -or $state.tasks -ne $paths.tasks -or
+        $state.phase -notin @('installing','installed','removing') -or $state.docs.Count -ne $(if ($state.version -eq 3) {3} else {2})) {
         throw "Unknown/other installation state preserved: $path"
     }
     if ($state.docs[0].path -ne $paths.settings -or $state.docs[1].path -ne $paths.tasks) { throw 'Invalid state document paths' }
+    if ($state.version -eq 3 -and $state.docs[2].path -ne $paths.keys) { throw 'Invalid keybindings state path' }
     foreach ($doc in $state.docs) {
         foreach ($key in @('before','after','from','to')) {
             $value=$doc.$key
@@ -153,7 +156,7 @@ function Setup-State([string]$path,[string]$root,$paths) {
     }
     foreach ($dir in $state.dirs) {
         $prefix=[IO.Path]::GetFullPath($dir).TrimEnd('\','/')+[IO.Path]::DirectorySeparatorChar
-        if (-not $paths.settings.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase) -and -not $paths.tasks.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase)) { throw 'Invalid state directory; preserved' }
+        if (-not $paths.settings.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase) -and -not $paths.tasks.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase) -and -not $paths.keys.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase)) { throw 'Invalid state directory; preserved' }
     }
     return $state
 }
@@ -220,6 +223,13 @@ function Setup-RemoveTasks([string]$current,[string]$before,[string]$after,$labe
             # The explicit uninstall removes these installer-created labels,
             # including edits to their presentation; other labels stay intact.
             $c=JC-Cut $c $node $i; $node=JC-Parse $c
+        }
+    }
+    if ($null -ne $b) {
+        $original=JC-Parse $b
+        foreach ($item in $original.children) {
+            $raw=JC-Raw $b $item.value
+            if ($labels -ccontains (JC-Value $raw).label) { $c=JC-Append $c $raw }
         }
     }
     if ($node.children.Count -eq 0 -and $null -eq $b) { $c=$null }

@@ -25,12 +25,22 @@ jobs:
         if: ${{ !cancelled() }}
         shell: pwsh
         run: ./scripts/check_setup.ps1
+      - name: Deployment, workspace and cache tests on PowerShell 5.1
+        if: ${{ !cancelled() }}
+        shell: powershell
+        run: ./scripts/check_deployment.ps1
+      - name: Deployment, workspace and cache tests on PowerShell 7
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: ./scripts/check_deployment.ps1
       - name: Keep setup diagnostics
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v6
         with:
           name: setup-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .zoi-checks/setup-test-*/*.log
+          path: |
+            .zoi-checks/setup-test-*/*.log
+            .zoi-checks/deploy-test-*/*.log
           include-hidden-files: true
           retention-days: 7
           if-no-files-found: warn

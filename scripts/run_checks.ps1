@@ -100,5 +100,6 @@ if ($trackVerification) {
     & (Join-Path $PSScriptRoot 'make_verification.ps1') -RunDir $store -OutputDir $output
 }
 Write-Host ('total: {0}, failed: {1}; logs: {2}' -f $results.Count, $failed, $ReportDir)
+Complete-CheckWorkspace $runDir 'regression' ($failed -eq 0)
 if ($failed) { exit 1 }
 exit 0

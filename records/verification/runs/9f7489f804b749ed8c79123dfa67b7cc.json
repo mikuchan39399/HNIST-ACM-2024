@@ -1,0 +1,67 @@
+{
+    "schema":  1,
+    "id":  "9f7489f804b749ed8c79123dfa67b7cc",
+    "startedUtc":  "2026-09-06T13:44:09.0877527Z",
+    "finishedUtc":  "2026-09-06T13:44:14.0974776Z",
+    "os":  "Windows",
+    "compilerVersion":  "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+    "flags":  [
+                  "-std=c++20",
+                  "-Wall",
+                  "-Wextra",
+                  "-Werror",
+                  "-UNDEBUG",
+                  "-O2"
+              ],
+    "sanitize":  false,
+    "logs":  ".ci-results/p08-baseline",
+    "results":  [
+                    {
+                        "fingerprint":  "c22df98acee159f48bb059f49a72977fb5765f27c560f72545e47fa9343fb28e",
+                        "files":  [
+                                      {
+                                          "path":  "algorithms/数据结构/树状数组/二维树状数组.cpp",
+                                          "hash":  "8a643f6dbe9a2a646dd34690de4b56972d343c502b8daedc14d770235b9a14b7"
+                                      },
+                                      {
+                                          "path":  "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
+                                          "hash":  "8d1df4e5908832e9f860f2ad5a634687dbebf927d1c52c4833ff1ac71092828d"
+                                      },
+                                      {
+                                          "path":  "algorithms/数据结构/树状数组/树状数组.cpp",
+                                          "hash":  "9fdbc83b942bdfbbe354ef250ca6e9b73292eac6977e773be7fa2bd68d5b3e62"
+                                      },
+                                      {
+                                          "path":  "algorithms/杂项/utils/utils.cpp",
+                                          "hash":  "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+                                      },
+                                      {
+                                          "path":  "rules/verification.json",
+                                          "hash":  "89e659ad1888e0370b6118d34b8c4e53f2e79740f1c6078b7cb7c21aa2ac0b4f"
+                                      },
+                                      {
+                                          "path":  "scripts/check_inventory.ps1",
+                                          "hash":  "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+                                      },
+                                      {
+                                          "path":  "scripts/check_process.ps1",
+                                          "hash":  "5f15a88c946073ae78bdb994b9ad4ee7de4e66436a8bcdbfd4aa4eb83b775910"
+                                      },
+                                      {
+                                          "path":  "scripts/check_verification.ps1",
+                                          "hash":  "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+                                      },
+                                      {
+                                          "path":  "scripts/run_checks.ps1",
+                                          "hash":  "c34d612df1c5c9e9775473ddebc37b57798135e5367755716106c76f1ff5f7e4"
+                                      }
+                                  ],
+                        "stable":  true,
+                        "path":  "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
+                        "phase":  "regression",
+                        "status":  "PASS",
+                        "exitCode":  0,
+                        "seconds":  4.63
+                    }
+                ]
+}

@@ -2,15 +2,9 @@
 #ifndef Z_OI_SKIPLIST
 #define Z_OI_SKIPLIST
 
-#include <array>
-#include <vector>
-#include <cassert>
 #include "../../杂项/随机数/z_rnd.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ SkipList 跳表 (去重集合) ============
 // 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继期望 O(log n); 结点删除后回收复用
 // K = 层数上限, 需 >= log2(规模), 默认 20 支撑 1e6
 // 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
@@ -18,7 +12,6 @@ using namespace std;
 template <int K = 20>
 struct SkipList
 {
-    static constexpr LL INF = 0x3f3f3f3f3f3f3f3f;
     struct node
     {
         LL val;
@@ -165,7 +158,7 @@ struct SkipList
         return n;
     }
     // 多测复位
-    // 时间: O(Used) | 空间: O(1)
+    // 时间: O(tot) | 空间: O(1)
     void clear()
     {
         tot = 0;
@@ -192,15 +185,18 @@ private:
     }
 };
 #endif
+
 /* Usage:
-    SkipList sl;                    // 默认 K = 20 层, 预算 1e6 结点
-    // SkipList<24> sl(2e5 + 10);   // K >= log2(规模), 预算按题传
-    sl.insert(x);                   // 去重插入, 返回结点 id > 0
-    sl.erase(x);                    // 删除, 返回 id; 不存在返回 -1
-    sl.get_rank(x);                 // < x 的元素个数(要排名 +1)
-    sl.get_kth(k);                  // 第 k 小, 越界返回 INF
-    sl.get_pre(x);                  // 严格前驱, 无则 -INF
-    sl.get_suf(x);                  // 严格后继, 无则 INF
-    sl.size();                      // 元素个数
-    sl.clear();                     // 多测复位, 容量保留
+int main()
+{
+    SkipList<20> s(16);
+    int id = s.insert(2);
+    cout << (s.insert(2) == id) << "\n"; // 1, 去重
+    s.insert(5);
+    cout << s.get_rank(5) << " " << s.get_kth(2) << "\n"; // 1 5
+    cout << s.get_pre(5) << " " << s.get_suf(2) << "\n"; // 2 5
+    cout << (s.erase(2) == id) << "\n"; // 1, 删除后 id 可被复用
+    s.clear();
+    cout << s.size() << "\n"; // 0
+}
 */
