@@ -1,5 +1,15 @@
 # 清扫历史代记
 
+## 2026-09-06 Codex: P04 SegGraph 最终对拍与注释
+
+- 原 300 组小测试两边共用 Dijkstra, Empty 只比数量。补 400 组独立矩阵 Floyd 全点对、BFS 可达性和 SCC 等价关系; 原点及返回中继点均作源, 加零权/负权 DAG/INF-1 固定用例
+- 默认套件加入 20 万点/操作及 1/2 个原点新增 20 万中继、非对齐区间、SCC 分块和大小交替, 所有验收模式由原扫描器自动进入普通/sanitizer CI, 不加人工命令
+- 旧 SegGraph(1,200) 连续造点经 ASan 复现点表堆越界。用户批准第三参数 max_extra 独立预算, 默认 max_n, 新建处检查预算, 保留两参数调用; 儿子表只分配骨架容量, Graph 不改
+- 严格先完成 Windows/WSL 普通与 sanitizer 压力, 再润色容量、编号、时间空间和 Usage, 移除模板自己的 using namespace std。补 README 的两棵树机制、容量公式、下游限制, 同步 rule 与用户功能页
+- 最终 Windows 23 套回归通过, Usage 说明最后调整后单独重跑 SegGraph 通过; Linux GCC 13.1 普通及 ASan/UBSan 在 8 MiB 栈通过且指纹稳定; 提取 Usage 重复 include 并核对输出通过。证据见 records/verification/seggraph-20260906.md 与 stress/seggraph-20260906.json, 两层表由 runner 自动刷新
+- 用户确认正在学, 进度行与摘要已记录。未修改 Dijkstra/SCC 实现, 只登记本组合覆盖。未提交/推送, P04 移档解除领取, 下一件 P05
+- 顺带核实前次已推送 c41a6c2: GitHub run 34014976649 的 setup/regression/sanitizer/stress(lca-vt)/stress(completed-graph) 五作业全 success, 五份附件存在且未过期; 不作为 P04 本轮在线结果
+
 ## 2026-09-06 Codex: 全库设计同步与工作区审查
 
 - 检查 74 个现役 catalog 条目、23 套对拍、116 份当前 Markdown, 结合脚本/CI 实现与定点复现; 不是全算法极限验收。完整结果及逐项快照见 records/tooling/repo-audit-20260906.md
@@ -482,3 +492,10 @@ Windows GCC 15.2 全库 -Mode All 通过 107/107, 包含 19 套回归与 88 个�
 - Linux GCC 13.1 同 CI 入口四项全部 PASS, stable=true; 原 LCA/虚树两项 PASS、两项 STACK_LIMIT (非深链通过)。专项摘要保留在 records/verification/stress, 不伪造 runner JSON。首次测试 Info 缺少条件方法编译失败, 修正夹具后重跑, 失败记录保留
 - Windows GCC 15.2 最终 23 套常规回归全通过, 日志 .ci-results/completed-audit-regression; runner 自动存证并刷新两层表。压力分类/真实失败自检、actionlint、PS7/PS5.1 功能和资产 -Check、diff 检查通过
 - 已同步 rule、用户功能表、测试说明、验证指南、11 条覆盖登记和生成资产; 详细基线/补验/限制见 records/verification/completed-template-audit-20260906.md。学习状态不变, 全库尚未逐件验收, 下一件仍 P04。未提交、未推送, 远程 CI 尚未运行
+
+## 2026-09-06 Codex: 统一 MIKU 手册输出
+
+- 旧脚本默认更新 zoi-booklet.pdf, 手动留下的 print 版未随源码更新。默认输出统一为 docs/booklet/output/zoi-booklet-print.pdf, 保留第 39 页 MIKU ♡; 删除旧普通版 PDF 与 .typ, 正式目录只保留 print PDF 和同名排版源
+- PS7 与 Windows PS5.1 默认整本重建均通过: 91 catalog 条目、106 骨架条目、5 插件, 175/175 知识目录覆盖。整本 127 页, 提取文本确认 MIKU 仅出现在物理第 39 页, 最新 SegGraph max_extra 等接口位于第 70 页, TreeCenter 已收录; 封面、目录、39/70 页渲染抽查通过
+- 同步 rule、用户功能表、打印指南及维护说明; 筛选示例另存库内临时区。VS Code 全局 zoi-booklet 任务没有覆盖 OutFile, 已修正其过期路径描述。make_features -Check 与 git diff --check 通过
+- 日志和检查脚本: .zoi-checks/codex-work/booklet-current.log、booklet-ps51.log、booklet-check.py、booklet-current-audit.json。源码修改后仍需运行重建, 不宣称 PDF 实时更新; 本轮未改算法, 未提交、未推送, 下一件仍 P05

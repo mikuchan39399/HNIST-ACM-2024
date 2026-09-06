@@ -122,6 +122,8 @@ LLM 每次新增、修改或撤下模板、工具、测试、CI 功能, 收尾�
 家族注记: 替罪羊 α=0.75 真删除+原位重建; LCA 主力 = DFN_LCA;
   连通性四件(SCC/EBCC/VBCC/BCT)鸭子注入 build(g,n), EBCC 桥 = 原图偶数
   半边 id（0-based，不保证 DFS 方向；端点经 g.edges 取）, SCC 可直接吃 SegGraph 的带权图;
+  SegGraph 分开预算原点与中继点: 第三参数 max_extra 默认取 max_n, r2r/r2new/p2new 各耗一个;
+  原点范围、虚点预算与边预留分别计算, 下游按 sg.tot 初始化, 普通及 sanitizer CI 自动跑 20 万规模用例。
   BCT 独立类型配 Z_OI_BCT 守卫 , 不依赖或复用 VBCC 类型 , 两者可以同场实例化.
   本轮最终覆盖包含现役轻件(最短路/欧拉/拓扑等), 不按代码短免验; k 短路弃置留档不回归。
 禁做: 任何摊还结构 × 可持久化 = 禁(版本回放摧毁势能)——Splay/LCT/
@@ -289,3 +291,4 @@ OJ: 贴线 AC 算半个 TLE, 最慢点超过时限 80% 就主动想常数。
 
 ## 13. 刷题工作流
 安装、展开/回溯、跳板、CI 与纸质手册的完整操作约定见 [工具与刷题流程](rules/workflow.md), 改相应脚本时必读。
+手册只维护 docs/booklet/output/zoi-booklet-print.pdf 这一份正式 PDF, 默认重建更新并保留第 39 页 MIKU; 临时筛选另存库内工作区, 操作见 [打印手册](docs/booklet/README.md)。

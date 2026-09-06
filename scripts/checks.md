@@ -33,6 +33,9 @@
 
 `TEST GAP` 只表示没有直接 include 证据，include 过也不代表所有接口和边界都已验证。历史清扫与验证记录见 `rules/sweep-board.md`，不能替代本次运行报告。
 
+`seggraph_check` 无参数即执行独立 Floyd/可达性对拍、SCC 组装和 20 万点/操作及中继点压力,
+因此自动进入普通与 sanitizer CI, 不需要另加压力 profile。范围与数值限制见优化建图 README。
+
 ## CI 与入口自检
 
 push、PR 和手动运行触发 CI；Windows 安装卸载、普通回归、sanitizer 和独立压力作业自动执行。回归失败后仍跑语法扫描并上传日志, 正确性用例失败会阻断 CI。快读写在 Linux 也做字节比对。

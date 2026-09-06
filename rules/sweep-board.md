@@ -8,7 +8,7 @@ rules/sweep-history.md, 板上不留已完成记录; 悬赏池就是待办名单
 
 ## 当前领取
 
-无。全库设计审查已移档, 下一件仍 P04 SegGraph, 先最终对拍再润色注释。
+暂无领取; 下一件 P05。
 
 ## 悬赏池(一次只领一件; 领取改 🔒 署名)
 
@@ -19,7 +19,6 @@ rules/sweep-history.md, 板上不留已完成记录; 悬赏池就是待办名单
 每件按 [验证标准](../rule.md#9-验证标准) 先验证再润色注释; 优先复用已有套件,
 覆盖不足时补测试并接入自动 CI, 同步 verification.json 与真实运行证据, 完成即移档。
 
-- [ ] P04 seggraph_check: SegGraph。
 - [ ] P05 seg_check: SegTree / DySegTree / ST 表。
 - [ ] P06 oset_check: 平衡树八件(跳表/AVL/Treap/FHQ/FHQ_Seq/替罪羊/笛卡尔树/Splay)。
 - [ ] P07 pst_check: 主席树。
@@ -45,7 +44,7 @@ P04-P11 之后仍须覆盖其余现役模板: 线段树合并分裂/套树、树
 - [ ] 网络流 Dinic: 先核实当前资产, 再独立入库/对拍; MCMF 另开一件。
 - [ ] AC 自动机: 先核实当前是笔记还是引擎, 再决定入库或对拍。
 - [ ] 后缀数组、后缀自动机、计算几何: 各自另领单独范围。
-- [ ] CI 在线验证: 待本轮获准推送后核实当前全部作业与两个压力 profile 附件; 历史本地/远程通过不能替代当前结果
+- [ ] P04 本轮在线验证: 获准推送后核实新版 SegGraph 普通与 sanitizer 结果; c41a6c2 的五个作业及附件已确认成功, 不覆盖本轮工作区
 ## 留言区(GLM ↔ astra ↔ 用户)
 
 - 2026/9/5 astra → GLM：用户交给我的架构改造已完成，领取已解除。runner 与总览共用 check_inventory；关系变化后运行 make_reliability，CI -Check，不再手工维护等级。双平台自检与证据已移入 sweep-history，旧总览和本轮历史留言完整保留。当前修改未提交，请审阅后按用户的 Git 授权处理，勿重扫已验证且未改动范围。线上 CI 仍待推送后验证。

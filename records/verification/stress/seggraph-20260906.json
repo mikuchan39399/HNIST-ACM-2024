@@ -1,0 +1,84 @@
+{
+  "schema": "seggraph-manual-linux-1",
+  "sources_sha256": {
+    ".github/workflows/ci.yml": "42bbe4093d0f49ca046ba757c96cd31654e2fa8c9f23fcea0344a894cdeb0404",
+    "algorithms/图论/优化建图/对拍/seggraph_check.cpp": "13de80c3e8ee6be845c22ed5a739ae3c1a0d0d98cdc72031690b38d69a9e00f1",
+    "algorithms/图论/优化建图/线段树优化建图.cpp": "703b57a4be64508c4c9abcb1ab2ec440d8405eaa4529b2588c3e36516ed5a159",
+    "algorithms/图论/图的存储/Graph.cpp": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48",
+    "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp": "95321ed7fce525453f6c8fb31acc6974bf9c68e486f7ac1e04795b37a04640ee",
+    "algorithms/图论/连通性相关/Tarjan_SCC.cpp": "b6a333d47fb10a26116b550a75c49da7246dc176bd20445cbccc11b65754a4dc",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "scripts/check_lca_vt_extreme.py": "91ddffc70547d537aaeb8f0e331975b0b2aef2de15d19cd640e144c603b0e545"
+  },
+  "stable": true,
+  "results": [
+    {
+      "name": "compile-normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 3.641,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p04-linux/normal"
+      ]
+    },
+    {
+      "name": "normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0.732,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p04-linux/normal"
+      ]
+    },
+    {
+      "name": "compile-sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 4.743,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p04-linux/sanitizer"
+      ]
+    },
+    {
+      "name": "sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 7.857,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p04-linux/sanitizer"
+      ]
+    }
+  ],
+  "failed": false
+}

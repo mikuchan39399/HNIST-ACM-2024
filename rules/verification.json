@@ -2,6 +2,59 @@
   "schema": 1,
   "coverage": [
     {
+      "template": "algorithms/图论/优化建图/线段树优化建图.cpp",
+      "api": [
+        "构造 max_n/max_m/max_extra",
+        "build",
+        "add_p2p/add_p2r/add_r2p/add_r2r",
+        "add_p2new/add_r2new",
+        "tot/g",
+        "Dijkstra/SCC 组装"
+      ],
+      "oracle": "原点区间逐点展开为独立矩阵, 用户中继另编号, Floyd 全点对; Empty 显式 BFS 可达性; SCC 比较双向可达; 大数据用结构闭式答案",
+      "cases": [
+        "保留种子 786786 的 300 组旧小图; 新增种子 42 的 400 组至 16 原点/32 操作, 全原点及返回中继点作源",
+        "无操作骨架、单点/全区间/重叠区间、自环重边、零权/1e12, INF-1 距离, 独立松弛核对负权 DAG",
+        "默认 20 万原点/操作, 大-单点-两点-非二次幂-大重建, 星方向、非对齐区间和 SCC 分块",
+        "仅 1/2 个原点、20 万中继预算恰好用满, LL/Empty, 三类造点交错、旧两参数调用和零中继预算"
+      ],
+      "summary": "六类连边、独立全点对及可达性、SCC 组合和默认 20 万规模已验; 原点与中继独立预算",
+      "limitations": "只测合法非空原点区间, build(0) 不支持; 中继数不得超预算, 重建后旧编号失效; Dijkstra 距离须小于 INF 且加法不溢出; 泛型权仅测 LL/Empty",
+      "suite": "algorithms/图论/优化建图/对拍/seggraph_check.cpp"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+      "api": [
+        "init",
+        "run(s,sg.g)",
+        "dist"
+      ],
+      "oracle": "SegGraph 逻辑操作独立展开, Floyd 全点对; 大图闭式距离",
+      "cases": [
+        "400 组小图的所有原点及返回中继点作源, 零权/重边/不可达/1e12/INF-1",
+        "20 万点/操作与 20 万中继, 重复 init 单源运行"
+      ],
+      "summary": "已验证 SegGraph 非负权单源组合, 包含中继源、不可达和目标规模",
+      "limitations": "仅登记 SegGraph 组合, 不代表 Dijkstra 全接口最终验收; 未测多源、负权不适用, 合法距离需小于 INF",
+      "suite": "algorithms/图论/优化建图/对拍/seggraph_check.cpp"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+      "api": [
+        "init",
+        "build(sg.g,sg.tot)",
+        "bel"
+      ],
+      "oracle": "独立 Floyd 双向可达判定原点与用户中继的强连通关系; 大图按 32 点分块闭式分组",
+      "cases": [
+        "400 组 SegGraph 小图, 核对所有原点及返回中继点点对",
+        "20 万点分块互达图及大小交替, 骨架编号参与 Tarjan 但仅核对业务点等价关系"
+      ],
+      "summary": "新增 SegGraph 带权图接 SCC 的独立分量与目标规模验证",
+      "limitations": "本组合未测缩点 DAG 或逐个骨架点的分量编号; 分块压力非原图大深链, SCC 仍保留递归",
+      "suite": "algorithms/图论/优化建图/对拍/seggraph_check.cpp"
+    },
+    {
       "template": "algorithms/图论/图的存储/Graph.cpp",
       "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
       "api": [

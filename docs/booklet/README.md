@@ -6,16 +6,16 @@
 ./scripts/make_booklet.ps1
 ```
 
-默认输出 docs/booklet/output/zoi-booklet.pdf，配套 zoi-booklet.typ 放在同一目录。默认 A4 横排三栏，带目录、页码和代码指纹；catalog 的顺序决定条目顺序，笔记会一并收录。
+唯一正式 PDF 为 docs/booklet/output/zoi-booklet-print.pdf，配套 zoi-booklet-print.typ 放在同一目录。每次默认生成直接更新这一份，不再分普通版和 print 版；第 39 页保留 MIKU ♡ 页脚。默认 A4 横排三栏，带目录、页码和代码指纹；catalog 的顺序决定条目顺序，笔记会一并收录。
 
 只看某一部分，或为双面打印安排较长条目从正面开始：
 
 ```powershell
-./scripts/make_booklet.ps1 -Filter seg
+./scripts/make_booklet.ps1 -Filter seg -OutFile .zoi-checks/codex-work/booklet-seg.pdf
 ./scripts/make_booklet.ps1 -SoloMin 90
 ```
 
-筛选版不执行全库覆盖审计；赛前生成不带 Filter 的完整版本，并检查纸面排版。PDF 和 booklet.typ 为生成物，不提交到 Git。
+筛选版不执行全库覆盖审计，预览用 OutFile 放入库内临时工作区，避免覆盖正式整本；赛前生成不带 Filter 的完整版本，并检查纸面排版。PDF 和配套 .typ 为生成物，不提交到 Git。
 
 用 -OutFile 指定其他 PDF 路径时，配套 .typ 使用相同文件名并放在旁边；相对路径从库根解析，目录不存在时自动创建。
 

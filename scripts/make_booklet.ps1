@@ -1,4 +1,4 @@
-param([string]$Filter = '', [string]$OutFile = 'docs/booklet/output/zoi-booklet.pdf', [int]$SoloMin = 0)
+param([string]$Filter = '', [string]$OutFile = 'docs/booklet/output/zoi-booklet-print.pdf', [int]$SoloMin = 0)
 # make_booklet.ps1 - printable contest booklet generator (typst, A4 landscape, 3 columns)
 # Layout: every catalog entry (code or ^ prose) opens a fresh page; skeleton entries
 #         auto-scanned from library folders flow compactly on shared pages.

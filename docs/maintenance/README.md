@@ -78,7 +78,8 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 
 封面显示生成日期、筛选范围与使用导览; quick 卡片等高, entrymeta 统一代码信息条, 页眉方向用浅灰标签。代码仍按原字号自动分栏分页。插件附录按相对路径以 zh-CN 显式排序, 避免文件枚举顺序影响页码。视觉改动需对比打印代码内容并渲染抽查封面、目录和正文; 使用说明见 [打印手册](../booklet/README.md)。
 
-赛场纸质化: make_booklet.ps1 -> docs/booklet/output/zoi-booklet.pdf(typst A4 横排三栏, 目录带页码);
+赛场纸质化: make_booklet.ps1 -> docs/booklet/output/zoi-booklet-print.pdf(typst A4 横排三栏, 目录带页码);
+正式手册只保留这一份 PDF 和同名 .typ, 默认重建覆盖更新, 第 39 页保留 MIKU ♡; 不再维护普通版副本。筛选/排版试验用 OutFile 写入 .zoi-checks/codex-work。修改页脚时整本检查 MIKU 仅在第 39 页, 避免目录页码求值泄漏。
   catalog 顺序即章节序, 行首 ^ = 笔记条目(.txt 正文, 无代码无跳板); 相对
   include 改写为跳板短名(誊写产物=同目录 .h 集合, utils 只印一次); 插件
   附录自动收(含 main 跳过); 每条目印 行数+ SHA256 前 8 hex(LF 归一化),

@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "8dcfddfea9504b0b8f44db5c072d1124",
+  "startedUtc": "2026-09-06T06:04:42.9451685Z",
+  "finishedUtc": "2026-09-06T06:04:46.4703818Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/p04-capacity-fixed",
+  "results": [
+    {
+      "fingerprint": "5464ea9f0247e5572efcada46988f1392ea32be8a3dfa240452cc3af5e7c607c",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+          "hash": "88b3e5216bd3e00ab3f356c0c4c6a8bb7472ab2c93898c72fb579246c05301f8"
+        },
+        {
+          "path": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "b64c1939befd06eaae7172242d08bd840dd0e5f6f93cbde497435f026fed8e18"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "95321ed7fce525453f6c8fb31acc6974bf9c68e486f7ac1e04795b37a04640ee"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "b6a333d47fb10a26116b550a75c49da7246dc176bd20445cbccc11b65754a4dc"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "dc00bb5d22ea65b37e46a80c432275624011c51ea3461e7ebc74d62fe95ef901"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "5f15a88c946073ae78bdb994b9ad4ee7de4e66436a8bcdbfd4aa4eb83b775910"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "c34d612df1c5c9e9775473ddebc37b57798135e5367755716106c76f1ff5f7e4"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 3.324
+    }
+  ]
+}
