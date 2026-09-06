@@ -8,7 +8,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 
 更新：`./scripts/make_reliability.ps1`；只读检查：`./scripts/make_reliability.ps1 -Check`。普通回归不会改写本表。
 
-## A 类：有直接对拍引用的现役模板 [51]
+## A 类：有直接对拍引用的现役模板 [52]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
@@ -31,20 +31,21 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [scapegoat - algorithms/数据结构/有序表与平衡树/替罪羊树.cpp](<../algorithms/数据结构/有序表与平衡树/替罪羊树.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) |
 | [cartesian - algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp](<../algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) |
 | [splay - algorithms/数据结构/有序表与平衡树/Splay.cpp](<../algorithms/数据结构/有序表与平衡树/Splay.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) |
-| [graph - algorithms/图论/图的存储/Graph.cpp](<../algorithms/图论/图的存储/Graph.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
-| [scc - algorithms/图论/连通性相关/Tarjan_SCC.cpp](<../algorithms/图论/连通性相关/Tarjan_SCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
-| [ebcc - algorithms/图论/连通性相关/Tarjan_EBCC.cpp](<../algorithms/图论/连通性相关/Tarjan_EBCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
-| [vbcc - algorithms/图论/连通性相关/Tarjan_VBCC.cpp](<../algorithms/图论/连通性相关/Tarjan_VBCC.cpp>) | [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
-| [bct - algorithms/图论/连通性相关/圆方树/BCT.cpp](<../algorithms/图论/连通性相关/圆方树/BCT.cpp>) | [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
-| [lca - algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp](<../algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
-| [hldlca - algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp](<../algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
-| [hld - algorithms/图论/树上问题/树链剖分/HLD.cpp](<../algorithms/图论/树上问题/树链剖分/HLD.cpp>) | [algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp](<../algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp>) |
-| [virtualTree - algorithms/图论/树上问题/虚树/二次排序.cpp](<../algorithms/图论/树上问题/虚树/二次排序.cpp>) | [algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
-| [virtualTreeStack - algorithms/图论/树上问题/虚树/单调栈.cpp](<../algorithms/图论/树上问题/虚树/单调栈.cpp>) | [algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
-| [diameterDfs - algorithms/图论/树上问题/树的直径/两次dfs.cpp](<../algorithms/图论/树上问题/树的直径/两次dfs.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
-| [diameterDp - algorithms/图论/树上问题/树的直径/树形dp法.cpp](<../algorithms/图论/树上问题/树的直径/树形dp法.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
-| [centroid - algorithms/图论/树上问题/树的重心/树的重心.cpp](<../algorithms/图论/树上问题/树的重心/树的重心.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
-| [topo - algorithms/图论/拓扑排序/拓扑排序.cpp](<../algorithms/图论/拓扑排序/拓扑排序.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
+| [graph - algorithms/图论/图的存储/Graph.cpp](<../algorithms/图论/图的存储/Graph.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)<br>[algorithms/图论/对拍/graph_core_check.cpp](<../algorithms/图论/对拍/graph_core_check.cpp>) |
+| [scc - algorithms/图论/连通性相关/Tarjan_SCC.cpp](<../algorithms/图论/连通性相关/Tarjan_SCC.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
+| [ebcc - algorithms/图论/连通性相关/Tarjan_EBCC.cpp](<../algorithms/图论/连通性相关/Tarjan_EBCC.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
+| [vbcc - algorithms/图论/连通性相关/Tarjan_VBCC.cpp](<../algorithms/图论/连通性相关/Tarjan_VBCC.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
+| [bct - algorithms/图论/连通性相关/圆方树/BCT.cpp](<../algorithms/图论/连通性相关/圆方树/BCT.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
+| [lca - algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp](<../algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
+| [hldlca - algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp](<../algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>) |
+| [hld - algorithms/图论/树上问题/树链剖分/HLD.cpp](<../algorithms/图论/树上问题/树链剖分/HLD.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp](<../algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp>) |
+| [virtualTree - algorithms/图论/树上问题/虚树/二次排序.cpp](<../algorithms/图论/树上问题/虚树/二次排序.cpp>) | [algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
+| [virtualTreeStack - algorithms/图论/树上问题/虚树/单调栈.cpp](<../algorithms/图论/树上问题/虚树/单调栈.cpp>) | [algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
+| [diameterDfs - algorithms/图论/树上问题/树的直径/两次dfs.cpp](<../algorithms/图论/树上问题/树的直径/两次dfs.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
+| [diameterDp - algorithms/图论/树上问题/树的直径/树形dp法.cpp](<../algorithms/图论/树上问题/树的直径/树形dp法.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
+| [centroid - algorithms/图论/树上问题/树的重心/树的重心.cpp](<../algorithms/图论/树上问题/树的重心/树的重心.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
+| [center - algorithms/图论/树上问题/树的中心/树的中心.cpp](<../algorithms/图论/树上问题/树的中心/树的中心.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/树上问题/树的中心/对拍/center_check.cpp](<../algorithms/图论/树上问题/树的中心/对拍/center_check.cpp>) |
+| [topo - algorithms/图论/拓扑排序/拓扑排序.cpp](<../algorithms/图论/拓扑排序/拓扑排序.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [segGraph - algorithms/图论/优化建图/线段树优化建图.cpp](<../algorithms/图论/优化建图/线段树优化建图.cpp>) | [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../algorithms/图论/优化建图/对拍/seggraph_check.cpp>) |
 | [dij - algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp](<../algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp>) | [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../algorithms/图论/优化建图/对拍/seggraph_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [dijN - algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp](<../algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
@@ -133,11 +134,15 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp](<../algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp>) | 未发现直接引用 |
 | [algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp>) | 未发现直接引用 |
 
-## 已发现的对拍套件 [19]
+## 已发现的对拍套件 [23]
 
 - [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../algorithms/图论/优化建图/对拍/seggraph_check.cpp>)
+- [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)
 - [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)
+- [algorithms/图论/对拍/graph_core_check.cpp](<../algorithms/图论/对拍/graph_core_check.cpp>)
+- [algorithms/图论/树上问题/树的中心/对拍/center_check.cpp](<../algorithms/图论/树上问题/树的中心/对拍/center_check.cpp>)
 - [algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp](<../algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp>)
+- [algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>)
 - [algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>)
 - [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)
 - [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>)

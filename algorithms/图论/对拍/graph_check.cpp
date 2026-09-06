@@ -191,9 +191,9 @@ void test_topo_sort()
         }
     }
 }
-// ============ 段 3: 直径×2 + 重心 vs 父表 O(n^2) 暴力 ============
+// ============ 段 3: 直径×2 vs 枚举起点, 重心 vs 逐点删除连通块 ============
 
-// 独立暴力: 父表 O(n^2)
+// 独立暴力: 扫描父表找邻边, 对每个起点或删点单独遍历, 总计 O(n^3)
 struct BruteTree
 {
     int n;
@@ -214,20 +214,31 @@ struct BruteTree
         for (int u = 1; u <= n; u++) ans = max(ans, max_dist(u, 0, 0));
         return ans;
     }
-    LL sub_sz(int u) const
-    {
-        LL s = pt[u];
-        for (int v = 1; v <= n; v++)
-            if (par[v] == u) s += sub_sz(v);
-        return s;
-    }
     LL max_part(int x) const
     {
-        LL tot = 0;
-        for (int i = 1; i <= n; i++) tot += pt[i];
-        LL mx = tot - sub_sz(x);
-        for (int v = 1; v <= n; v++)
-            if (par[v] == x) mx = max(mx, sub_sz(v));
+        if (n == 1) return 0;
+        VI seen(n + 1);
+        seen[x] = 1;
+        LL mx = numeric_limits<LL>::min();
+        for (int start = 1; start <= n; start++)
+        {
+            if (seen[start]) continue;
+            VI q{start};
+            seen[start] = 1;
+            LL sum = 0;
+            for (size_t i = 0; i < q.size(); i++)
+            {
+                int u = q[i];
+                sum += pt[u];
+                for (int v = 1; v <= n; v++)
+                    if (!seen[v] && (par[v] == u || par[u] == v))
+                    {
+                        seen[v] = 1;
+                        q.push_back(v);
+                    }
+            }
+            mx = max(mx, sum);
+        }
         return mx;
     }
     pair<VI, LL> centroids() const
@@ -303,6 +314,34 @@ void test_tree_basic()
     }
 }
 
+// 负点权下根没有父侧空块; 零点权下答案可以超过两个
+void test_centroid_boundaries()
+{
+    Graph<false> g(6, 5);
+    TreeCentroid<Graph<false>> tc(6);
+    g.add(1, 2);
+    tc.init(2);
+    tc.pt[1] = tc.pt[2] = -1;
+    tc.build(g, 2);
+    assert(tc.centroids == VI({1, 2}) && tc.min_max_part == -1);
+
+    g.clear();
+    tc.init(1);
+    tc.pt[1] = -7;
+    tc.build(g, 1);
+    assert(tc.centroids == VI({1}) && tc.min_max_part == 0);
+
+    for (int u = 2; u <= 6; u++) g.add(u - 1, u);
+    tc.init(6);
+    for (int u = 1; u <= 6; u++) tc.pt[u] = 0;
+    tc.build(g, 6);
+    assert(tc.centroids == VI({1, 2, 3, 4, 5, 6}) && tc.min_max_part == 0);
+
+    tc.init(6);
+    tc.build(g, 6);
+    assert(tc.centroids == VI({3, 4}) && tc.min_max_part == 3);
+}
+
 // ============ 段 5: Graph 本体 vs 逐边账本 ============
 static void test_graph_core()
 {
@@ -371,10 +410,13 @@ static void test_graph_core()
         dg.clear();
         ug.clear();
         assert(dg.edge_cnt() == 0 && ug.edge_cnt() == 0 && dg.node_cnt() == 0);
-        dg.add(1, 2);
-        ug.add(1, 2);
+        int v = min(n, 2); // n = 1 时用自环, 不借状态表余量访问点 2
+        dg.add(1, v);
+        ug.add(1, v);
         assert(dg.edge_cnt() == 1 && ug.edge_cnt() == 1);
-        assert(dg.deg[1] == 1 && ug.deg[1] == 1 && ug.deg[2] == 1);
+        assert(dg.deg[1] == 1 && dg.in_deg[v] == 1);
+        assert(ug.deg[1] == (v == 1 ? 2 : 1));
+        if (v != 1) assert(ug.deg[v] == 1);
     }
 }
 
@@ -516,6 +558,7 @@ int main()
     test_lca_engines();
     test_topo_sort();
     test_tree_basic();
+    test_centroid_boundaries();
     test_graph_core();
     test_graph_assign();
     test_shortest_path();

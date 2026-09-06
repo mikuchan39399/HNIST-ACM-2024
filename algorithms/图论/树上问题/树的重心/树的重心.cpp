@@ -2,37 +2,35 @@
 #ifndef Z_OI_TREE_CENTROID
 #define Z_OI_TREE_CENTROID
 
-#include <vector>
-#include <algorithm>
-#include <limits>
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ 树的重心 (带点权) ============
-// 重心 = 删除后最大连通块权最小的点; 最多 2 个
-// 支持零/负点权; 森林仅算节点 1 所在的树
+// 求删点后最大连通块权和最小的全部点, 支持零/负点权; 全 1 点权时至多 2 个
+// 输入为 n >= 1 的无向连通树; pt 为点权, 默认 1, sz 为以 1 为根的子树权和
+// centroids 按编号升序存答案, min_max_part 为最优值; 单点树删完无块, 最优值约定为 0
+// pt/sz 每点 16 B, 答案每点 4 B; n = 1e6 时有效元素合计至多约 20 MB, 递归栈另计
 template <class G>
 struct TreeCentroid
 {
     int n;
-    VLL pt;   // 点权, 默认 1, 建树前直填
-    VLL sz;   // 子树权和, build 后有效
-    VI centroids;    // 全体重心, 升序
-    LL min_max_part; // 删重心后最大连通块的权
+    VLL pt;
+    VLL sz;
+    VI centroids;
+    LL min_max_part;
     LL total;
+    // 分配 max_n 个点的状态并将点权置为 1
+    // 时间 O(max_n) | 空间 O(max_n)
     TreeCentroid(int max_n = 0) { init(max_n); }
-    // 多测复位点权为 1 (其余 build 自复位)
-    // 时间: O(n) | 空间: O(n)
+    // 设置本次点数并将点权置为 1, 结果成员由后续 build 更新
+    // 时间 O(_n) | 空间 O(_n)
     void init(int _n)
     {
         n = _n;
         pt.assign(n + 10, 1);
         sz.assign(n + 10, 0);
     }
-    // 对 1..n 的树 g 求全体重心
-    // 时间: O(n) | 空间: O(n)
+    // 按 pt 求 g 的全部最优删点并写入 centroids, 点权数组不足时先整体重置为 1
+    // 时间 O(n + c log c) | 空间 O(n), c 为答案个数, 含递归栈
     void build(G& g, int _n)
     {
         n = _n;
@@ -58,7 +56,8 @@ private:
             sz[u] += sz[v];
             mx = max(mx, sz[v]);
         }
-        mx = max(mx, total - sz[u]);   // up 块在子树累加完成后算
+        if (p) mx = max(mx, total - sz[u]); // 根没有父侧连通块
+        if (n == 1) mx = 0;
         if (mx < min_max_part) min_max_part = mx, centroids = {u};
         else if (mx == min_max_part) centroids.push_back(u);
     }
@@ -73,7 +72,7 @@ private:
  * // tc.pt[i] = w[i];             // 带点权时直填, 不填默认全 1
  * for (int i = 1; i < n; i++) { int u, v; cin >> u >> v; g.add(u, v); }
  * tc.build(g, n);
- * tc.centroids;                  // 重心列表(最多 2 个)
+ * tc.centroids;                  // 全部最优删点, 零/负点权下可能超过 2 个
  * tc.min_max_part;               // 删重心后最大连通块的权
  * tc.sz;                         // 子树权和(以 1 为根)
  * // build 为递归 DFS, 深链依赖评测机栈宽

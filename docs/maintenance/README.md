@@ -15,12 +15,12 @@
 | 资产扫描/测试入口 | 运行 scripts/check_inventory_test.ps1 / scripts/check_runner.ps1 |
 | 分享队友包 | scripts/make_team_package.ps1 -OutputPath ./docs/releases/HNIST-ZOI.zip（目标须不存在） |
 
-功能细目由 make_features 复用 check_inventory 生成；-Check 只检查且过期失败。概括性功能介绍在 docs/features/README.md，新增或撤下整个功能时同步描述，不手填数量或测试通过等级。
-所有脚本放 scripts，库根从 PSScriptRoot 推导，不写本机绝对路径。打包收源码、受管文档、验证范围 JSON 与自动运行证据, 排除恢复备份、原始测试日志和已有发布包
+功能细目由 make_features 复用 check_inventory 生成；-Check 只检查且过期失败。每次功能新增、修改或撤下均执行 [rule 双向同步要求](../../rule.md#适用范围与阅读顺序), 核对 LLM 规则与 docs/features/README.md 的用户说明, 不限于新增整个功能; 不手填生成数量或测试通过等级。
+所有脚本放 scripts，库根从 PSScriptRoot 推导，不写本机绝对路径。打包收源码、受管文档、验证范围 JSON、自动运行证据及压力入口依赖的 .github 配置, 排除恢复备份、原始测试日志和已有发布包。
 
 ## CI 与报告
 
-push、PR 或手动触发 CI。普通回归、语法扫描、sanitizer 与 Windows 安装脚本检查分工见 [测试说明](../../scripts/checks.md) 和 [CI 配置](../../.github/workflows/ci.yml)。
+push、PR 或手动触发 CI。普通回归、语法扫描、sanitizer、独立压力与 Windows 安装脚本检查分工见 [测试说明](../../scripts/checks.md) 和 [CI 配置](../../.github/workflows/ci.yml)。新增验收用的压力参数须绑定自动作业, 不以保留手动脚本代替接入; 改入口时同时验证成功、失败和超时路径。
 报告绑定当次源码、环境、参数和范围；本地绿和已发布提交的绿不能代替未提交改动的验证。日志无权限时不猜原因，尽量本地复现。没有运行的环境不标通过。
 
 两层表的数据分工、失效条件、CI 附件导入与 AI 收尾流程统一见 [验证指南](../verification/README.md), 不在这里复制状态规则. 新增功能时同步用户功能总览和 AI 路由, 不只改实施记录
@@ -102,9 +102,9 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 - 采纳 reliability 自动生成，但它只展示当前测试资产关系，不从 include 推断独立暴力、API 覆盖、运行通过或赛场可靠性。A/B/C 若保留，只是导航：直接引用资产/未发现直接引用/纯文本笔记；豁免 C++ 单列，不混入笔记。
 - 独立入口 scripts/make_reliability.ps1，默认生成，-Check 只比较且过期失败；不在普通 run_checks 中写跟踪文档。CI 普通作业校验生成物，无时间戳、绝对路径或不稳定排序。
 - scripts/check_inventory.ps1 共用 catalog/源文件/直接 include 事实映射，runner 和生成器都调用，不维护第二份模板到套件表、不解析 TEST GAP 控制台文本。抽取时保留现有 scaffold 校验失败语义，并更新 check_runner 的假仓库依赖。
-- TEST GAP 继续是提示，不作门禁，不把传递 include 转成行为覆盖率。第一版不合并旧 PASS；现有 summary 无源码及依赖指纹，不能证明当前脏工作区通过。运行结果仍查报告中的环境/参数/范围。
+- TEST GAP 继续是提示，不作门禁，不把传递 include 转成行为覆盖率。旧无指纹 summary 不导入当前证据; 现行 runner 已记录源码及依赖指纹, 失效判断统一见验证指南。
 - 旧 reliability 全表已完整归档至 sweep-history；深检与重构期标记留在历史，不作为源码变化后自动继承的等级。rule 的手工同步义务已替换为生成和校验，测试纪律不变。
-- 验收仅围绕映射增删、同名不同路径、笔记/豁免、输出幂等、-Check 不写且过期失败、旧内容有去处；复跑 runner 九项自检，不重扫无关模板。
+- 修改资产映射时验证映射增删、同名不同路径、笔记/豁免、输出幂等、-Check 不写且过期失败和历史保留; 运行现行入口自检, 不手填会过期的测试项数, 不重扫无关模板。
 - 六个规则分卷默认不增文件，新内容放现有职责内；不为凑数重新合成巨型 rule。
 - 历史压缩保留问题结论、测试环境/范围/结果、证据位置和未解决分歧；去掉重复进度即可，不自动改写为更强结论。暂不做历史压缩脚本。
 日常命令: ./scripts/make_reliability.ps1 更新总览; -Check 只检查是否过期。
@@ -115,6 +115,6 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 
 纸质化回归须检查：筛选条目的 include 仍按完整 catalog 和相对目标路径改写；同名源文件不按 basename 混淆；SoloMin 的正文和插件均按阈值从奇数页开始，审计不得漏掉应检查锚点。版式修改后核对代码块、目录覆盖与页数，并渲染检查目录、正文、笔记和附录。
 
-临时工作目录统一使用库内 .zoi-checks/codex-work，命令以仓库根目录为工作目录；不再把本项目的测试副本、预览图和中间脚本放到 C 盘会话目录。此目录受 Git 忽略，正式文档仍放 docs。
+工作目录、子进程临时文件与长期交接统一执行 [工作区与沉淀](../../rules/collab.md#工作区与沉淀)。
 
 根目录只保留 README.md、AGENTS.md、rule.md 和 .gitignore 等必要入口。旧规则历史位于 records/tooling/rule_history.md；手册 PDF 及同名 .typ 默认生成到 docs/booklet/output，指定 OutFile 时两者跟随该路径，不能重新把默认生成物散落到根目录。打包排除手册 output，仍保留历史正文。

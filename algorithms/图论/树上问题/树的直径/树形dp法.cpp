@@ -2,25 +2,20 @@
 #ifndef Z_OI_TREE_DIAMETER_DP
 #define Z_OI_TREE_DIAMETER_DP
 
-#include <vector>
-#include <algorithm>
-#include <type_traits>
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ 树的直径 (树形 dp, 仅求长度) ============
-// 支持负边权(与两次 DFS 版的分界); W 为 Empty 时按 1 计权
-// 森林仅算节点 1 所在的树
+// 树形 DP 求直径长度, 支持负边权, 无权边按 1 计权, 允许单点路径且长度为 0
+// 输入为 n >= 1 的无向森林, 仅处理点 1 所在的树; down 为从各点向下的最大路径权和
+// 每点 8 B; n = 1e6 时约 8 MB, 递归栈另计
 template <class G>
 struct TreeDiameterDP
 {
     int n;
     LL len;
     VLL down;
-    // 对 1..n 的树 g 树形 dp 并返回直径长度; 多测直接重跑即可全量自复位
-    // 时间: O(n) | 空间: O(n)
+    // 重建 g 中点 1 所在树的状态并返回直径长度, 全负边权时返回 0
+    // 时间 O(n) | 空间 O(n), 含递归栈
     LL build(G& g, int _n)
     {
         n = _n;

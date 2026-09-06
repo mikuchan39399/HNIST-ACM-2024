@@ -2,14 +2,8 @@
 #ifndef Z_OI_EBCC
 #define Z_OI_EBCC
 
-#include <vector>
-#include <algorithm>
-#include <iostream>
-#include <cassert>
 #include "../图的存储/Graph.cpp"
 #include "../../杂项/utils/utils.cpp"
-
-using namespace std;
 
 // 边双与桥森林; bel[u] 为 1 .. ebcc_cnt, ebcc_points[i] 存原图点, tree 点号为分量号
 // 原图外置, 需 g[u], id / rev / edges 半边接口; 允许重边与自环, 递归深度最坏 n

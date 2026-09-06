@@ -67,6 +67,7 @@
 | [树上问题 / 树的直径 / 两次dfs](<../../algorithms/图论/树上问题/树的直径/两次dfs.cpp>) | [diameterDfs.h](<../../zoi/diameterDfs.h>) |
 | [树上问题 / 树的直径 / 树形dp法](<../../algorithms/图论/树上问题/树的直径/树形dp法.cpp>) | [diameterDp.h](<../../zoi/diameterDp.h>) |
 | [树上问题 / 树的重心 / 树的重心](<../../algorithms/图论/树上问题/树的重心/树的重心.cpp>) | [centroid.h](<../../zoi/centroid.h>) |
+| [树上问题 / 树的中心 / 树的中心](<../../algorithms/图论/树上问题/树的中心/树的中心.cpp>) | [center.h](<../../zoi/center.h>) |
 | [欧拉图 / 无向图欧拉边路径](<../../algorithms/图论/欧拉图/无向图欧拉边路径.cpp>) | [eulerUndirected.h](<../../zoi/eulerUndirected.h>) |
 | [欧拉图 / 有向图欧拉边路径](<../../algorithms/图论/欧拉图/有向图欧拉边路径.cpp>) | [eulerDirected.h](<../../zoi/eulerDirected.h>) |
 | [欧拉图 / 无向图欧拉点路径](<../../algorithms/图论/欧拉图/无向图欧拉点路径.cpp>) | [eulerPointUndirected.h](<../../zoi/eulerPointUndirected.h>) |

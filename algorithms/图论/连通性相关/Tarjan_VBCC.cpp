@@ -2,14 +2,8 @@
 #ifndef Z_OI_VBCC
 #define Z_OI_VBCC
 
-#include <vector>
-#include <algorithm>
-#include <iostream>
-#include <cassert>
 #include "../图的存储/Graph.cpp"
 #include "../../杂项/utils/utils.cpp"
-
-using namespace std;
 
 // 点双与圆方森林; cut[u] 判割点, vbcc_cir[i] 存第 i 个点双的原图点, 孤立点自成一块
 // 圆点 1 .. n, 方点 n + i, 总点数最多 2 * n; 接 HLD 等算法时按 n + vbcc_cnt 建树

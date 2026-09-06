@@ -1,0 +1,118 @@
+{
+  "schema": "lca-vt-extreme-1",
+  "profile": "lca-vt",
+  "compiler": "g++-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+  "platform": "linux",
+  "sources_sha256": {
+    ".github/workflows/ci.yml": "42bbe4093d0f49ca046ba757c96cd31654e2fa8c9f23fcea0344a894cdeb0404",
+    "algorithms/图论/图的存储/Graph.cpp": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48",
+    "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp": "15029b41362c8e58e1e021fd50ccc658fe674bd9ebd148b1d25f63d8a12484ba",
+    "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp": "844ea1cb045bcb06117f056dd232e85d32eec0815564ca1e270b6188b5ddf3b3",
+    "algorithms/图论/树上问题/虚树/二次排序.cpp": "ecb891378b48142957b9edf290b913b14726a68f292061c6696c79fbfadfe43f",
+    "algorithms/图论/树上问题/虚树/单调栈.cpp": "f20b20ffd036eaa79fd75c0ba58653a0df33cff3d4ec5bcdbff158721f052434",
+    "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp": "f951a907500e20047f0a3ef36b15770713d86bbc2c88ce24b5de6a8b190d5884",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "scripts/check_lca_vt_extreme.py": "91ddffc70547d537aaeb8f0e331975b0b2aef2de15d19cd640e144c603b0e545"
+  },
+  "stable": true,
+  "results": [
+    {
+      "name": "compile-normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 3.587,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-hbtebxjg/normal"
+      ]
+    },
+    {
+      "name": "large-shallow",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 11.269,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-hbtebxjg/normal",
+        "--large",
+        "1000000"
+      ]
+    },
+    {
+      "name": "large-chain",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 4.399,
+      "timeout_seconds": 180,
+      "stack_kib": 262144,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-hbtebxjg/normal",
+        "--deep",
+        "1000000"
+      ]
+    },
+    {
+      "name": "compile-sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 11.323,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-hbtebxjg/sanitizer"
+      ]
+    },
+    {
+      "name": "stack-dfn",
+      "status": "STACK_LIMIT",
+      "exit_code": 1,
+      "seconds": 0.504,
+      "timeout_seconds": 60,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-hbtebxjg/sanitizer",
+        "--probe-dfn",
+        "200000"
+      ]
+    },
+    {
+      "name": "stack-hld",
+      "status": "STACK_LIMIT",
+      "exit_code": 1,
+      "seconds": 0.402,
+      "timeout_seconds": 60,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-hbtebxjg/sanitizer",
+        "--probe-hld",
+        "200000"
+      ]
+    }
+  ],
+  "failed": false
+}

@@ -2,6 +2,360 @@
   "schema": 1,
   "coverage": [
     {
+      "template": "algorithms/图论/图的存储/Graph.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "四种 Dir",
+        "Empty",
+        "LL 组合的 add",
+        "id",
+        "rev",
+        "邻接序",
+        "度数",
+        "拷贝",
+        "移动",
+        "clear"
+      ],
+      "oracle": "独立边账本逐项核对",
+      "cases": [
+        "20 万点 60 万条逻辑边, 零预留触发扩容、自环重边、LL 两端存取和清空重建",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点 60 万条逻辑边, 零预留触发扩容、自环重边、LL 两端存取和清空重建",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "build",
+        "get",
+        "入度不变"
+      ],
+      "oracle": "独立检查排列完整性和每条边的先后约束",
+      "cases": [
+        "20 万点 DAG、重复边、加回边成环, 大/空/单点/大复用",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点 DAG、重复边、加回边成环, 大/空/单点/大复用",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "build",
+        "len",
+        "end_u",
+        "end_v",
+        "path",
+        "pre"
+      ],
+      "oracle": "多臂树闭式距离与路径逐边检查",
+      "cases": [
+        "20 万点星/64 点长臂, 零权和 1e12 边权, 大/单点/两点/大, 根分量约定",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点星/64 点长臂, 零权和 1e12 边权, 大/单点/两点/大, 根分量约定",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "build"
+      ],
+      "oracle": "多臂树直径闭式答案, 全负权允许单点路径",
+      "cases": [
+        "20 万点星/64 点长臂, 零权、正负 1e12 边权, 大小交替和根分量约定",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点星/64 点长臂, 零权、正负 1e12 边权, 大小交替和根分量约定",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "init",
+        "build",
+        "centroids",
+        "min_max_part"
+      ],
+      "oracle": "独立计算删点后各实际非空分块大小与权和",
+      "cases": [
+        "20 万点星/64 点长臂, 全负/零/1e12 点权, 大/单点/两点/大",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点星/64 点长臂, 全负/零/1e12 点权, 大/单点/两点/大",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "build",
+        "centers",
+        "radius",
+        "ecc",
+        "diameter",
+        "end_u",
+        "end_v"
+      ],
+      "oracle": "多臂树逐点离心率闭式答案",
+      "cases": [
+        "20 万点星/64 点长臂, 全零及 1e12 边权, 全部中心及全部 ecc, 大小交替",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点星/64 点长臂, 全零及 1e12 边权, 全部中心及全部 ecc, 大小交替",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "init",
+        "build",
+        "任意根",
+        "fa",
+        "dep",
+        "dfn",
+        "seg",
+        "sz",
+        "路径与子树修改查询"
+      ],
+      "oracle": "独立 BFS 父表、儿子表枚举与朴素点值; 大树按编号爬父链",
+      "cases": [
+        "400 组任意根小树每组 160 操作, len/sum/max 同查; 20 万点二叉树每轮 10 万操作, 大/单点/大; 空森林及 BCT 组装",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 400 组任意根小树每组 160 操作, len/sum/max 同查; 20 万点二叉树每轮 10 万操作, 大/单点/大; 空森林及 BCT 组装",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "init",
+        "build",
+        "bel",
+        "scc_cnt",
+        "build_dag"
+      ],
+      "oracle": "按生成结构闭式划分 SCC, 核对成员唯一性与缩点边数",
+      "cases": [
+        "20 万点孤立/星/二叉/64 点环块森林, 大/单点/大",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点孤立/星/二叉/64 点环块森林, 大/单点/大",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "init",
+        "build",
+        "bel",
+        "ebcc_cnt",
+        "get_bridges",
+        "build_tree"
+      ],
+      "oracle": "按生成结构闭式划分 EBCC, 独立原边序核对桥",
+      "cases": [
+        "20 万点孤立/星/二叉/64 点环块森林, 大/单点/大",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点孤立/星/二叉/64 点环块森林, 大/单点/大",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "init",
+        "build",
+        "vbcc_cir",
+        "cut",
+        "build_tree"
+      ],
+      "oracle": "独立构造规范点双集合、割点与圆方边关联",
+      "cases": [
+        "20 万点孤立/星/二叉/64 点环块森林, 全块和割点核对, 大/单点/大",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点孤立/星/二叉/64 点环块森林, 全块和割点核对, 大/单点/大",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+      "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "api": [
+        "init",
+        "build",
+        "vbcc_cir",
+        "cut",
+        "build_tree",
+        "HLD 组装"
+      ],
+      "oracle": "独立构造点双与圆方边, 圆点记 1 后核对 HLD 路径计数",
+      "cases": [
+        "20 万点孤立/星/二叉/64 点环块森林, 全块/割点/邻接核对和大小复用",
+        "CI completed-graph profile 另跑 20 万点深链/大环, 256 MiB 栈, 普通与 ASan/UBSan 均须成功"
+      ],
+      "summary": "已完成项补验: 20 万点孤立/星/二叉/64 点环块森林, 全块/割点/邻接核对和大小复用",
+      "limitations": "本套件为结构化目标规模补验, 随机/穷举语义暴力保留在原套件; 递归深链仅在独立增栈 CI 中执行, 不承诺默认栈通过; HLD 仅验证可交换点权聚合, 权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+      "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+      "api": ["init/build", "lca(u,v)", "lca(nodes)", "dist", "jump", "dep/dis/rt/sz/dfn/rnk/fa[0]", "虚树双实现组装"],
+      "oracle": "独立父表爬链与路径权和; 大链用编号闭式答案; 虚树以原父树删枝、必选点及多有效儿子分叉点构造, 不调用被测 LCA",
+      "cases": ["默认 mt19937(42), 400 组最多 40 点带权树/森林全点对, 另有 3 个固定零权/LL 两端权和样例, 跳转负/零/路径中点/终点/越过终点", "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 init 复用", "默认 20 万点星/二叉/随机树/64 点链块森林, 每形态 10 万次查询, 四种 LCA 与虚树组合核对", "全点、2n 长重复输入、空集、单点、稀疏关键点及大-小-大重建; 百万点/增栈深链/默认栈探针由独立 CI stress 作业执行, 专项报告单列"],
+      "summary": "带权全点对、跳转、成员表与虚树双实现组装已测, 默认压力到 20 万点",
+      "limitations": "保留递归; 深链不在本套件无参数回归中, 独立 CI stress 作业记录栈探针和增栈百万点结果, 不承诺默认栈通过; 未逐项核对完整 rmq/fa 倍增表"
+    },
+    {
+      "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+      "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+      "api": ["init/build", "build(g,root)", "lca(u,v)", "lca(nodes)", "dist", "dep/dis/rt/sz/dfn/fa", "虚树双实现组装"],
+      "oracle": "独立父表爬链与路径权和, 指定根由原边表独立 BFS 重建父表; 虚树以父树删枝构造, 不调用被测 LCA",
+      "cases": ["默认 mt19937(42), 400 组最多 40 点带权树/森林全点对, 其中 200 组连通树再测随机指定根与两种虚树, 另测零权及逼近 LL 两端的权和", "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 init 复用", "默认 20 万点星/二叉/随机树/64 点链块森林, 每形态 10 万次查询, 四种 LCA 与虚树组合核对", "全点、2n 长重复输入、空集、单点、稀疏关键点及大-小-大重建; 独立 CI stress 作业另列百万点和栈探针报告"],
+      "summary": "带权全点对、任意根、成员表与虚树双实现组装已测, 默认压力到 20 万点",
+      "limitations": "保留递归, 默认回归不跑大深链; 默认栈限制由独立 CI stress 作业另列探针结果, 不承诺深链通过; 指定根只测连通树, son/top 未逐项核对"
+    },
+    {
+      "template": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+      "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+      "api": ["build(nodes,lca,root)", "tree 边端点/权值", "输入不变", "build 自带复位"],
+      "oracle": "在独立父树上剪除无关键点分支, 保留必选点及至少两个有效儿子的分叉点, 连最近保留祖先; 不用 LCA/DFS 序/单调栈",
+      "cases": ["同时搭配 DFN_LCA 和 HLD_LCA, 400 组带权小树/森林及 3 个零权/LL 边界样例, 其中 200 组另测 HLD 任意根", "默认 20 万点星/二叉/随机树/64 点链块森林, 全点和 2n 长重复点集", "清空后单点、稀疏点集、任意必选 root、跨分量及大-小-大复用"],
+      "summary": "两份 LCA 组装及独立删枝参照已测, 全点/重复输入压力到 20 万点",
+      "limitations": "默认结构化压力不含大深链, LCA 递归受栈限制; 百万点及增栈深链由独立 CI stress 作业自动执行并另出报告, 不冒充本套件无参数回归范围"
+    },
+    {
+      "template": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+      "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+      "api": ["build(nodes,lca,root)", "tree 边端点/权值", "输入不变", "build 自带复位"],
+      "oracle": "在独立父树上剪除无关键点分支, 保留必选点及至少两个有效儿子的分叉点, 连最近保留祖先; 不用 LCA/DFS 序/单调栈",
+      "cases": ["同时搭配 DFN_LCA 和 HLD_LCA, 400 组带权小树/森林及 3 个零权/LL 边界样例, 其中 200 组另测 HLD 任意根", "默认 20 万点星/二叉/随机树/64 点链块森林, 全点和 2n 长重复点集", "清空后单点、稀疏点集、任意必选 root、跨分量及大-小-大复用"],
+      "summary": "两份 LCA 组装及独立删枝参照已测, 全点/重复输入压力到 20 万点",
+      "limitations": "默认结构化压力不含大深链, LCA 递归受栈限制; 百万点及增栈深链由独立 CI stress 作业自动执行并另出报告, 不冒充本套件无参数回归范围"
+    },
+    {
+      "template": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+      "suite": "algorithms/图论/树上问题/虚树/对拍/vt_check.cpp",
+      "api": ["build(nodes,lca)", "build(nodes,lca,root)", "clear", "tree 边端点/权值/used", "输入点集不变"],
+      "oracle": "独立原始边表建父表, 爬父链求两两 LCA 闭包, 每点连向闭包内最近祖先并取路径权和; 比较规范边集, 不以双实现互拍代替暴力",
+      "cases": ["mt19937(42), 原 300 组 1 到 12 点无权树/含孤立点森林, 默认 root=1, 静态对象 build 复用", "300 组 1 到 24 点随机重标号带权森林, 每组各测任意点集与同分量点集, 任意 root、重复点、正负及零权", "10 个固定样例: 重复点、非祖先 root、分支、负/零/1e12 权、跨树清空、空集和单点、64 点链/星及大-小-大复用", "新增样例核对输入不变、used, 显式 clear 后边/used/head/deg 清空, const 点集重建"],
+      "summary": "两版虚树的压缩边与权值、任意必选 root、重复点、跨树清空和复用已对拍",
+      "limitations": "本套件仅搭配 DFN_LCA 且最多 64 点, HLD_LCA 与大规模见 lca_vt_stress_check; 空集不保留 root, 单点无边且不进入 Graph.used, 不提供独立虚树点集或重定根结果"
+    },
+    {
+      "template": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+      "suite": "algorithms/图论/树上问题/虚树/对拍/vt_check.cpp",
+      "api": ["build(nodes,lca)", "build(nodes,lca,root)", "clear", "tree 边端点/权值/used", "输入点集不变"],
+      "oracle": "独立原始边表建父表, 爬父链求两两 LCA 闭包, 每点连向闭包内最近祖先并取路径权和; 比较规范边集, 不以双实现互拍代替暴力",
+      "cases": ["mt19937(42), 原 300 组 1 到 12 点无权树/含孤立点森林, 默认 root=1, 静态对象 build 复用", "300 组 1 到 24 点随机重标号带权森林, 每组各测任意点集与同分量点集, 任意 root、重复点、正负及零权", "10 个固定样例: 重复点、非祖先 root、分支、负/零/1e12 权、跨树清空、空集和单点、64 点链/星及大-小-大复用", "新增样例核对输入不变、used, 显式 clear 后边/used/head/deg 清空, const 点集重建"],
+      "summary": "两版虚树的压缩边与权值、任意必选 root、重复点、跨树清空和复用已对拍",
+      "limitations": "本套件仅搭配 DFN_LCA 且最多 64 点, HLD_LCA 与大规模见 lca_vt_stress_check; 空集不保留 root, 单点无边且不进入 Graph.used, 栈工作状态未逐项核对"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+      "suite": "algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp",
+      "api": ["init", "build(g,1)", "build(g)", "dfn/seg", "modify_path", "query_path", "modify_subtree", "query_subtree"],
+      "oracle": "独立父表逐级爬链与儿子表遍历, 朴素点权数组逐点加和",
+      "cases": ["单树 300 组, 每组 60 次混合操作, 固定种子 20260903", "固定单点及 61 点链/星/二叉树, 其余随机树最多 60 点", "森林 150 组, 每组 60 次操作尝试, 跨分量路径跳过, 种子 3369", "正负点权与正负增量, 静态 HLD/SegTree 跨组 init, 每棵树根子树尾对账"],
+      "summary": "单树与森林的点权路径/子树加和查询及多测复位已对拍",
+      "limitations": "仅测加和代数, 指定根仅测 1, 查询只核对 sum; 未直接测其他代数、边权映射、任意根、空森林或长于 61 的深链, 剖链成员表未逐项核对"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+      "suite": "algorithms/图论/树上问题/树的中心/对拍/center_check.cpp",
+      "api": ["build", "centers", "radius", "ecc", "end_u/end_v", "diameter"],
+      "oracle": "独立 Floyd 全源距离, 逐点取最远距离并枚举全部最小值点; 大链/星使用闭式答案",
+      "cases": ["mt19937(42), 400 组 1 到 24 点随机重标号树, 每组分别测试 Empty 与 LL", "8 个固定小例: 单点、奇偶链、长边、全零星、零权分支、1e12 边权", "2000/1/2/1999 点链交替复位与 2000 点星, 核对全部 ecc 与中心"],
+      "summary": "无权/非负权顶点中心、半径、每点最远距离和直径端点均已对拍",
+      "limitations": "仅支持无向连通树及 Empty/非负整数权, 不求边内部中心; 深链测至 2000 点, 路径权和须在 LL 内"
+    },
+    {
+      "template": "algorithms/图论/图的存储/Graph.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": ["add", "clear", "node_cnt", "edge_cnt", "operator[]", "拷贝/移动赋值"],
+      "oracle": "逐边账本核对邻接多重集和度数, 赋值前后逐点邻接快照",
+      "cases": ["300 组无权有向/无向小图, 自环重边与 clear 后重建, 种子 777", "300 组赋值测试, 有向 Empty/LL 与无向 LL 拷贝, 种子 42", "副本加边清空后原图不变, 有向移动赋值及自赋值, nothrow 静态检查"],
+      "summary": "图论组装套件核对存图、复位与赋值, 另有独立本体套件",
+      "limitations": "本套件的赋值快照不比较边权, 未直接验证 id/rev 和扩容; 这些由 graph_core_check 单独登记"
+    },
+    {
+      "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": ["init", "build", "lca(u,v)", "lca(nodes)", "dist", "jump", "sz"],
+      "oracle": "独立父表逐级爬链, 递归计子树大小, 路径步数模拟",
+      "cases": ["300 组 1 到 50 点无权森林, mt19937(42)", "静态实例 init 复用, 每组 40 次随机点对与跳转", "1 到 6 个点的点集查询, 跨树返回值, 非正步数及超路长跳转"],
+      "summary": "无权森林的单点对/点集 LCA、距离、跳转和子树大小已对拍",
+      "limitations": "本套件仅测无权小森林, 带权/空态/大规模见 lca_vt_stress_check; 完整 rmq/fa 表未逐项核对"
+    },
+    {
+      "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": ["init", "build(g)", "lca(u,v)", "lca(nodes)", "dist"],
+      "oracle": "独立父表逐级爬链与路径步数",
+      "cases": ["300 组 1 到 50 点无权森林, mt19937(42)", "静态实例 init 复用, 每组 40 次随机点对", "1 到 6 个点的点集查询及跨树返回值"],
+      "summary": "默认根无权森林的单点对/点集 LCA 与距离已对拍",
+      "limitations": "本套件仅测默认根无权小森林, 指定根/带权/空态/大规模见 lca_vt_stress_check; son/top 未逐项核对"
+    },
+    {
+      "template": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": ["build", "get"],
+      "oracle": "独立三色 DFS 判环, 拓扑序排列与逐边前后关系",
+      "cases": ["300 组 1 到 40 点、0 到 120 边有向图, mt19937(42)", "自环重边, 静态实例重复 build", "核对原图入度不变, 成功时每点恰好一次, 失败时出队不足 n 点"],
+      "summary": "判环、合法拓扑序、重复构建与原图入度保护已测",
+      "limitations": "未直接测 n=0 或大规模; 不要求字典序最小, 不验证失败时部分序列的具体顺序"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": ["build", "len", "end_u/end_v", "path"],
+      "oracle": "独立枚举起点的全路径权和, 父表核对返回路径邻接与权和",
+      "cases": ["200 组 1 到 50 点非负边权树及其无权形态, mt19937(42)", "静态实例重复 build, 边权 0 到 6", "带权路径的首尾、相邻结点和权和核对"],
+      "summary": "非负权直径长度、端点和路径已对拍, 无权长度另行核对",
+      "limitations": "未直接测森林、深链或大规模; 无权路径和完整 pre 表未逐项检查; 负边权不在契约内"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": ["build"],
+      "oracle": "独立枚举所有起点的路径权和, 允许零长度单点路径",
+      "cases": ["300 组 1 到 50 点树, 其中 100 组允许 -5 到 5 的负边权, mt19937(42)", "其余 200 组非负权并额外核对无权形态", "静态实例重复 build"],
+      "summary": "有权及无权直径长度已对拍, 包含负边权",
+      "limitations": "未直接测森林、深链、大规模或固定全负树; down 表未逐项核对; 不承诺非空边路径"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": ["init", "pt", "build", "centroids", "min_max_part"],
+      "oracle": "独立逐点删除后扫描连通块, 汇总各块权和并枚举全部最优删点",
+      "cases": ["300 组 1 到 50 点树, 点权 -2 到 6, mt19937(42), 静态实例 init 复用", "两点均为 -1 的根空块反例, 单点负权树", "六点全零链返回全部点, 全 1 链返回两个重心"],
+      "summary": "正/零/负点权的最优值和全部答案已用删点暴力核对",
+      "limitations": "仅支持无向连通树, 未测深链、大规模或权和极值; sz 表未逐项核对; 单点删完约定为 0"
+    },
+    {
+      "template": "algorithms/图论/图的存储/Graph.cpp",
+      "suite": "algorithms/图论/对拍/graph_core_check.cpp",
+      "api": ["Graph", "add", "clear", "node_cnt", "edge_cnt", "id", "rev", "operator[]", "拷贝与移动"],
+      "oracle": "独立逻辑边账本逐点扫描, 按插入次序反向枚举邻接边",
+      "cases": [
+        "有向/无向与 Empty/LL 四种组合, 各 304 组, mt19937(42)",
+        "空图、单点自环、重边、负权、孤立点、重复 clear 与大小交替复用",
+        "超过实际预留容量, 逐次核对半边编号、链序、度数、触碰点与权值",
+        "拷贝构造/赋值独立性, 移动构造/赋值与自赋值, 邻接引用改权"
+      ],
+      "summary": "编号、邻接、度数、权值、扩容、复位与拷贝移动均有直接对拍",
+      "limitations": "仅测 Empty/LL 权值; 不承诺加边时已有引用有效, 不测试超出点容量的输入"
+    },
+    {
       "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
       "suite": "algorithms/图论/连通性相关/对拍/conn_check.cpp",
       "api": [

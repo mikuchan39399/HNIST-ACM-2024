@@ -1,0 +1,162 @@
+{
+  "schema": 1,
+  "id": "c70ac5b4deca4eb2943b3fb48c332919",
+  "startedUtc": "2026-09-06T02:55:43.6533558Z",
+  "finishedUtc": "2026-09-06T02:55:51.7112096Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/graph-deps/graph_check",
+  "results": [
+    {
+      "fingerprint": "0337285644ac88ac7a1a20abff012a92e4ed64a8b523b85965b19dc3209ad019",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+          "hash": "d81e25b18897b863f9e16dea95a7d69eddd57c70937870a23f1c8a2abb7e208f"
+        },
+        {
+          "path": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "175f98b6a2b9b459c83508613e5934addda74fa8f7e99808b05ee8fa66455541"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "486c2dc51db21936d6a0863b03d411a7ac86696efdb4f4ed104d4f5174fce367"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "95321ed7fce525453f6c8fb31acc6974bf9c68e486f7ac1e04795b37a04640ee"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "9e14ffa47441b1868fb683ebc333b2b6730888eee1b2e90e197e0d961d6354a2"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "beb3c396fb14acf1e9961c177b4be28138966b2d9a0227435556b2e77c9e3582"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "5f15a88c946073ae78bdb994b9ad4ee7de4e66436a8bcdbfd4aa4eb83b775910"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "c34d612df1c5c9e9775473ddebc37b57798135e5367755716106c76f1ff5f7e4"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 3.014
+    },
+    {
+      "fingerprint": "e749c880c0d3e675c8cd9ad4f197f7b474fb005faab1dad21c128cc0f774ecb0",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "486c2dc51db21936d6a0863b03d411a7ac86696efdb4f4ed104d4f5174fce367"
+        },
+        {
+          "path": "algorithms/图论/对拍/graph_check.cpp",
+          "hash": "f2d652f626c6080ba40d1a75107c02ecf78761fd8891feec24cae7aec91656ae"
+        },
+        {
+          "path": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+          "hash": "688d7778edf789b4b7a45d801022ed2f692fdd2caa068ac2f0b7e155aa0c8434"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
+          "hash": "2e29d6631878c55ab6d6650800edb6000f34f6c416625574e86b3a72feeb4716"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
+          "hash": "0f53bf21e977e42f1d535b442580c6eaa52bf49b606883009090546309eb6512"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
+          "hash": "b421fd62abe67e91ba6c88955cb0433519a2d2fb2bf316a059d2b639ebb17c44"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
+          "hash": "07fe08c01a6c827c7d17e0e58914c35693d553ce29ccbe5abe4f11d258f00bb8"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "95321ed7fce525453f6c8fb31acc6974bf9c68e486f7ac1e04795b37a04640ee"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
+          "hash": "15690990a01a2c1a0251d3f2e220f73fc11c7b0f8c6a3b4c130cc560b5def087"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "089f8b43008739ec1d52c079df94887d2786a56c883c451066394b2e0c5a367d"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "141be1886614db5392490b4dd01d3c192d5fc1f90c335d179f01a62e2ff5d2a2"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+          "hash": "2b95ab073e058c80734d0cd2deb153c8f229a68a0e28204183bea0f90338c958"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+          "hash": "06f1c907863dc10f3e204d6dcab57663ca610bf27b477605e371f79f4b838c40"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "18be185e596d7da920dc0fc59b26df5273de7d1de3a4fab11fd9d92d04386dac"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "9e14ffa47441b1868fb683ebc333b2b6730888eee1b2e90e197e0d961d6354a2"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "beb3c396fb14acf1e9961c177b4be28138966b2d9a0227435556b2e77c9e3582"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "5f15a88c946073ae78bdb994b9ad4ee7de4e66436a8bcdbfd4aa4eb83b775910"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "c34d612df1c5c9e9775473ddebc37b57798135e5367755716106c76f1ff5f7e4"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/对拍/graph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.862
+    }
+  ]
+}

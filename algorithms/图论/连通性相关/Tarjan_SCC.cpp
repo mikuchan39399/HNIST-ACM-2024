@@ -2,14 +2,8 @@
 #ifndef Z_OI_SCC
 #define Z_OI_SCC
 
-#include <vector>
-#include <algorithm>
-#include <iostream>
-#include <cassert>
 #include "../图的存储/Graph.cpp"
 #include "../../杂项/utils/utils.cpp"
-
-using namespace std;
 
 // 强连通分量; bel[u] 为 1 .. scc_cnt, 跨分量边从大编号指向小编号, dag 恒无权
 // 原图外置, build 可接带权图 (含 SegGraph), 只读邻接中的 e.v; 递归深度最坏 n

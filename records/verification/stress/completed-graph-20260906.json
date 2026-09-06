@@ -1,0 +1,125 @@
+{
+  "schema": "lca-vt-extreme-1",
+  "profile": "completed-graph",
+  "compiler": "g++-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+  "platform": "linux",
+  "sources_sha256": {
+    ".github/workflows/ci.yml": "42bbe4093d0f49ca046ba757c96cd31654e2fa8c9f23fcea0344a894cdeb0404",
+    "algorithms/图论/图的存储/Graph.cpp": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48",
+    "algorithms/图论/对拍/completed_graph_stress_check.cpp": "09158af4de9ec34a24c61e2552819a4e8bf366281f3f45ebbd119a28058023e8",
+    "algorithms/图论/拓扑排序/拓扑排序.cpp": "7359347a6875f87ef04404aabb30fc123a4a6a6dd2314f3855882e33f378476b",
+    "algorithms/图论/树上问题/树的中心/树的中心.cpp": "6cfac680803f486cc93fad0fd8e0f32bf7adec8c980ddb46c6b5eff0e6879488",
+    "algorithms/图论/树上问题/树的直径/两次dfs.cpp": "6ad1bce0f05db2ef6b9e648ac82909b7678197d5d497f9a9bb380da214d32b9a",
+    "algorithms/图论/树上问题/树的直径/树形dp法.cpp": "cf3208de1074ad0ad9aded1d6c56f88eea3bbc530baa5598c8f328d78b513186",
+    "algorithms/图论/树上问题/树的重心/树的重心.cpp": "6a12a3195faca4471f8a16ea6be043877cc7e6f2e5c132bef83d6bfae1019884",
+    "algorithms/图论/树上问题/树链剖分/HLD.cpp": "032076c5b37467fd46038d225302c03288cd5e2e518fa78421b95f11271c78d7",
+    "algorithms/图论/连通性相关/Tarjan_EBCC.cpp": "df1737bd192b0c2b794888781eb6213e3059bed66b9da3b4287fa06c7a72a858",
+    "algorithms/图论/连通性相关/Tarjan_SCC.cpp": "b6a333d47fb10a26116b550a75c49da7246dc176bd20445cbccc11b65754a4dc",
+    "algorithms/图论/连通性相关/Tarjan_VBCC.cpp": "f9699b4f2f9e00af3934c811c295b4cbe2bacb72fa20c19f86de69caa6976f09",
+    "algorithms/图论/连通性相关/圆方树/BCT.cpp": "42e7bfe56555711d1ccff3d1d164867cb3b9b381280723f3c1ca407a3c8451a1",
+    "algorithms/数据结构/线段树/泛型线段树.cpp": "06dc78be2a8ecb4c1a31fb752652896483c907f55c29db5a87b58045317a8fc0",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "scripts/check_lca_vt_extreme.py": "a5d1a7de016dc9baadd7e3bee50757a251f8fc06aa521b6250bab5c74d7d78ce"
+  },
+  "stable": true,
+  "results": [
+    {
+      "name": "compile-normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 3.84,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-3l49twg2/normal"
+      ]
+    },
+    {
+      "name": "large-shallow",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.325,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-3l49twg2/normal",
+        "--large",
+        "200000"
+      ]
+    },
+    {
+      "name": "large-chain",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 1.584,
+      "timeout_seconds": 180,
+      "stack_kib": 262144,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-3l49twg2/normal",
+        "--deep",
+        "200000"
+      ]
+    },
+    {
+      "name": "compile-sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 6.651,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-3l49twg2/sanitizer"
+      ]
+    },
+    {
+      "name": "sanitizer-large",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 30.736,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-3l49twg2/sanitizer",
+        "--large",
+        "200000"
+      ]
+    },
+    {
+      "name": "sanitizer-deep",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 54.004,
+      "timeout_seconds": 180,
+      "stack_kib": 262144,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/lca-vt-3l49twg2/sanitizer",
+        "--deep",
+        "200000"
+      ]
+    }
+  ],
+  "failed": false
+}

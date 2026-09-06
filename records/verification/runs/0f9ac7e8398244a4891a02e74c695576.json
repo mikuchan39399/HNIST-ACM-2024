@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "id": "0f9ac7e8398244a4891a02e74c695576",
+  "startedUtc": "2026-09-06T03:10:50.2851278Z",
+  "finishedUtc": "2026-09-06T03:10:53.9848126Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/p01-related/conn_check",
+  "results": [
+    {
+      "fingerprint": "df0a87250363bf7a1a9334ddb2e6a14df27aef3ec4675343b2459308f9aa5d56",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "db05701401185f8f0fd54855c9992ecf4559abbd98552d2703769eb3aa5a2a94"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "130ef563453d3a156ec985978fce7b3a72cebc19bd70398dc1d980936ff6df2d"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "afb1e7cd7a2449d8a53cf29067c5842f40d3985dc1dad0557967936f984e081a"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "5c8089a3a6de8b80fd3bb6ba1852f5c1e19ac27b8f66917f226a32ac25f3d32a"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "1cd3422b59c3f04c4d04ae816e63bd2235db4f98c2abc46138695ed98b4a6db1"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/对拍/conn_check.cpp",
+          "hash": "acdd472329492c1d60ce823b7181fcd6ed04d6f71a76dbe7cc2053e037a5b31c"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "9e14ffa47441b1868fb683ebc333b2b6730888eee1b2e90e197e0d961d6354a2"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "0396630d85c67afad33c24caf332c176d5e709d6c6d01107d389b753361adb9b"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "5f15a88c946073ae78bdb994b9ad4ee7de4e66436a8bcdbfd4aa4eb83b775910"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "c34d612df1c5c9e9775473ddebc37b57798135e5367755716106c76f1ff5f7e4"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/连通性相关/对拍/conn_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 3.623
+    }
+  ]
+}

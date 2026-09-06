@@ -132,4 +132,19 @@ foreach ($mode in $modes) {
     else { Run uninstall $mode 1 -Purge -Library $pkg; Assert ([IO.Directory]::Exists($pkg)) 'Modified package removed' }
 }
 Pass 'owned package deletion / modified or added files retained'
+# Exercise the real package builder: stress snapshots also need CI configuration.
+$zipPath=Join-Path $fixture 'team.zip'
+$pack=Invoke-CheckProcess (Get-Process -Id $PID).Path @('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $PSScriptRoot 'make_team_package.ps1'),'-OutputPath',$zipPath) $fixture 90 (Join-Path $fixture 'package-build')
+Assert (-not $pack.TimedOut -and $pack.ExitCode -eq 0) 'Team package build failed'
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$zip=[IO.Compression.ZipFile]::OpenRead($zipPath)
+try {
+    $names=@($zip.Entries | ForEach-Object { $_.FullName.Replace('\','/') })
+    foreach($required in @('.github/workflows/ci.yml','scripts/check_lca_vt_extreme.py','rules/verification.json','.zoi-package.json')) {
+        Assert ($names -ccontains ('HNIST-ZOI/'+$required)) ('Missing package dependency: '+$required)
+    }
+    Assert (@($names | Where-Object { $_ -match '/(\.git|\.zoi-checks|\.ci-results|backups|releases)/|/booklet/output/|\.exe$' }).Count -eq 0) 'Private or generated assets leaked into package'
+} finally { $zip.Dispose() }
+$script:calls++
+Pass 'real team package includes stress configuration and excludes local artifacts'
 Write-Host "Setup self-test: $script:groups groups passed ($script:calls commands); logs: $fixture"

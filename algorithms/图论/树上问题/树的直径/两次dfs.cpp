@@ -2,44 +2,37 @@
 #ifndef Z_OI_TREE_DIAMETER
 #define Z_OI_TREE_DIAMETER
 
-#include <vector>
-#include <algorithm>
-#include <type_traits>
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ 树的直径 (两次 DFS, 提供端点与路径) ============
-// 仅支持非负边权, 可负边权请用 dp 版(树形dp法.cpp)
-// W 为 Empty 时按 1 计权; 森林仅算节点 1 所在的树
-// 内存: pre 4B/点 + path 动态
+// 两次 DFS 求直径端点与路径, 仅支持非负边权, 无权边按 1 计权
+// 输入为 n >= 1 的无向森林, 仅处理点 1 所在的树; pre 为第二次 DFS 的父表
+// len 为路径权和, path 按 end_u 到 end_v 排列, 同长路径取遍历中先遇到的一条
+// pre 每点 4 B, path 每点 4 B; n = 1e6 时有效元素合计至多约 8 MB, 递归栈另计
 template <class G>
 struct TreeDiameter
 {
     int n;
-    VI pre;    // 父节点, 重建路径用
-    VI path;   // 直径路径 end_u -> end_v
+    VI pre;
+    VI path;
     int end_u, end_v;
     LL len;
-    VI cur_far;
-    VLL cur_d;
-    // 对 1..n 的树 g 两次 DFS; 多测直接重跑即可全量自复位
-    // 时间: O(n) | 空间: O(n)
+    int cur_far;
+    LL cur_d;
+    // 重建 g 中点 1 所在树的状态, 将直径长度、端点和路径写入 len、end_u/end_v 和 path
+    // 时间 O(n) | 空间 O(n), 含递归栈
     void build(G& g, int _n)
     {
         n = _n;
         pre.assign(n + 10, 0);
-        cur_far.assign(n + 10, 0);
-        cur_d.assign(n + 10, 0);
-        cur_d[0] = -1;
+        cur_d = -1;
         dfs(1, 0, 0, g);
-        end_u = cur_far[0];
+        end_u = cur_far;
         pre[end_u] = 0;
-        cur_d[0] = -1;
+        cur_d = -1;
         dfs(end_u, 0, 0, g);
-        end_v = cur_far[0];
-        len = cur_d[0];
+        end_v = cur_far;
+        len = cur_d;
         path.clear();
         for (int u = end_v; u; u = pre[u]) path.push_back(u);
         reverse(path.begin(), path.end());
@@ -53,7 +46,7 @@ private:
     }
     void dfs(int u, int p, LL d, G& g)
     {
-        if (d > cur_d[0]) cur_d[0] = d, cur_far[0] = u;
+        if (d > cur_d) cur_d = d, cur_far = u;
         for (auto& e : g[u])
         {
             int v = e.v;

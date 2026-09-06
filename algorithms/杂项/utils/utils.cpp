@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <climits>
+#include <limits>
 #include <cfloat>
 #include <cstring>
 #include <cstdint>

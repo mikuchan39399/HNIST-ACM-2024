@@ -58,6 +58,6 @@ Git 克隆或普通源码 ZIP 没有队友包归属清单，卸载只撤配置�
 ./scripts/make_team_package.ps1 -OutputPath "D:/分享/HNIST-ZOI.zip"
 ```
 
-测试使用隔离配置，绝不卸载当前电脑的真实配置。打包器校验跳板和 catalog，只收源文件，不收 `.git`、个人安装状态、编译产物、测试日志或编辑器配置。
+测试使用隔离配置，绝不卸载当前电脑的真实配置。打包器校验跳板和 catalog，收源码、文档、验证证据及压力脚本所需的 CI 配置，不收 `.git`、个人安装状态、编译产物、测试日志或编辑器配置。
 
 参考：[VS Code 用户任务](https://code.visualstudio.com/docs/debugtest/tasks#_user-level-tasks)、[CPH 参数解析](https://raw.githubusercontent.com/agrawal-d/cph/main/src/preferences.ts)。

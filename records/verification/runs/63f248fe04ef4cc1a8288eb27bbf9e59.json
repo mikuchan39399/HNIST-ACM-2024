@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "63f248fe04ef4cc1a8288eb27bbf9e59",
+  "startedUtc": "2026-09-06T03:12:08.3016784Z",
+  "finishedUtc": "2026-09-06T03:12:10.6490413Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/p01-final/vt_check",
+  "results": [
+    {
+      "fingerprint": "3f2d996aec578ea51c714306577543579e206313753e81c768476cea55a7306d",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "db05701401185f8f0fd54855c9992ecf4559abbd98552d2703769eb3aa5a2a94"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "8f64b32d13ce6394f98083ab838f01cfe3c50193f5da79d22a3f0d5e250e9acc"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+          "hash": "62f329f3bb0d780fca5f192a06167451c8a8c80a0067a0c18bbe14feb1483504"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+          "hash": "f605b0ebebc731e210ed8ce6552bd0492bfaac779ff609264b8d744ff0e10a9b"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/对拍/vt_check.cpp",
+          "hash": "3c6d9768bffb8b330b0babb8a512cf258d2be9220c862130c2e319b878a5354b"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "9e14ffa47441b1868fb683ebc333b2b6730888eee1b2e90e197e0d961d6354a2"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "0396630d85c67afad33c24caf332c176d5e709d6c6d01107d389b753361adb9b"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "5f15a88c946073ae78bdb994b9ad4ee7de4e66436a8bcdbfd4aa4eb83b775910"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "c34d612df1c5c9e9775473ddebc37b57798135e5367755716106c76f1ff5f7e4"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/树上问题/虚树/对拍/vt_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 2.248
+    }
+  ]
+}

@@ -87,6 +87,30 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+  stress:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [lca-vt, completed-graph]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check stress failure classification
+        run: python3 scripts/check_lca_vt_extreme.py --self-test
+      - name: Target-scale checks and stack boundary reports
+        if: ${{ !cancelled() }}
+        run: python3 scripts/check_lca_vt_extreme.py --profile ${{ matrix.profile }} --report-dir .ci-results/stress-${{ matrix.profile }}
+      - name: Keep stress diagnostics
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: stress-${{ matrix.profile }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ci-results/stress-${{ matrix.profile }}/
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: warn
+
   sanitizer:
     runs-on: ubuntu-24.04
     timeout-minutes: 25

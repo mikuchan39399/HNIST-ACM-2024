@@ -13,4 +13,4 @@
 | 改脚本、维护跳板或制作分享包 | [维护说明](maintenance/README.md) |
 
 AI 接手看 [AGENTS.md](../AGENTS.md)，修改模板看 [模板契约](../rule.md)，追溯方案看 [历史目录](../records/tooling/README.md)。
-本地 ZIP 放 releases/，私人恢复备份放 backups/；它们不提交，也不进入队友包。
+本地 ZIP 放 docs/releases/，私人恢复备份放 docs/backups/；它们不提交，也不进入队友包。

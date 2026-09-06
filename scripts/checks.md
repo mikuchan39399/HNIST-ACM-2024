@@ -29,13 +29,33 @@
 
 边界按契约选择：空态/单元素、全相等/全负值、合法数值上界、首尾与完整区间、容量恰好用满、大—小—大复位、历史版本分叉与回访、链/星/森林/重边。返回值哨兵与合法数据范围要分清，不拿越界输入制造伪 bug。
 
-新套件放对应算法目录的 `对拍/` 下，名字以 `_check.cpp` 结尾，入口会自动发现。不需要手工把新套件加到 CI。
+新套件放对应算法目录的 `对拍/` 下，名字以 `_check.cpp` 结尾，入口会自动发现并无参数运行。额外命令行压力模式不会因此自动执行, 用于验收的模式必须另接入 CI, 不能只留手动命令。
 
 `TEST GAP` 只表示没有直接 include 证据，include 过也不代表所有接口和边界都已验证。历史清扫与验证记录见 `rules/sweep-board.md`，不能替代本次运行报告。
 
 ## CI 与入口自检
 
-push、PR 和手动运行触发 CI；Windows 安装卸载、普通回归与 sanitizer 各一个作业。回归失败后仍跑语法扫描并上传日志，任何失败都会让作业失败。快读写在 Linux 也做字节比对。
+push、PR 和手动运行触发 CI；Windows 安装卸载、普通回归、sanitizer 和独立压力作业自动执行。回归失败后仍跑语法扫描并上传日志, 正确性用例失败会阻断 CI。快读写在 Linux 也做字节比对。
+
+当前压力作业在 Linux 以 matrix 自动执行 `python3 scripts/check_lca_vt_extreme.py --profile NAME`,
+NAME 为 `lca-vt` 或 `completed-graph`, 无需另行手动触发。`lca-vt` (也是默认 profile) 执行:
+
+- 两份 LCA 与两份虚树四种组合, 百万点星/二叉/随机树/链块森林, 必须通过
+- 百万点深链在测试子进程 256 MiB 栈下执行, 必须通过
+- 两份 LCA 各自用 ASan/UBSan 在 8 MiB 栈下探测 20 万点链; 正常完成记 PASS, 只有退出码 1 且明确诊断 `ERROR: AddressSanitizer: stack-overflow` 才记 STACK_LIMIT。超时、普通段错误、断言失败、其他内存错误及 UB 仍判失败
+- `--self-test` 检查失败分类, 并实际制造非零退出和超时; CI 先自检再跑压力
+
+报告 `.ci-results/stress-lca-vt/summary.json` 记录每项命令、编译参数、栈限制、退出码、状态和源码/依赖哈希, stdout/stderr 单列, 随 `stress-*` artifact 上传。STACK_LIMIT 是已记录的环境限制, 不表示该深链用例通过; 小规模/20 万点默认套件继续在普通及 sanitizer 作业中自动执行。
+
+`completed-graph` 编译 `completed_graph_stress_check.cpp`, 普通及 ASan/UBSan 分别运行
+`--large 200000` (8 MiB 栈) 和 `--deep 200000` (256 MiB 栈), 四次都必须成功,
+不接受 STACK_LIMIT。默认套件覆盖 Graph/Topo/直径双实现/重心/中心/HLD/连通性四件套;
+深链模式只跑递归的树属性/HLD/连通性, 包含大环及圆方树接 HLD。
+该 profile 的附件为 `.ci-results/stress-completed-graph/`, 不覆盖 LCA 报告。
+手动调用不传 `--report-dir` 时也按 profile 选择各自目录; 编译/测试子进程的
+TEMP/TMP/TMPDIR 均指向报告目录, 避免在 WSL 系统盘产生本项目编译临时文件。
+旧套件保留随机或穷举语义暴力, 新套件负责结构化规模补验和 HLD 任意根暴力;
+范围与限制见 [本轮复审](../records/verification/completed-template-audit-20260906.md)。
 
 `check_runner.ps1` 在独立小仓库中实际制造编译错误、警告、断言失败、超时、零匹配、缺 catalog、错跳板和重复条目，检查这些情况不会被入口误报成功。它只验证测试入口，不代替算法对拍。
 
@@ -59,6 +79,7 @@ A/B/C 分别是带直接引用的 catalog 引擎、未发现直接引用的引�
 ## 安装与卸载自检
 
 ./scripts/check_setup.ps1 覆盖全新 Profile、重复安装/卸载、JSONC 注释与嵌套同名键、既有 -I 参数、后续用户修改、安装状态异常、写入中断恢复和受管包自删除。Windows CI 使用 PS5.1 与 PS7 各跑一遍，日志保留在 .zoi-checks/setup-test-*。真实 Win11 的插件或编译器不由安装器安装，使用说明见 [队友安装说明](../docs/setup/README.md)。
+该自检还实际生成队友 ZIP, 检查压力入口及 CI 配置齐全, 本地日志、编译产物和私人备份没有入包。
 
 
 ## 自动汇总验证现状
