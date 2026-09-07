@@ -2,6 +2,8 @@
 
 目标是尽早发现会丢区域赛分数的错误。随机对拍、确定性边界、语法检查和 sanitizer 分工不同，不能互相替代。
 
+线段树常用插件用 `./scripts/run_checks.ps1 -Filter seg_plugins`。套件直接 include 七份插件，逐数组暴力检查全部维护量，普通/动态树各 64 轮×320 次；默认另跑每组 20万-1-257-20万复位、长短区间交错修改和查询。Binary/Linear 只验完整 build，其余五组另验 1e9 稀疏零域。`*_check.cpp` 自动发现，普通与 sanitizer CI 都执行，无需手动添加 suite 名。专题边界与证据见 [插件验证](../records/verification/seg-plugins-20260907.md)。
+
 在仓库根目录运行：
 
 ```powershell
@@ -39,6 +41,18 @@
 因此自动进入普通与 sanitizer CI, 不需要另加压力 profile。范围与数值限制见优化建图 README。
 
 ## CI 与入口自检
+
+`python scripts/check_docs.py --self-test` 与 `python scripts/check_docs.py` 自动在普通 CI 执行。
+前者验证断链/孤页/错锚点等失败路径, 后者分别检查用户 README 与 AI AGENTS 对全部受管 Markdown 的可达性,
+以及本地链接和标题锚点; 原文快照只检查能否被找到, 不改写其历史路径。算法说明新增后先运行 make_features。
+
+`misc_check` 默认包含单调队列滑窗四种平手策略、有限前驱 DP、单调栈四种最近关系的小暴力,
+以及 20 万长度的六种滑窗/栈形态与大 DP。大规模参照分别为分块前后缀、multiset 和离散化加 Fenwick,
+不以两份同构单调结构互拍; 普通及 sanitizer CI 自动采用, 无需额外参数。见 records/verification/mono-20260907.md。
+
+`dsu_check` 默认执行染色/平移暴力、六模式独立约束图 BFS, 20 万点链/星/平衡合并/分块森林,
+以及跨模式大—小—大复位、原容量/地址不变和大模数边界; 普通与 sanitizer CI 自动采用。
+两份 find 已改迭代, 默认压力无需增栈; 原失败基线和修复证据见 records/verification/dsu-20260907.md。
 
 `leftist_check` 默认执行普通双堆型 20 万点混合修改/惰删/弹空、20 万层父链反例与堆级标记,
 持久化双堆型三形态 20 万版本/完整弹空及独立历史快照/旧结点不变检查;
@@ -114,3 +128,11 @@ A/B/C 分别是带直接引用的 catalog 引擎、未发现直接引用的引�
 ## 自动汇总验证现状
 
 runner 自动记录源码与依赖指纹、环境和运行结果, 并生成 [口语概览](../docs/verification/status.md) 与 [AI 明细](../docs/verification/details.md). 只重新判断当前源码是否仍被旧结果覆盖时运行 `./scripts/make_verification.ps1`. 具体范围登记、CI 导入和状态规则见 [指南](../docs/verification/README.md). 原 reliability 表继续只负责静态资产关联.
+
+## 手册自动检查
+
+样例含七层嵌套目录；PDF 检查读取实际字号及位置，验证目录页和正文都逐层收敛、子级缩进正确且目录行不重叠。深目录也必须出现在目录页中，不能用截断深度掩盖样式问题。
+
+`./scripts/check_booklet.ps1` 在 PS 5.1/7 检查发现和 Markdown 转换，不要求 Typst；`-Render` 实际编译样例与 1200 行增长/奇数页场景。构建审计检查实现连同说明各占独立页段，PDF 检查逐项核对文件夹与源码的书签层级、纸面目录文本和起页。共 17 次构建包含新增/改名目录、纯空目录筛选、旧题记不再读取、同目录源码全部收录与逐实现起页、目录与唯一同名源码合用标题，以及行内/独立/表格公式、分式/上下标/求和/伸缩括号和代码中的美元符号，以及未知命令、错误分组、未闭合公式、原始 Typst 注入的拒绝路径。诊断放 `.zoi-checks/booklet-test-*`，按现有工作区清理约定管理。
+
+`python scripts/check_booklet_pdf.py <PDF> [--root <样例库根>]` 需 pypdf，独立将完整 PDF 的目录清单与实际算法目录树对账，核对目录/说明标题、编号正文、数学字体、增长行序与 MIKU 页脚；构建另核对数学节点数量，视觉抽查负责确认符号含义与布局。CI booklet 作业每次自动完整生成并执行这些检查，成功附件是对应提交的手册；操作见 [手册指南](../docs/booklet/README.md)。

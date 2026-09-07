@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "537d1cb148f14446b407c09333428896",
+  "startedUtc": "2026-09-07T02:20:27.1429367Z",
+  "finishedUtc": "2026-09-07T02:20:30.7738823Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/p11-windows-old-baseline",
+  "results": [
+    {
+      "fingerprint": "937e77e51847c023456efb8ffe850b9be8610e2c415e2df36ec2e11ef20d5cda",
+      "files": [
+        {
+          "path": "algorithms/数据结构/单调队列/单调队列.cpp",
+          "hash": "413074b4f6f94489764312200f319710f371079322c97cfc97c6d474bd706945"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "algorithms/杂项/对拍/misc_check.cpp",
+          "hash": "eaa64285cab7c4ee64abfd4c3c21cc4a8f9a09a26b5f95c7bde2296362aad38a"
+        },
+        {
+          "path": "algorithms/杂项/快读快写/快读快写.cpp",
+          "hash": "44b9546af976f2f07c80a2c099ed0551d8c4ee2d83f976b1b9717c922317efe4"
+        },
+        {
+          "path": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "dbe48812c15a3ad8637723c8e3316c711a8036313462e778578cac26925ef08c"
+        },
+        {
+          "path": "algorithms/杂项/防卡/哈希防卡.cpp",
+          "hash": "ead95a622d79e4d09371c8f26cc6e42f6e37e1278d42a9c2ad0428343202ad74"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "37d3261983d324009247c9c46417ee6be4d87b83ee21153913a285d31f0c4f7e"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "0deaea5bfe7fe90e955dfaf85489462b20901e23ccc68561404e46319a0ac0d7"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/misc_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 3.36
+    }
+  ]
+}

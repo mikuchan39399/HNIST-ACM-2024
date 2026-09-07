@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "id": "e790163099834db28f37288103085366",
+  "startedUtc": "2026-09-07T05:48:37.7812248Z",
+  "finishedUtc": "2026-09-07T05:48:52.5020573Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/65a38af49aac4b0aa3465628b5005144/logs",
+  "results": [
+    {
+      "fingerprint": "27824b1cbff942ef16efd5fe2017e7e653f92d7fd09b4249e93f65b1835240f1",
+      "files": [
+        {
+          "path": "algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp",
+          "hash": "8812e5cf257d4fd68437b863adacc0244d48a89ce969b8a2a8d64e13f8cd7073"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型动态线段树.cpp",
+          "hash": "d77327ba18c5bf250aa726186187fcdca0979b3d7af21c52fabf4a1d810e4fb2"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间01赋值翻转与连续段.cpp",
+          "hash": "13d597eb55f1b660c0e3e612e1bec56f2afb374c74066d90ae1bf994e35fbb9c"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间仿射与平方和.cpp",
+          "hash": "04ee7ee5e6bb3a093108f492a28f7f78c20932086787c97dd0f57eb767040351"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp",
+          "hash": "0b2b1144f00a8deecff5b99f049a000c8ebc0b66dcbf6fa8121f5d79bf4a9cf4"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间异或与按位计数.cpp",
+          "hash": "9f72b33549c1d924aa332c8ba3bfc394054d38c6ae520d1955030ac52041d826"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间等差加法与区间和.cpp",
+          "hash": "44053481bcb93ac67ef4328f410a0532b8ebcaee5f2483e8a8b9b4b4d25339cb"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp",
+          "hash": "ddbefebebb5e3f6a8668eaaf9284a81192caa31bc06165d1ba9da4cde0594303"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp",
+          "hash": "5c18ae890217c53c2bcf0e9dc766c14f0deea2c537ae90786f2891464929c694"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "1b250967a18393d513750f3772e9a3f60f695a26c7a034a7a1c84ecd6946d98b"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "bb2ad91f77734dd8e154e899a0a8807ac39d5cbd5627251101d42d2eecd9bb50"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "0deaea5bfe7fe90e955dfaf85489462b20901e23ccc68561404e46319a0ac0d7"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 14.261
+    }
+  ]
+}

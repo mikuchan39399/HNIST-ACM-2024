@@ -33,6 +33,18 @@ foreach ($domain in $domains) {
         $lines.Add('| '+(Link $label $e.path)+' | '+$kind+' |')
     }
 }
+$lines.Add(''); $lines.Add('## '+(U '7b97 6cd5 8bf4 660e 6587 6863')); $lines.Add('')
+$lines.Add('['+(U '8def 7ebf 56fe')+'](../roadmaps/README.md) | '+(U '6e90 7801 540c 76ee 5f55 20 52 45 41 44 4d 45 20 4e3a 53ef 9009 4f7f 7528 8bf4 660e 2c 20 81ea 52a8 8fdb 5165 624b 518c 3002'))
+$guidePaths=@(Get-ChildItem -LiteralPath (Join-Path $root 'algorithms') -Recurse -File -Filter '*.md' | ForEach-Object { $_.FullName.Substring($root.Length+1).Replace('\','/') })
+[Array]::Sort($guidePaths,[StringComparer]::Ordinal)
+$guideDomain=''
+foreach ($guide in $guidePaths) {
+    $parts=$guide.Split('/'); $domain=if ($parts.Length -gt 2) { $parts[1] } else { U '7b97 6cd5' }
+    if ($guideDomain -cne $domain) { $lines.Add(''); $lines.Add('### '+$domain+(U '6587 6863')); $lines.Add(''); $guideDomain=$domain }
+    $label=if ($parts.Length -gt 2) { $parts[2..($parts.Length-1)] -join ' / ' } else { $parts[1] }
+    if ($label -eq 'README.md') { $label=$domain+(U '603b 89c8') }
+    $lines.Add('- '+(Link $label $guide))
+}
 $text=($lines -join "`n")+"`n"
 $output=Join-Path $root 'docs/features/catalog.md'
 $enc=New-Object Text.UTF8Encoding($false)

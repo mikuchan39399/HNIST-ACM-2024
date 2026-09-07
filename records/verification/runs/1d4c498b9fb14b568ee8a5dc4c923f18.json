@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "id": "1d4c498b9fb14b568ee8a5dc4c923f18",
+  "startedUtc": "2026-09-07T01:49:12.5749368Z",
+  "finishedUtc": "2026-09-07T01:49:16.5930537Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/p10-iterative-baseline",
+  "results": [
+    {
+      "fingerprint": "86ebffe2d2cff8bc90b258899af4247e5e664dcfe51e340d25035d1ebb61174d",
+      "files": [
+        {
+          "path": "algorithms/数据结构/并查集/DSU.cpp",
+          "hash": "9c5303af4c90a0d32402a70191b3911e273c74e5a3784f4edc0ba6e34727973e"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/WDSU.cpp",
+          "hash": "fb6f93d5c2521a19c6009a0ddb0bcdc1f5b60c2ac431e3b06dc265ed263b5773"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+          "hash": "d89f316df69a46900558fd2113af025ebe8450d719f0f63cf587d1de99458eb5"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "0216a45fb982b237afcde917e1a755e67ca2db0a55fac0aa5126ad7ccc3926a1"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "0deaea5bfe7fe90e955dfaf85489462b20901e23ccc68561404e46319a0ac0d7"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 3.736
+    }
+  ]
+}

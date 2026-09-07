@@ -8,18 +8,19 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 
 更新：`./scripts/make_reliability.ps1`；只读检查：`./scripts/make_reliability.ps1 -Check`。普通回归不会改写本表。
 
-## A 类：有直接对拍引用的现役模板 [52]
+## A 类：有直接对拍引用的现役模板 [53]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
-| [seg - algorithms/数据结构/线段树/泛型线段树.cpp](<../algorithms/数据结构/线段树/泛型线段树.cpp>) | [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_check.cpp>) |
-| [dynamicSeg - algorithms/数据结构/线段树/泛型动态线段树.cpp](<../algorithms/数据结构/线段树/泛型动态线段树.cpp>) | [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_check.cpp>) |
+| [seg - algorithms/数据结构/线段树/泛型线段树.cpp](<../algorithms/数据结构/线段树/泛型线段树.cpp>) | [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_check.cpp>)<br>[algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
+| [dynamicSeg - algorithms/数据结构/线段树/泛型动态线段树.cpp](<../algorithms/数据结构/线段树/泛型动态线段树.cpp>) | [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_check.cpp>)<br>[algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 | [persistentSeg - algorithms/数据结构/线段树/可持久化线段树/主席树.cpp](<../algorithms/数据结构/线段树/可持久化线段树/主席树.cpp>) | [algorithms/数据结构/线段树/对拍/pst_check.cpp](<../algorithms/数据结构/线段树/对拍/pst_check.cpp>) |
 | [persistentLeftist - algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp](<../algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp>) | [algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp](<../algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp>) |
 | [leftist - algorithms/数据结构/堆/左偏树/左偏树.cpp](<../algorithms/数据结构/堆/左偏树/左偏树.cpp>) | [algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp](<../algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp>) |
 | [dsu - algorithms/数据结构/并查集/DSU.cpp](<../algorithms/数据结构/并查集/DSU.cpp>) | [algorithms/数据结构/并查集/对拍/dsu_check.cpp](<../algorithms/数据结构/并查集/对拍/dsu_check.cpp>) |
 | [wdsu - algorithms/数据结构/并查集/WDSU.cpp](<../algorithms/数据结构/并查集/WDSU.cpp>) | [algorithms/数据结构/并查集/对拍/dsu_check.cpp](<../algorithms/数据结构/并查集/对拍/dsu_check.cpp>) |
 | [monoQueue - algorithms/数据结构/单调队列/单调队列.cpp](<../algorithms/数据结构/单调队列/单调队列.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>) |
+| [monoStack - algorithms/数据结构/单调栈/单调栈.cpp](<../algorithms/数据结构/单调栈/单调栈.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>) |
 | [bit - algorithms/数据结构/树状数组/树状数组.cpp](<../algorithms/数据结构/树状数组/树状数组.cpp>) | [algorithms/数据结构/树状数组/对拍/bit_check.cpp](<../algorithms/数据结构/树状数组/对拍/bit_check.cpp>) |
 | [bit2d - algorithms/数据结构/树状数组/二维树状数组.cpp](<../algorithms/数据结构/树状数组/二维树状数组.cpp>) | [algorithms/数据结构/树状数组/对拍/bit_check.cpp](<../algorithms/数据结构/树状数组/对拍/bit_check.cpp>) |
 | [st - algorithms/数据结构/ST表/ST表.cpp](<../algorithms/数据结构/ST表/ST表.cpp>) | [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_check.cpp>) |
@@ -114,7 +115,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [convex - algorithms/计算几何/凸包/凸包.txt](<../algorithms/计算几何/凸包/凸包.txt>) | 不适用（笔记） |
 | [hpi - algorithms/计算几何/半平面交/半平面交.txt](<../algorithms/计算几何/半平面交/半平面交.txt>) | 不适用（笔记） |
 
-## 豁免代码：无目录跳板的 C++ 文件（不等同于笔记） [15]
+## 豁免代码：无目录跳板的 C++ 文件（不等同于笔记） [21]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
@@ -130,11 +131,17 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [algorithms/数据结构/堆/左偏树/k短路未维护.cpp](<../algorithms/数据结构/堆/左偏树/k短路未维护.cpp>) | 未发现直接引用 |
 | [algorithms/数据结构/线段树/泛型插件/P2572 序列操作.cpp](<../algorithms/数据结构/线段树/泛型插件/P2572%20序列操作.cpp>) | 未发现直接引用 |
 | [algorithms/数据结构/线段树/泛型插件/主席树/主席树单点修改范围求和.cpp](<../algorithms/数据结构/线段树/泛型插件/主席树/主席树单点修改范围求和.cpp>) | 未发现直接引用 |
-| [algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp>) | 未发现直接引用 |
+| [algorithms/数据结构/线段树/泛型插件/区间01赋值翻转与连续段.cpp](<../algorithms/数据结构/线段树/泛型插件/区间01赋值翻转与连续段.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
+| [algorithms/数据结构/线段树/泛型插件/区间仿射与平方和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间仿射与平方和.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
+| [algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 | [algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp](<../algorithms/数据结构/线段树/泛型插件/区间历史最值.cpp>) | 未发现直接引用 |
 | [algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间取模区间求和.cpp>) | 未发现直接引用 |
+| [algorithms/数据结构/线段树/泛型插件/区间异或与按位计数.cpp](<../algorithms/数据结构/线段树/泛型插件/区间异或与按位计数.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
+| [algorithms/数据结构/线段树/泛型插件/区间等差加法与区间和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间等差加法与区间和.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
+| [algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
+| [algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 
-## 已发现的对拍套件 [23]
+## 已发现的对拍套件 [24]
 
 - [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../algorithms/图论/优化建图/对拍/seggraph_check.cpp>)
 - [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)
@@ -157,5 +164,6 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 - [algorithms/数据结构/树状数组/对拍/bit_check.cpp](<../algorithms/数据结构/树状数组/对拍/bit_check.cpp>)
 - [algorithms/数据结构/线段树/对拍/pst_check.cpp](<../algorithms/数据结构/线段树/对拍/pst_check.cpp>)
 - [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_check.cpp>)
+- [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>)
 - [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>)
 - [algorithms/杂项/随机数/对拍/rnd_check.cpp](<../algorithms/杂项/随机数/对拍/rnd_check.cpp>)

@@ -33,6 +33,14 @@ jobs:
         if: ${{ !cancelled() }}
         shell: pwsh
         run: ./scripts/check_deployment.ps1
+      - name: Booklet discovery on PowerShell 5.1
+        if: ${{ !cancelled() }}
+        shell: powershell
+        run: ./scripts/check_booklet.ps1
+      - name: Booklet discovery on PowerShell 7
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: ./scripts/check_booklet.ps1
       - name: Keep setup diagnostics
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v6
@@ -41,6 +49,47 @@ jobs:
           path: |
             .zoi-checks/setup-test-*/*.log
             .zoi-checks/deploy-test-*/*.log
+            .zoi-checks/booklet-test-*/*.log
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: warn
+
+  booklet:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install pinned Typst and PDF prerequisites
+        run: |
+          mkdir -p .zoi-checks/codex-work/booklet-tools
+          curl --fail --location --retry 3 https://github.com/typst/typst/releases/download/v0.15.1/typst-x86_64-unknown-linux-musl.tar.xz -o .zoi-checks/codex-work/booklet-tools/typst.tar.xz
+          tar -xJf .zoi-checks/codex-work/booklet-tools/typst.tar.xz -C .zoi-checks/codex-work/booklet-tools
+          echo "$PWD/.zoi-checks/codex-work/booklet-tools/typst-x86_64-unknown-linux-musl" >> "$GITHUB_PATH"
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk fonts-dejavu-core
+          python3 -m venv .zoi-checks/codex-work/booklet-tools/venv
+          .zoi-checks/codex-work/booklet-tools/venv/bin/pip install pypdf==6.0.0
+      - name: Compile fixtures including long source and shared manuals
+        shell: pwsh
+        run: ./scripts/check_booklet.ps1 -Render
+      - name: Rebuild the complete current booklet
+        shell: pwsh
+        run: ./scripts/make_booklet.ps1
+      - name: Verify PDF contents, source pages, text and page-39 footer
+        run: |
+          .zoi-checks/codex-work/booklet-tools/venv/bin/python scripts/check_booklet_pdf.py docs/booklet/output/zoi-booklet-print.pdf
+          for fixture in .zoi-checks/booklet-test-*; do
+            .zoi-checks/codex-work/booklet-tools/venv/bin/python scripts/check_booklet_pdf.py "$fixture/out/book.pdf" --root "$fixture"
+          done
+      - name: Keep the current booklet and diagnostics
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: booklet-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            docs/booklet/output/zoi-booklet-print.pdf
+            docs/booklet/output/zoi-booklet-print.typ
+            .zoi-checks/booklet-test-*/*.log
           include-hidden-files: true
           retention-days: 7
           if-no-files-found: warn
@@ -60,6 +109,12 @@ jobs:
       - name: Check generated feature catalog
         shell: pwsh
         run: ./scripts/make_features.ps1 -Check
+      - name: Check documentation navigation and failure detection
+        if: ${{ !cancelled() }}
+        run: |
+          python3 scripts/check_docs.py --self-test
+          python3 scripts/check_docs.py
+          python3 scripts/check_design.py
       - name: Check inventory and generator behavior
         if: ${{ !cancelled() }}
         shell: pwsh

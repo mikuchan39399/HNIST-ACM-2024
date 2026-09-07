@@ -12,3 +12,11 @@
 | workflow 过期安装说明 | 以当前安装器为准：不留 .bak，默认构建只在未有默认任务时设置 |
 
 本轮不删历史事故与算法红线；workflow 的详细拆分留下一轮处理。
+
+## 原文快照入口
+
+以下只供追溯, 内部链接按当时原位置解释, 不作为现行指令:
+
+- [AGENTS](AGENTS.md)、[Cline 入口](.clinerules__zoi.md)
+- [算法规则](rule.md)、[协作约定](rules__collab.md)、[工作流](rules__workflow.md)
+- [文档目录](docs__README.md)

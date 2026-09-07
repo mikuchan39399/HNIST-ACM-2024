@@ -3,8 +3,8 @@ $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 if (-not $BuildRoot) { $BuildRoot=Join-Path $root '.zoi-checks' }
 $fixture=Join-Path ([IO.Path]::GetFullPath($BuildRoot)) ('inventory-test-'+[Guid]::NewGuid().ToString('N'))
-foreach ($d in @('scripts','rules','zoi','algorithms/other','algorithms/tests')) { [void][IO.Directory]::CreateDirectory((Join-Path $fixture $d)) }
-foreach ($f in @('check_inventory.ps1','make_reliability.ps1')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $f) -Destination (Join-Path $fixture 'scripts') }
+foreach ($d in @('scripts','rules','zoi','algorithms/other','algorithms/tests','docs/features')) { [void][IO.Directory]::CreateDirectory((Join-Path $fixture $d)) }
+foreach ($f in @('check_inventory.ps1','make_reliability.ps1','make_features.ps1')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $f) -Destination (Join-Path $fixture 'scripts') }
 . (Join-Path $PSScriptRoot 'check_inventory.ps1')
 . (Join-Path $PSScriptRoot 'check_process.ps1')
 $enc=New-Object Text.UTF8Encoding($false)
@@ -12,8 +12,8 @@ function Put([string]$p,[string]$s) { [IO.File]::WriteAllText((Join-Path $fixtur
 function Assert([bool]$ok,[string]$message) { if (-not $ok) { throw $message } }
 function Inventory { return Get-CheckInventory $fixture }
 $script:n=0
-function Generate([int]$expected=0,[switch]$Check) {
-    $script:n++; $argsForRun=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $fixture 'scripts/make_reliability.ps1'))
+function Generate([int]$expected=0,[switch]$Check,[string]$Generator='make_reliability.ps1') {
+    $script:n++; $argsForRun=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $fixture ('scripts/'+$Generator)))
     if ($Check) { $argsForRun+='-Check' }
     $r=Invoke-CheckProcess (Get-Process -Id $PID).Path $argsForRun $fixture 30 (Join-Path $fixture ('generate-'+$script:n))
     Assert (-not $r.TimedOut -and $r.ExitCode -eq $expected) 'Generator returned unexpected status'
@@ -67,4 +67,21 @@ Put 'zoi/_catalog.txt' $catalog
 $i=Inventory; Assert ($i.checks.Count -eq 0 -and $i.entries[0].suites.Count -eq 0) 'Deleted suites remained in inventory'
 Generate
 Write-Host '[PASS] invalid scaffold preserves report / missing prose rejects / removed suites disappear'
-Write-Host "Inventory self-test: 4 groups passed ($script:n generator commands); logs: $fixture"
+Put 'algorithms/README.md' '# Overview'
+Put 'algorithms/other/README.md' '# Family guide'
+Generate -Generator 'make_features.ps1'
+$featurePath=Join-Path $fixture 'docs/features/catalog.md'
+$featureSnapshot=[IO.File]::ReadAllText($featurePath)
+Assert ($featureSnapshot.Contains('../../algorithms/README.md') -and $featureSnapshot.Contains('../../algorithms/other/README.md')) 'Feature guide navigation lost root or family README'
+$featureStamp=(Get-Item -LiteralPath $featurePath).LastWriteTimeUtc
+Generate -Generator 'make_features.ps1'
+Generate -Check -Generator 'make_features.ps1'
+Assert ((Get-Item -LiteralPath $featurePath).LastWriteTimeUtc -eq $featureStamp) 'Unchanged feature generation rewrote output'
+Put 'algorithms/other/guide #1.md' '# Additional guide'
+Generate 1 -Check -Generator 'make_features.ps1'
+Assert ([IO.File]::ReadAllText($featurePath) -ceq $featureSnapshot) 'Feature Check changed stale output'
+Generate -Generator 'make_features.ps1'
+Assert ([IO.File]::ReadAllText($featurePath).Contains('../../algorithms/other/guide%20%231.md')) 'Feature guide URL escaping failed'
+Generate -Check -Generator 'make_features.ps1'
+Write-Host '[PASS] feature guide discovery / stale Check is read-only / idempotence / URL escaping'
+Write-Host "Inventory self-test: 5 groups passed ($script:n generator commands); logs: $fixture"

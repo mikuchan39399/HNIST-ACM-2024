@@ -1,0 +1,82 @@
+{
+  "schema": "dsu-manual-linux-1",
+  "sources_sha256": {
+    ".github/workflows/ci.yml": "ad6e53cfea339c488c6deccf092280ed4015d0152c3948e5f93bbd057bc3d34e",
+    "algorithms/数据结构/并查集/DSU.cpp": "e04d092d498d0716751bb25082a47a10b267bf8a78dda022ab1baca7e8994481",
+    "algorithms/数据结构/并查集/WDSU.cpp": "87c40272a535b281c84f35def007e9c31a4efcf247dad88c27406173b7cac2b7",
+    "algorithms/数据结构/并查集/对拍/dsu_check.cpp": "f66e2219d1c51f86864f5b710753288b0ddf32fc81aab540fe87422972b49444",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "scripts/check_lca_vt_extreme.py": "91ddffc70547d537aaeb8f0e331975b0b2aef2de15d19cd640e144c603b0e545"
+  },
+  "stable": true,
+  "results": [
+    {
+      "name": "compile-normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.485,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p10-baseline/normal"
+      ]
+    },
+    {
+      "name": "normal",
+      "status": "FAIL",
+      "exit_code": -6,
+      "seconds": 0.378,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p10-baseline/normal"
+      ]
+    },
+    {
+      "name": "compile-sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.983,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p10-baseline/sanitizer"
+      ]
+    },
+    {
+      "name": "sanitizer",
+      "status": "FAIL",
+      "exit_code": 1,
+      "seconds": 4.341,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p10-baseline/sanitizer"
+      ]
+    }
+  ],
+  "failed": true
+}

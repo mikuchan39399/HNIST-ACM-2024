@@ -1,0 +1,82 @@
+{
+  "schema": "dsu-manual-linux-1",
+  "sources_sha256": {
+    ".github/workflows/ci.yml": "ad6e53cfea339c488c6deccf092280ed4015d0152c3948e5f93bbd057bc3d34e",
+    "algorithms/数据结构/并查集/DSU.cpp": "e04d092d498d0716751bb25082a47a10b267bf8a78dda022ab1baca7e8994481",
+    "algorithms/数据结构/并查集/WDSU.cpp": "36ae83bf7ac362afdc974e919ad60cf23091eb6d40f98c0b0c695018c698d050",
+    "algorithms/数据结构/并查集/对拍/dsu_check.cpp": "f66e2219d1c51f86864f5b710753288b0ddf32fc81aab540fe87422972b49444",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "scripts/check_lca_vt_extreme.py": "91ddffc70547d537aaeb8f0e331975b0b2aef2de15d19cd640e144c603b0e545"
+  },
+  "stable": true,
+  "results": [
+    {
+      "name": "compile-normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.534,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p10-recursive-large-stack/normal"
+      ]
+    },
+    {
+      "name": "normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0.483,
+      "timeout_seconds": 180,
+      "stack_kib": 262144,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p10-recursive-large-stack/normal"
+      ]
+    },
+    {
+      "name": "compile-sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 2.884,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p10-recursive-large-stack/sanitizer"
+      ]
+    },
+    {
+      "name": "sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 5.092,
+      "timeout_seconds": 180,
+      "stack_kib": 262144,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p10-recursive-large-stack/sanitizer"
+      ]
+    }
+  ],
+  "failed": false
+}

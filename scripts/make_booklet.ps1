@@ -1,19 +1,14 @@
-param([string]$Filter = '', [string]$OutFile = 'docs/booklet/output/zoi-booklet-print.pdf', [int]$SoloMin = 0)
+param([string]$Filter = '', [string]$OutFile = 'docs/booklet/output/zoi-booklet-print.pdf', [int]$SoloMin = 0, [switch]$SourceOnly, [string]$TypstPath = '')
 # make_booklet.ps1 - printable contest booklet generator (typst, A4 landscape, 3 columns)
-# Layout: every catalog entry (code or ^ prose) opens a fresh page; skeleton entries
-#         auto-scanned from library folders flow compactly on shared pages.
-#         Page header center shows the entry flowing on that page. Catalog lines
-#         starting with '^' are prose entries (theorems/notes, no code, no stub).
-#         TOC is two-level (domains + entries); sub-domains render as separators.
-#         Folder coverage audit: every knowledge-point folder must surface in the
-#         booklet (own entry, catalog file, or group README note) or the build
-#         exits 1 -- no silent missing folders.
+# Directories define chapters; catalog order only ranks existing source families.
+# A README beside a selected source follows the last selected sibling, once.
+# Roadmaps live in docs/roadmaps and never enter this print pipeline.
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\make_booklet.ps1              -> full
-#        powershell -ExecutionPolicy Bypass -File scripts\make_booklet.ps1 -Filter seg  -> scoped (audit skipped)
+#        powershell -File scripts\make_booklet.ps1 -Filter seg -OutFile .zoi-checks/seg.pdf
 # SoloMin: with a value > 0, real entries with >= SoloMin lines additionally start
 #          on an odd page (= a physical sheet's front side) for duplex printing;
-#          the default 0 keeps one continuous sequence with no fully blank pages.
-# Pipeline: catalog (order = section order) -> include rewrite (stub names)
+#          the default 0 starts each entry on a fresh page without parity padding.
+# Pipeline: directory tree + catalog identities -> include rewrite (stub names)
 #           -> SHA256[:8] over LF-normalized text -> booklet.typ -> typst compile.
 # Requires: typst on PATH, or scripts\typst.exe next to this script (auto-detected).
 # NOTE: keep this file ASCII-only (PS 5.1 reads no-BOM as ANSI). CJK text
@@ -23,12 +18,15 @@ $root = Split-Path -Parent $PSScriptRoot
 $enc = New-Object System.Text.UTF8Encoding($false)
 $plugName = -join ([char]0x63D2, [char]0x4EF6)   # plugin folder marker, CJK kept out of source bytes
 
-$typst = (Get-Command typst -ErrorAction SilentlyContinue).Source
+$typst = if ($TypstPath) { [IO.Path]::GetFullPath($TypstPath) } else { (Get-Command typst -ErrorAction SilentlyContinue | Select-Object -First 1).Source }
 if (-not $typst) {
     $local = Join-Path $PSScriptRoot 'typst.exe'
     if (Test-Path -LiteralPath $local) { $typst = $local }
-    else { throw 'typst not found: install to PATH or drop typst.exe into scripts\' }
+    elseif (-not $SourceOnly) { throw 'typst not found: install to PATH or drop typst.exe into scripts\' }
 }
+
+. (Join-Path $PSScriptRoot 'booklet_markdown.ps1')
+. (Join-Path $PSScriptRoot 'booklet_tree.ps1')
 
 # ---- catalog entries (order = booklet order) ----
 $zoiDir = Join-Path $root 'zoi'
@@ -50,86 +48,28 @@ foreach ($l in $catLines) {
         Prose = $prose }
 }
 $allEntries = @($entries)
-if ($Filter -ne '') {
-    $entries = @($entries | Where-Object { $_.Domain -like "*$Filter*" -or $_.Sub -like "*$Filter*" -or $_.Name -like "*$Filter*" -or $_.Cn -like "*$Filter*" })
-}
-if ($entries.Count -eq 0) { throw 'no catalog entries matched' }
-
 # basename -> stub map for local include rewrite
 $stubByFile = @{}
 foreach ($e in $allEntries) { if (-not $e.Prose) { $stubByFile[[IO.Path]::GetFullPath((Join-Path $root $e.Rel))] = $e.Name } }
-
-# ---- library walk: every knowledge-point folder must surface in the booklet ----
-# knowledge folder = depth >= 2 dir whose path avoids the aux layers (duipai /
-# liti / plugin markers, spelled in codepoints to keep this file ASCII-only).
-# Represented folders already carry catalog files; missing LEAVES become auto
-# entries (README as prose body, else a placeholder title); unrepresented
-# groups lend their README to the sub separator as an intro note.
-$algDir = Join-Path $root 'algorithms'
-$auxDp = -join ([char]0x5BF9, [char]0x62CD)   # dui-pai harness layer
-$auxLt = -join ([char]0x4F8B, [char]0x9898)   # li-ti solution layer
-$kDirs = @{}
-foreach ($d in Get-ChildItem $algDir -Recurse -Directory) {
-    $rel = $d.FullName.Substring($algDir.Length + 1).Replace('\', '/')
-    if ($rel -notlike '*/*') { continue }
-    $aux = $false
-    foreach ($sg in ($rel -split '/')) { if ($sg -eq $auxDp -or $sg -eq $auxLt -or $sg.Contains($plugName)) { $aux = $true; break } }
-    if ($aux) { continue }
-    $kDirs[$rel] = $true
-}
-$kRep = @{}
-foreach ($rel in $kDirs.Keys) {
-    $pre = 'algorithms/' + $rel + '/'
-    foreach ($e2 in $entries) { if ($e2.Rel.StartsWith($pre)) { $kRep[$rel] = $true; break } }
-}
-$kKids = @{}
-foreach ($rel in $kDirs.Keys) {
-    $n = 0
-    foreach ($r2 in $kDirs.Keys) { if ($r2 -ne $rel -and $r2.StartsWith($rel + '/')) { $n++ } }
-    $kKids[$rel] = $n
-}
-$autoRaw = @()
-$subIntro = @{}
-$subIntroRaw = @()
-foreach ($rel in $kDirs.Keys) {
-    if ($kRep.ContainsKey($rel)) { continue }
-    $segs = $rel -split '/'
-    $rdLocal = Join-Path $algDir ($rel.Replace('/', '\') + '\README.md')
-    $rdThere = Test-Path -LiteralPath $rdLocal
-    if ($kKids[$rel] -gt 0) {
-        if ($rdThere) { $subIntroRaw += [pscustomobject]@{ Key = $segs[0] + '/' + $segs[1]; Rel = $rel; Text = [IO.File]::ReadAllText($rdLocal, $enc) } }
-        continue
-    }
-    $cn = $segs[$segs.Count - 1]
-    if ($segs.Count -gt 3) {
-        $mid = $segs[2..($segs.Count - 2)] -join ' '
-        if ($mid -ne $cn) { $cn = $mid + ' ' + $cn }
-    }
-    $autoRaw += [pscustomobject]@{ Domain = $segs[0]; Sub = $segs[1]; Cn = $cn; Rel = ('algorithms/' + $rel + '/README.md'); HasReadme = $rdThere }
-}
-# group READMEs sharing one sub (e.g. a group nested under another group) are
-# concatenated in path order -- never overwrite each other, never depend on
-# dictionary enumeration order
-foreach ($grp in ($subIntroRaw | Sort-Object Key, Rel | Group-Object Key)) {
-    $subIntro[$grp.Name] = (($grp.Group | ForEach-Object { $_.Text.Trim() }) -join "`n`n")
-}
-if ($Filter -ne '') {
-    $autoRaw = @($autoRaw | Where-Object { $_.Domain -like "*$Filter*" -or $_.Sub -like "*$Filter*" -or $_.Cn -like "*$Filter*" })
-}
-$autoRaw = @($autoRaw | Sort-Object Domain, Sub, Cn)
 
 # ---- plugin appendix (algebra layer copy sources; full solutions skipped) ----
 $plugins = @()
 foreach ($d in Get-ChildItem (Join-Path $root 'algorithms') -Recurse -Directory) {
     if ($d.Name -notlike "*$plugName*") { continue }
     foreach ($f in Get-ChildItem $d.FullName -Recurse -Filter *.cpp) {
-        if (Select-String -Path $f.FullName -Pattern 'int\s+main' -Quiet) { continue }
+        # Ignore comments and quoted examples before looking for a real main.
+        $source=[IO.File]::ReadAllText($f.FullName,$enc)
+        $code=[regex]::Replace($source, '(?s)/\*.*?\*/|//[^\r\n]*|"(?:\\.|[^"\\])*"|''(?:\\.|[^''\\])*''', ' ')
+        if ($code -match '\bint\s+main\s*\(') { continue }
         $rel = $f.FullName.Substring($root.Length + 1).Replace('\', '/')
         $plugins += [pscustomobject]@{ Name = $f.BaseName; Rel = $rel; Family = 'Appendix'; Cn = $f.BaseName }
     }
 }
 
-$plugins = @($plugins | Sort-Object Rel -Culture zh-CN)
+$plugins = @($plugins | Sort-Object Rel -Unique -Culture zh-CN)
+$tree=Get-BookletTree $root $allEntries $plugins $Filter
+$entries=@($allEntries | Where-Object { $tree.Files.ContainsKey($_.Rel) })
+$plugins=@($plugins | Where-Object { $tree.Files.ContainsKey($_.Rel) })
 
 # ---- per-entry transform: rewrite includes, LF-normalize, hash ----
 $script:warn = @()
@@ -161,69 +101,71 @@ $realCount = $blocks.Count
 $plugBlocks = @()
 foreach ($p in $plugins) { $plugBlocks += Convert-Entry $p }
 
-# ---- auto entries: library skeleton -> booklet. The stable merge keeps the
-# (Domain,Sub) contiguity the emit loop relies on: first-appearance ranks for
-# known subs/domains, unknowns ranked after them, catalog blocks keep order,
-# autos attach after their own group.
-$autoBlocks = @()
-$gId = 0
-foreach ($a in $autoRaw) {
-    $gId++
-    $nm = 'g' + $gId.ToString('000')
-    if ($a.HasReadme) {
-        $ab = Convert-Entry ([pscustomobject]@{ Name = $nm; Rel = $a.Rel; Domain = $a.Domain; Sub = $a.Sub; Cn = $a.Cn; Prose = $true })
-        $autoBlocks += [pscustomobject]@{ Meta = $ab.Meta; Text = $ab.Text; Hash = $ab.Hash; Lines = $ab.Lines; Auto = $true }
-    }
-    else {
-        $autoBlocks += [pscustomobject]@{ Meta = [pscustomobject]@{ Name = $nm; Rel = $a.Rel; Domain = $a.Domain; Sub = $a.Sub; Cn = $a.Cn; Prose = $true }; Text = ''; Hash = ''; Lines = 0; Auto = $true }
+# One manual per source directory. Never search ancestors or descendants.
+$manualOwner = @{}
+$manuals = @{}
+foreach ($b in @($blocks) + @($plugBlocks)) {
+    $rd = ($b.Meta.Rel -replace '/[^/]+$','') + '/README.md'
+    if (Test-Path -LiteralPath (Join-Path $root $rd) -PathType Leaf) {
+        $manualOwner[$rd] = $b.Meta.Rel
+        $manuals[$rd] = [IO.File]::ReadAllText((Join-Path $root $rd), $enc)
     }
 }
-$domRank = @{}
-$subRank = @{}
-foreach ($b in $blocks) {
-    if (!$domRank.ContainsKey($b.Meta.Domain)) { $domRank[$b.Meta.Domain] = $domRank.Count }
-    $sk2 = $b.Meta.Domain + '/' + $b.Meta.Sub
-    if (!$subRank.ContainsKey($sk2)) { $subRank[$sk2] = $subRank.Count }
+$printedManuals = @{}
+function Append-Manual($Builder, $Entry) {
+    $rd = ($Entry.Meta.Rel -replace '/[^/]+$','') + '/README.md'
+    if ($manualOwner.ContainsKey($rd) -and $manualOwner[$rd] -eq $Entry.Meta.Rel) {
+        [void]$Builder.AppendLine('// manual: ' + $rd)
+        [void]$Builder.AppendLine('#metadata(' + (Typ-String $rd) + ') <manual-' + $printedManuals.Count + '>')
+        [void]$Builder.AppendLine((Convert-BookletMarkdown $manuals[$rd]))
+        $printedManuals[$rd] = $true
+    }
 }
-foreach ($ab in $autoBlocks) {
-    if (!$domRank.ContainsKey($ab.Meta.Domain)) { $domRank[$ab.Meta.Domain] = 1000 + $domRank.Count }
-    $sk2 = $ab.Meta.Domain + '/' + $ab.Meta.Sub
-    if (!$subRank.ContainsKey($sk2)) { $subRank[$sk2] = 1000 + $subRank.Count }
-}
-$ordered = @()
-$i2 = 0
-foreach ($b in $blocks) { $ordered += [pscustomobject]@{ D = $domRank[$b.Meta.Domain]; S = $subRank[$b.Meta.Domain + '/' + $b.Meta.Sub]; T = 0; I = $i2; B = $b }; $i2++ }
-$j2 = 5000
-foreach ($ab in $autoBlocks) { $ordered += [pscustomobject]@{ D = $domRank[$ab.Meta.Domain]; S = $subRank[$ab.Meta.Domain + '/' + $ab.Meta.Sub]; T = $j2; I = $i2; B = $ab }; $i2++; $j2++ }
-# multi-key sort: domain rank, then sub rank, then catalog-before-auto tie.
-# (a packed numeric key would overflow between rank fields once auto-only
-# subs get 1000+ sub ranks)
-$blocks = @($ordered | Sort-Object D, S, T, I | ForEach-Object { $_.B })
 
 # ---- assemble typst source ----
 function Zh([string]$hex) { -join @($hex.Split(' ') | ForEach-Object { [char][Convert]::ToInt32($_,16) }) }
 function Esc([string]$t) { return ($t -replace '([_\*\[\]#`$\\@<>])', '\$1') }   # typst markup escape
+$fontList = if ($typst -and -not $SourceOnly) { @(& $typst fonts) } else { @('Source Sans Pro','Consolas','Noto Sans SC') }
+function Font-Choice($Choices) {
+    foreach ($f in $Choices) { if ($fontList -contains $f) { return $f } }
+    throw ('Missing booklet font; install one of: ' + ($Choices -join ', '))
+}
+$cjkFont = Font-Choice @('Noto Sans SC','Noto Sans CJK SC','Microsoft YaHei')
+$bodyFont = Font-Choice @('Source Sans Pro','DejaVu Sans')
+$monoFont = Font-Choice @('Consolas','DejaVu Sans Mono')
 $s = New-Object System.Text.StringBuilder
+[void]$s.AppendLine('#let booklet-mono = (' + (Typ-String $monoFont) + ', ' + (Typ-String $cjkFont) + ')')
 [void]$s.AppendLine('#set page(paper: "a4", flipped: true, margin: (x: 0.8cm, y: 1.0cm, top: 1.5cm), numbering: (..a) => text(size: 6pt, fill: luma(120), { let n = a.pos().at(0); let t = if a.pos().len() > 1 { a.pos().at(1) } else { none }; let label = if t == none { str(n) } else { str(n) + " / " + str(t) }; if n == 39 { context { if counter(page).get().first() == 39 { text(size: 6pt, fill: rgb("#68aaa3"), "MIKU \u{2661}") } else { label } } } else { label } }))')
-[void]$s.AppendLine('#set text(font: ("Source Sans Pro", "Noto Sans SC"), size: 7.5pt, lang: "zh", region: "cn", cjk-latin-spacing: auto)')
+[void]$s.AppendLine('#set text(font: (' + (Typ-String $bodyFont) + ', ' + (Typ-String $cjkFont) + '), size: 7.5pt, lang: "zh", region: "cn", cjk-latin-spacing: auto)')
 [void]$s.AppendLine('#set par(leading: 0.52em, spacing: 0.85em, justify: false)')
 [void]$s.AppendLine('#set heading(numbering: none)')
-[void]$s.AppendLine('#show heading.where(level: 1): it => block(above: 0.5em, below: 0.65em, width: 100%)[#text(size: 13pt, weight: "bold", fill: rgb("#1f4e79"), it.body) #v(0.5em) #line(length: 100%, stroke: 1pt + rgb("#1f4e79"))]')
-[void]$s.AppendLine('#show raw: set text(font: ("Consolas", "Noto Sans SC"), size: 6pt)')
+# Depth controls all heading and contents styles; no deeper level falls back
+# to Typst's larger default. Clamp only the font floor, never tree depth.
+[void]$s.AppendLine('#let chapter-style(depth, contents: false) = {')
+[void]$s.AppendLine('  let i = calc.min(depth, 5) - 1')
+[void]$s.AppendLine('  if contents { (size: (8.5pt, 7.2pt, 6.8pt, 6.4pt, 6.2pt).at(i), weight: ("bold", "bold", "regular", "regular", "regular").at(i), ink: (rgb("#1f4e79"), luma(35), luma(55), luma(75), luma(85)).at(i)) }')
+[void]$s.AppendLine('  else { (size: (13pt, 9.5pt, 8.2pt, 7.6pt, 7.2pt).at(i), weight: ("bold", "bold", "bold", "semibold", "regular").at(i), ink: (rgb("#1f4e79"), rgb("#243e52"), luma(45), luma(65), luma(80)).at(i)) }')
+[void]$s.AppendLine('}')
+[void]$s.AppendLine('#show heading: it => {')
+[void]$s.AppendLine('  let style = chapter-style(it.level)')
+[void]$s.AppendLine('  block(sticky: true, above: if it.level == 1 { 7pt } else if it.level == 2 { 10pt } else { 5pt }, below: 3pt, width: 100%)[#text(size: style.size, weight: style.weight, fill: style.ink, it.body)#if it.level == 1 { v(5pt); line(length: 100%, stroke: 1pt + style.ink) }]')
+[void]$s.AppendLine('}')
+[void]$s.AppendLine('#show raw: set text(font: booklet-mono, size: 6pt)')
 [void]$s.AppendLine('#show raw.where(block: true): it => block(width: 100%, fill: none, stroke: (left: 1.1pt + luma(150), top: 0.35pt + luma(215), right: 0.35pt + luma(215), bottom: 0.35pt + luma(215)), inset: (x: 5pt, y: 3.5pt), radius: (top-right: 2pt, bottom-right: 2pt), it)')
-[void]$s.AppendLine('#show heading.where(level: 2): it => block(above: 1.3em, below: 0.3em, text(weight: "bold", size: 7.8pt, fill: luma(25), it.body))')
-[void]$s.AppendLine('#let subsep(b) = block(above: 1.0em, below: 0.45em, width: 100%)[#text(size: 9.5pt, weight: "bold", fill: rgb("#2e6da4"), b) #v(0.4em) #line(length: 100%, stroke: 0.7pt + luma(165))]')
-[void]$s.AppendLine('#let subintro(b) = block(above: 0em, below: 0.8em, width: 100%, fill: luma(246), inset: (x: 4.5pt, y: 3.5pt), radius: 2pt)[#text(size: 6.2pt, fill: luma(105), b)]')
-[void]$s.AppendLine('#show outline: set text(size: 7pt)')
-[void]$s.AppendLine('#show outline.entry: set par(leading: 0.5em)')
-[void]$s.AppendLine('#show outline.entry.where(level: 1): it => block(above: 0.85em, below: 0.15em, text(weight: "bold", size: 8.5pt, fill: rgb("#1f4e79"), it))')
-[void]$s.AppendLine('#show outline.entry.where(level: 2): it => { set text(size: 6.4pt, fill: luma(75)); it }')
+[void]$s.AppendLine('#show outline.entry: it => {')
+[void]$s.AppendLine('  let style = chapter-style(it.level, contents: true)')
+[void]$s.AppendLine('  set text(size: style.size, weight: style.weight, fill: style.ink)')
+[void]$s.AppendLine('  set par(leading: 0.45em)')
+[void]$s.AppendLine('  block(above: if it.level == 1 { 6pt } else if it.level == 2 { 2pt } else { 0pt }, below: 1.8pt, inset: (top: 0.7pt, bottom: 0.7pt), it)')
+[void]$s.AppendLine('}')
 [void]$s.AppendLine('#let pagehead = context {')
 [void]$s.AppendLine('  let pg = here().page()')
 [void]$s.AppendLine('  let doms = query(heading.where(level: 1)).filter(h => h.location().page() <= pg)')
 [void]$s.AppendLine('  let dom = if doms.filter(h => h.location().page() == pg).len() > 0 { doms.filter(h => h.location().page() == pg).first().body } else if doms.len() > 0 { doms.last().body } else { [--] }')
 [void]$s.AppendLine('  let ents = query(heading).filter(h => h.has(str(label)) and h.location().page() <= pg)')
-[void]$s.AppendLine('  let flowing = if ents.filter(h => h.location().page() == pg).len() > 0 { ents.filter(h => h.location().page() == pg).first().body } else if ents.len() > 0 { ents.last().body } else { [--] }')
+[void]$s.AppendLine('  let local = ents.filter(h => h.location().page() == pg)')
+[void]$s.AppendLine('  let sources = local.filter(h => str(h.label).starts-with("e-"))')
+[void]$s.AppendLine('  let flowing = if sources.len() > 0 { sources.first().body } else if local.len() > 0 { local.first().body } else if ents.len() > 0 { ents.last().body } else { [--] }')
 [void]$s.AppendLine('  grid(columns: (auto, 1fr, auto), box(fill: luma(239), inset: (x: 4pt, y: 1pt), text(size: 6pt, weight: "bold", fill: luma(60))[#dom]), align(center, text(size: 6pt, fill: luma(110), flowing)), text(size: 6pt, fill: luma(110))[zoi booklet])')
 [void]$s.AppendLine('  v(0.3em)')
 [void]$s.AppendLine('  line(length: 100%, stroke: 0.3pt + luma(205))')
@@ -249,135 +191,105 @@ $editionText = (Get-Date -Format 'yyyy-MM-dd') + ' / ' + $scopeText
 [void]$s.AppendLine(']]')
 [void]$s.AppendLine('#v(1fr)')
 [void]$s.AppendLine('#pagebreak()')
-[void]$s.AppendLine('#columns(3, gutter: 0.9cm)[#outline(title: none, depth: 2, indent: 0.6em)]')
+[void]$s.AppendLine('#columns(3, gutter: 0.9cm)[#outline(title: none, indent: 6pt)]')
 [void]$s.AppendLine((Zh '23 76 28 31 32 70 74 29 a 23 62 6c 6f 63 6b 28 77 69 64 74 68 3a 20 31 30 30 25 2c 20 62 72 65 61 6b 61 62 6c 65 3a 20 66 61 6c 73 65 2c 20 69 6e 73 65 74 3a 20 31 32 70 74 2c 20 73 74 72 6f 6b 65 3a 20 30 2e 35 70 74 20 2b 20 6c 75 6d 61 28 32 30 30 29 2c 20 72 61 64 69 75 73 3a 20 33 70 74 29 5b a 23 73 65 74 20 74 65 78 74 28 73 69 7a 65 3a 20 39 70 74 29 a 23 74 65 78 74 28 73 69 7a 65 3a 20 31 32 70 74 2c 20 77 65 69 67 68 74 3a 20 22 62 6f 6c 64 22 29 5b 6253 5370 8bbe 7f6e 5d a 23 76 28 36 70 74 29 a 23 67 72 69 64 28 63 6f 6c 75 6d 6e 73 3a 20 28 31 66 72 2c 20 31 66 72 29 2c 20 67 75 74 74 65 72 3a 20 38 70 74 2c a 5b 7eb8 5f20 3a 20 41 34 20 2f 20 6a2a 5411 5d 2c 20 5b 7f29 653e 3a 20 5b9e 9645 5927 5c0f 20 2f 20 31 30 30 25 5d 2c a 5b 6bcf 5f20 7eb8 3a 20 31 20 9875 20 50 44 46 2c 20 9875 9762 672c 8eab 5df2 6709 4e09 680f 5d 2c 20 5b 53cc 9762 3a 20 77ed 8fb9 7ffb 8f6c 5d 2c a 5b 989c 8272 3a 20 9ed1 767d 5373 53ef 2c 20 4fdd 7559 7070 5ea6 5d 2c 20 5b 6b63 6587 3a 20 36 20 70 74 2c 20 5efa 8bae 5148 8bd5 5370 4e00 9875 4ee3 7801 5d 29 a 23 76 28 36 70 74 29 a 23 74 65 78 74 28 73 69 7a 65 3a 20 38 70 74 2c 20 66 69 6c 6c 3a 20 6c 75 6d 61 28 38 30 29 29 5b 5148 786e 8ba4 4ee3 7801 548c 7070 8272 6ce8 91ca 6e05 6670 3001 9875 8fb9 672a 88c1 5207 2c 20 518d 6253 5370 6574 672c 3b 20 82e5 6253 5370 673a 63d0 793a 8d85 51fa 53ef 6253 5370 533a 57df 2c 20 5148 68c0 67e5 9884 89c8 2c 20 5fc5 8981 65f6 9002 914d 53ef 6253 5370 533a 57df 5e76 518d 6b21 8bd5 5370 5d a 5d a'))
 [void]$s.AppendLine('#pagebreak()')
 [void]$s.AppendLine('#set page(columns: 3, margin: (x: 0.7cm, y: 0.95cm, top: 1.4cm), header: pagehead, foreground: colrule)')
 [void]$s.AppendLine('')
-# guard: (Domain, Sub) groups must be contiguous in catalog order, or the emit
-# loop prints the same sub heading twice and the TOC lists it two times
-$prevKey = ''
-$seenSub = @{}
-foreach ($b in $blocks) {
-    $k = $b.Meta.Domain + '/' + $b.Meta.Sub
-    if ($seenSub.ContainsKey($k) -and $prevKey -ne $k) { throw ('catalog: non-contiguous sub-domain: ' + $k) }
-    $seenSub[$k] = $true
-    $prevKey = $k
-}
-$lastDom = ''
-$lastSub = ''
-$pbPage = '#pagebreak(weak: true)'             # every real entry opens a fresh page
-$pbOdd = '#pagebreak(to: "odd", weak: true)'   # SoloMin>0: big entries jump to a sheet front
-$pbDom = if ($SoloMin -gt 0) { $pbOdd } else { $pbPage }  # domain openers always take a fresh page
-$tobu = -join ([char]0x5F85, [char]0x8865)     # 'to be filled' tag; codepoints keep this file ASCII-only
-$prevAuto = $false
-foreach ($b in $blocks) {
-    $newDom = $b.Meta.Domain -ne $lastDom
-    $newSub = $newDom -or ($b.Meta.Domain + '/' + $b.Meta.Sub -ne ($lastDom + '/' + $lastSub))
-    if ($newDom) {
-        [void]$s.AppendLine($pbDom)            # domain heading always opens a fresh page
-        [void]$s.AppendLine('= ' + (Esc $b.Meta.Domain))
-        $lastDom = $b.Meta.Domain
-    }
-    elseif (-not $b.Auto) { [void]$s.AppendLine($(if ($SoloMin -gt 0 -and $b.Lines -ge $SoloMin) { $pbOdd } else { $pbPage })) }   # real entries: one page each
-    elseif (-not $prevAuto) { [void]$s.AppendLine($pbPage) } # skeleton runs start on a fresh page too
-    if ($newSub) {
-        [void]$s.AppendLine('#subsep[' + (Esc $b.Meta.Sub) + ']')
-        $ikey = $b.Meta.Domain + '/' + $b.Meta.Sub
-        if ($subIntro.ContainsKey($ikey)) { [void]$s.AppendLine('#subintro[' + (Esc ($subIntro[$ikey].Trim())) + ']') }
-        $lastSub = $b.Meta.Sub
-    }
-    $tag = ''
-    if ($b.Meta.Prose -and ($b.Lines -eq 0 -or $b.Text -match ('^' + (Zh '5360 4f4d') + '[:\uFF1A]') -or $b.Text.Contains((Zh '9aa8 67b6 7a7a 76ee 5f55')))) {
-        $tag = ' #text(fill: luma(165), size: 0.72em)[' + $tobu + ']'   # catalog prose + empty shells carry the marker
-    }
-    [void]$s.AppendLine('== ' + (Esc $b.Meta.Cn) + $tag + ' <e-' + $b.Meta.Name + '>')
-    if ($b.Lines -gt 0) {
-        [void]$s.AppendLine('#entrymeta[' + $(if (-not $b.Meta.Prose -and $b.Meta.PSObject.Properties['Domain']) { (Esc ($b.Meta.Name + '.h')) + ' | ' } else { '' }) + $b.Lines + (Zh '20 884c 20 7c 20 53 48 41 32 35 36 20')  + $b.Hash + ']')
-        if ($b.Meta.Prose) {
-            [void]$s.AppendLine('#set par(justify: true)')
-            [void]$s.AppendLine((Esc $b.Text))
-            [void]$s.AppendLine('#set par(justify: false)')
-        }
-        else {
-            [void]$s.AppendLine('```cpp')
-            [void]$s.AppendLine($b.Text)
-            [void]$s.AppendLine('```')
-        }
-    }
-    [void]$s.AppendLine('')
-    $prevAuto = [bool]$b.Auto
-}
-if ($plugBlocks.Count -gt 0) {
-    $firstPlug = $true
-    $pi = 0
-    foreach ($b in $plugBlocks) {
-        $brk = if ($SoloMin -gt 0 -and $b.Lines -ge $SoloMin) { $pbOdd } else { $pbPage }
-        if ($firstPlug) { [void]$s.AppendLine($brk); [void]$s.AppendLine('= ' + (Zh '9644 5f55 ff1a 4ee3 6570 63d2 4ef6')); $firstPlug = $false }
-        else { [void]$s.AppendLine($brk) }
-        [void]$s.AppendLine('=== ' + (Esc $b.Meta.Name) + ' <e-plug' + $pi + '>')
-        [void]$s.AppendLine('#entrymeta[' + $(if (-not $b.Meta.Prose -and $b.Meta.PSObject.Properties['Domain']) { (Esc ($b.Meta.Name + '.h')) + ' | ' } else { '' }) + $b.Lines + (Zh '20 884c 20 7c 20 53 48 41 32 35 36 20')  + $b.Hash + ']')
-        [void]$s.AppendLine('```cpp')
-        [void]$s.AppendLine($b.Text)
-        [void]$s.AppendLine('```')
-        [void]$s.AppendLine('')
-        $pi++
-    }
-}
+$blockByPath=@{}
+foreach ($b in @($blocks)+@($plugBlocks)) { $blockByPath[$b.Meta.Rel]=$b }
+$pluginLabels=@{}
+for ($pi=0; $pi -lt $plugBlocks.Count; $pi++) { $pluginLabels[$plugBlocks[$pi].Meta.Rel]='e-plug'+$pi }
+$script:printedDirs=@{}
+$script:pendingHeadings=New-Object Text.StringBuilder
+$script:newDomain=$false
+$script:lastBlockKind=''
+[void]$s.AppendLine('// directory-scope: '+$(if ($Filter) { 'filtered' } else { 'all' }))
+foreach ($node in $tree.Roots) { Write-BookletNode $node $s $blockByPath $pluginLabels $SoloMin }
+if ($script:pendingHeadings.Length) { throw 'Unflushed directory headings' }
 $outputPath = if ([IO.Path]::IsPathRooted($OutFile)) { [IO.Path]::GetFullPath($OutFile) } else { [IO.Path]::GetFullPath((Join-Path $root $OutFile)) }
+if ([IO.Path]::GetExtension($outputPath) -ne '.pdf') { throw 'OutFile must use the .pdf extension' }
+$canonical = [IO.Path]::GetFullPath((Join-Path $root 'docs/booklet/output/zoi-booklet-print.pdf'))
+if (($Filter -or $SourceOnly) -and $outputPath -eq $canonical) { throw 'A preview requires -OutFile in the workspace scratch directory' }
 [void][IO.Directory]::CreateDirectory((Split-Path -Parent $outputPath))
 $typPath = [IO.Path]::ChangeExtension($outputPath, '.typ')
 if ($typPath -eq $outputPath) { throw 'OutFile must not use the .typ extension' }
 [IO.File]::WriteAllText($typPath, $s.ToString(), $enc)
+
+if ($SourceOnly) { Write-Host ('[OK] source: ' + $entries.Count + ' entries, ' + $printedManuals.Count + ' manuals -> ' + $typPath); return }
 
 # ---- compile ----
 Push-Location $root
 try { & $typst compile $typPath $outputPath; if ($LASTEXITCODE -ne 0) { throw 'typst compile failed' } }
 finally { Pop-Location }
 
-Write-Host ('[OK] booklet: ' + $realCount + ' catalog entries + ' + $autoBlocks.Count + ' skeleton entries, ' + $plugBlocks.Count + ' plugins -> ' + $outputPath)
+Write-Host ('[OK] booklet: ' + $realCount + ' catalog entries + ' + $printedManuals.Count + ' manuals, ' + $plugBlocks.Count + ' plugins -> ' + $outputPath)
 foreach ($w in $script:warn) { Write-Host ('[WARN] ' + $w) -ForegroundColor Yellow }
 
 # ---- anchor eval: one query feeds both audits ----
 # NOTE: `typst query` output carries no location on current toolchains; the old
 #       JSON audit silently matched nothing (vacuous OK). eval() is the truth.
-$prevEAP = $ErrorActionPreference
-$ErrorActionPreference = 'Continue'
-$expr = 'query(heading).filter(h=>h.has(str(label))).map(h=>(h.label,h.location().page()))'
-$evalOut = & $typst eval $expr --in $typPath 2>$null
-$ErrorActionPreference = $prevEAP
-
-# ---- folder coverage audit: the booklet must anchor every knowledge folder ----
-# independent recheck of the walk against what the generated source really
-# emits: each scanned skeleton folder must show up as its labeled heading,
-# otherwise the build fails here with the missing list printed.
-if ($Filter -ne '') {
-    Write-Host '[SKIP] folder coverage audit (filtered build)'
-}
-else {
-    $gmap = @{}
-    foreach ($ab in $autoBlocks) { $gmap[$ab.Meta.Name] = $ab }
-    $found = @{}
-    foreach ($m in [regex]::Matches(($evalOut -join ' '), '"<e-(g[0-9]+)>",(\d+)')) { $found[$m.Groups[1].Value] = $true }
-    $missing = @($gmap.Keys | Where-Object { !$found.ContainsKey($_) })
-    if ($missing.Count -gt 0) {
-        foreach ($nm in $missing) { Write-Host ('[COVERAGE MISSING] ' + $gmap[$nm].Meta.Cn + '  ' + $gmap[$nm].Meta.Rel) -ForegroundColor Red }
-        Write-Host ('[FAIL] folder coverage: ' + $missing.Count + ' of ' + $autoBlocks.Count + ' library folders missing from booklet'); exit 1
+function Invoke-BookletEval([string]$Expression) {
+    # Typst writes UTF-8 even when PowerShell is launched with redirected pipes.
+    $previousEncoding=[Console]::OutputEncoding
+    try {
+        [Console]::OutputEncoding=$enc
+        & $typst eval $Expression --in $typPath
+        if ($LASTEXITCODE -ne 0) { throw 'Typst audit query failed' }
     }
-    Write-Host ('[OK] folder coverage: ' + $kDirs.Count + '/' + $kDirs.Count + ' knowledge folders anchored (' + $autoBlocks.Count + ' skeleton entries, ' + $realCount + ' catalog entries, ' + $subIntroRaw.Count + ' group notes)')
+    finally { [Console]::OutputEncoding=$previousEncoding }
 }
+$expr = 'query(heading).filter(h=>h.outlined and h.has(str(label))).map(h=>(h.label,h.location().page()))'
+$evalOut = Invoke-BookletEval $expr
+
+# Every selected entry and every discovered manual must survive typesetting.
+$expected = @($blocks | ForEach-Object { 'e-' + $_.Meta.Name })
+for ($pi=0; $pi -lt $plugBlocks.Count; $pi++) { $expected += 'e-plug' + $pi }
+foreach ($anchor in $expected) {
+    if (([regex]::Matches(($evalOut -join ' '), ('"<' + [regex]::Escape($anchor) + '>"'))).Count -ne 1) { throw ('Missing or repeated entry anchor: ' + $anchor) }
+}
+$startPages=@{}
+foreach ($m in [regex]::Matches(($evalOut -join ' '), '"<(e-[a-zA-Z0-9]+)>",(\d+)')) { $startPages[$m.Groups[1].Value]=[int]$m.Groups[2].Value }
+$endEval=Invoke-BookletEval 'query(metadata).filter(m=>type(m.value)==str and m.value.starts-with("entry-end:")).map(m=>(m.value,m.location().page()))'
+if ($LASTEXITCODE -ne 0) { throw 'Entry reserve audit query failed' }
+$ends=[regex]::Matches(($endEval -join ' '), '"entry-end:(e-[a-zA-Z0-9]+)",(\d+)')
+if ($ends.Count -ne $expected.Count) { throw 'Entry reserve audit missed an end marker' }
+$previousEnd=0
+foreach ($m in $ends) {
+    $anchor=$m.Groups[1].Value; $end=[int]$m.Groups[2].Value
+    if (-not $startPages.ContainsKey($anchor) -or $startPages[$anchor] -le $previousEnd -or $end -lt $startPages[$anchor]) { throw ('Entry does not own its pages: '+$anchor) }
+    $previousEnd=$end
+}
+Write-Host ('[OK] reserve: '+$ends.Count+' entries own separate page ranges including manuals')
+if ($printedManuals.Count -ne $manuals.Count) { throw 'Manual discovery/emission mismatch' }
+$manualQuery = 'query(metadata).map(m=>m.value)'
+$manualEval = Invoke-BookletEval $manualQuery
+if ($LASTEXITCODE -ne 0) { throw 'Manual audit query failed' }
+foreach ($rd in $manuals.Keys) {
+    if (([regex]::Matches(($manualEval -join ' '), [regex]::Escape((Typ-String $rd)))).Count -ne 1) { throw ('Missing or repeated manual: ' + $rd) }
+}
+Write-Host ('[OK] coverage: ' + $expected.Count + ' entries, ' + $manuals.Count + ' adjacent manuals; roadmap prose excluded')
+foreach ($dir in @($tree.Nodes.Values | Where-Object { $_.Selected })) {
+    if (-not $script:printedDirs.ContainsKey($dir.Rel)) { throw ('Directory was not emitted: '+$dir.Rel) }
+    if (([regex]::Matches(($manualEval -join ' '),[regex]::Escape((Typ-String ('directory:'+$dir.Rel))))).Count -ne 1) { throw ('Directory coverage mismatch: '+$dir.Rel) }
+}
+Write-Host ('[OK] directories: '+$script:printedDirs.Count+' real algorithm directories')
+$mathExpected=[regex]::Matches($s.ToString(),[regex]::Escape('#metadata("booklet-math")')).Count
+$mathActual=Invoke-BookletEval 'query(math.equation).len()'
+if ($LASTEXITCODE -ne 0 -or [int]($mathActual -join '') -ne $mathExpected) { throw 'Math equation coverage mismatch' }
+Write-Host ('[OK] math: '+$mathExpected+' equations typeset')
 
 # ---- parity audit: only meaningful when SoloMin>0 (duplex sheet fronts) ----
 if ($SoloMin -le 0) {
-    if (($evalOut -join ' ') -notmatch 'e-') { Write-Host '[FAIL] anchor eval matched nothing (eval broken?)'; exit 1 }
-    Write-Host '[OK] parity: skipped (SoloMin=0, continuous layout, no blank filler pages)'
+    if (($evalOut -join ' ') -notmatch '(e-|dir-)') { Write-Host '[FAIL] anchor eval matched nothing (eval broken?)'; exit 1 }
+    Write-Host '[OK] parity: skipped (SoloMin=0, fresh entry pages, no parity filler)'
 }
 else {
 $viol = 0
 $hits = 0
 $bigHits = 0
 $bigset = @()
-foreach ($b in $blocks) { if (-not $b.Auto -and $b.Lines -ge $SoloMin) { $bigset += $b.Meta.Name } }
+foreach ($b in $blocks) { if ($b.Lines -ge $SoloMin) { $bigset += $b.Meta.Name } }
 for ($pi = 0; $pi -lt $plugBlocks.Count; $pi++) { if ($plugBlocks[$pi].Lines -ge $SoloMin) { $bigset += 'plug' + $pi } }
 foreach ($m in [regex]::Matches(($evalOut -join ' '), '"<(e-[a-zA-Z0-9]+)>",(\d+)')) {
     $hits++
@@ -392,7 +304,7 @@ foreach ($m in [regex]::Matches(($evalOut -join ' '), '"<(e-[a-zA-Z0-9]+)>",(\d+
     }
 }
 if ($bigHits -ne $bigset.Count) { throw 'Parity audit missed expected big-entry anchors' }
-if ($hits -eq 0) { Write-Host '[FAIL] parity audit matched no entry anchors (eval broken?)'; exit 1 }
+if ($expected.Count -gt 0 -and $hits -eq 0) { Write-Host '[FAIL] parity audit matched no entry anchors (eval broken?)'; exit 1 }
 if ($viol -eq 0) { Write-Host ('[OK] parity: ' + $bigHits + '/' + $bigset.Count + ' big entries start on odd pages (sheet fronts)') }
 else { Write-Host ('[FAIL] parity violations: ' + $viol); exit 1 }
 }

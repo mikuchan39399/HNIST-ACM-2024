@@ -10,6 +10,7 @@ leftist	algorithms/数据结构/堆/左偏树/左偏树.cpp
 dsu	algorithms/数据结构/并查集/DSU.cpp
 wdsu	algorithms/数据结构/并查集/WDSU.cpp
 monoQueue	algorithms/数据结构/单调队列/单调队列.cpp
+monoStack	algorithms/数据结构/单调栈/单调栈.cpp
 bit	algorithms/数据结构/树状数组/树状数组.cpp
 bit2d	algorithms/数据结构/树状数组/二维树状数组.cpp
 segFhq	algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp

@@ -2,6 +2,74 @@
   "schema": 1,
   "coverage": [
     {
+      "template": "algorithms/数据结构/线段树/泛型线段树.cpp",
+      "suite": "algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp",
+      "api": [
+        "七组真实 Info/Tag 的 build、modify、query 与复位",
+        "加/赋值/模仿射平方和/异或计数/01连续段/最大子段/绝对下标等差"
+      ],
+      "oracle": "逐元素数组更新并扫描全部维护量; 最大子段小数据枚举所有子段, 大数据独立前缀最小值; 模运算暴力使用 __int128",
+      "cases": [
+        "每组 64 轮×320 次双引擎随机, n=1/全同/交替/整段标记后局部下传/空标记/最终全区间枚举",
+        "每组 20万-1-257-20万, 20 次大范围操作及每轮 n 次单点/短区间修改查询, 模数上界/第30位/1e9正负值",
+        "五组从未 build 的 1e9 稀疏零域起步, Binary/Linear 只验完整 build"
+      ],
+      "limitations": "仅这七个常用插件, 不代表旧历史最值/取模等专题已验; Binary 与 Linear 必须 build; Xor 值与掩码在位宽内且长度<=INT_MAX; 其余普通整数运算及累积标记须在 LL 内",
+      "summary": "七组真实插件双引擎与每组20万规模; 稀疏零域适配按插件契约区分"
+    },
+    {
+      "template": "algorithms/数据结构/线段树/泛型动态线段树.cpp",
+      "suite": "algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp",
+      "api": [
+        "七组真实 Info/Tag 的 build、modify、query 与复位",
+        "加/赋值/模仿射平方和/异或计数/01连续段/最大子段/绝对下标等差"
+      ],
+      "oracle": "逐元素数组更新并扫描全部维护量; 最大子段小数据枚举所有子段, 大数据独立前缀最小值; 模运算暴力使用 __int128",
+      "cases": [
+        "每组 64 轮×320 次双引擎随机, n=1/全同/交替/整段标记后局部下传/空标记/最终全区间枚举",
+        "每组 20万-1-257-20万, 20 次大范围操作及每轮 n 次单点/短区间修改查询, 模数上界/第30位/1e9正负值",
+        "五组从未 build 的 1e9 稀疏零域起步, Binary/Linear 只验完整 build"
+      ],
+      "limitations": "仅这七个常用插件, 不代表旧历史最值/取模等专题已验; Binary 与 Linear 必须 build; Xor 值与掩码在位宽内且长度<=INT_MAX; 其余普通整数运算及累积标记须在 LL 内",
+      "summary": "七组真实插件双引擎与每组20万规模; 稀疏零域适配按插件契约区分"
+    },
+    {
+      "template": "algorithms/数据结构/单调队列/单调队列.cpp",
+      "suite": "algorithms/杂项/对拍/misc_check.cpp",
+      "api": ["mono_window 四种比较及平手策略, 返回下标", "mono_dp 有限前驱 min 转移"],
+      "oracle": "400 组逐窗口全扫描及 600 组 O(nk) DP; 大滑窗独立分块前后缀, 大 DP multiset 保存全部合法前驱及常费用闭式答案",
+      "cases": ["20 万-1-257-20 万, 正序/倒序/全同/LL 极值交替/锯齿/随机, 六种窗口宽度与 k>n", "空态、同值左右下标、int 极值、300 组自定义载荷, 输入不变", "DP 大小多测、正/零/负常费用、两种大随机窗口、LL 合法极值"],
+      "limitations": "输入含 0 号哨兵且 1-based, k>=1; 比较为固定一致顺序, 键不变; DP 仅示范指定递推, 所有加法在 LL 内; 大滑窗四种平手下标由小暴力补充, 大规模主要比最值",
+      "summary": "显式滑窗/DP 骨架, 20 万长度与平手/时机边界纳入默认对拍"
+    },
+    {
+      "template": "algorithms/数据结构/单调栈/单调栈.cpp",
+      "suite": "algorithms/杂项/对拍/misc_check.cpp",
+      "api": ["mono_stack 左侧最近 < / <= / > / >=", "反转求右侧示例, 输入不变"],
+      "oracle": "600 组逐位置向左扫描; 大规模独立离散化加 Fenwick 前缀最大下标, 不用单调栈; 反转示例直接向右扫描",
+      "cases": ["20 万-0-1-257-20 万, 正序/倒序/全同/LL 极值交替/锯齿/随机, 四种关系逐下标核对", "空态/单元素、int 极值、重复调用、300 组自定义载荷"],
+      "limitations": "输入含 0 号哨兵且 1-based, 不存在为 0; 比较为固定一致顺序; 未把 README 的区间贡献提示实现为通用引擎, 按题改动需另验",
+      "summary": "新入库的显式弹栈骨架, 四种关系与 20 万长度已接默认对拍"
+    },
+    {
+      "template": "algorithms/数据结构/并查集/DSU.cpp",
+      "suite": "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+      "api": ["构造/init/find/merge/same/size"],
+      "oracle": "300 组染色重标与独立分量计数; 大规模按链/星/平衡合并的闭式根与大小, 257 点分块公式核对",
+      "cases": ["20 万-0-1-37-20 万复位, 每轮链/星/平衡合并, 全点大小/根/重复及自合并", "20 万点分块森林随机连通与分量大小, 最早点在尚未压缩的长链上查根"],
+      "limitations": "init 不超过构造容量; 根方向保持 v 的根挂到 u 的根, 非按大小合并; find 迭代路径压缩, 单次仍可能线性; 不支持删除或撤销",
+      "summary": "20 万点退化链与分块森林、多测复位已验, 查根改迭代消除递归栈依赖"
+    },
+    {
+      "template": "algorithms/数据结构/并查集/WDSU.cpp",
+      "suite": "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+      "api": ["构造/init/find/merge/same/query", "mod=0 普通距离及 mod>0 归一化"],
+      "oracle": "原平移暴力每模式 300 组; 另六模式各 350 组约束图 BFS, 不复用势能合并公式; 20 万点按预设势能差给出答案",
+      "cases": ["链/星/平衡/分块森林各 20 万点和查询, mod=0/1/3/1000000007", "孤立点、合并方向、自合并、矛盾约束忽略、正反向距离, LLONG_MAX 模数与合法距离, INF 与连通结果碰撞", "20 万-0-1-17-20 万复位并切换四种模式, 核对地址/容量不变; 300 次小多测, 省略模数切回 0"],
+      "limitations": "所有距离加减中间值须在 LL 内; 已连通 merge 忽略矛盾, INF 可能也是合法距离需用 same 辨别; init 不超过构造容量, 复位后旧关系失效; 仅路径压缩, 单次查根仍可能线性",
+      "summary": "归一化溢出与递归深栈已修, 独立 BFS、20 万点及跨模式容量复用已验"
+    },
+    {
       "template": "algorithms/数据结构/堆/左偏树/左偏树.cpp",
       "suite": "algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp",
       "api": ["init/alive/same/merge/insert/pop/erase", "set_val/add_val/get_val 单点域", "heap_add/heap_mul/add_all 堆级域", "get_top_id/get_top_val/get_size/get_heap_sum/get_heap_count/get_roots_id"],

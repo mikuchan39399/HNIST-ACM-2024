@@ -14,3 +14,8 @@
 - 两层验证表: [实施与验证](verification-20260906.md)
 - 全库设计与同步审查: [问题、处理结果、工作区及 74 项快照](repo-audit-20260906.md)。
 - 队友部署与缓存治理: [安装、VS Code 任务、真实 ZIP 交付和双平台验证](deployment-audit-20260906.md)。
+- 2026-09-07 发布: [提交与五项在线 CI 核验](release-20260907.md)。
+- 2026-09-07 文档导航: [双入口缺口、修补与自动检查](../../rules/sweep-history.md#2026-09-07-codex-文档双入口导航审查)。
+- 2026-09-07 手册与 README: [路线分离、分类粒度与自动打印验证](booklet-readme-20260907.md)。
+
+旧 [docs/architecture 入口](../../docs/architecture/README.md)仅保留跳转; 算法压力与修复记录另从 [专项验证索引](../verification/README.md) 查阅。

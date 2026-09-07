@@ -21,6 +21,7 @@
 | [并查集 / DSU](<../../algorithms/数据结构/并查集/DSU.cpp>) | [dsu.h](<../../zoi/dsu.h>) |
 | [并查集 / WDSU](<../../algorithms/数据结构/并查集/WDSU.cpp>) | [wdsu.h](<../../zoi/wdsu.h>) |
 | [单调队列 / 单调队列](<../../algorithms/数据结构/单调队列/单调队列.cpp>) | [monoQueue.h](<../../zoi/monoQueue.h>) |
+| [单调栈 / 单调栈](<../../algorithms/数据结构/单调栈/单调栈.cpp>) | [monoStack.h](<../../zoi/monoStack.h>) |
 | [树状数组 / 树状数组](<../../algorithms/数据结构/树状数组/树状数组.cpp>) | [bit.h](<../../zoi/bit.h>) |
 | [树状数组 / 二维树状数组](<../../algorithms/数据结构/树状数组/二维树状数组.cpp>) | [bit2d.h](<../../zoi/bit2d.h>) |
 | [树套树 / 线段树套FHQ_Treap](<../../algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp>) | [segFhq.h](<../../zoi/segFhq.h>) |
@@ -131,3 +132,30 @@
 | [防卡 / 哈希防卡](<../../algorithms/杂项/防卡/哈希防卡.cpp>) | [customHash.h](<../../zoi/customHash.h>) |
 | [离散化 / 离散化](<../../algorithms/杂项/离散化/离散化.cpp>) | [discrete.h](<../../zoi/discrete.h>) |
 | [主元素问题 / Misra-Gries](<../../algorithms/杂项/主元素问题/Misra-Gries.cpp>) | [misraGries.h](<../../zoi/misraGries.h>) |
+
+## 算法说明文档
+
+[路线图](../roadmaps/README.md) | 源码同目录 README 为可选使用说明, 自动进入手册。
+
+### 算法文档
+
+- [算法总览](<../../algorithms/README.md>)
+
+### 图论文档
+
+- [优化建图 / README.md](<../../algorithms/图论/优化建图/README.md>)
+- [树上问题 / 树的中心 / README.md](<../../algorithms/图论/树上问题/树的中心/README.md>)
+- [树上问题 / 树的直径 / README.md](<../../algorithms/图论/树上问题/树的直径/README.md>)
+- [树上问题 / 树的重心 / README.md](<../../algorithms/图论/树上问题/树的重心/README.md>)
+
+### 数据结构文档
+
+- [单调栈 / README.md](<../../algorithms/数据结构/单调栈/README.md>)
+- [单调队列 / README.md](<../../algorithms/数据结构/单调队列/README.md>)
+- [堆 / 左偏树 / README.md](<../../algorithms/数据结构/堆/左偏树/README.md>)
+- [并查集 / README.md](<../../algorithms/数据结构/并查集/README.md>)
+- [有序表与平衡树 / README.md](<../../algorithms/数据结构/有序表与平衡树/README.md>)
+- [树状数组 / README.md](<../../algorithms/数据结构/树状数组/README.md>)
+- [线段树 / README.md](<../../algorithms/数据结构/线段树/README.md>)
+- [线段树 / 可持久化线段树 / README.md](<../../algorithms/数据结构/线段树/可持久化线段树/README.md>)
+- [线段树 / 泛型插件 / README.md](<../../algorithms/数据结构/线段树/泛型插件/README.md>)

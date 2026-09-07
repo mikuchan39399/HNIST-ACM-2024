@@ -6,7 +6,7 @@
 | 改了什么 | 要做什么 |
 |---|---|
 | 母版登记、跳板名称 | 更新 zoi/_catalog.txt，运行 scripts/make_stubs.ps1；遵守模板契约 |
-| catalog 或测试 include 关系 | 运行 scripts/make_reliability.ps1，再运行 scripts/make_features.ps1 |
+| catalog、测试 include 关系或算法说明文档 | 运行 scripts/make_reliability.ps1，再运行 scripts/make_features.ps1；文档变动另验导航 |
 | 模板实现或传递依赖 | 重跑相关套件; 暂不跑时用 scripts/make_verification.ps1 刷新待重验状态 |
 | 测试行为、API 或边界用例 | 核对 rules/verification.json 的对应范围, 运行相关套件后查看自动生成的两层表 |
 | 指纹、证据或两层表生成器 | 运行 scripts/check_verification_test.ps1, 同时验证 PS5.1 / PS7 |
@@ -16,6 +16,7 @@
 | 分享队友包 | VS Code 的 zoi-package 或 scripts/make_team_package.ps1, 默认 docs/releases/时间戳 ZIP |
 
 功能细目由 make_features 复用 check_inventory 生成；-Check 只检查且过期失败。每次功能新增、修改或撤下均执行 [rule 双向同步要求](../../rule.md#适用范围与阅读顺序), 核对 LLM 规则与 docs/features/README.md 的用户说明, 不限于新增整个功能; 不手填生成数量或测试通过等级。
+make_features 同时收集 algorithms 下的 Markdown, 在算法目录末尾生成按方向排列的说明入口, 不只链接源码; 新增说明后要重新生成。
 所有脚本放 scripts，库根从 PSScriptRoot 推导，不写本机绝对路径。打包收源码、受管文档、验证范围 JSON、自动运行证据及压力入口依赖的 .github 配置, 排除恢复备份、原始测试日志和已有发布包。
 
 安装 v3 管理 settings/tasks/keybindings 三个文档, v2 原快照可升级, 重装检查并补缺项;
@@ -27,6 +28,18 @@ configure-zoi 只处理调用方指定的工作区, 多个 C/C++ 配置逐一补
 打包排除规则必须相对库根计算, 不能因为库本身位于 .zoi-checks 或 releases 下就排空全部源码;
 拒绝跟随链接, 排除个人状态, 完成 ZIP 后再公布正式文件, 清理临时目录有有限重试。
 部署自检必须实际解压发布包并安装, 不能只检查 ZIP 名称。CI setup 作业自动跑两版 PowerShell 的部署自检。
+
+## 文档导航维护
+
+用户从根 README → docs/README 按任务找指南, AI 从 AGENTS 按任务路由到规则与相关说明。算法源码/笔记/家族 README 从生成目录进入, 学习状态从 progress 进入, 当前验证从 verification 两层表进入; 只有追溯时才打开 records 的专项或历史索引。
+
+新增或移动文档时, 给它安排合适的上级入口并写清用途, 同时检查用户与 AI 路径。不要为了可达而要求 AI 预读全部文档。专项验证报告补 records/verification/README, 工具记录补 records/tooling/README, 归档快照补对应目录 README。
+
+在 Git 工作副本运行 `python scripts/check_docs.py`, 需要 Python 3.8+ 与 Git。它扫描已跟踪和未忽略的新 Markdown, 检查本地链接/标题锚点, 并分别从根 README 和 AGENTS 沿实际 Markdown 链接检查所有文档可达; 目录链接仅在存在 README 时进入该页, 不把整个目录自动视作已导航。
+
+检查支持本库使用的内联链接、引用链接定义与 ATX 标题; 不访问外部网站, 不扫描忽略目录的私有产物, 代码块/行内代码不当作链接。rule_history 和两轮迁移的原文快照保留旧相对路径, 不校验其出链, 但快照自身仍须由索引可达。这个检查保证当前链接结构, 不保证读者或模型理解正文, 人仍要核对入口是否说明“何时读”。
+
+`python scripts/check_docs.py --self-test` 在库内临时夹具验证孤页、断链、错锚点、单向入口、代码示例、大小写与归档例外。CI 普通作业自动运行自检和全库检查。check_inventory_test 另验算法说明自动收集、生成物过期拒绝、只读校验和不变时不重写。
 
 ## CI 与报告
 
@@ -87,27 +100,35 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 
 ## 手册生成约定
 
-封面显示生成日期、筛选范围与使用导览; quick 卡片等高, entrymeta 统一代码信息条, 页眉方向用浅灰标签。代码仍按原字号自动分栏分页。插件附录按相对路径以 zh-CN 显式排序, 避免文件枚举顺序影响页码。视觉改动需对比打印代码内容并渲染抽查封面、目录和正文; 使用说明见 [打印手册](../booklet/README.md)。
+正文 heading 与目录 outline.entry 共用 `chapter-style` 的深度样式规则，统一字号、字重与颜色；不再单独覆盖前两级而让深层回退。目录按 6 pt 递进缩进，保留条目间距；只钳制最小字号，不限制目录深度。样例含七层目录，PDF 检查从实际绘制文字读取字号和坐标，验证两处均按深度收敛、缩进保留且行不重叠。
 
-赛场纸质化: make_booklet.ps1 -> docs/booklet/output/zoi-booklet-print.pdf(typst A4 横排三栏, 目录带页码);
-正式手册只保留这一份 PDF 和同名 .typ, 默认重建覆盖更新, 第 39 页保留 MIKU ♡; 不再维护普通版副本。筛选/排版试验用 OutFile 写入 .zoi-checks/codex-work。修改页脚时整本检查 MIKU 仅在第 39 页, 避免目录页码求值泄漏。
-  catalog 顺序即章节序, 行首 ^ = 笔记条目(.txt 正文, 无代码无跳板); 相对
-  include 改写为跳板短名(誊写产物=同目录 .h 集合, utils 只印一次); 插件
-  附录自动收(含 main 跳过); 每条目印 行数+ SHA256 前 8 hex(LF 归一化),
-  自检先数行再对 hash; 纯 =/- 装饰线超栏宽转换期截断(先截后 hash, 纸
-  面与指纹一致); 目录两级=域/条目,
-  子域是分隔条(subsep), 未代表组的 README 印作导语(subintro); 全库知
-  识点文件夹构建期对账（数量以本次扫描为准）, 缺条 exit 1 并打印缺席清单(防缺斤少
-  两); 缺失叶子自动成骨架条目(README 作正文, 空壳打「待补」)紧凑连
-  排, 真实条目一条一页; 大条目正面起排改 -SoloMin 可选(默认 0 连续
-  排版零空白页, 双面打印场景 -SoloMin 90; parity 审计仅在 >0 时跑);
-  条件分页禁 context 读页码(反馈循环); catalog 域/子域必须连续, 乱序
-  构建直接 throw(否则子域分隔条重复印); 审计锚点用 typst eval 取(query
-  输出无 location, 旧 JSON 审计曾静默空匹配假绿); 页码=一面一页; PS5.1
-  按 ANSI, 中文字面量一律码点拼接(「待补」曾乱码成「寰呰」); typst
-  雷区: _ 是强调开关(中文文件名须转义), content 里 # 开代码(禁裸 #/[)。
-  typst 单 exe 落 scripts\(gitignore); 生成物不进 git。2026/9/3 建成,
-  2026/9/5 全库覆盖+两级目录改版。
+使用步骤与版式见 [打印手册](../booklet/README.md)。路线和待建目标集中到 [路线图](../roadmaps/README.md)，源码同目录 README 仅为用户选定的使用说明，是否新写按 rule §3.1 执行。
+
+`make_booklet.ps1` 从 catalog 读取代码与 `^` 笔记，按完整源路径解析 include 并替换为跳板短名；LF 归一化、截断超长装饰线后计算 SHA256 前 8 位。指纹只对应转换后的代码/笔记，README 不混进代码指纹。代数插件自动发现、去重、按 zh-CN 路径排序，跳过含 main 的文件，回到实际所属目录打印。
+
+`booklet_tree.ps1` 独立扫描 algorithms 的实际目录，排除 对拍 与隐藏工具目录；每个已建/待建目录都是章节。catalog 只提供源码身份、跳板名和已有家族排序优先级，新目录无需登记便可出现。按完整路径形成祖先/子目录关系；筛选支持纯空目录，保留祖先而不带入无关兄弟。
+
+每份源码、登记笔记和插件另起页，长内容跨栏续页，README 紧跟最后一个同目录实现；页段末尾留作补写。待建目录另起一段集中排，标题间留空，不占用上一实现的余页。遍历先缓冲祖先标题，等首个实现或空叶目录换页后再输出，避免父标题落单。唯一源码与目录同名时合用标题，其余源码均进入目录和 PDF 书签。插件也使用同一遍历，SoloMin 只额外要求长条目与方向从奇数页起排。
+页眉优先显示当页实现名；续页沿用该实现，待建目录页显示当前分类，避免首个实现被祖先标题遮住。
+插件扫描在判断 main 前剥离注释和普通字符串/字符字面量，避免 Usage 注释中的完整 main 导致真实插件被排除；仍排除真正带 main 的题解，回归同时包含这两种样例。
+
+不维护或渲染分类短题记。待建空叶目录用 `.gitkeep` 保留到 Git；禁止用删除空目录或只保留本机空目录的方式整理路线。路线长文仍位于 docs/roadmaps，不与算法目录是否入册混淆。
+
+`booklet_markdown.ps1` 负责有限 Markdown 转换：标题用不入目录且与后文相连的小标题，表格/列表/段落采用可分页正文，字符串引用和围栏代码均作为数据处理，不执行 README 中的 Typst 代码。行内代码允许换行，说明正文 7 pt，代码 6 pt。新增复杂语法需扩展转换器和测试，不靠塞进不可分页大框解决布局。
+
+入册 README 按 rule §3.1 保持赛场速查风格，验证/维护记录留在对应记录中。数学用 `$…$` 或 `$$…$$`，经白名单递归解析为 Typst 数学节点；不直接拼入原始数学输入。支持的 TeX 子集见打印指南，未知命令、分组和伸缩括号不匹配时失败。代码内美元符号不参与公式解析，表格切列也须识别数学中的绝对值符号。数学字体用 Typst 自带 New Computer Modern Math，独立公式 8 pt 浅灰底。
+
+编译后用 `typst eval` 检查每个预期算法锚点、每个目录和每份 README 元数据恰好出现一次，并核对实际数学节点数量与转换结果一致；不能只判断“查到过一个锚点”。`SoloMin > 0` 另核对所有大条目的奇数页。完整 PDF 保留第 39 页 MIKU，页码求值须区分目录与物理页。
+
+正式产物仅 `docs/booklet/output/zoi-booklet-print.pdf` 和同名 `.typ`，不提交 Git。预览写库内工作区；筛选或 `SourceOnly` 禁止覆盖正式文件。`SourceOnly` 供不装 Typst 的发现/转换测试使用，仍以 `.pdf` 参数决定同名 `.typ` 位置，不生成 PDF。
+
+CI 的 setup 作业在 PS 5.1/7 运行 `check_booklet.ps1`；booklet 作业使用固定 Typst 0.15.1、中文字体和 pypdf，运行 `check_booklet.ps1 -Render`、完整构建及 `check_booklet_pdf.py`，上传当次 PDF/Typst 和诊断。17 次样例构建包括目录新增/改名/空目录筛选、旧题记不再读取、同名目录/源码合用标题、同目录多实现收录、共享/新增说明、祖先和路线长文排除、非法围栏、预览覆盖保护、数学正常/错误输入、1200 行增长与奇数页。构建查询正文标题和每个实现（含说明）的结束位置，要求页段互不占用；PDF 检查独立对照实际目录树，逐项核对目录/源码书签名称、层级、顺序及纸面目录文本，确认不同起页，并核对数学字体。视觉改动仍须渲染人工抽查。
+
+PowerShell 脚本保持 ASCII，中文从路径/正文读入或用码点；代码与普通文字不得拼成可执行 Typst 标记。字体按实际安装情况挑选，缺中文字体直接报错，不能以乱码 PDF 假装成功。
+
+隔离构建可用 `-TypstPath <可执行文件路径>` 明确指定编译器，不修改系统 PATH 或复制大工具到每份样例。成功样例调用共用完成标记/清理机制，按 tooling 类保留最近三份；失败现场保留。
+
+分类变更运行 `python scripts/check_design.py`，核对九方向明细与进度条目的对应、分类合计、catalog 覆盖和 README 角色；该检查随 CI 导航步骤自动执行，不修改学习状态。
 
 ## 库减负：生成总览与共用资产映射
 
@@ -125,14 +146,14 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 
 模板和知识点变更收尾执行 [学习与入库进度同步约定](../progress/README.md#ai-何时询问如何同步)，核对条目、链接、摘要和用户确认；不由生成器覆盖学习记录。
 
-纸质化回归须检查：筛选条目的 include 仍按完整 catalog 和相对目标路径改写；同名源文件不按 basename 混淆；SoloMin 的正文和插件均按阈值从奇数页开始，审计不得漏掉应检查锚点。版式修改后核对代码块、目录覆盖与页数，并渲染检查目录、正文、笔记和附录。
+纸质化回归须检查：筛选条目的 include 仍按完整 catalog 和相对目标路径改写；同名源文件不按 basename 混淆；SoloMin 的正文和插件均按阈值从奇数页开始，审计不得漏掉应检查锚点。版式修改后核对代码块、目录覆盖与页数，并渲染检查目录、正文、笔记、插件和待建章节。
 
 工作目录、子进程临时文件与长期交接统一执行 [工作区与沉淀](../../rules/collab.md#工作区与沉淀)。
 
 ## 测试缓存保留
 
 `.zoi-checks` 是隔离测试的编译产物、临时输入、配置副本和诊断现场, 不参与模板 include 或安装后的正常刷题。
-run_checks/check_setup/zoi_check/check_runner/check_deployment 完成后写 `.zoi-run.json`,
+run_checks/check_setup/zoi_check/check_runner/check_deployment/check_booklet 完成后写 `.zoi-run.json`,
 只有 PASS、路径吻合、类型已知的完成目录才可自动清理, 每类保留最近三份。
 同一缓存根用临时独占锁串行清理, 同时完成的另一测试跳过本次清理, 避免争删同一现场。
 异常退出无完成标记、FAIL、含链接的目录与 codex-work 均保留, 不靠目录名猜成功。

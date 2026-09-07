@@ -1,0 +1,84 @@
+{
+  "schema": "mono-manual-linux-1",
+  "sources_sha256": {
+    ".github/workflows/ci.yml": "ad6e53cfea339c488c6deccf092280ed4015d0152c3948e5f93bbd057bc3d34e",
+    "algorithms/数据结构/单调队列/单调队列.cpp": "8ee3293ca47b19e0be62e656bdf2b4c5a8db70b3709d02febd3465379722417f",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "algorithms/杂项/对拍/misc_check.cpp": "1a5ce375a8603a80f2c5d1840ab4b0dda1b13f6adafc98b2289deb8b547220c3",
+    "algorithms/杂项/快读快写/快读快写.cpp": "44b9546af976f2f07c80a2c099ed0551d8c4ee2d83f976b1b9717c922317efe4",
+    "algorithms/杂项/离散化/离散化.cpp": "dbe48812c15a3ad8637723c8e3316c711a8036313462e778578cac26925ef08c",
+    "algorithms/杂项/防卡/哈希防卡.cpp": "ead95a622d79e4d09371c8f26cc6e42f6e37e1278d42a9c2ad0428343202ad74",
+    "scripts/check_lca_vt_extreme.py": "91ddffc70547d537aaeb8f0e331975b0b2aef2de15d19cd640e144c603b0e545"
+  },
+  "stable": true,
+  "results": [
+    {
+      "name": "compile-normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 4.099,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "algorithms/杂项/对拍/misc_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p11-new-baseline/normal"
+      ]
+    },
+    {
+      "name": "normal",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 1.24,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p11-new-baseline/normal"
+      ]
+    },
+    {
+      "name": "compile-sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 6.151,
+      "timeout_seconds": 180,
+      "stack_kib": null,
+      "argv": [
+        "/usr/bin/g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "algorithms/杂项/对拍/misc_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p11-new-baseline/sanitizer"
+      ]
+    },
+    {
+      "name": "sanitizer",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 5.103,
+      "timeout_seconds": 180,
+      "stack_kib": 8192,
+      "argv": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.ci-results/p11-new-baseline/sanitizer"
+      ]
+    }
+  ],
+  "failed": false
+}
