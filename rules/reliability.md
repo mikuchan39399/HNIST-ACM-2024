@@ -8,7 +8,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 
 更新：`./scripts/make_reliability.ps1`；只读检查：`./scripts/make_reliability.ps1 -Check`。普通回归不会改写本表。
 
-## A 类：有直接对拍引用的现役模板 [66]
+## A 类：有直接对拍引用的现役模板 [64]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
@@ -60,18 +60,16 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [trie - algorithms/字符串/字典树/字典树.cpp](<../algorithms/字符串/字典树/字典树.cpp>) | [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)<br>[algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>) |
 | [persistentTrie - algorithms/字符串/字典树/可持久化字典树.cpp](<../algorithms/字符串/字典树/可持久化字典树.cpp>) | [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)<br>[algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>) |
 | [mint - algorithms/数学/数论/mint.cpp](<../algorithms/数学/数论/mint.cpp>) | [algorithms/数学/数论/对拍/mint_check.cpp](<../algorithms/数学/数论/对拍/mint_check.cpp>) |
-| [eulerSieve - algorithms/数学/数论/欧拉筛.cpp](<../algorithms/数学/数论/欧拉筛.cpp>) | [algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
-| [eratosthenes - algorithms/数学/数论/埃氏筛.cpp](<../algorithms/数学/数论/埃氏筛.cpp>) | [algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
-| [segSieve - algorithms/数学/数论/区间筛质数.cpp](<../algorithms/数学/数论/区间筛质数.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>)<br>[algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
-| [intSqrt - algorithms/数学/数论/整数开方.cpp](<../algorithms/数学/数论/整数开方.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>) |
-| [divisorSums - algorithms/数学/数论/约数个数及约数和公式法.cpp](<../algorithms/数学/数论/约数个数及约数和公式法.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>) |
-| [divCeilFloor - algorithms/数学/数论/除法上下取整.cpp](<../algorithms/数学/数论/除法上下取整.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>) |
+| [eulerSieve - algorithms/数学/数论/质数筛/欧拉筛.cpp](<../algorithms/数学/数论/质数筛/欧拉筛.cpp>) | [algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
+| [eratosthenes - algorithms/数学/数论/质数筛/埃氏筛.cpp](<../algorithms/数学/数论/质数筛/埃氏筛.cpp>) | [algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
+| [segSieve - algorithms/数学/数论/质数筛/区间筛质数.cpp](<../algorithms/数学/数论/质数筛/区间筛质数.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>)<br>[algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
+| [divisorSums - algorithms/数学/数论/约数/约数个数及约数和公式法.cpp](<../algorithms/数学/数论/约数/约数个数及约数和公式法.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>) |
 | [bigint - algorithms/数学/高精度计算/高精度.cpp](<../algorithms/数学/高精度计算/高精度.cpp>) | [algorithms/数学/高精度计算/对拍/bigint_check.cpp](<../algorithms/数学/高精度计算/对拍/bigint_check.cpp>) |
 | [lucas - algorithms/数学/组合数学/卢卡斯定理求组合数.cpp](<../algorithms/数学/组合数学/卢卡斯定理求组合数.cpp>) | [algorithms/数学/组合数学/对拍/comb_check.cpp](<../algorithms/数学/组合数学/对拍/comb_check.cpp>) |
 | [binomLoop - algorithms/数学/组合数学/循环求组合数.cpp](<../algorithms/数学/组合数学/循环求组合数.cpp>) | [algorithms/数学/组合数学/对拍/comb_check.cpp](<../algorithms/数学/组合数学/对拍/comb_check.cpp>) |
 | [binomPascal - algorithms/数学/组合数学/打表杨辉三角求组合数.cpp](<../algorithms/数学/组合数学/打表杨辉三角求组合数.cpp>) | [algorithms/数学/组合数学/对拍/comb_check.cpp](<../algorithms/数学/组合数学/对拍/comb_check.cpp>) |
 | [binomFactInv - algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp](<../algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp>) | [algorithms/数学/组合数学/对拍/comb_check.cpp](<../algorithms/数学/组合数学/对拍/comb_check.cpp>) |
-| [utils - algorithms/杂项/utils/utils.cpp](<../algorithms/杂项/utils/utils.cpp>) | [algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>)<br>[algorithms/杂项/对拍/utils_local_check.cpp](<../algorithms/杂项/对拍/utils_local_check.cpp>) |
+| [utils - algorithms/杂项/utils/utils.cpp](<../algorithms/杂项/utils/utils.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>)<br>[algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>)<br>[algorithms/杂项/对拍/utils_local_check.cpp](<../algorithms/杂项/对拍/utils_local_check.cpp>) |
 | [rw - algorithms/杂项/快读快写/快读快写.cpp](<../algorithms/杂项/快读快写/快读快写.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>)<br>[algorithms/杂项/对拍/rw_check.cpp](<../algorithms/杂项/对拍/rw_check.cpp>) |
 | [i128 - algorithms/杂项/128位整数/128int.cpp](<../algorithms/杂项/128位整数/128int.cpp>) | [algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp](<../algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp>)<br>[algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>) |
 | [rnd - algorithms/杂项/随机数/z_rnd.cpp](<../algorithms/杂项/随机数/z_rnd.cpp>) | [algorithms/杂项/随机数/对拍/rnd_check.cpp](<../algorithms/杂项/随机数/对拍/rnd_check.cpp>) |

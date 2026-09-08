@@ -3,7 +3,9 @@
 # Catalog line format: <shortname><TAB><target path relative to library root>
 # NOTE: keep this file ASCII-only; PS 5.1 reads no-BOM files as ANSI and CJK
 #       comments can corrupt line structure. Catalog is read with explicit UTF-8.
+$ErrorActionPreference='Stop'
 $Root = Split-Path -Parent $PSScriptRoot   # scripts/ -> library root
+if (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'sync_layout.ps1')) { & (Join-Path $PSScriptRoot 'sync_layout.ps1') }
 $enc = New-Object System.Text.UTF8Encoding($false)
 $cat = Join-Path $Root 'zoi\_catalog.txt'
 if (-not (Test-Path -LiteralPath $cat)) { Write-Host '[FAIL] catalog not found'; exit 1 }

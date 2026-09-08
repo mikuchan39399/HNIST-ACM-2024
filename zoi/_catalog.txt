@@ -72,12 +72,10 @@ persistentTrie	algorithms/字符串/字典树/可持久化字典树.cpp
 ^sam	algorithms/字符串/后缀自动机/后缀自动机.txt
 ^suffixArray	algorithms/字符串/后缀数组/后缀数组.txt
 mint	algorithms/数学/数论/mint.cpp
-eulerSieve	algorithms/数学/数论/欧拉筛.cpp
-eratosthenes	algorithms/数学/数论/埃氏筛.cpp
-segSieve	algorithms/数学/数论/区间筛质数.cpp
-intSqrt	algorithms/数学/数论/整数开方.cpp
-divisorSums	algorithms/数学/数论/约数个数及约数和公式法.cpp
-divCeilFloor	algorithms/数学/数论/除法上下取整.cpp
+eulerSieve	algorithms/数学/数论/质数筛/欧拉筛.cpp
+eratosthenes	algorithms/数学/数论/质数筛/埃氏筛.cpp
+segSieve	algorithms/数学/数论/质数筛/区间筛质数.cpp
+divisorSums	algorithms/数学/数论/约数/约数个数及约数和公式法.cpp
 ^mobius	algorithms/数学/数论/莫比乌斯反演.txt
 bigint	algorithms/数学/高精度计算/高精度.cpp
 ^matrixTree	algorithms/数学/组合数学/矩阵树定理.txt

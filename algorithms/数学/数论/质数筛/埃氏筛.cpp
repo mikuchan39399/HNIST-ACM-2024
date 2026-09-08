@@ -2,7 +2,7 @@
 #ifndef Z_OI_ERATOSTHENES
 #define Z_OI_ERATOSTHENES
 
-#include "../../杂项/utils/utils.cpp"
+#include "../../../杂项/utils/utils.cpp"
 
 // 埃氏筛, prime[x] 标记质数, primes 按升序从下标 0 存; 不保存最小质因子
 // 0<=n<INT_MAX 且表能放下; 位压缩标记约 (n+1)/8+4*pi(n) B, n=1e7 约 3.9MB 有效数据

@@ -2,7 +2,7 @@
 #ifndef Z_OI_EULER_SIEVE
 #define Z_OI_EULER_SIEVE
 
-#include "../../杂项/utils/utils.cpp"
+#include "../../../杂项/utils/utils.cpp"
 
 // 线性筛, lp[x] 为最小质因子, primes 按升序从下标 0 存; lp[0]=lp[1]=0
 // 0<=n<INT_MAX 且表能放下; 约 4(n+1)+4*pi(n) B, n=1e7 时有效数据约 42.7MB

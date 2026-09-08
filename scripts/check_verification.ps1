@@ -8,7 +8,7 @@ function Get-VSnapshot([string]$Root,[string]$Source) {
     $Root=[IO.Path]::GetFullPath($Root).TrimEnd('\','/')
     $pending=New-Object 'Collections.Generic.Queue[string]'
     $pending.Enqueue($Source)
-    foreach ($f in @('scripts/run_checks.ps1','scripts/check_process.ps1','scripts/check_inventory.ps1','scripts/check_verification.ps1')) {
+    foreach ($f in @('scripts/run_checks.ps1','scripts/check_process.ps1','scripts/check_inventory.ps1','scripts/check_verification.ps1','scripts/sync_layout.ps1')) {
         if ([IO.File]::Exists((Join-Path $Root $f))) { $pending.Enqueue($f) }
     }
     $seen=@{}; $files=@(); $allAdded=$false

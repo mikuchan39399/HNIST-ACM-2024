@@ -16,6 +16,7 @@
 | 跑对拍、定位失败 | [测试说明](../scripts/checks.md) |
 | 打印比赛手册 | [生成 PDF](booklet/README.md) |
 | 改脚本、维护跳板或制作分享包 | [维护说明](maintenance/README.md) |
+| 自己移动目录、增加算法，了解自动与手动的边界 | [目录同步](maintenance/layout.md) |
 | 用 VS Code 任务生成队友 ZIP | [正式发布目录](releases/README.md) |
 | 找人工恢复备份的用途说明 | [备份目录说明](backups/README.md) |
 | 保存训练复盘或比赛材料 | [记录目录](../records/README.md) / [比赛目录](../contests/README.md) |

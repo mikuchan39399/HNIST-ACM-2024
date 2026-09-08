@@ -1,0 +1,198 @@
+{
+  "status": "PASS",
+  "platform": "Windows",
+  "initial": [
+    {
+      "name": "powershell-check_inventory_test.ps1",
+      "exit": 0,
+      "seconds": 10.55
+    },
+    {
+      "name": "powershell-check_verification_test.ps1",
+      "exit": 0,
+      "seconds": 10.42
+    },
+    {
+      "name": "powershell-check_runner.ps1",
+      "exit": 0,
+      "seconds": 21.99
+    },
+    {
+      "name": "powershell-zoi_check.ps1",
+      "exit": 1,
+      "seconds": 44.41
+    },
+    {
+      "name": "powershell-check_booklet.ps1",
+      "exit": 0,
+      "seconds": 47.81
+    },
+    {
+      "name": "powershell-check_deployment.ps1",
+      "exit": 1,
+      "seconds": 15.84
+    },
+    {
+      "name": "pwsh-check_inventory_test.ps1",
+      "exit": 0,
+      "seconds": 12.45
+    },
+    {
+      "name": "pwsh-check_verification_test.ps1",
+      "exit": 0,
+      "seconds": 11.56
+    },
+    {
+      "name": "pwsh-check_runner.ps1",
+      "exit": 0,
+      "seconds": 15.38
+    },
+    {
+      "name": "pwsh-zoi_check.ps1",
+      "exit": 0,
+      "seconds": 66.88
+    },
+    {
+      "name": "pwsh-check_booklet.ps1",
+      "exit": 0,
+      "seconds": 33.92
+    },
+    {
+      "name": "pwsh-check_deployment.ps1",
+      "exit": 0,
+      "seconds": 38.89
+    }
+  ],
+  "retries": [
+    [
+      {
+        "name": "zoi_check.ps1",
+        "exit": 1,
+        "seconds": 39.77,
+        "environment": "PSModulePath inherited from PowerShell 7 removed in test child"
+      },
+      {
+        "name": "check_deployment.ps1",
+        "exit": 1,
+        "seconds": 14.12,
+        "environment": "PSModulePath inherited from PowerShell 7 removed in test child"
+      }
+    ],
+    [
+      {
+        "name": "zoi_check.ps1",
+        "exit": 1,
+        "seconds": 51.88,
+        "environment": "PSModulePath inherited from PowerShell 7 removed in test child"
+      },
+      {
+        "name": "check_deployment.ps1",
+        "exit": 0,
+        "seconds": 28.75,
+        "environment": "PSModulePath inherited from PowerShell 7 removed in test child"
+      }
+    ],
+    [
+      {
+        "name": "zoi_check.ps1",
+        "exit": 0,
+        "seconds": 54.62,
+        "environment": "PSModulePath inherited from PowerShell 7 removed in test child"
+      }
+    ]
+  ],
+  "final": {
+    "powershell-check_inventory_test.ps1": {
+      "name": "powershell-check_inventory_test.ps1",
+      "exit": 0,
+      "seconds": 10.55
+    },
+    "powershell-check_verification_test.ps1": {
+      "name": "powershell-check_verification_test.ps1",
+      "exit": 0,
+      "seconds": 10.42
+    },
+    "powershell-check_runner.ps1": {
+      "name": "powershell-check_runner.ps1",
+      "exit": 0,
+      "seconds": 21.99
+    },
+    "powershell-zoi_check.ps1": {
+      "name": "zoi_check.ps1",
+      "exit": 0,
+      "seconds": 54.62,
+      "environment": "PSModulePath inherited from PowerShell 7 removed in test child"
+    },
+    "powershell-check_booklet.ps1": {
+      "name": "powershell-check_booklet.ps1",
+      "exit": 0,
+      "seconds": 47.81
+    },
+    "powershell-check_deployment.ps1": {
+      "name": "check_deployment.ps1",
+      "exit": 0,
+      "seconds": 28.75,
+      "environment": "PSModulePath inherited from PowerShell 7 removed in test child"
+    },
+    "pwsh-check_inventory_test.ps1": {
+      "name": "pwsh-check_inventory_test.ps1",
+      "exit": 0,
+      "seconds": 12.45
+    },
+    "pwsh-check_verification_test.ps1": {
+      "name": "pwsh-check_verification_test.ps1",
+      "exit": 0,
+      "seconds": 11.56
+    },
+    "pwsh-check_runner.ps1": {
+      "name": "pwsh-check_runner.ps1",
+      "exit": 0,
+      "seconds": 15.38
+    },
+    "pwsh-zoi_check.ps1": {
+      "name": "pwsh-zoi_check.ps1",
+      "exit": 0,
+      "seconds": 66.88
+    },
+    "pwsh-check_booklet.ps1": {
+      "name": "pwsh-check_booklet.ps1",
+      "exit": 0,
+      "seconds": 33.92
+    },
+    "pwsh-check_deployment.ps1": {
+      "name": "pwsh-check_deployment.ps1",
+      "exit": 0,
+      "seconds": 38.89
+    }
+  },
+  "layout_selftests": {
+    "powershell_5_1": {
+      "cases": 11,
+      "status": "PASS",
+      "seconds": 13.621
+    },
+    "powershell_7": {
+      "cases": 11,
+      "status": "PASS",
+      "seconds": 16.95
+    },
+    "evidence": "Captured command output in this task; actual PowerShell child execution and g++ fixture compilation"
+  },
+  "notes": [
+    "Initial Windows PowerShell inherited PowerShell 7 PSModulePath; child environment corrected without changing system settings.",
+    "One corrected-environment zoi restore hit transient File.Replace sharing violation; full rerun passed 18 groups and 94 commands."
+  ],
+  "files": {
+    "scripts/sync_layout.ps1": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8",
+    "scripts/source_lookup.py": "594097f028909a8876a5a050f2afdc4ed89736bc013886afce9945ecf8c1d5dc",
+    "scripts/check_layout.py": "b97b984f3faec29ee3aa7b71db87497297a85329d63093774d58d1497a8ebefe",
+    "scripts/run_checks.ps1": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f",
+    "scripts/zoi.ps1": "614b7a9de1cb8771e9fbd331fb27d33cbe3a4b8f60f21d5f3947fbb1831beca7",
+    "scripts/make_stubs.ps1": "06f749b9d7972d3bb69f3c70e4101c5fe2eceb241aea52e929c3e0cac5ca4dec",
+    "scripts/make_booklet.ps1": "dc5897e5266f438a503647bdf7b56409393448d6a2f9c3bbd9aeb1401e4299de",
+    "scripts/make_team_package.ps1": "f94c776f445082e75ca8d20ee440bdcaf153dad5db7c031fe8bbd5f9a6667c14",
+    "scripts/check_verification.ps1": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460",
+    "scripts/check_bigint_rw.py": "e37ee17daa8c25a14b9a5e54143f9a378c1cfe4f0ec02a288cfda01c13ffdc9d",
+    "scripts/check_lca_vt_extreme.py": "575698a5ceb2930378261e41182e9b8c42053b3697e50a5a9f1fa202a32219af"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "platform": "win32",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "files": {
+    "algorithms/数学/高精度计算/对拍/bigint_check.cpp": "699330ed6aef5efe95e008f79619213e8dd77855cf8f2100c2d6fb1120d5d0dd",
+    "algorithms/数学/高精度计算/高精度.cpp": "f89d261c63731af95496be374e1b565571c1406122a6c62015ba679963f78dcf",
+    "algorithms/杂项/128位整数/128int.cpp": "342625247499d16412e8ae49d19b8ace26baa1048990d4146381dbaac8c94acd",
+    "algorithms/杂项/utils/utils.cpp": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f",
+    "algorithms/杂项/对拍/rw_check.cpp": "2b6f084399d6fd592c93cc649397ef2c4863a849bb5c5d70b8bbdce578825a0b",
+    "algorithms/杂项/快读快写/快读快写.cpp": "369d4bc6a400e45723f9ecfd6eb138a55369c5e796192e4532f0256b94b0b2f7",
+    "scripts/check_bigint_rw.py": "e37ee17daa8c25a14b9a5e54143f9a378c1cfe4f0ec02a288cfda01c13ffdc9d",
+    "scripts/source_lookup.py": "594097f028909a8876a5a050f2afdc4ed89736bc013886afce9945ecf8c1d5dc"
+  },
+  "results": [
+    {
+      "name": "compiler",
+      "returncode": 0,
+      "seconds": 0.016
+    },
+    {
+      "name": "compile-bigint_check",
+      "returncode": 0,
+      "seconds": 2.765
+    },
+    {
+      "name": "compile-rw_check",
+      "returncode": 0,
+      "seconds": 2.36
+    },
+    {
+      "name": "bigint-python",
+      "returncode": 0,
+      "seconds": 7.234
+    },
+    {
+      "name": "bigint-native",
+      "returncode": 0,
+      "seconds": 0.031
+    },
+    {
+      "name": "rw-native",
+      "returncode": 0,
+      "seconds": 1.672
+    },
+    {
+      "name": "rw-exit-flush",
+      "returncode": 0,
+      "seconds": 0.047
+    },
+    {
+      "name": "compile-usage-bigint",
+      "returncode": 0,
+      "seconds": 1.609
+    },
+    {
+      "name": "usage-bigint",
+      "returncode": 0,
+      "seconds": 0.11
+    },
+    {
+      "name": "usage-empty-bigint",
+      "returncode": 0,
+      "seconds": 0.0
+    },
+    {
+      "name": "compile-usage-rw",
+      "returncode": 0,
+      "seconds": 0.531
+    },
+    {
+      "name": "usage-rw",
+      "returncode": 0,
+      "seconds": 0.125
+    },
+    {
+      "name": "usage-empty-rw",
+      "returncode": 0,
+      "seconds": 0.016
+    }
+  ],
+  "status": "PASS",
+  "compiler": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "oracle_cases": 5663,
+  "max_decimal_digits": 100001,
+  "factorial_n": 100000,
+  "stable": true
+}

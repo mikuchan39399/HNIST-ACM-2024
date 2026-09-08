@@ -17,6 +17,7 @@ if ($Filter -and $Mode -ne 'Regression') { throw '-Filter applies only to Regres
 # NOTE: keep this file ASCII-only; PS 5.1 reads no-BOM files as ANSI and CJK
 #       comments can corrupt line structure.
 $root = Split-Path -Parent $PSScriptRoot   # scripts/ -> library root
+if (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'sync_layout.ps1')) { & (Join-Path $PSScriptRoot 'sync_layout.ps1') }
 . (Join-Path $PSScriptRoot 'check_inventory.ps1')
 $inventory = Get-CheckInventory $root
 . (Join-Path $PSScriptRoot 'check_verification.ps1')

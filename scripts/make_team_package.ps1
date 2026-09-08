@@ -2,6 +2,7 @@ param([string]$OutputPath='')
 # Build a portable zip from source assets only, never personal setup state.
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
+if (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'sync_layout.ps1')) { & (Join-Path $PSScriptRoot 'sync_layout.ps1') }
 if (-not $OutputPath) {
     $releaseDir=Join-Path $root 'docs/releases'
     [void][IO.Directory]::CreateDirectory($releaseDir)

@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "id": "b9c2986447594770a3f0274066d66097",
+  "startedUtc": "2026-09-08T11:50:48.1698813Z",
+  "finishedUtc": "2026-09-08T11:50:50.0541064Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/layout-audit/windows-boundary",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "071b7d8fbee16d8d15a5b66367d3debcf7103dbc535e57d9d9a8a3f740ca28b0",
+      "files": [
+        {
+          "path": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
+          "hash": "68c38597b7201a144bb37b6dcafde6cae6009b3c90bf8e478fc35d5128774007"
+        },
+        {
+          "path": "algorithms/数学/数论/约数/约数个数及约数和公式法.cpp",
+          "hash": "331679647f5457b2c237fe4cd942abfa0a8b067a5314c8b935757041bdc5c73a"
+        },
+        {
+          "path": "algorithms/数学/数论/质数筛/区间筛质数.cpp",
+          "hash": "25d6d7adbdecb34296c7d9b491fb87fe9fd8f4c53f07180221db2569ef3d92a6"
+        },
+        {
+          "path": "algorithms/数学/数论/质数筛/埃氏筛.cpp",
+          "hash": "a744039a26f659ecef26375d4b83a5718f71769dd1870096daddc6d25f6ba29a"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数学/数论/约数/约数个数及约数和公式法.cpp",
+          "hash": "2962ab2a94b4590ffbe1a5d14fd35871ba6d5a4da8854d9461de5b36df7523a0",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数学/数论/质数筛/区间筛质数.cpp",
+          "hash": "0f2d66be04525e87a7f63c7573416f6fdc7be63193784b66a985ff1d0023ee5b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7894f0644788e069295a60c3d6008ff62f2c78c527301d90952ce53a3a313f20",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 1.701
+    }
+  ]
+}

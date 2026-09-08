@@ -5,7 +5,7 @@
 
 | 改了什么 | 要做什么 |
 |---|---|
-| 母版登记、跳板名称 | 更新 zoi/_catalog.txt，运行 scripts/make_stubs.ps1；遵守模板契约 |
+| 母版移动、新模板短名 | 保留/新增源码第一行 zoi 短名，运行 scripts/sync_layout.ps1；常用入口自动执行，见[目录同步](layout.md) |
 | catalog、测试 include 关系或算法说明文档 | 运行 scripts/make_reliability.ps1，再运行 scripts/make_features.ps1；文档变动另验导航 |
 | 模板实现或传递依赖 | 重跑相关套件; 暂不跑时用 scripts/make_verification.ps1 刷新待重验状态 |
 | 测试行为、API 或边界用例 | 核对 rules/verification.json 的对应范围, 运行相关套件后查看自动生成的两层表 |
@@ -50,10 +50,10 @@ push、PR 或手动触发 CI。普通回归、语法扫描、sanitizer、独立�
 
 ## 跳板生成约定
 
-zoi\ 跳板层: stub = 一行 #include 指向真身, 纯 ASCII 短名, 中文路径只在
-  zoi\_catalog.txt 出现; 新引擎入库 = catalog 加一行 + 跑 make_stubs。
+zoi\ 跳板层: stub = 一行 #include 指向真身, 纯 ASCII 短名。引擎以源码首行
+  `// zoi: 短名` 为稳定身份，路径由 sync_layout 扫描更新到 catalog 和跳板。
   后缀必须 .h(.cpp 不进补全候选); 命名标准缩写留任、冷门驼峰全称;
-  make_stubs 顺手盖 '// zoi: 名' 戳(预检校验一致); ! 豁免行 = 不配跳板
+  新引擎先写唯一短名再同步，删除/合并显式维护登记；! 豁免行 = 不配跳板
   的决策留痕, 预检做全覆盖校验; 自清洁删改名残留, 纯大小写改名 NTFS
   覆盖写不换名, 要先手删旧件。
 

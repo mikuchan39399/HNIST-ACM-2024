@@ -1481,7 +1481,7 @@
       "summary": "全部64种HB的精确预算, 空串也复制根, 空哨兵不占cap"
     },
     {
-      "template": "algorithms/数学/数论/欧拉筛.cpp",
+      "template": "algorithms/数学/数论/质数筛/欧拉筛.cpp",
       "suite": "algorithms/数学/数论/对拍/number_sieve_check.cpp",
       "api": [
         "LinearSieve::init/is_prime/factorize, lp/primes/n"
@@ -1495,7 +1495,7 @@
       "summary": "欧拉线性筛、最小质因子与快速分解; 千万表全量核验和跨规模重建"
     },
     {
-      "template": "algorithms/数学/数论/埃氏筛.cpp",
+      "template": "algorithms/数学/数论/质数筛/埃氏筛.cpp",
       "suite": "algorithms/数学/数论/对拍/number_sieve_check.cpp",
       "api": [
         "Eratosthenes::init/is_prime, prime/primes/n"
@@ -1509,7 +1509,7 @@
       "summary": "位压缩埃氏筛, 千万表逐点判素及质数顺序核验"
     },
     {
-      "template": "algorithms/数学/数论/区间筛质数.cpp",
+      "template": "algorithms/数学/数论/质数筛/区间筛质数.cpp",
       "suite": "algorithms/数学/数论/对拍/number_sieve_check.cpp",
       "api": [
         "segmented_sieve(l,r), 实际复用Eratosthenes"
@@ -1523,7 +1523,7 @@
       "summary": "百万宽区间与近1e12平方边界, 位压缩并复用基础筛"
     },
     {
-      "template": "algorithms/数学/数论/区间筛质数.cpp",
+      "template": "algorithms/数学/数论/质数筛/区间筛质数.cpp",
       "suite": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
       "api": [
         "segmented_sieve(l,r)"
@@ -1536,21 +1536,7 @@
       "summary": "小区间全量试除, 负端点截断和空区间"
     },
     {
-      "template": "algorithms/数学/数论/整数开方.cpp",
-      "suite": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
-      "api": [
-        "floor_isqrt/ceil_isqrt"
-      ],
-      "oracle": "纯整数二分并用i128乘方判断, 不复用浮点估计与修正",
-      "cases": [
-        "1000组原有随机与LL极值, 10万随机非负LL加10万随机根的平方前/自身/后一共40万调用, LLONG_MAX往下10001个值",
-        "非正数统一0, 重复include"
-      ],
-      "limitations": "输入LL, x<=0返回0; 固定位宽中浮点估计后整数修正; ceil结果可到3037000500",
-      "summary": "整数二分独立核验四十万量级平方边界及LL上界"
-    },
-    {
-      "template": "algorithms/数学/数论/约数个数及约数和公式法.cpp",
+      "template": "algorithms/数学/数论/约数/约数个数及约数和公式法.cpp",
       "suite": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
       "api": [
         "deprime(int)->pair<int,LL>, 无全局cnt/sum"
@@ -1564,18 +1550,21 @@
       "summary": "20万约数答案和int上界; 返回值隔离, 不再覆盖全局变量"
     },
     {
-      "template": "algorithms/数学/数论/除法上下取整.cpp",
+      "template": "algorithms/杂项/utils/utils.cpp",
       "suite": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
       "api": [
+        "floor_isqrt/ceil_isqrt",
         "floor_div/ceil_div, include守卫"
       ],
-      "oracle": "提升i128并把分母归正, 用非负绝对值的整除/加分母取整, 不复用模板余数符号条件",
+      "oracle": "纯整数二分并用i128乘方判断, 不复用浮点估计与修正；提升i128并把分母归正, 用非负绝对值的整除/加分母取整, 不复用模板余数符号条件",
       "cases": [
+        "1000组原有随机与LL极值, 10万随机非负LL加10万随机根的平方前/自身/后一共40万调用, LLONG_MAX往下10001个值",
+        "非正数统一0, 重复include",
         "a=-200..200,b=-50..50的合法笛卡尔积; LL上下界/0/±1/±2等交叉; 20万对完整64位随机有符号输入",
         "正负分子分母、整除/非整除、LLONG_MIN除正数或其他负数; 重复include"
       ],
-      "limitations": "b!=0且(a,b)!=(LLONG_MIN,-1), 因其数学结果不在LL内; 不用返回哨兵伪装无效除法",
-      "summary": "全符号组合和LL极值, 20万随机除法; 明确不可表示商的契约"
+      "limitations": "输入LL, x<=0返回0; 固定位宽中浮点估计后整数修正; ceil结果可到3037000500；b!=0且(a,b)!=(LLONG_MIN,-1), 因其数学结果不在LL内; 不用返回哨兵伪装无效除法",
+      "summary": "整数二分独立核验四十万量级平方边界及LL上界；全符号组合和LL极值, 20万随机除法; 明确不可表示商的契约"
     }
   ]
 }

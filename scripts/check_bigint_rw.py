@@ -11,13 +11,14 @@ import re
 import subprocess
 import sys
 import time
+from source_lookup import engine, suite
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCES = ["algorithms/数学/高精度计算/对拍/bigint_check.cpp", "algorithms/杂项/对拍/rw_check.cpp"]
+SOURCES = [suite(ROOT, name) for name in ('bigint_check.cpp', 'rw_check.cpp')]
 
 
 def snapshot():
-    pending = [ROOT / p for p in SOURCES] + [Path(__file__)]
+    pending = [ROOT / p for p in SOURCES] + [Path(__file__), ROOT / 'scripts/source_lookup.py']
     files = {}
     while pending:
         path = pending.pop().resolve()
@@ -150,9 +151,9 @@ def main():
         tail = run("rw-exit-flush", [exes[1], "--exit-flush"])
         if tail != b"E" * (2 * (1 << 22) + 17): raise AssertionError("Destructor flush lost bytes")
         usage_cases = [
-            ("bigint", "algorithms/数学/高精度计算/高精度.cpp", b"-123 97\n",
+            ("bigint", engine(ROOT, 'bigint'), b"-123 97\n",
              "-26\n-220\n-11931\n-1 -26\n71\n11\n1 11931\n6 94\n1 1\n1 1\n0 1\n6\n1\n2432902008176640000\n"),
-            ("rw", "algorithms/杂项/快读快写/快读快写.cpp", b"3\n1 -2 3\n1.25e3 hello X\n",
+            ("rw", engine(ROOT, 'rw'), b"3\n1 -2 3\n1.25e3 hello X\n",
              "2\n1 -2 3\n1250.000000\nhello X\nanswer=2\n-170141183460469231731687303715884105728\n340282366920938463463374607431768211455\n"),
         ]
         for name, source, data, want in usage_cases:

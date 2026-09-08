@@ -144,10 +144,10 @@
 | trie | [源码](<../../algorithms/字符串/字典树/字典树.cpp>) | 1 | 0 | 4 | 有 | 有 | 有 |
 | persistentTrie | [源码](<../../algorithms/字符串/字典树/可持久化字典树.cpp>) | 2 | 0 | 4 | 有 | 有 | 有 |
 | mint | [源码](<../../algorithms/数学/数论/mint.cpp>) | 1 | 0 | 9 | 有 | 有 | 有 |
-| segSieve | [源码](<../../algorithms/数学/数论/区间筛质数.cpp>) | 1 | 0 | 0 | 无 | 有 | 有 |
-| intSqrt | [源码](<../../algorithms/数学/数论/整数开方.cpp>) | 1 | 0 | 0 | 无 | 有 | 有 |
-| divisorSums | [源码](<../../algorithms/数学/数论/约数个数及约数和公式法.cpp>) | 1 | 0 | 0 | 无 | 有 | 有 |
-| divCeilFloor | [源码](<../../algorithms/数学/数论/除法上下取整.cpp>) | 0 | 0 | 0 | 无 | 待补 | 未检出 |
+| segSieve | [源码](<../../algorithms/数学/数论/质数筛/区间筛质数.cpp>) | 1 | 0 | 0 | 无 | 有 | 有 |
+| intSqrt | [源码](<../../algorithms/杂项/utils/utils.cpp>) | 1 | 0 | 0 | 无 | 有 | 有 |
+| divisorSums | [源码](<../../algorithms/数学/数论/约数/约数个数及约数和公式法.cpp>) | 1 | 0 | 0 | 无 | 有 | 有 |
+| divCeilFloor | [源码](<../../algorithms/杂项/utils/utils.cpp>) | 0 | 0 | 0 | 无 | 待补 | 未检出 |
 | bigint | [源码](<../../algorithms/数学/高精度计算/高精度.cpp>) | 1 | 0 | 9 | 有 | 有 | 有 |
 | lucas | [源码](<../../algorithms/数学/组合数学/卢卡斯定理求组合数.cpp>) | 0 | 0 | 1 | 有 | 待补 | 未检出 |
 | binomLoop | [源码](<../../algorithms/数学/组合数学/循环求组合数.cpp>) | 0 | 0 | 1 | 有 | 待补 | 未检出 |

@@ -3,6 +3,7 @@
 先按 [安装说明](../setup/README.md) 注册任务。写题时 include 所需跳板，保存当前文件后，在 VS Code 运行：
 
 推荐 `#include "bit.h"`, 已知 zoi 跳板的 `<bit.h>` 也支持; 普通 `<vector>` 等标准头不展开。
+展开前会按源码稳定短名同步库内路径；自己移动母版仍可继续使用原跳板，详见[目录同步](../maintenance/layout.md)。恢复、状态查询和解除管理不执行目录迁移。
 `Ctrl+Alt+Z` 直接展开当前 C++ 文件, `Ctrl+Alt+T` 打开 zoi 任务列表; 有快捷键冲突时使用
 `Ctrl+P` 输入 `task zoi-`。不要在 tasks.json 标签激活时展开, 不要点击右侧配置齿轮代替运行。
 `0 blocks` 表示没有发现模板引用, 不是已插入模板; 先检查已保存源码。

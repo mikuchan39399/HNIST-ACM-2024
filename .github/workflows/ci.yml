@@ -18,6 +18,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
+      - name: Synchronize source layout
+        shell: pwsh
+        run: ./scripts/sync_layout.ps1
       - name: Setup and uninstall on Windows PowerShell 5.1
         shell: powershell
         run: ./scripts/check_setup.ps1
@@ -59,6 +62,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
+      - name: Synchronize source layout
+        shell: pwsh
+        run: ./scripts/sync_layout.ps1
       - name: Install pinned Typst and PDF prerequisites
         run: |
           mkdir -p .zoi-checks/codex-work/booklet-tools
@@ -99,6 +105,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
+      - name: Synchronize source layout
+        shell: pwsh
+        run: ./scripts/sync_layout.ps1
       - name: Toolchain
         run: |
           g++ --version
@@ -106,6 +115,8 @@ jobs:
       - name: Check generated test inventory
         shell: pwsh
         run: ./scripts/make_reliability.ps1 -Check
+      - name: Check layout relocation and source discovery
+        run: python3 scripts/check_layout.py --shell pwsh
       - name: Check generated feature catalog
         shell: pwsh
         run: ./scripts/make_features.ps1 -Check
@@ -161,6 +172,9 @@ jobs:
         mode: [regression, sanitizer]
     steps:
       - uses: actions/checkout@v5
+      - name: Synchronize source layout
+        shell: pwsh
+        run: ./scripts/sync_layout.ps1
       - name: BigInt Python oracle and rw buffer/exit checks
         run: |
           if [ '${{ matrix.mode }}' = sanitizer ]; then
@@ -190,6 +204,9 @@ jobs:
         profile: [lca-vt, completed-graph]
     steps:
       - uses: actions/checkout@v5
+      - name: Synchronize source layout
+        shell: pwsh
+        run: ./scripts/sync_layout.ps1
       - name: Check stress failure classification
         run: python3 scripts/check_lca_vt_extreme.py --self-test
       - name: Target-scale checks and stack boundary reports
@@ -210,6 +227,9 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
+      - name: Synchronize source layout
+        shell: pwsh
+        run: ./scripts/sync_layout.ps1
       - name: Toolchain
         run: g++ --version
       - name: ASan and UBSan regression

@@ -8,12 +8,12 @@
 
 | 实现 | 本轮结果 |
 |---|---|
-| [欧拉筛](../../algorithms/数学/数论/欧拉筛.cpp) | 新增 `eulerSieve.h` / `LinearSieve`，O(n) 保存最小质因子 lp 与升序 primes，提供 is_prime/factorize |
-| [埃氏筛](../../algorithms/数学/数论/埃氏筛.cpp) | 新增 `eratosthenes.h` / `Eratosthenes`，vector<bool> 位压缩标记与升序 primes，O(n log log n)，不保存最小质因子 |
-| [区间筛](../../algorithms/数学/数论/区间筛质数.cpp) | 复用真实 Eratosthenes，基础与区间标记均位压缩；保留安全定位首倍数和避免末次递增溢出的循环 |
-| [整数开方](../../algorithms/数学/数论/整数开方.cpp) | 保留浮点估计后整数除法校正，补 inline 与完整 Usage，不引入无必要的新算法 |
-| [约数统计](../../algorithms/数学/数论/约数个数及约数和公式法.cpp) | 跳过2以外的偶因子，返回 pair<int,LL>；移除全局 cnt/sum，结果可跨调用保存 |
-| [除法取整](../../algorithms/数学/数论/除法上下取整.cpp) | 补守卫、统一 utils 依赖、完整 Usage；说明并断言零分母与 LLONG_MIN/-1 不在合法域 |
+| [欧拉筛](../../algorithms/数学/数论/质数筛/欧拉筛.cpp) | 新增 `eulerSieve.h` / `LinearSieve`，O(n) 保存最小质因子 lp 与升序 primes，提供 is_prime/factorize |
+| [埃氏筛](../../algorithms/数学/数论/质数筛/埃氏筛.cpp) | 新增 `eratosthenes.h` / `Eratosthenes`，vector<bool> 位压缩标记与升序 primes，O(n log log n)，不保存最小质因子 |
+| [区间筛](../../algorithms/数学/数论/质数筛/区间筛质数.cpp) | 复用真实 Eratosthenes，基础与区间标记均位压缩；保留安全定位首倍数和避免末次递增溢出的循环 |
+| [整数开方](../../algorithms/杂项/utils/utils.cpp) | 保留浮点估计后整数除法校正，补 inline 与完整 Usage，不引入无必要的新算法 |
+| [约数统计](../../algorithms/数学/数论/约数/约数个数及约数和公式法.cpp) | 跳过2以外的偶因子，返回 pair<int,LL>；移除全局 cnt/sum，结果可跨调用保存 |
+| [除法取整](../../algorithms/杂项/utils/utils.cpp) | 补守卫、统一 utils 依赖、完整 Usage；说明并断言零分母与 LLONG_MIN/-1 不在合法域 |
 
 约数统计的调用迁移为 `auto [cnt, sum] = deprime(x)`，仍只接正 int。库内搜索到的实际调用方只有对应对拍，已同步迁移。原全局变量模式容易冲突或被后续调用覆盖，本轮没有把无效负数/零输入伪装成正确答案。
 

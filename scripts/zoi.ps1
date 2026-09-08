@@ -9,6 +9,7 @@ param(
 # A per-file journal makes interrupted source/state replacement recoverable.
 $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
+if ($Action -eq 'expand' -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'sync_layout.ps1'))) { & (Join-Path $PSScriptRoot 'sync_layout.ps1') }
 $enc = New-Object Text.UTF8Encoding($false, $true)
 $comparison = [StringComparer]::Ordinal
 if ([IO.Path]::DirectorySeparatorChar -eq '\') { $comparison = [StringComparer]::OrdinalIgnoreCase }

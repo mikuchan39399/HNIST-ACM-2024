@@ -2,14 +2,12 @@
 #include <climits>
 #include <iostream>
 #include <random>
-#include "../整数开方.cpp"
-#include "../区间筛质数.cpp"
-#include "../约数个数及约数和公式法.cpp"
-#include "../除法上下取整.cpp"
-#include "../整数开方.cpp"
-#include "../区间筛质数.cpp"
-#include "../约数个数及约数和公式法.cpp"
-#include "../除法上下取整.cpp"
+#include "../../../杂项/utils/utils.cpp"
+#include "../质数筛/区间筛质数.cpp"
+#include "../约数/约数个数及约数和公式法.cpp"
+#include "../../../杂项/utils/utils.cpp"
+#include "../质数筛/区间筛质数.cpp"
+#include "../约数/约数个数及约数和公式法.cpp"
 
 // 用整数二分求平方根, 避开模板的浮点估计和修正过程
 LL brute_sqrt(LL x)

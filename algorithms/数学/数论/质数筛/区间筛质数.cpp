@@ -2,7 +2,7 @@
 #ifndef Z_OI_SEG_SIEVE
 #define Z_OI_SEG_SIEVE
 
-#include "整数开方.cpp"
+#include "../../../杂项/utils/utils.cpp"
 #include "埃氏筛.cpp"
 
 // 返回闭区间 [l,r] 内的全部质数, 按从小到大排列; 空区间返回空 vector

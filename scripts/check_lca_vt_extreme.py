@@ -12,9 +12,10 @@ import sys
 import tempfile
 import time
 import unittest
+from source_lookup import suite
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE = "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp"
+SOURCE = suite(ROOT, 'lca_vt_stress_check.cpp')
 
 
 def classify(code, output, timed_out=False, probe=False, success_marker="lca_vt_stress_check passed"):
@@ -31,7 +32,7 @@ def classify(code, output, timed_out=False, probe=False, success_marker="lca_vt_
 
 
 def snapshot(source=SOURCE):
-    pending = [ROOT / source, Path(__file__), ROOT / ".github/workflows/ci.yml"]
+    pending = [ROOT / source, Path(__file__), ROOT / 'scripts/source_lookup.py', ROOT / ".github/workflows/ci.yml"]
     files = {}
     while pending:
         path = pending.pop().resolve()
@@ -123,7 +124,7 @@ def main():
     report = (ROOT / (args.report_dir or (".ci-results/stress-" + args.profile))).resolve()
     report.mkdir(parents=True, exist_ok=True)
     completed = args.profile == "completed-graph"
-    source = "algorithms/图论/对拍/completed_graph_stress_check.cpp" if completed else SOURCE
+    source = suite(ROOT, 'completed_graph_stress_check.cpp') if completed else SOURCE
     marker = "completed_graph_stress_check passed" if completed else "lca_vt_stress_check passed"
     size = "200000" if completed else "1000000"
     before = snapshot(source)

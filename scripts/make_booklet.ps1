@@ -14,6 +14,7 @@ param([string]$Filter = '', [string]$OutFile = 'docs/booklet/output/zoi-booklet-
 # NOTE: keep this file ASCII-only (PS 5.1 reads no-BOM as ANSI). CJK text
 #       (family names, entry titles) flows in from file paths at runtime.
 $ErrorActionPreference = 'Stop'
+if (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'sync_layout.ps1')) { & (Join-Path $PSScriptRoot 'sync_layout.ps1') }
 $root = Split-Path -Parent $PSScriptRoot
 $enc = New-Object System.Text.UTF8Encoding($false)
 $plugName = -join ([char]0x63D2, [char]0x4EF6)   # plugin folder marker, CJK kept out of source bytes

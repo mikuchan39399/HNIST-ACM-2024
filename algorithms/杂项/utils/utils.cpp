@@ -94,6 +94,53 @@ inline void fast_io()
     cout.tie(nullptr);
 }
 
+// 返回 sqrt(x) 向下取整的整数; x <= 0 时返回 0
+// 时间: O(1) | 空间: O(1)
+inline LL floor_isqrt(LL x)
+{
+    if (x <= 0) return 0;
+    LL r = sqrt(x);
+    while (r + 1 <= x / (r + 1)) r++;
+    while (r > x / r) r--;
+    return r;
+}
+// 返回 sqrt(x) 向上取整的整数; x <= 0 时返回 0
+// 时间: O(1) | 空间: O(1)
+inline LL ceil_isqrt(LL x)
+{
+    if (x <= 0) return 0;
+    LL r = floor_isqrt(x);
+    return r + (r * r != x);
+}
+
+// 返回 a/b 向负无穷取整; b!=0 且不能是 LLONG_MIN/-1 (结果超出 LL)
+// 时间: O(1) | 空间: O(1)
+inline LL floor_div(LL a, LL b)
+{
+    assert(b != 0 && !(a == LLONG_MIN && b == -1));
+    LL res = a / b;
+    LL rem = a % b;
+    if (rem != 0 && ((a < 0) ^ (b < 0)))
+    {
+        res--;
+    }
+    return res;
+}
+
+// 返回 a/b 向正无穷取整; 契约同 floor_div, 支持正负分子和分母
+// 时间: O(1) | 空间: O(1)
+inline LL ceil_div(LL a, LL b)
+{
+    assert(b != 0 && !(a == LLONG_MIN && b == -1));
+    LL res = a / b;
+    LL rem = a % b;
+    if (rem != 0 && ((a > 0) == (b > 0)))
+    {
+        res++;
+    }
+    return res;
+}
+
 #ifdef LOCAL
 template <class T>
 void debug_out(const T& x) { cerr << x; }
@@ -123,6 +170,10 @@ int main()
     debug(n, b.size());                // 仅 LOCAL 时定义调试宏, 写入 cerr
     debug_array(b, n);                 // 打印 b[1..n]
 #endif
+    cout << floor_isqrt(10) << ' ' << ceil_isqrt(10) << '\n'; // 3 4
+    cout << floor_div(-7, 3) << ' ' << ceil_div(-7, 3) << '\n'; // -3 -2
+    cout << ceil_div(LLONG_MAX, 2) << '\n'; // 4611686018427387904
+    // 不用 (a+b-1)/b: 负数方向与中间溢出都会出错
     // endl 在本库为 '\n', 不主动刷新; 交互题应显式 flush
 }
 */

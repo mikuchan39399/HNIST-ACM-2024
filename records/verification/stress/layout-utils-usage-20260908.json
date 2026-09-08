@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "usage": "utils",
+  "output": "0 0 -1\r\n1\r\n3 4\r\n-3 -2\r\n4611686018427387904\r\n",
+  "multi_translation_unit": true
+}

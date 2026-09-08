@@ -2,11 +2,11 @@
 #ifndef Z_OI_DIVISOR_SUMS
 #define Z_OI_DIVISOR_SUMS
 
-#include "../../杂项/utils/utils.cpp"
+#include "../../../杂项/utils/utils.cpp"
 
 // 分解正 int x, 返回 {约数个数, 约数和}; x=1 返回 {1,1}, 不修改全局状态
 // 时间: O(sqrt(x)) | 空间: O(1)
-inline pair<int, LL> deprime(int x)
+inline PIL deprime(int x)
 {
     assert(x >= 1);
     LL sum = 1;

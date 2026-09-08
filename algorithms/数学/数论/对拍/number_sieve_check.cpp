@@ -1,8 +1,8 @@
-#include "../欧拉筛.cpp"
-#include "../埃氏筛.cpp"
-#include "../区间筛质数.cpp"
-#include "../欧拉筛.cpp"
-#include "../埃氏筛.cpp"
+#include "../质数筛/欧拉筛.cpp"
+#include "../质数筛/埃氏筛.cpp"
+#include "../质数筛/区间筛质数.cpp"
+#include "../质数筛/欧拉筛.cpp"
+#include "../质数筛/埃氏筛.cpp"
 
 // 独立 Sundaram 枚举奇合数: (2i+1)(2j+1)=2(i+j+2ij)+1, 不使用两份筛的循环。
 vector<char> reference_primes(int n)

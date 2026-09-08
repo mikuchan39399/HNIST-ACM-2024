@@ -103,12 +103,10 @@
 | 条目 | 跳板或笔记 |
 |---|---|
 | [数论 / mint](<../../algorithms/数学/数论/mint.cpp>) | [mint.h](<../../zoi/mint.h>) |
-| [数论 / 欧拉筛](<../../algorithms/数学/数论/欧拉筛.cpp>) | [eulerSieve.h](<../../zoi/eulerSieve.h>) |
-| [数论 / 埃氏筛](<../../algorithms/数学/数论/埃氏筛.cpp>) | [eratosthenes.h](<../../zoi/eratosthenes.h>) |
-| [数论 / 区间筛质数](<../../algorithms/数学/数论/区间筛质数.cpp>) | [segSieve.h](<../../zoi/segSieve.h>) |
-| [数论 / 整数开方](<../../algorithms/数学/数论/整数开方.cpp>) | [intSqrt.h](<../../zoi/intSqrt.h>) |
-| [数论 / 约数个数及约数和公式法](<../../algorithms/数学/数论/约数个数及约数和公式法.cpp>) | [divisorSums.h](<../../zoi/divisorSums.h>) |
-| [数论 / 除法上下取整](<../../algorithms/数学/数论/除法上下取整.cpp>) | [divCeilFloor.h](<../../zoi/divCeilFloor.h>) |
+| [数论 / 质数筛 / 欧拉筛](<../../algorithms/数学/数论/质数筛/欧拉筛.cpp>) | [eulerSieve.h](<../../zoi/eulerSieve.h>) |
+| [数论 / 质数筛 / 埃氏筛](<../../algorithms/数学/数论/质数筛/埃氏筛.cpp>) | [eratosthenes.h](<../../zoi/eratosthenes.h>) |
+| [数论 / 质数筛 / 区间筛质数](<../../algorithms/数学/数论/质数筛/区间筛质数.cpp>) | [segSieve.h](<../../zoi/segSieve.h>) |
+| [数论 / 约数 / 约数个数及约数和公式法](<../../algorithms/数学/数论/约数/约数个数及约数和公式法.cpp>) | [divisorSums.h](<../../zoi/divisorSums.h>) |
 | [数论 / 莫比乌斯反演](<../../algorithms/数学/数论/莫比乌斯反演.txt>) | 笔记（无跳板） |
 | [高精度计算 / 高精度](<../../algorithms/数学/高精度计算/高精度.cpp>) | [bigint.h](<../../zoi/bigint.h>) |
 | [组合数学 / 矩阵树定理](<../../algorithms/数学/组合数学/矩阵树定理.txt>) | 笔记（无跳板） |

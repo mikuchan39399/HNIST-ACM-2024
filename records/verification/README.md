@@ -10,6 +10,7 @@ runs 中的 JSON 由 run_checks.ps1 自动写入, 每轮独立记录, 不手工�
 
 | 范围 | 报告 |
 |---|---|
+| 目录同步与 utils 数值工具合并 | [全库回归、Linux sanitizer 与双版 PowerShell](../tooling/layout-20260908.md) |
 | 数论两筛与现役四件 | [千万筛表、独立参照与整数边界](number-theory-20260908.md) |
 | Trie 双件 | [历史分叉、20万规模、长串栈与大计数](trie-20260908.md) |
 | 杂项六件与 SipHash-4-8 | [公共底座、完整整数边界与防卡哈希](misc-20260908.md) |
