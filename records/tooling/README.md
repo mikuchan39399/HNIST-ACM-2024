@@ -19,3 +19,8 @@
 - 2026-09-07 手册与 README: [路线分离、分类粒度与自动打印验证](booklet-readme-20260907.md)。
 
 旧 [docs/architecture 入口](../../docs/architecture/README.md)仅保留跳转; 算法压力与修复记录另从 [专项验证索引](../verification/README.md) 查阅。
+
+- 模板说明授权纠正：[四份保留范围与九份撤出快照](readme-scope-20260907.md)。
+
+- 验证状态降噪：[分项范围、迁移与自检](verification-scope-20260907.md)。
+- 手册说明排版：[四份说明、通用样式与 PDF 验证](booklet-style-20260908.md)。

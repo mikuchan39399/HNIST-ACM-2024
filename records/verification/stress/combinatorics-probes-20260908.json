@@ -1,0 +1,59 @@
+{
+  "date": "2026-09-08",
+  "baseline": {
+    "lucas-odd": {
+      "exit_code": 0,
+      "stdout": "4 1",
+      "stderr": ""
+    },
+    "lucas-two": {
+      "timeout_seconds": 2
+    },
+    "pascal-one": {
+      "exit_code": 0,
+      "stdout": "1 1",
+      "stderr": ""
+    },
+    "fact-cross-mod": {
+      "exit_code": 0,
+      "stdout": "0",
+      "stderr": ""
+    }
+  },
+  "overflow": {
+    "old-loop-overflow": {
+      "exit_code": 1,
+      "stderr": "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/combinatorics-audit/old-loop.cpp:44:18: runtime error: signed integer overflow: 999999999999 * 999993007 cannot be represented in type 'long long int'\n"
+    },
+    "old-pascal-overflow": {
+      "exit_code": 1,
+      "stderr": "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/combinatorics-audit/old-pascal.cpp:21:40: runtime error: signed integer overflow: 1037158320 + 1166803110 cannot be represented in type 'int'\n"
+    }
+  },
+  "usage_expand": [
+    {
+      "usage": 0,
+      "status": "PASS",
+      "standalone_compile": true,
+      "restored_text_equal": true
+    },
+    {
+      "usage": 1,
+      "status": "PASS",
+      "standalone_compile": true,
+      "restored_text_equal": true
+    },
+    {
+      "usage": 2,
+      "status": "PASS",
+      "standalone_compile": true,
+      "restored_text_equal": true
+    },
+    {
+      "usage": 3,
+      "status": "PASS",
+      "standalone_compile": true,
+      "restored_text_equal": true
+    }
+  ]
+}

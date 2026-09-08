@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "id": "fac9d530a9de4f6983ea647572f263b0",
+  "startedUtc": "2026-09-07T10:37:54.7383297Z",
+  "finishedUtc": "2026-09-07T10:38:01.9443835Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/shortest-mst/mst-baseline",
+  "results": [
+    {
+      "fingerprint": "1f9db5f9882809f67b8d2312e8e5b4685ed80fc093f6b79fdd531f2e9aff96a9",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp",
+          "hash": "1008d74ba7a0d01fcbc304e072ae12d5f0a50b54380998cbb914f28e0262b1de"
+        },
+        {
+          "path": "algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp",
+          "hash": "4de579bc1b4435a2ecabb32a420c0d39427af851af1463c1452869e7b4d2d6aa"
+        },
+        {
+          "path": "algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp",
+          "hash": "7a1d68b4f2b15443130530f5c505acfaa341a6a9390010f88d8077f882e1d502"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/DSU.cpp",
+          "hash": "f0c6a46ed91ff48505d7e21de80276c960d9f21653dd7793e07f81f439f2b7bf"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/dsu.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "bff81974b53500db85c12657f446392164a78fe239b78dbf26b2c2b9ef06198c"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "c1ec3d79e736ff4cb5e13a4bc39b2d3be43cb5f0ff32e7db74c38f0e5942f259"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "0deaea5bfe7fe90e955dfaf85489462b20901e23ccc68561404e46319a0ac0d7"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 6.937
+    }
+  ]
+}

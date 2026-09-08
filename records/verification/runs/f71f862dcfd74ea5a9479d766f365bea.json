@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "id": "f71f862dcfd74ea5a9479d766f365bea",
+  "startedUtc": "2026-09-08T07:16:45.0135063Z",
+  "finishedUtc": "2026-09-08T07:17:02.8339048Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/trie-audit/runner",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "e4a46dbfb6b6b4feb7ce45b6925ac07cfca7f1bd8e6db68b1a5df3d3eed07ff4",
+      "files": [
+        {
+          "path": "algorithms/字符串/字典树/可持久化字典树.cpp",
+          "hash": "e62adc792953be52aeea49ca1e6d325ee03f0c6dee6cabf853d200ebfd27b758"
+        },
+        {
+          "path": "algorithms/字符串/字典树/字典树.cpp",
+          "hash": "0810f330567b4d20cc6c0e56d6cc283c494437e14d5b08b5d37866bb37280410"
+        },
+        {
+          "path": "algorithms/字符串/字典树/对拍/trie_capacity_check.cpp",
+          "hash": "eac512204d0d3c4398845f3f4177e735c89cb6ae06137ce8032242bc9dbfb08b"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "162d7e3884215670b2bb015d4104c01dd0b381591bdd3b0f8abdd8c651be5a80"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "8162d0d0d5ab02f4eaf0f2ee6c20aadb095b1c294f94b36f1df047a1839c573b"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "d06c472762e4c11e623289e941afb0ab3abfcd11c2cc677d00374a9038003263"
+        }
+      ],
+      "scopes": [],
+      "stable": true,
+      "path": "algorithms/字符串/字典树/对拍/trie_capacity_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 9.325
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "9bdaf253f2a0fc74c76a685dcaa975150f8ad8ea74134780fe035c07ecf62b95",
+      "files": [
+        {
+          "path": "algorithms/字符串/字典树/可持久化字典树.cpp",
+          "hash": "e62adc792953be52aeea49ca1e6d325ee03f0c6dee6cabf853d200ebfd27b758"
+        },
+        {
+          "path": "algorithms/字符串/字典树/字典树.cpp",
+          "hash": "0810f330567b4d20cc6c0e56d6cc283c494437e14d5b08b5d37866bb37280410"
+        },
+        {
+          "path": "algorithms/字符串/字典树/对拍/trie_check.cpp",
+          "hash": "e31dda1ca5b1a7b9f27dd0446d3fc53fbf1fd457e619539c35613f2df02dd241"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "162d7e3884215670b2bb015d4104c01dd0b381591bdd3b0f8abdd8c651be5a80"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "8162d0d0d5ab02f4eaf0f2ee6c20aadb095b1c294f94b36f1df047a1839c573b"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "d06c472762e4c11e623289e941afb0ab3abfcd11c2cc677d00374a9038003263"
+        }
+      ],
+      "scopes": [],
+      "stable": true,
+      "path": "algorithms/字符串/字典树/对拍/trie_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 8.181
+    }
+  ]
+}

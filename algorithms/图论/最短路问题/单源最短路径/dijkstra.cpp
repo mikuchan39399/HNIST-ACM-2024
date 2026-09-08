@@ -5,34 +5,31 @@
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/utils/utils.cpp"
 
-using namespace std;
-
-// ============ Dijkstra 朴素 O(n^2) 单源最短路 ============
-// 要求边权非负; 稠密图(m≈n^2)比堆版省堆开销; dist 不可达 = INF
-// 内存: dist 8B/点 + st 4B/点; 预算 = max_n
+// 逐点扫描选最近点, 适合稠密图; 非负整数边权与有限距离 < INF, 候选加法在 LL 内
+// dist 不可达为 INF, st 标记已选点; 每点 12 B, 2000 点约 24 KB, 不含 Graph
 struct DijkstraN
 {
     int n;
     VLL dist;
     VI st;
-    // 构造: 预算 max_n
-    // 时间: O(n) | 空间: 12B/点
+    // 分配 max_n 个点的工作表, 点编号为 1..n
+    // 时间 O(max_n) | 空间 O(max_n)
     DijkstraN(int max_n = 0) : n(0), dist(max_n + 10, INF), st(max_n + 10, 0) {}
-    // 多测复位: dist 清 INF, st 清 0 (dist[0]=INF 兼作选点哨兵)
-    // 时间: O(n) | 空间: O(1)
+    // 在构造容量内设为 n 个点并清空距离与选点状态, 每次 run 前调用
+    // 时间 O(n) | 额外空间 O(1)
     void init(int _n)
     {
         n = _n;
         z_fill_n(_n, INF, dist);
         z_fill_n(_n, 0, st);
     }
-    // 单源跑最短路, 结果写 dist
-    // 时间: O(n^2 + m) | 空间: O(1)
+    // 从 s 跑最短路并写入 dist, 不修改图
+    // 时间 O(n^2 + m) | 额外空间 O(1)
     template <class G>
     void run(int s, G& g)
     {
         dist[s] = 0;
-        for (int i = 1; i < n; i++)   // 每轮确认一个点, 共 n-1 轮
+        for (int i = 1; i < n; i++)
         {
             int t = 0;
             for (int j = 1; j <= n; j++)
@@ -45,13 +42,16 @@ struct DijkstraN
     }
 };
 #endif
-/*
- * Usage:
- * Graph<true, int> g{n, n * n};     // 稠密图用 int 权省内存
- * DijkstraN dij{n};
- * dij.init(n);
- * for (int i = 1; i <= m; i++) { int u, v, w; cin >> u >> v >> w; g.add(u, v, w); }
- * dij.run(s, g);
- * dij.dist[v];                       // 不可达 = INF
- * // 多测: g.clear(); dij.init(n); 重跑
- */
+/* Usage
+int main()
+{
+    Graph<true, int> g(4, 3);
+    g.add(1, 2, 5); g.add(2, 3, 2); g.add(1, 3, 9);
+    DijkstraN dij(4);
+    dij.init(4); dij.run(1, g);
+    cout << dij.dist[3] << ' ' << (dij.dist[4] == INF) << '\n'; // 7 1
+    g.clear(); g.add(2, 1, 3);
+    dij.init(2); dij.run(2, g);
+    cout << dij.dist[1] << '\n'; // 3
+}
+*/

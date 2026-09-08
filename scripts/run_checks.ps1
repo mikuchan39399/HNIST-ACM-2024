@@ -81,7 +81,7 @@ foreach ($source in $sources) {
     }
     if (Test-Path -LiteralPath $exe) { Remove-Item -LiteralPath $exe -Force }
     $after = Get-VSnapshot $root $relative
-    $results += [pscustomobject]@{fingerprint=$before.hash; files=$before.files; stable=($before.hash -ceq $after.hash);  path=$relative; phase=$(if ($isCheck) {'regression'} else {'syntax'}); status=$status; exitCode=$exitCode; seconds=[Math]::Round($elapsed, 3) }
+    $results += [pscustomobject]@{fingerprintVersion=2; fingerprint=$before.hash; files=$before.files; scopes=@(Get-VScopeEvidence $before $after); stable=($before.hash -ceq $after.hash);  path=$relative; phase=$(if ($isCheck) {'regression'} else {'syntax'}); status=$status; exitCode=$exitCode; seconds=[Math]::Round($elapsed, 3) }
     Write-Host ('[' + $status + '] ' + $relative)
 }
 $failed = @($results | Where-Object { $_.status -ne 'PASS' }).Count

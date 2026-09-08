@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "id": "c114702abae14a368cbb3d0da585463a",
+  "startedUtc": "2026-09-07T12:36:55.2935033Z",
+  "finishedUtc": "2026-09-07T12:36:58.1557302Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/mint-audit/deep-before-comments",
+  "results": [
+    {
+      "fingerprint": "b0ab16b71bcad8bc6dad15708a4fe453be64b7d1876e6630f0c239614da955e1",
+      "files": [
+        {
+          "path": "algorithms/数学/数论/mint.cpp",
+          "hash": "e1cf032b1fb508973270d8cfe3a992f2786f061096921f5fb20542f3dde7e98a"
+        },
+        {
+          "path": "algorithms/数学/数论/对拍/mint_check.cpp",
+          "hash": "2565f45da60c19d4f262cafd12f2a579ccd5f72bc12e61a0663d29f4a5e1175c"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "bff81974b53500db85c12657f446392164a78fe239b78dbf26b2c2b9ef06198c"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "rules/verification.json",
+          "hash": "a0222666f23f3882cf10768663c94f1a02561fb46c2d135b31878e5fec8ccd50"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "702a219ab163cc39a12de54a11b5426eccb4eb928abbdfd0e98c97a0e7fba724"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "0deaea5bfe7fe90e955dfaf85489462b20901e23ccc68561404e46319a0ac0d7"
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数学/数论/对拍/mint_check.cpp",
+      "phase": "regression",
+      "status": "COMPILE FAIL",
+      "exitCode": 1,
+      "seconds": 2.49
+    }
+  ]
+}

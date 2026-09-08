@@ -26,6 +26,23 @@ foreach ($r in ($rows | Sort-Object date)) { $latest[$r.suite+'|'+$r.profile]=$r
 function U([string]$hex) { -join @($hex.Split(' ') | ForEach-Object { [char][Convert]::ToInt32($_,16) }) }
 function Profile([string]$s) { $s.Replace(' / normal',(U '20 666e 901a 56de 5f52')).Replace(' / sanitizer',(U '20 5185 5b58 4e0e 672a 5b9a 4e49 884c 4e3a 68c0 67e5')) }
 function ResultLabel([string]$s) { switch($s) { 'PASS' {(U '901a 8fc7')} 'COMPILE FAIL' {(U '7f16 8bd1 5931 8d25')} 'COMPILE TIMEOUT' {(U '7f16 8bd1 8d85 65f6')} 'RUN FAIL' {(U '8fd0 884c 5931 8d25')} 'RUN TIMEOUT' {(U '8fd0 884c 8d85 65f6')} default { $s } } }
+function Reason($Assessment) {
+ $labels=@(foreach($reason in $Assessment.reasons) { switch($reason) {
+  'no-record' {(U '6ca1 6709 8fd0 884c 8bb0 5f55')}
+  'legacy' {(U '65e7 7248 8bb0 5f55 7f3a 5c11 5206 9879 8303 56f4 ff0c 9700 65b0 7248 590d 9a8c')}
+  'during-run' {(U '8fd0 884c 671f 95f4 6e90 7801 6216 6267 884c 811a 672c 53d8 5316')}
+  'tooling' {(U '6d4b 8bd5 6267 884c 811a 672c 53d8 5316')}
+  'test' {(U '5bf9 62cd 4ee3 7801 53d8 5316')}
+  'source' {(U '6a21 677f 6e90 7801 6216 672c 5730 4f9d 8d56 53d8 5316')}
+  'fingerprint' {(U '6821 9a8c 4fe1 606f 4e0d 4e00 81f4')}
+  'new-scope' {(U '65b0 589e 8303 56f4 5c1a 672a 9a8c 8bc1')}
+  'scope-during-run' {(U '8fd0 884c 671f 95f4 8be5 9879 8303 56f4 53d8 5316')}
+  'scope' {(U '8be5 9879 9a8c 8bc1 8303 56f4 53d8 5316')}
+  'failed' {(U '6700 8fd1 4e00 6b21 6d4b 8bd5 5931 8d25')}
+  default {$reason}
+ } })
+ $labels -join '; '
+}
 function Cell($v) { ([string]$v).Replace('|','\|').Replace("`r",'').Replace("`n",'<br>') }
 function Link([string]$path,[string]$label='') {
  if (-not $label) { $label=$path }
@@ -40,23 +57,32 @@ $user.Add((U '5b 41 49 20 9a8c 8bc1 660e 7ec6 5d 28 64 65 74 61 69 6c 73 2e 6d 6
 $user.Add((U '7c 20 6a21 677f 20 7c 20 73b0 5728 600e 4e48 6837 20 7c 20 5df2 6d4b 5185 5bb9 20 7c 20 8fd8 8981 6ce8 610f 4ec0 4e48 20 7c')); $user.Add('|---|---|---|---|')
 $detail.Add((U '23 20 41 49 20 9a8c 8bc1 660e 7ec6')); $detail.Add('')
 $detail.Add((U '81ea 52a8 751f 6210 2e 20 69 6e 63 6c 75 64 65 20 53ea 8868 793a 9759 6001 5173 8054 2c 20 884c 4e3a 8303 56f4 7531 20 76 65 72 69 66 69 63 61 74 69 6f 6e 2e 6a 73 6f 6e 20 767b 8bb0 2c 20 8fd0 884c 8bc1 636e 7531 20 72 75 6e 6e 65 72 20 8bb0 5f55 2e')); $detail.Add('')
-$detail.Add((U '7c 20 6a21 677f 20 7c 20 5957 4ef6 20 7c 20 41 50 49 20 7c 20 72ec 7acb 53c2 7167 20 7c 20 6570 636e 4e0e 8fb9 754c 20 7c 20 9650 5236 20 7c')); $detail.Add('|---|---|---|---|---|---|')
+$detail.Add((U '7c 20 6a21 677f 20 7c 20 5957 4ef6 20 7c 20 41 50 49 20 7c 20 72ec 7acb 53c2 7167 20 7c 20 6570 636e 4e0e 8fb9 754c 20 7c 20 9650 5236 20 7c')); $detail[$detail.Count-1]=$detail[$detail.Count-1].TrimEnd('|')+' | '+(U '5f53 524d 5224 65ad')+' |'
+$detail.Add('|---|---|---|---|---|---|---|')
 $snapshots=@{}
 foreach ($e in $inventory.entries) {
  if ($e.kind -ne 'engine') { continue }
  $scopes=@($spec.coverage | Where-Object { $_.template -ceq $e.path })
- $states=@(); $profiles=@()
+ $states=@(); $profiles=@(); $assessments=@(); $scopeLabels=@{}
  foreach ($suite in @($scopes | ForEach-Object {$_.suite} | Sort-Object -Unique)) {
   if (-not $snapshots.ContainsKey($suite)) { $snapshots[$suite]=Get-VSnapshot $root $suite }
   $found=@($latest.Values | Where-Object {$_.suite -ceq $suite})
-  if (-not $found.Count) { $states+='none' }
-  foreach ($r in $found) { $states+=Get-VState $r.result $snapshots[$suite].hash; $profiles+=(Profile $r.profile) }
+  if (-not $found.Count) { $states+='none'; $scopeLabels[$suite]=(U '6ca1 6709 8fd0 884c 8bb0 5f55') }
+  $labels=@()
+  foreach ($r in $found) {
+   $assessment=Get-VAssessment $r.result $snapshots[$suite] $e.path
+   $assessments+=$assessment; $states+=$assessment.state; $profiles+=(Profile $r.profile)
+   $label=if($assessment.state -eq 'pass'){(U '901a 8fc7')}else{Reason $assessment}
+   $labels+=(Profile $r.profile)+': '+$label
+  }
+  if($labels.Count) { $scopeLabels[$suite]=$labels -join '; ' }
  }
  $state=(U '8fd8 6ca1 6709 767b 8bb0 5177 4f53 6d4b 4e86 54ea 4e9b 884c 4e3a')
  if ($scopes.Count) {
   $state=(U '767b 8bb0 7684 6d4b 8bd5 90fd 5df2 901a 8fc7')
   if ($states -contains 'fail') { $state=(U '6709 6d4b 8bd5 6ca1 901a 8fc7 2c 20 5148 67e5 770b 660e 7ec6') }
-  elseif ($states -contains 'stale') { $state=(U '4ee3 7801 6216 9a8c 8bc1 6761 4ef6 53d8 4e86 2c 20 9700 8981 91cd 8dd1') }
+  elseif ($states -contains 'stale') { $state=(U '9700 8981 590d 9a8c')+': '+((@($assessments | Where-Object {$_.state -eq 'stale'} | ForEach-Object {Reason $_}) | Select-Object -Unique) -join '; ') }
+  elseif ($states -contains 'legacy') { $state=(U '65e7 7248 8bb0 5f55 ff0c 9700 65b0 7248 590d 9a8c ff1b 5386 53f2 7ed3 679c 89c1 660e 7ec6') }
   elseif ($states -contains 'none') { $state=(U '8303 56f4 5df2 767b 8bb0 2c 20 8fd8 6709 6d4b 8bd5 6ca1 6709 8fd0 884c 8bb0 5f55') }
   if ($profiles.Count) { $state+=' ('+(($profiles | Sort-Object -Unique) -join ', ')+')' }
  }
@@ -67,21 +93,24 @@ foreach ($e in $inventory.entries) {
   $limits=(U '4e0d 80fd 4ec5 51ed 20 69 6e 63 6c 75 64 65 20 6216 5176 4ed6 6a21 677f 901a 8fc7 5c31 5224 65ad 5b83 5df2 6d4b 597d')
  }
  $user.Add('| '+(Link $e.path $(if($e.name){$e.name}else{[IO.Path]::GetFileNameWithoutExtension($e.path)}))+' | '+(Cell $state)+' | '+(Cell $summary)+' | '+(Cell $limits)+' |')
- if (-not $scopes.Count) { $detail.Add('| '+(Link $e.path)+' | '+(($e.suites | ForEach-Object {Link $_}) -join '<br>')+' | '+(U '672a 767b 8bb0')+' | '+(U '672a 6838 5b9e')+' | '+(U '672a 6838 5b9e')+' | '+(U '4e0d 80fd 4ece 9759 6001 5173 8054 63a8 65ad 884c 4e3a 8986 76d6')+' |') }
+ if (-not $scopes.Count) { $detail.Add('| '+(Link $e.path)+' | '+(($e.suites | ForEach-Object {Link $_}) -join '<br>')+' | '+(U '672a 767b 8bb0')+' | '+(U '672a 6838 5b9e')+' | '+(U '672a 6838 5b9e')+' | '+(U '4e0d 80fd 4ece 9759 6001 5173 8054 63a8 65ad 884c 4e3a 8986 76d6')+' | '+(U '672a 767b 8bb0')+' |') }
  foreach ($s in $scopes) {
-  $detail.Add('| '+(Link $e.path)+' | '+(Link $s.suite)+' | '+(Cell ($s.api -join ', '))+' | '+(Cell $s.oracle)+' | '+(Cell ($s.cases -join '; '))+' | '+(Cell $s.limitations)+' |')
+  $detail.Add('| '+(Link $e.path)+' | '+(Link $s.suite)+' | '+(Cell ($s.api -join ', '))+' | '+(Cell $s.oracle)+' | '+(Cell ($s.cases -join '; '))+' | '+(Cell $s.limitations)+' | '+(Cell $scopeLabels[$s.suite])+' |')
  }
 }
 $detail.Add(''); $detail.Add((U '23 23 20 5404 73af 5883 6700 65b0 8fd0 884c')); $detail.Add('')
 $detail.Add((U '7c 20 5957 4ef6 20 7c 20 73af 5883 20 7c 20 5f53 524d 5224 65ad 20 7c 20 5b9e 9645 7ed3 679c 20 7c 20 55 54 43 20 65f6 95f4 20 7c 20 7f16 8bd1 5668 4e0e 53c2 6570 20 7c 20 8bc1 636e 7f16 53f7 4e0e 6307 7eb9 20 7c 20 65e5 5fd7 4f4d 7f6e 20 7c'))
-$detail.Add('|---|---|---|---|---|---|---|---|')
+$detail[$detail.Count-1]=$detail[$detail.Count-1].TrimEnd('|')+' | '+(U '590d 9a8c 539f 56e0 4e0e 53d8 5316 6587 4ef6')+' |'
+$detail.Add('|---|---|---|---|---|---|---|---|---|')
 foreach ($r in ($latest.Values | Sort-Object suite,profile)) {
  if (-not $snapshots.ContainsKey($r.suite)) { $snapshots[$r.suite]=Get-VSnapshot $root $r.suite }
- $state=Get-VState $r.result $snapshots[$r.suite].hash
- $label=switch($state){pass {(U '5f53 524d 6e90 7801 901a 8fc7')} stale {(U '5f85 91cd 9a8c')} fail {(U '5f53 524d 6e90 7801 5931 8d25')} default {(U '65e0 8bb0 5f55')}}
- $detail.Add('| '+(Link $r.suite)+' | '+(Cell (Profile $r.profile))+' | '+$label+' | '+(Cell (ResultLabel $r.result.status))+' | '+$r.date+' | '+(Cell ($r.run.compilerVersion+' / '+($r.run.flags -join ' ')))+' | '+$r.run.id+' / '+$r.result.fingerprint+' | '+(Cell $r.run.logs)+' |')
+ $assessment=Get-VAssessment $r.result $snapshots[$r.suite]
+ $state=$assessment.state
+ $label=switch($state){pass {(U '5f53 524d 6e90 7801 901a 8fc7')} stale {(U '5f85 91cd 9a8c')} fail {(U '5f53 524d 6e90 7801 5931 8d25')} legacy {(U '65e7 7248 8bb0 5f55 ff0c 9700 65b0 7248 590d 9a8c')} default {(U '65e0 8bb0 5f55')}}
+ $detail.Add('| '+(Link $r.suite)+' | '+(Cell (Profile $r.profile))+' | '+$label+' | '+(Cell (ResultLabel $r.result.status))+' | '+$r.date+' | '+(Cell ($r.run.compilerVersion+' / '+($r.run.flags -join ' ')))+' | '+$r.run.id+' / '+$r.result.fingerprint+' | '+(Cell $r.run.logs)+' | '+(Cell ((Reason $assessment)+$(if($assessment.changed.Count){'; '+($assessment.changed -join ', ')})))+' |')
 }
 $detail.Add(''); $detail.Add((U '4a 53 4f 4e 20 8bc1 636e 4fdd 7559 5b8c 6574 4f9d 8d56 6307 7eb9 2e 20 540c 73af 5883 6700 65b0 5931 8d25 4e0d 4f1a 88ab 65e7 901a 8fc7 8986 76d6 2e 20 8bed 6cd5 68c0 67e5 4e0d 7b97 5bf9 62cd 901a 8fc7 2e 20 8fd0 884c 671f 95f4 6e90 7801 53d8 5316 5219 5f85 91cd 9a8c 2e'))
+$detail.Add(''); $detail.Add((U '4e0a 8868 6309 6a21 677f 2f 5957 4ef6 5224 65ad 8303 56f4 662f 5426 4ecd 6709 6548 ff1b 5404 73af 5883 6700 65b0 8fd0 884c 8868 53ea 5224 65ad 5957 4ef6 4ee3 7801 3002 65e7 7248 8bb0 5f55 4fdd 7559 5386 53f2 7ed3 679c ff0c 672a 8865 9020 901a 8fc7 ff1b 65b0 7248 8fd0 884c 540e 81ea 52a8 66ff 6362 5c55 793a 3002'))
 $utf8=New-Object Text.UTF8Encoding($false)
 [IO.File]::WriteAllText((Join-Path $OutputDir 'status.md'),(($user -join "`n")+"`n"),$utf8)
 [IO.File]::WriteAllText((Join-Path $OutputDir 'details.md'),(($detail -join "`n")+"`n"),$utf8)

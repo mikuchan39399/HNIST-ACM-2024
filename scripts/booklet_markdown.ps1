@@ -131,13 +131,25 @@ function Convert-BookletMarkdown([string]$Text) {
     $lines = $Text.Replace("`r`n","`n") -split "`n"
     $out = New-Object Text.StringBuilder
     [void]$out.AppendLine('#block(above: 5pt, below: 2pt, breakable: true)[')
-    [void]$out.AppendLine('#set text(size: 7pt)')
-    [void]$out.AppendLine('#set par(leading: 0.45em, spacing: 0.55em)')
+    [void]$out.AppendLine('#let manual-ink = rgb("#294f4b")')
+    [void]$out.AppendLine('#set text(size: 7.1pt)')
+    [void]$out.AppendLine('#set par(leading: 0.52em, spacing: 4pt, justify: false)')
     [void]$out.AppendLine('#show math.equation: set text(font: "New Computer Modern Math")')
-    [void]$out.AppendLine('#show math.equation.where(block: true): it => block(above: 5pt, below: 5pt, width: 100%, inset: (x: 4pt, y: 4pt), fill: luma(247), radius: 2pt)[#align(center, text(size: 8pt, it))]')
+    $section=0
+    $formulaLabel=''
+    $leadParagraph=$false
     for ($i=0; $i -lt $lines.Count; $i++) {
         $line = $lines[$i]
+        # A standalone bold paragraph immediately before display math is its caption.
+        if ($line -match '^\s*\*\*(.+?)\*\*\s*$') {
+            $caption=$Matches[1]; $next=$i+1
+            while ($next -lt $lines.Count -and -not $lines[$next].Trim()) { $next++ }
+            if ($next -lt $lines.Count -and $lines[$next].Trim().StartsWith('$$')) {
+                $formulaLabel=$caption; $i=$next; $line=$lines[$i]
+            }
+        }
         if ($line -match '^\s*(`{3,}|~{3,})(\w*)\s*$') {
+            $leadParagraph=$false
             $fence=$Matches[1]; $lang=$Matches[2]; $body=New-Object 'Collections.Generic.List[string]'; $closed=$false
             for ($i++; $i -lt $lines.Count; $i++) {
                 if ($lines[$i] -match ('^\s*' + [regex]::Escape($fence[0]) + '{' + $fence.Length + ',}\s*$')) { $closed=$true; break }
@@ -146,6 +158,7 @@ function Convert-BookletMarkdown([string]$Text) {
             if (-not $closed) { throw 'README has an unclosed code fence' }
             [void]$out.AppendLine('#raw(' + (Typ-String ($body -join "`n")) + ', block: true, lang: ' + (Typ-String $lang) + ')')
         } elseif ($line.Trim().StartsWith('$$')) {
+            $leadParagraph=$false
             $formula=$line.Trim().Substring(2)
             if ($formula.EndsWith('$$') -and $formula.Length -ge 2) { $formula=$formula.Substring(0,$formula.Length-2) }
             else {
@@ -156,13 +169,36 @@ function Convert-BookletMarkdown([string]$Text) {
                 }
                 if (-not $closed) { throw 'Unclosed display math' }
             }
-            [void]$out.AppendLine('#metadata("booklet-math")')
-            [void]$out.AppendLine('$ ' + (Convert-BookletMath $formula) + ' $')
-        } elseif ($line -match '^\s*#{1,6}\s+(.+)$') {
-            [void]$out.AppendLine('#block(sticky: true, above: 5pt, below: 2pt)[#text(weight: "bold", fill: rgb("#2e6da4"))[' + (Typ-Inline $Matches[1]) + ']]')
+            [void]$out.AppendLine('#block(width: 100%, above: 4pt, below: 5pt, inset: (x: 6pt, y: 5pt), fill: luma(247), radius: 2pt)[')
+            if ($formulaLabel) {
+                [void]$out.AppendLine('#text(size: 6.2pt, fill: luma(90))['+(Typ-Inline $formulaLabel)+'] #v(2pt)')
+                $formulaLabel=''
+            }
+            [void]$out.AppendLine('#metadata("booklet-math")#align(center, text(size: 8pt)[$ ' + (Convert-BookletMath $formula) + ' $])]')
+        } elseif ($line -match '^\s*(#{1,6})\s+(.+)$') {
+            $level=$Matches[1].Length; $title=$Matches[2]
+            $leadParagraph=$level -eq 1
+            if ($level -eq 1) {
+                $section=0
+                [void]$out.AppendLine('#block(sticky: true, above: 5pt, below: 5pt, width: 100%)[#text(size: 12pt, weight: "bold", fill: manual-ink)['+(Typ-Inline $title)+']')
+                # One quoted line immediately below H1 is the optional subtitle.
+                $next=$i+1
+                while ($next -lt $lines.Count -and -not $lines[$next].Trim()) { $next++ }
+                if ($next -lt $lines.Count -and $lines[$next] -match '^\s*>\s?(.+)$') {
+                    [void]$out.AppendLine('#v(3pt) #text(size: 6.6pt, fill: luma(90))['+(Typ-Inline $Matches[1])+']')
+                    $i=$next
+                }
+                [void]$out.AppendLine('#v(5pt) #line(length: 100%, stroke: 1pt + manual-ink)]')
+            } elseif ($level -eq 2) {
+                $section++
+                [void]$out.AppendLine('#block(sticky: true, above: 8pt, below: 3.5pt, width: 100%)[#grid(columns: (18pt, 1fr), align: horizon, text(size: 7pt, fill: luma(135), '+(Typ-String $section.ToString('00'))+'), text(size: 8.5pt, weight: "bold", fill: manual-ink)['+(Typ-Inline $title)+']) #v(2.5pt) #line(length: 100%, stroke: 0.35pt + luma(210))]')
+            } else {
+                [void]$out.AppendLine('#block(sticky: true, above: 5pt, below: 3pt)[#text(size: 7.5pt, weight: "bold", fill: manual-ink)['+(Typ-Inline $title)+']]')
+            }
         } elseif ($line.Trim().StartsWith('|') -and $i+1 -lt $lines.Count -and $lines[$i+1] -match '^\s*\|?\s*:?-{3,}') {
+            $leadParagraph=$false
             $header = @(Markdown-Cells $line); $cols=$header.Count
-            [void]$out.AppendLine('#table(columns: '+$cols+', inset: 2.5pt, stroke: 0.3pt + luma(205), fill: (x,y) => if y == 0 { luma(242) },')
+            [void]$out.AppendLine('#table(columns: ('+(('1fr,' * $cols))+'), inset: (x: 4pt, y: 3pt), stroke: (left: none, right: none, top: none, bottom: 0.3pt + luma(215)), fill: (x,y) => if y == 0 { luma(244) },')
             [void]$out.AppendLine('table.header(' + (($header | ForEach-Object { '[#strong['+(Typ-Inline $_)+']]' }) -join ',') + '),')
             $i += 2
             while ($i -lt $lines.Count -and $lines[$i].Trim().StartsWith('|')) {
@@ -174,14 +210,39 @@ function Convert-BookletMarkdown([string]$Text) {
             $i--
             [void]$out.AppendLine(')')
         } elseif ($line -match '^\s*([-+*]|\d+[.)])\s+(.+)$') {
-            $itemText=$Matches[2]; $itemMark=$Matches[1]
-            $marker=if ($itemMark -match '^\d') { $itemMark } else { [string][char]0x2022 }
-            [void]$out.AppendLine('#block(above: 3pt, below: 3pt, inset: (left: 5pt))[' + (Typ-Inline ($marker+' '+$itemText)) + ']')
-            [void]$out.AppendLine('')
+            $leadParagraph=$false
+            $numbered=[regex]::IsMatch($Matches[1],'^\d'); $start=1
+            if ($numbered) { $start=[int]($Matches[1] -replace '\D','') }
+            $kind=if ($numbered) { 'enum(start: '+$start+', ' } else { 'list(' }
+            [void]$out.AppendLine('#'+$kind+'indent: 7pt, body-indent: 3pt, spacing: 2pt,')
+            do {
+                [void]$out.AppendLine('['+(Typ-Inline $Matches[2])+'],')
+                $i++
+            } while ($i -lt $lines.Count -and $lines[$i] -match '^\s*([-+*]|\d+[.)])\s+(.+)$' -and ([regex]::IsMatch($Matches[1],'^\d') -eq $numbered))
+            $i--
+            [void]$out.AppendLine(')')
         } elseif ($line -match '^\s*>\s?(.*)$') {
-            [void]$out.AppendLine('#block(inset: (left: 4pt), stroke: (left: 0.6pt + luma(170)))[' + (Typ-Inline $Matches[1]) + ']')
+            $leadParagraph=$false
+            [void]$out.AppendLine('#block(width: 100%, above: 5pt, below: 4pt, breakable: true, inset: (left: 6pt, right: 3pt, y: 3pt), stroke: (left: 1pt + manual-ink))[#show strong: it => text(size: 6.8pt, fill: manual-ink, it)')
+            do {
+                [void]$out.AppendLine((Typ-Inline $Matches[1]))
+                $i++
+            } while ($i -lt $lines.Count -and $lines[$i] -match '^\s*>\s?(.*)$')
+            $i--
+            [void]$out.AppendLine(']')
         } elseif ($line -match '^\s*(-{3,}|\*{3,})\s*$') { [void]$out.AppendLine('#line(length: 100%, stroke: 0.3pt + luma(200))') }
-        else { [void]$out.AppendLine((Typ-Inline $line)) }
+        elseif ($leadParagraph -and $line.Trim()) {
+            # Keep title + opening prose with the next block (often a definition).
+            # Only the short opening paragraph is grouped, never the whole manual.
+            [void]$out.AppendLine('#block(sticky: true)[')
+            do {
+                [void]$out.AppendLine((Typ-Inline $lines[$i]))
+                $i++
+            } while ($i -lt $lines.Count -and $lines[$i].Trim() -and $lines[$i] -notmatch '^\s*(#|>|\$\$|\||`{3,}|~{3,}|[-+*]\s|\d+[.)]\s)')
+            $i--
+            $leadParagraph=$false
+            [void]$out.AppendLine(']')
+        } else { [void]$out.AppendLine((Typ-Inline $line)) }
     }
     [void]$out.AppendLine(']')
     $out.ToString()

@@ -2,29 +2,25 @@
 #ifndef Z_OI_SPFARING
 #define Z_OI_SPFARING
 
-#include <queue>
 #include "../../图的存储/Graph.cpp"
-#include "../../../杂项/utils/utils.cpp"
+#include "../../../杂项/128位整数/128int.cpp"
 
-using namespace std;
-
-// ============ SPFA 判负环 ============
-// 全源种子(全部点入队, dist 全 0), 判据 = 最短路树边数 cnt >= n,
-// 与起点可达性无关
-// 内存: dist 8B/点 + cnt/inq 各 4B/点; 预算 = max_n
+// 全点以零距离入队, cnt 记录当前松弛路径的边数, 达到 n 即有负环, 不是累计入队次数
+// Graph 用 int/LL 整数权, dist 用库内 i128 避免负环反复降低距离时溢出, 可查任意分量
+// 工作表每点 24 B, 队列每项 4 B 且至多 n 项, 20 万点约 5.6 MB, 不含 Graph
 struct SPFARing
 {
     int n;
-    VLL dist;
+    vector<i128> dist;
     VI cnt, inq;
-    // 构造: 预算 max_n
-    // 时间: O(n) | 空间: 16B/点
+    // 分配 max_n 个点的工作表, 点编号为 1..n, n >= 1
+    // 时间 O(max_n) | 空间 O(max_n)
     SPFARing(int max_n = 0) : n(0), dist(max_n + 10, 0), cnt(max_n + 10, 0), inq(max_n + 10, 0) {}
-    // 多测复位: n 重配
-    // 时间: O(1) | 空间: O(1)
+    // 在构造容量内设为 n 个点, 工作表由 run 清空
+    // 时间 O(1) | 额外空间 O(1)
     void init(int _n) { n = _n; }
-    // 判整图是否有负环, 返回 true = 有
-    // 时间: 最坏 O(nm) | 空间: O(n)
+    // 返回整图是否有负环, 每次自动清空工作表, 不修改图
+    // 最坏时间 O(nm+n) | 额外空间 O(n)
     template <class G>
     bool run(G& g)
     {
@@ -49,12 +45,17 @@ struct SPFARing
     }
 };
 #endif
-/*
- * Usage:
- * Graph<true, LL> g{n, m};
- * SPFARing sp{n};
- * sp.init(n);
- * for (int i = 1; i <= m; i++) { int u, v; LL w; cin >> u >> v >> w; g.add(u, v, w); }
- * sp.run(g);                         // true = 图里有负环
- * // 多测: g.clear(); sp.init(n); 重跑
- */
+/* Usage
+int main()
+{
+    Graph<true, LL> g(4, 3);
+    g.add(1, 2, 5); g.add(3, 4, -2); g.add(4, 3, 1);
+    SPFARing sp(4);
+    sp.init(4);
+    cout << sp.run(g) << '\n'; // 1, 从 1 不可达的负环也会发现
+    g.clear(); g.add(1, 2, -3);
+    cout << sp.run(g) << '\n'; // 0, run 自带复位
+    sp.init(1); g.clear();
+    cout << sp.run(g) << '\n'; // 0
+}
+*/

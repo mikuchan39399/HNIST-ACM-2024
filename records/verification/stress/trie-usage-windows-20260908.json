@@ -1,0 +1,213 @@
+{
+  "status": "PASS",
+  "platform": "win32",
+  "compiler": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "stack_bytes": "default",
+  "files": {
+    "algorithms/字符串/字典树/可持久化字典树.cpp": "e62adc792953be52aeea49ca1e6d325ee03f0c6dee6cabf853d200ebfd27b758",
+    "algorithms/字符串/字典树/字典树.cpp": "0810f330567b4d20cc6c0e56d6cc283c494437e14d5b08b5d37866bb37280410",
+    "algorithms/字符串/字典树/对拍/trie_capacity_check.cpp": "eac512204d0d3c4398845f3f4177e735c89cb6ae06137ce8032242bc9dbfb08b",
+    "algorithms/字符串/字典树/对拍/trie_check.cpp": "e31dda1ca5b1a7b9f27dd0446d3fc53fbf1fd457e619539c35613f2df02dd241",
+    "algorithms/杂项/utils/utils.cpp": "162d7e3884215670b2bb015d4104c01dd0b381591bdd3b0f8abdd8c651be5a80",
+    "zoi/trie.h": "4a869aa784c00de8dd0109e3f3a514956db5277935904fb0710ac1e7f7edeaf2",
+    "zoi/persistentTrie.h": "d8a3c379af54903049f130dc6fbfec7db4b493e2619b37392d0b1381f127166d"
+  },
+  "results": [
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "-IF:\\c++\\my_code\\HNIST-ACM-2024\\zoi",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.75,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.203,
+      "stdout": "2 3\n1 4\n2\n0\n7\n-1\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "expand",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.125,
+      "stdout": "[OK] expanded: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.cpp (1 blocks)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.516,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.047,
+      "stdout": "2 3\n1 4\n2\n0\n7\n-1\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "restore",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 0.968,
+      "stdout": "[OK] restore: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage0.cpp\n",
+      "stderr": ""
+    },
+    {
+      "usage": "字典树.cpp",
+      "expand_restore": "PASS: UTF-8 text equal"
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "-IF:\\c++\\my_code\\HNIST-ACM-2024\\zoi",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.86,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.14,
+      "stdout": "7\n7\n2 3\n7\n7\n-1\n2\n1\n3\n-1\n2\n0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "expand",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.016,
+      "stdout": "[OK] expanded: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.cpp (1 blocks)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.875,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.047,
+      "stdout": "7\n7\n2 3\n7\n7\n-1\n2\n1\n3\n-1\n2\n0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "restore",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.031,
+      "stdout": "[OK] restore: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\trie-audit\\usage1.cpp\n",
+      "stderr": ""
+    },
+    {
+      "usage": "可持久化字典树.cpp",
+      "expand_restore": "PASS: UTF-8 text equal"
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.016,
+      "stdout": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0\nCopyright (C) 2025 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    }
+  ]
+}

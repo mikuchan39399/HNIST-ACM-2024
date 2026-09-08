@@ -27,3 +27,5 @@ utils 母版(杂项\utils\utils.cpp): 别名全家 + 最值常量 + fast_io +
 z_fill_n 坑: 折叠表达式的模式只能是 cast-expression, 二元比较要
   整体加括号 assert(((((int)cs.size()) >= n) && ...));
   旧写法在新版 GCC 直接编译错误。
+  当前实现先检查 n>=0, 用 size_t 比较容量并计算 n+10; 保持从下标 0 填充余量的旧行为,
+  不扩容、不负责清空更远的历史数据。fast_io 为 inline, 多翻译单元链接不再重定义。

@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "id": "08946e137df145dba9ac565213d87db9",
+  "startedUtc": "2026-09-07T15:09:23.5384312Z",
+  "finishedUtc": "2026-09-07T15:09:29.6573934Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/treegraph/final-windows",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "6756acda19e9ceb6d6a7047675d144756b2e0202f1ceb89e440baf654aab158a",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/对拍/treegraph_check.cpp",
+          "hash": "eacd17e1f35d024bd9d5f27467aa18cb76cbf0ceeb6f0a25a32c63a471a5171d"
+        },
+        {
+          "path": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "4432d877a02a27acc8235abea6e16576f795a6ee0a7cc12af44649a1acb3cc23"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "c0354e2f5d0c681f40e4edcb82d323f61d381a8cb15e2fd5ab456c472c326f84"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "15029b41362c8e58e1e021fd50ccc658fe674bd9ebd148b1d25f63d8a12484ba"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "8162d0d0d5ab02f4eaf0f2ee6c20aadb095b1c294f94b36f1df047a1839c573b"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "d06c472762e4c11e623289e941afb0ab3abfcd11c2cc677d00374a9038003263"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "74505f6f44011af6c5d0eaa1b910dbbefc3cf6c806d9e4c42b9dae5aa6d202dd",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/treegraph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.763
+    }
+  ]
+}

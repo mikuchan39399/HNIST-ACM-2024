@@ -6,7 +6,7 @@
 
 // 返回 sqrt(x) 向下取整的整数; x <= 0 时返回 0
 // 时间: O(1) | 空间: O(1)
-LL floor_isqrt(LL x)
+inline LL floor_isqrt(LL x)
 {
     if (x <= 0) return 0;
     LL r = sqrt(x);
@@ -16,15 +16,20 @@ LL floor_isqrt(LL x)
 }
 // 返回 sqrt(x) 向上取整的整数; x <= 0 时返回 0
 // 时间: O(1) | 空间: O(1)
-LL ceil_isqrt(LL x)
+inline LL ceil_isqrt(LL x)
 {
     if (x <= 0) return 0;
     LL r = floor_isqrt(x);
     return r + (r * r != x);
 }
 #endif
-/*
- * Usage:
- * floor_isqrt(10); // 返回 3
- * ceil_isqrt(10);  // 返回 4
- */
+/* Usage
+#include <intSqrt.h>
+int main()
+{
+    for (LL x : {0LL, 9LL, 10LL, LLONG_MAX})
+        cout << floor_isqrt(x) << ' ' << ceil_isqrt(x) << '\n';
+    // 0 0; 3 3; 3 4; 3037000499 3037000500
+    // 直接强转 sqrt(x) 在平方数附近可能舍入错, 接口会用整数除法校正
+}
+*/

@@ -69,7 +69,6 @@ void test_trie()
         run(t62, "aZ09", rng);
         run(t2, "01", rng);
     }
-    cout << "All tests passed flawlessly!\n";
 }
 
 // 独立暴力: 全数组扫 max(x ^ v)
@@ -82,7 +81,7 @@ void test_trie_xor()
         int c = rng() % 3;
         if (c == 0) return rng() % 16;            // 小值
         if (c == 1) return rng() % 1000000;       // 中值
-        return ((LL)rng() << 31) + rng();         // 大值(62 位)
+        return (LL)(((ULL)rng() << 32 | rng()) & 0x7fffffffffffffffULL);         // 大值(63 个有效位, 无符号拼接避免生成器溢出)
     };
     for (int tc = 0; tc < 300; tc++)
     {
@@ -116,7 +115,7 @@ void test_pers_trie()
         int c = rng() % 3;
         if (c == 0) return rng() % 16;            // 小值
         if (c == 1) return rng() % 1000000;       // 中值
-        return ((LL)rng() << 31) + rng();         // 大值(62 位)
+        return (LL)(((ULL)rng() << 32 | rng()) & 0x7fffffffffffffffULL);         // 大值(63 个有效位, 无符号拼接避免生成器溢出)
     };
     for (int tc = 0; tc < 300; tc++)
     {
@@ -161,7 +160,7 @@ void test_pers_trie_range()
         int c = rng() % 3;
         if (c == 0) return rng() % 16;
         if (c == 1) return rng() % 1000000;
-        return ((LL)rng() << 31) + rng();
+        return (LL)(((ULL)rng() << 32 | rng()) & 0x7fffffffffffffffULL);
     };
     for (int tc = 0; tc < 300; tc++)
     {
@@ -246,7 +245,7 @@ void run_kth(PT& pt, int pick, mt19937& rng)
     {
         if (pick == 0) return rng() % (1LL << 11);   // HB=10 值域
         if (pick == 1) return rng() % (1LL << 31);   // HB=30 值域
-        return ((LL)rng() << 31) + rng();            // 默认 63 全域
+        return (LL)(((ULL)rng() << 32 | rng()) & 0x7fffffffffffffffULL);            // 默认 63 全域
     };
     int n = 1 + rng() % 40;
     vector<LL> a(n + 1);
@@ -333,6 +332,192 @@ void test_boundaries()
     assert(pt.kth_xor(roots.back(), 0, {0}, 6) == -1);
 }
 
+// 从任意历史根分叉; 对每次插入检查整个旧结点池不变, 暴力保存完整单词多重集。
+template<int K>
+void test_string_forks(const string& chars)
+{
+    mt19937 rng(20260908 + K);
+    PersTrie<K> pt(2000);
+    for (int tc = 0; tc < 100; ++tc)
+    {
+        pt.clear();
+        VI roots{0};
+        vector<vector<string>> words(1);
+        for (int i = 1; i <= 80; ++i)
+        {
+            int base = rng() % i;
+            string s;
+            for (int j = rng() % 9; j--; ) s += chars[rng() % chars.size()];
+            auto old = pt.tr;
+            roots.push_back(pt.insert(roots[base], s));
+            words.push_back(words[base]);
+            words.back().push_back(s);
+            assert(pt.tr.size() == old.size() + s.size() + 1);
+            for (size_t j = 0; j < old.size(); ++j)
+                assert(pt.tr[j].ch == old[j].ch && pt.tr[j].cnt == old[j].cnt);
+            // +当前版本 +任意版本 -祖先版本: 一份 s 加一份任意快照, 必须非负。
+            int other = rng() % roots.size();
+            auto expected = words[other];
+            expected.push_back(s);
+            VI plus{roots.back(), roots[other], roots[base]}, minus{roots[base], roots[base]};
+            for (string q : {s, s.substr(0, s.size() / 2), string(), string(3, chars.back())})
+            {
+                LL cnt = brute_prefix(expected, q);
+                int best = 0;
+                for (const auto& w : expected)
+                {
+                    int len = 0;
+                    while (len < (int)min(w.size(), q.size()) && w[len] == q[len]) ++len;
+                    best = max(best, len);
+                }
+                assert(pt.count_prefix(plus, minus, q) == cnt);
+                assert(pt.lcp_len(plus, minus, q) == best);
+                assert(pt.count_prefix(roots[other], q) == brute_prefix(words[other], q));
+                assert(pt.count_prefix(plus, plus, q) == 0);
+                assert(pt.lcp_len(plus, plus, q) == -1);
+            }
+            assert(pt.size(roots[other]) == (int)words[other].size());
+        }
+    }
+}
+
+// 随机版本树: 独立沿 parent 枚举 u-v 路径, 不把根差计数当参照。
+template<int HB>
+void test_numeric_forks()
+{
+    mt19937_64 rng(20260908 + HB);
+    const ULL mask = HB == 63 ? 0x7fffffffffffffffULL : (1ULL << (HB + 1)) - 1;
+    PersTrie<2, HB> pt(80 * (HB + 2));
+    for (int tc = 0; tc < 100; ++tc)
+    {
+        pt.clear();
+        VI roots(81), parent(81), depth(81);
+        VLL value(81);
+        for (int i = 1; i <= 80; ++i)
+        {
+            parent[i] = rng() % i;
+            depth[i] = depth[parent[i]] + 1;
+            value[i] = (i % 3 == 0) ? value[parent[i]] : (LL)(rng() & mask);
+            auto old = pt.tr;
+            roots[i] = pt.insert(roots[parent[i]], value[i]);
+            assert(pt.tot == i * (HB + 2) && pt.size(roots[i]) == depth[i]);
+            for (size_t j = 0; j < old.size(); ++j)
+                assert(pt.tr[j].ch == old[j].ch && pt.tr[j].cnt == old[j].cnt);
+        }
+        for (int q = 0; q < 80; ++q)
+        {
+            int u = 1 + rng() % 80, v = 1 + rng() % 80, a = u, b = v;
+            VLL path;
+            while (a != b)
+            {
+                if (depth[a] < depth[b]) swap(a, b);
+                path.push_back(value[a]);
+                a = parent[a];
+            }
+            if (a) path.push_back(value[a]);
+            LL x = rng() & mask, best = -1;
+            for (LL y : path) best = max(best, x ^ y);
+            assert(pt.max_xor({roots[u], roots[v], roots[17]},
+                              {roots[a], roots[parent[a]], roots[17]}, x) == best);
+            VLL xs{x, value[u], 0}, all;
+            // 任意分叉版本相对其空版本, 全快照笛卡尔积排序。
+            for (int t = u; t; t = parent[t])
+                for (LL y : xs) all.push_back(y ^ value[t]);
+            sort(all.rbegin(), all.rend());
+            for (int k = 1; k <= (int)all.size(); ++k)
+                assert(pt.kth_xor(roots[u], 0, xs, k) == all[k - 1]);
+            LL single = -1;
+            for (int t = u; t; t = parent[t]) single = max(single, x ^ value[t]);
+            assert(pt.max_xor(roots[u], x) == single);
+        }
+    }
+}
+
+void test_scale()
+{
+    constexpr int n = 200000;
+    {
+        string s(n, 'a');
+        Trie<26> tr(n + 1);
+        PersTrie<26> pt(n + 2);
+        for (int round = 0; round < 3; ++round)
+        {
+            tr.clear(); pt.clear();
+            tr.insert(s); tr.insert(s); tr.insert("");
+            int empty = pt.insert(0, ""), root = pt.insert(empty, s);
+            assert(tr.tr.size() == n + 1 && pt.tot == n + 2);
+            assert(tr.count_word(s) == 2 && tr.count_word("") == 1);
+            assert(tr.count_prefix(s) == 2 && pt.count_prefix(root, s) == 1);
+            assert(pt.count_prefix(empty, s) == 0);
+            assert(pt.lcp_len({root}, {empty}, s + "b") == n);
+            assert(tr.walk(s + "a") == -1 && pt.count_prefix(root, s + "a") == 0);
+            assert(tr.count_prefix("") == 3 && pt.count_prefix(root, "") == 2);
+        }
+    }
+    {
+        // 连续整数的普通 Trie 结点数 < 2*n+64; 持久化每次恰好 32 个。
+        Trie<2> tr(2 * n + 64);
+        PersTrie<2, 30> pt(32 * n);
+        VI roots(n + 1);
+        for (int round = 0; round < 2; ++round)
+        {
+            tr.clear(); pt.clear(); roots[0] = 0;
+            for (int i = 1; i <= n; ++i)
+            {
+                tr.insert_num(i - 1);
+                roots[i] = pt.insert(roots[i - 1], i - 1);
+                assert(pt.size(roots[i]) == i);
+            }
+            assert(pt.tot == 32 * n && pt.size(0) == 0);
+            auto used = pt.tr.size();
+            for (int q = 0; q < 80; ++q)
+            {
+                LL x = (q * 1000003LL) & ((1LL << 31) - 1), all = 0, part = 0;
+                int l = 1 + (q * 7919) % n, r = l + (n - l) / 2;
+                for (int i = 0; i < n; ++i) all = max(all, x ^ i);
+                for (int i = l; i <= r; ++i) part = max(part, x ^ (i - 1));
+                assert(tr.max_xor(x) == all && pt.max_xor(roots[n], x) == all);
+                assert(pt.max_xor({roots[r]}, {roots[l - 1]}, x) == part);
+                assert(pt.kth_xor(roots[r], roots[l - 1], {x}, 1) == part);
+            }
+            assert(pt.tr.size() == used); // 查询不分配持久化结点
+        }
+        tr.clear(); pt.clear();
+        assert(tr.max_xor(0) == -1 && pt.max_xor(0, 0) == -1);
+    }
+    {
+        // 多根正侧先累计到 28 亿, 即使最后抵消到 70000, 中间值也必须用 LL。
+        constexpr int c = 70000, copies = 40000;
+        PersTrie<26> words(2 * c);
+        PersTrie<2, 0> nums(2 * c);
+        int a = 0, b = 0;
+        for (int i = 0; i < c; ++i) { a = words.insert(a, "a"); b = nums.insert(b, 1); }
+        VI p(copies, a), m(copies - 1, a), bp(copies, b), bm(copies - 1, b);
+        for (string s : {"", "a"})
+        {
+            assert(words.count_prefix(p, {}, s) == 1LL * copies * c);
+            assert(words.count_prefix(p, m, s) == c);
+            assert(words.count_prefix(p, p, s) == 0);
+        }
+        assert(words.lcp_len(p, m, "aa") == 1 && words.lcp_len(p, p, "aa") == -1);
+        assert(nums.max_xor(bp, {}, 0) == 1 && nums.max_xor(bp, bm, 0) == 1);
+        assert(nums.max_xor(bp, bp, 0) == -1);
+    }
+    {
+        // 20万 x 20万, 总配对 400 亿: 不展开矩阵, 0/1 各占一半给闭式计数。
+        PersTrie<2, 0> pt(2 * n);
+        int root = 0;
+        VLL xs(n);
+        for (int i = 0; i < n; ++i) { root = pt.insert(root, i % 2); xs[i] = i % 2; }
+        LL half = 1LL * n * n / 2;
+        assert(pt.kth_xor(root, 0, xs, 1) == 1);
+        assert(pt.kth_xor(root, 0, xs, half) == 1);
+        assert(pt.kth_xor(root, 0, xs, half + 1) == 0);
+        assert(pt.kth_xor(root, 0, xs, 2 * half) == 0);
+        assert(pt.kth_xor(root, 0, xs, 2 * half + 1) == -1);
+    }
+}
+
 int main()
 {
     test_boundaries();
@@ -342,5 +527,14 @@ int main()
     test_pers_trie_range();
     test_pers_trie_str();
     test_pers_trie_kth();
+    test_string_forks<1>("0");
+    test_string_forks<2>("01");
+    test_string_forks<10>("0123456789");
+    test_string_forks<26>("abcdefghijklmnopqrstuvwxyz");
+    test_string_forks<62>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+    test_numeric_forks<0>(); test_numeric_forks<1>(); test_numeric_forks<10>();
+    test_numeric_forks<30>(); test_numeric_forks<62>(); test_numeric_forks<63>();
+    test_scale();
+    cout << "trie: PASS (random snapshots, forks, 200000 scale, 64-bit counts)\n";
     return 0;
 }

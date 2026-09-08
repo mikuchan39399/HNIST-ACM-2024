@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "id": "406d2bca246e48c7b80745d4e497c8ee",
+  "startedUtc": "2026-09-08T08:10:06.4872279Z",
+  "finishedUtc": "2026-09-08T08:10:12.2351650Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/push-check/runner",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "8f98c7d1b401dc7b7d60721f2168e021165ce8c0eeb75733de68dda86ee4a1ac",
+      "files": [
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "162d7e3884215670b2bb015d4104c01dd0b381591bdd3b0f8abdd8c651be5a80"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/对拍/hash_check.cpp",
+          "hash": "0a5b8819de978d3d7244b978c2a27525f69649fa2cc17dcffc7f7c8ab6b18245"
+        },
+        {
+          "path": "algorithms/杂项/对拍/reference/siphash/siphash.h",
+          "hash": "30d4269093e5886cb9e7ea826899ef02daddac682e73c335c53dd748b9e20bfb"
+        },
+        {
+          "path": "algorithms/杂项/对拍/reference/siphash/siphash_ref.h",
+          "hash": "1eb04356ed89dfe2c1b69e9d4a2844721e159457e9111bf484f934faae9c2c8f"
+        },
+        {
+          "path": "algorithms/杂项/对拍/reference/siphash/vectors64.h",
+          "hash": "296d54b53b0f449f5334b31f14ac76f7d06de0f01d400c829c9cf8071dd883cc"
+        },
+        {
+          "path": "algorithms/杂项/防卡/customHash.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/防卡/哈希防卡.cpp",
+          "hash": "9ccb1d2676066c8edbac0670771d81914b1f15adcc700a00f35122f27540e100"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "8162d0d0d5ab02f4eaf0f2ee6c20aadb095b1c294f94b36f1df047a1839c573b"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "d06c472762e4c11e623289e941afb0ab3abfcd11c2cc677d00374a9038003263"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/杂项/防卡/哈希防卡.cpp",
+          "hash": "524a48e9eba104c4d44d740041dd9ed501b5eb8947d9d218c39c014d29f3a2e3",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/hash_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.377
+    }
+  ]
+}

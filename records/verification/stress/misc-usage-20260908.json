@@ -1,0 +1,42 @@
+[
+  {
+    "source": "utils/utils.cpp",
+    "status": "PASS",
+    "standalone": true,
+    "restored_text_equal": true
+  },
+  {
+    "source": "128位整数/128int.cpp",
+    "status": "PASS",
+    "standalone": true,
+    "restored_text_equal": true
+  },
+  {
+    "source": "随机数/z_rnd.cpp",
+    "status": "PASS",
+    "standalone": true,
+    "restored_text_equal": true
+  },
+  {
+    "source": "防卡/哈希防卡.cpp",
+    "status": "PASS",
+    "standalone": true,
+    "restored_text_equal": true
+  },
+  {
+    "source": "离散化/离散化.cpp",
+    "status": "PASS",
+    "standalone": true,
+    "restored_text_equal": true
+  },
+  {
+    "source": "主元素问题/Misra-Gries.cpp",
+    "status": "PASS",
+    "standalone": true,
+    "restored_text_equal": true
+  },
+  {
+    "source": "utils two translation units",
+    "status": "PASS"
+  }
+]

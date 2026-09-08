@@ -1,67 +1,57 @@
 // zoi: lucas
-#include <iostream>
+#ifndef Z_OI_LUCAS
+#define Z_OI_LUCAS
 
-using namespace std;
+#include "阶乘表及阶乘逆元表求组合数.cpp"
 
-using LL = long long;
-
-const int N = 1e5 + 10; // N 需大于等于可能出现的最大模数 p
-LL f[N]; 
-LL g[N]; 
-
-// 快速幂
-LL qpow(LL a, LL x, LL p)
+// 素数模下 C(n,k) 等于各 p 进位组合数的乘积, 任一位 k_i>n_i 即为 0
+// 适合 n/k 很大而素数 p 可建表的场景; 复用 PrimeComb, 有效表数据共 16p B
+struct Lucas
 {
-    LL ret = 1;
-    while (x)
+    PrimeComb table;
+
+    // 按素数 p 重建 [0,p-1] 阶乘表, p>=2; O(p) 时间/空间, 非扩展 Lucas
+    void init(int p)
     {
-        if (x & 1) 
+        assert(p >= 2);
+        table.init(p - 1, p);
+    }
+    // 返回 C(n,k) mod p, k 越界返回 0; 0<=n<=LLONG_MAX, O(1+log_p(n+1)) 时间
+    LL comb(LL n, LL k) const
+    {
+        assert(n >= 0 && table.mod >= 2);
+        if (k < 0 || k > n) return 0;
+        LL ans = 1, p = table.mod;
+        while (k)
         {
-            ret = (ret * a) % p;
+            int a = n % p, b = k % p;
+            if (b > a) return 0;
+            ans = (i128)ans * table.comb(a, b) % p;
+            n /= p;
+            k /= p;
         }
-        x >>= 1;
-        a = (a * a) % p;
+        return ans;
     }
-    return ret;
-}
+};
+#endif
 
-// 预处理模 p 意义下的阶乘与逆元
-// 前置条件：p 必须为质数，且 p <= N
-void init_lucas(int p)
-{
-    int up = p - 1;
-    f[0] = 1;
-    for (int i = 1; i <= up; i++)
-    {
-        f[i] = (f[i - 1] * i) % p;
-    }
-    
-    g[up] = qpow(f[up], up - 2, p);
-    
-    for (int i = up - 1; i >= 0; i--)
-    {
-        g[i] = (g[i + 1] * (i + 1)) % p;
-    }
-}
+/* Usage
+#include "lucas.h"
 
-// 计算局部的组合数 C(n, m) % p (n, m < p)
-LL get_C(int n, int m, int p)
+int main()
 {
-    if (n < m || m < 0) 
+    int p, q;
+    if (!(cin >> p >> q)) return 0;      // 输入示例: 7 2
+    Lucas c;
+    c.init(p);                         // p 必须为素数, 按 p 而非 n 分配空间
+    while (q--)
     {
-        return 0;
+        LL n, k;
+        cin >> n >> k;                  // 后接: 100 50 / 8 1
+        cout << c.comb(n, k) << '\n';    // 4 / 1
     }
-    return f[n] * g[m] % p * g[n - m] % p;
+    c.init(2);                         // 多测换模数, 2 同样合法
+    cout << c.comb(8, 1) << '\n';        // 0
+    // 即使 p 是素数, p=1e9+7 也不适合整张表; 大 n 小 k 可选 binom_loop
 }
-
-// 卢卡斯定理核心递归
-// 核心机制：C(n, m) ≡ C(n/p, m/p) * C(n%p, m%p) (mod p)
-// 适用场景：n, m 极大（如 1e18 级别），但模数 p 较小（如 <= 1e5）且必须为质数
-LL lucas(LL n, LL m, int p)
-{
-    if (m == 0) 
-    {
-        return 1;
-    }
-    return (lucas(n / p, m / p, p) * get_C(n % p, m % p, p)) % p;
-}
+*/

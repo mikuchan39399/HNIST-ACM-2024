@@ -1,0 +1,170 @@
+{
+  "status": "PASS",
+  "platform": "linux",
+  "compiler": "g++-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O1",
+    "-g",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize-recover=all",
+    "-fno-omit-frame-pointer",
+    "-D_GLIBCXX_ASSERTIONS"
+  ],
+  "stack_bytes": 1048576,
+  "files": {
+    "algorithms/字符串/字典树/可持久化字典树.cpp": "e62adc792953be52aeea49ca1e6d325ee03f0c6dee6cabf853d200ebfd27b758",
+    "algorithms/字符串/字典树/字典树.cpp": "0810f330567b4d20cc6c0e56d6cc283c494437e14d5b08b5d37866bb37280410",
+    "algorithms/字符串/字典树/对拍/trie_capacity_check.cpp": "eac512204d0d3c4398845f3f4177e735c89cb6ae06137ce8032242bc9dbfb08b",
+    "algorithms/字符串/字典树/对拍/trie_check.cpp": "e31dda1ca5b1a7b9f27dd0446d3fc53fbf1fd457e619539c35613f2df02dd241",
+    "algorithms/杂项/utils/utils.cpp": "162d7e3884215670b2bb015d4104c01dd0b381591bdd3b0f8abdd8c651be5a80",
+    "zoi/trie.h": "4a869aa784c00de8dd0109e3f3a514956db5277935904fb0710ac1e7f7edeaf2",
+    "zoi/persistentTrie.h": "d8a3c379af54903049f130dc6fbfec7db4b493e2619b37392d0b1381f127166d"
+  },
+  "results": [
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/algorithms/字符串/字典树/对拍/trie_capacity_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/trie_capacity_check.linux"
+      ],
+      "exit": 0,
+      "seconds": 26.897,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/trie_capacity_check.linux"
+      ],
+      "exit": 0,
+      "seconds": 0.076,
+      "stdout": "trie capacity: PASS\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/algorithms/字符串/字典树/对拍/trie_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/trie_check.linux"
+      ],
+      "exit": 0,
+      "seconds": 16.755,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/trie_check.linux"
+      ],
+      "exit": 0,
+      "seconds": 10.611,
+      "stdout": "trie: PASS (random snapshots, forks, 200000 scale, 64-bit counts)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-I/mnt/f/c++/my_code/HNIST-ACM-2024/zoi",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/usage0.linux.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/usage0.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 4.322,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/usage0.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.021,
+      "stdout": "2 3\n1 4\n2\n0\n7\n-1\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-I/mnt/f/c++/my_code/HNIST-ACM-2024/zoi",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/usage1.linux.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/usage1.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 4.558,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/trie-audit/usage1.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.028,
+      "stdout": "7\n7\n2 3\n7\n7\n-1\n2\n1\n3\n-1\n2\n0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.004,
+      "stdout": "g++-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    }
+  ]
+}

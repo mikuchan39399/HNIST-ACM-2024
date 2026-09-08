@@ -1,0 +1,20 @@
+{
+  "old-i128-min": {
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/misc-audit/old-i128-probe.h:18:42: runtime error: signed integer overflow: 0x7ffffffffffffffffffffffffffffff8 + 8 cannot be represented in type '__int128'\n"
+  },
+  "old-rnd-bool": {
+    "compile_exit": 1,
+    "stderr": "In file included from /usr/include/c++/13/bits/stl_algo.h:65,\n                 from /usr/include/c++/13/algorithm:61,\n                 from /mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/misc-audit/old-utils.cpp:19,\n                 from /mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/misc-audit/old-rnd-probe.h:5,\n                 from /mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/misc-audit/old-rnd-bool.cpp:1:\n/usr/include/c++/13/bits/uniform_int_dist.h: In instantiation of \u2018std::uniform_int_distribution<_IntType>::result_type std::uniform_int_distribution<_IntType>::operator()(_UniformRandomBitGenerator&, const param_type&) [with _UniformRandomBitGenerator = std::mersenne_twister_engine<long unsigned int, 64, 312, 156, 31, 13043109905998158313, 29, 6148914691236517205, 17, 8202884508482404352, 37, 18444473444759240704, 43, 6364136223846793005>; _IntType = bool; result_type = bool]\u2019:\n/usr/include/c++/13/bits/uniform_int_dist.h:204:34:   required from \u2018std::uniform_int_distribution<_IntType>::result_type std::uniform_int_distribution<_IntType>::operator()(_UniformRandomBitGenerator&) [with _UniformRandomBitGenerator = std::mersenne_twister_engine<long unsigned int, 64, 312, 156, 31, 13043109905998158313, 29, 6148914691236517205, 17, 8202884508482404352, 37, 18444473444759240704, 43, 6364136223846793005>; _IntType = bool; result_type = bool]\u2019\n/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/misc-audit/old-rnd-probe.h:16:51:   required from \u2018T z_rnd(T, T) [with T = bool]\u2019\n/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/misc-audit/old-rnd-bool.cpp:2:24:   required from here\n/usr/include/c++/13/bits/uniform_int_dist.h:292:59: error: invalid use of incomplete type \u2018struct std::make_unsigned<bool>\u2019\n  292 |         typedef typename make_unsigned<result_type>::type __utype;\n      |                                                           ^~~~~~~\nIn file included from /usr/include/c++/13/bits/move.h:37,\n                 from /usr/include/c++/13/bits/exception_ptr.h:41,\n                 from /usr/include/c++/13/exception:164,\n                 from /usr/include/c++/13/ios:41,\n                 from /usr/include/c++/13/ostream:40,\n                 from /usr/include/c++/13/iostream:41,\n                 from /mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/misc-audit/old-utils.cpp:13:\n/usr/include/c++/13/type_traits:1839:21: note: declaration of \u2018struct std::make_unsigned<bool>\u2019\n 1839 |   template<> struct make_unsigned<bool>;\n      |                     ^~~~~~~~~~~~~~~~~~~\n/usr/include/c++/13/bits/uniform_int_dist.h:293:68: error: invalid use of incomplete type \u2018struct std::make_unsigned<bool>\u2019\n  293 |         typedef typename common_type<_Gresult_type, __utype>::type __uctype;\n      |                                                                    ^~~~~~~~\n/usr/include/c++/13/type_traits:1839:21: note: declaration of \u2018struct std::make_unsigned<bool>\u2019\n 1839 |   template<> struct make_unsigned<bool>;\n      |                     ^~~~~~~~~~~~~~~~~~~\n"
+  },
+  "old-rnd-wide": {
+    "exit_code": 0,
+    "stdout": "100",
+    "stderr": ""
+  },
+  "old-utils-odr": {
+    "link_exit": 1,
+    "stderr": "/usr/bin/ld: /mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/misc-audit/ccftAwXe.o: in function `fast_io()':\nold-odr-b.cpp:(.text+0x0): multiple definition of `fast_io()'; /mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/misc-audit/ccBHgDde.o:old-odr-a.cpp:(.text+0x0): first defined here\ncollect2: error: ld returned 1 exit status\n"
+  }
+}

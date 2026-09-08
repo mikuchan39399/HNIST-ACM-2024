@@ -14,6 +14,7 @@
 | 文档整理 | 将要修改的正文及引用它的入口；按[导航维护](docs/maintenance/README.md#文档导航维护)核对用户/AI 双入口；保留约束与历史，不重复编写第二套规则 |
 
 用户明确要求优先。各正文只管自己的范围，入口不复制条款；冲突先查实现和现行正文，无法判定时向用户说明。
+模板是否配 README 只按用户明确决定，创建或整理前核对 [当前授权范围](rule.md#31-启发式模板-2026-09-07-用户裁决)，不得以文件已存在推定授权。
 用户已持续授权随功能变更同步 rule.md 的功能事实与执行说明，按其双向同步要求维护；改变既定算法取舍/协作政策或修改 records/tooling/rule_history.md 仍需对应的明确授权。已读且未变化的正文不用重复加载；缺文件先查路径，仍找不到再询问用户。
 当前验证先查 [AI 明细](docs/verification/details.md) 中相关条目, 必要时从[专项验证索引](records/verification/README.md)或 runs 读取对应证据; 不默认加载全部运行记录
 历史方案从[工具历史索引](records/tooling/README.md)和[清扫历史](rules/sweep-history.md)按问题进入; [Cline 入口](.clinerules/zoi.md)仅转到本页

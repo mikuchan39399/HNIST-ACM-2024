@@ -1,0 +1,12 @@
+SipHash reference C implementation and official vectors
+Authors: Jean-Philippe Aumasson and Daniel J. Bernstein
+Source: https://github.com/veorq/SipHash
+Upstream revision: 32d067603b93b47828700880649198e0bfbbcffa
+Retrieved: 2026-09-08
+License: CC0 (see LICENSE_CC0 and the source copyright headers)
+
+siphash_ref.h is upstream siphash.c with the filename changed and one
+trailing space removed from a comment; executable code is unchanged.
+siphash.h is unmodified. vectors64.h packs upstream vectors_sip64 byte arrays
+into equivalent little-endian uint64_t constants.
+These files are independent test oracles, not part of the contest template.

@@ -1,0 +1,6 @@
+collision fixture: standard=5000 sip48=6
+collision fixture: standard=5000 sip48=6
+collision fixture: standard=5000 sip48=7
+collision fixture: standard=5000 sip48=8
+million integer hashes: splitmix_ms=1.1158 sip48_ms=31.8447 checksum=14498513085112756388
+hash_check passed: SipHash-4-8 reference, keys, containers, collisions

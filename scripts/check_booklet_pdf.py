@@ -129,6 +129,33 @@ def check(pdf, root):
             assert marker in whole, f'Fixture content absent: {marker}'
         assert 'MUST_NOT_PRINT' not in whole, 'Roadmap entered PDF'
         assert whole.index('SOURCE_B') < whole.index('SHARED_MANUAL') < whole.index('LAST_MANUAL_KEEP'), 'Detached manual'
+    if 'SUBTITLE_KEEP' in typ:
+        # Check painted text, not just the style strings in the generated source.
+        expected_sizes = {'SHARED_MANUAL': 12, 'SUBTITLE_KEEP': 6.6,
+                          'LIST_HEADING': 8.5, 'SECOND_SECTION_KEEP': 8.5,
+                          'SUBHEADING_KEEP': 7.5, 'FORMULA_CAPTION_KEEP': 6.2,
+                          'NOTE_LABEL_KEEP': 6.8}
+        painted = {marker: [] for marker in expected_sizes}
+        for page in reader.pages:
+            def visit_manual(text, cm, tm, font, size):
+                for marker in painted:
+                    if marker in compact(text):
+                        painted[marker].append(size)
+            page.extract_text(visitor_text=visit_manual)
+        for marker, size in expected_sizes.items():
+            assert painted[marker] and all(abs(s-size) < 0.01 for s in painted[marker]), \
+                f'Manual style missing or wrong: {marker}: {painted[marker]}'
+        for marker in ('TreeCenter<G>', 'NOTE_BODY_KEEP', 'NOTE_CONTINUATION_KEEP',
+                       '#read("private")', '<not-a-label>'):
+            assert marker in whole, f'Manual literal content lost: {marker}'
+        long_pdf = pdf.parent / 'long-manual.pdf'
+        assert long_pdf.is_file(), 'Long table render fixture missing'
+        long_pages = [p.extract_text() or '' for p in PdfReader(long_pdf).pages]
+        long_text = '\n'.join(long_pages)
+        rows = [int(n) for n in re.findall(r'ROW_\s*(\d+)', long_text)]
+        assert rows == list(range(1, 91)), 'Long table rows missing, repeated or reordered'
+        assert compact(long_text).count('Longkey') >= 2, 'Long table header did not repeat across columns/pages'
+        print('[PASS] PDF manual style: title/subtitle/sections/caption/note sizes; literals; 90-row table flow and repeated header')
     print(f'[PASS] PDF: {len(pages)} pages, {len(directories)} directories, {len(manuals)} manuals, {equations} math equations, {checks} headings/list checks, MIKU={miku}')
 
 

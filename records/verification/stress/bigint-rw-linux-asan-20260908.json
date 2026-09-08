@@ -1,0 +1,98 @@
+{
+  "platform": "linux",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O1",
+    "-g",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize-recover=all",
+    "-fno-omit-frame-pointer",
+    "-D_GLIBCXX_ASSERTIONS"
+  ],
+  "files": {
+    "algorithms/数学/高精度计算/对拍/bigint_check.cpp": "699330ed6aef5efe95e008f79619213e8dd77855cf8f2100c2d6fb1120d5d0dd",
+    "algorithms/数学/高精度计算/高精度.cpp": "f89d261c63731af95496be374e1b565571c1406122a6c62015ba679963f78dcf",
+    "algorithms/杂项/128位整数/128int.cpp": "bff81974b53500db85c12657f446392164a78fe239b78dbf26b2c2b9ef06198c",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "algorithms/杂项/对拍/rw_check.cpp": "2b6f084399d6fd592c93cc649397ef2c4863a849bb5c5d70b8bbdce578825a0b",
+    "algorithms/杂项/快读快写/快读快写.cpp": "369d4bc6a400e45723f9ecfd6eb138a55369c5e796192e4532f0256b94b0b2f7",
+    "scripts/check_bigint_rw.py": "2d623d418b378ece28c190c28d330c837e9f6cd547f05c516ce3fa676a7cf27e"
+  },
+  "results": [
+    {
+      "name": "compiler",
+      "returncode": 0,
+      "seconds": 0.018
+    },
+    {
+      "name": "compile-bigint_check",
+      "returncode": 0,
+      "seconds": 7.583
+    },
+    {
+      "name": "compile-rw_check",
+      "returncode": 0,
+      "seconds": 7.584
+    },
+    {
+      "name": "bigint-python",
+      "returncode": 0,
+      "seconds": 20.136
+    },
+    {
+      "name": "bigint-native",
+      "returncode": 0,
+      "seconds": 0.359
+    },
+    {
+      "name": "rw-native",
+      "returncode": 0,
+      "seconds": 11.79
+    },
+    {
+      "name": "rw-exit-flush",
+      "returncode": 0,
+      "seconds": 0.102
+    },
+    {
+      "name": "compile-usage-bigint",
+      "returncode": 0,
+      "seconds": 5.622
+    },
+    {
+      "name": "usage-bigint",
+      "returncode": 0,
+      "seconds": 0.04
+    },
+    {
+      "name": "usage-empty-bigint",
+      "returncode": 0,
+      "seconds": 0.037
+    },
+    {
+      "name": "compile-usage-rw",
+      "returncode": 0,
+      "seconds": 2.157
+    },
+    {
+      "name": "usage-rw",
+      "returncode": 0,
+      "seconds": 0.039
+    },
+    {
+      "name": "usage-empty-rw",
+      "returncode": 0,
+      "seconds": 0.035
+    }
+  ],
+  "status": "PASS",
+  "compiler": "g++-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+  "oracle_cases": 5663,
+  "max_decimal_digits": 100001,
+  "factorial_n": 100000,
+  "stable": true
+}

@@ -1,0 +1,598 @@
+{
+  "status": "PASS",
+  "platform": "win32",
+  "compiler": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "files": {
+    "algorithms/数学/数论/欧拉筛.cpp": "7993d71a71d7672f0b849cc5e79b66744d14e603c82d4967d3179b167f19f92e",
+    "algorithms/数学/数论/埃氏筛.cpp": "649d2140eac9ad9a1b48c823c4a2be6f155061165f9e9028bbc8f0c8c23da7df",
+    "algorithms/数学/数论/区间筛质数.cpp": "c2f845c337db4b992178b26fe1fb869f76bb54fdfe1f197a7b970b2318590b8a",
+    "algorithms/数学/数论/整数开方.cpp": "a8c23afed1e7f5bb20b24094b18e5c44e160948f3152a97885f3100c2d4a28d3",
+    "algorithms/数学/数论/约数个数及约数和公式法.cpp": "3ff20d568f2eb7b7ebc7a85e6200e15a1077373be1bc8040bf4d7873c1139c02",
+    "algorithms/数学/数论/除法上下取整.cpp": "847b5784bd7d6ccd031067c53d848dc2961d85088339a189def59c2a877a2a3d",
+    "algorithms/数学/数论/对拍/number_boundary_check.cpp": "93cce3737437567791e80e3dc44d62aeb96f6a29b6fd0623fb94a79a5cf0154f",
+    "algorithms/数学/数论/对拍/number_sieve_check.cpp": "6cb52f976daafa583e1a4fbac622173e055c5e727e8be298a752b71687b1dd90",
+    "algorithms/杂项/utils/utils.cpp": "162d7e3884215670b2bb015d4104c01dd0b381591bdd3b0f8abdd8c651be5a80"
+  },
+  "results": [
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "-IF:\\c++\\my_code\\HNIST-ACM-2024\\zoi",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.672,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.157,
+      "stdout": "1 0\n2^3 3^2 \n7\n2 3 5 7 \n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "expand",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.265,
+      "stdout": "[OK] expanded: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.cpp (1 blocks)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.578,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.078,
+      "stdout": "1 0\n2^3 3^2 \n7\n2 3 5 7 \n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "restore",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.11,
+      "stdout": "[OK] restore: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage0.cpp\n",
+      "stderr": ""
+    },
+    {
+      "usage": "欧拉筛.cpp",
+      "expand_restore": "PASS, UTF-8 text equal"
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "-IF:\\c++\\my_code\\HNIST-ACM-2024\\zoi",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.687,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.141,
+      "stdout": "2 3 5 7 11 13 17 19 23 29 \n1 0\n0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "expand",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.125,
+      "stdout": "[OK] expanded: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.cpp (1 blocks)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.797,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.062,
+      "stdout": "2 3 5 7 11 13 17 19 23 29 \n1 0\n0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "restore",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.188,
+      "stdout": "[OK] restore: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage1.cpp\n",
+      "stderr": ""
+    },
+    {
+      "usage": "埃氏筛.cpp",
+      "expand_restore": "PASS, UTF-8 text equal"
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "-IF:\\c++\\my_code\\HNIST-ACM-2024\\zoi",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.906,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.125,
+      "stdout": "97 101 103 107 109 \n0\n0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "expand",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.219,
+      "stdout": "[OK] expanded: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.cpp (1 blocks)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.828,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.094,
+      "stdout": "97 101 103 107 109 \n0\n0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "restore",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.187,
+      "stdout": "[OK] restore: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage2.cpp\n",
+      "stderr": ""
+    },
+    {
+      "usage": "区间筛质数.cpp",
+      "expand_restore": "PASS, UTF-8 text equal"
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "-IF:\\c++\\my_code\\HNIST-ACM-2024\\zoi",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.516,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.14,
+      "stdout": "0 0\n3 3\n3 4\n3037000499 3037000500\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "expand",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.391,
+      "stdout": "[OK] expanded: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.cpp (1 blocks)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.5,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.063,
+      "stdout": "0 0\n3 3\n3 4\n3037000499 3037000500\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "restore",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.062,
+      "stdout": "[OK] restore: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage3.cpp\n",
+      "stderr": ""
+    },
+    {
+      "usage": "整数开方.cpp",
+      "expand_restore": "PASS, UTF-8 text equal"
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "-IF:\\c++\\my_code\\HNIST-ACM-2024\\zoi",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.625,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.125,
+      "stdout": "6 28\n1 1\n6 28\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "expand",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.141,
+      "stdout": "[OK] expanded: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.cpp (1 blocks)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.531,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.047,
+      "stdout": "6 28\n1 1\n6 28\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "restore",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.156,
+      "stdout": "[OK] restore: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage4.cpp\n",
+      "stderr": ""
+    },
+    {
+      "usage": "约数个数及约数和公式法.cpp",
+      "expand_restore": "PASS, UTF-8 text equal"
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "-IF:\\c++\\my_code\\HNIST-ACM-2024\\zoi",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.563,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.125,
+      "stdout": "-3 -2\n-3 -2\n2 3\n4611686018427387904\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "expand",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.156,
+      "stdout": "[OK] expanded: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.cpp (1 blocks)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.exe"
+      ],
+      "exit": 0,
+      "seconds": 1.422,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.078,
+      "stdout": "-3 -2\n-3 -2\n2 3\n4611686018427387904\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\scripts\\zoi.ps1",
+        "restore",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.cpp",
+        "-NoClipboard"
+      ],
+      "exit": 0,
+      "seconds": 1.062,
+      "stdout": "[OK] restore: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\usage5.cpp\n",
+      "stderr": ""
+    },
+    {
+      "usage": "除法上下取整.cpp",
+      "expand_restore": "PASS, UTF-8 text equal"
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O2",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\link_a.cpp",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\link_b.cpp",
+        "-o",
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\linked.exe"
+      ],
+      "exit": 0,
+      "seconds": 2.953,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\codex-work\\number-audit\\linked.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.141,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.016,
+      "stdout": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0\nCopyright (C) 2025 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    }
+  ]
+}

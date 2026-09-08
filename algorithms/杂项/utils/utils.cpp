@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <utility>
 #include <tuple>
@@ -19,12 +20,15 @@
 #include <algorithm>
 #include <array>
 #include <bitset>
+#include <bit>
 #include <cmath>
 #include <functional>
 #include <map>
 #include <numeric>
 #include <queue>
 #include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include <stack>
 #include <chrono>
 #include <concepts>
@@ -73,14 +77,17 @@ inline int dy4[4] = {1, -1, 0, 0};
 inline int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
 inline int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 
+// 从下标 0 填到 min(n+10,size)-1, 含 1-based 哨兵与少量余量; 各容器 size>=n>=0
+// 时间为实际填充元素数之和, O(1) 额外空间; 不扩容, 不保证清空更远的旧数据
 template <class V, typename... CS>
 void z_fill_n(int n, V val, CS&... cs)
 {
-    assert(((((int)cs.size()) >= n) && ...));
-    (fill(cs.begin(), cs.begin() + min((size_t)(n + 10), cs.size()), val), ...);
+    assert(n >= 0 && ((cs.size() >= (size_t)n) && ...));
+    (fill(cs.begin(), cs.begin() + min((size_t)n + 10, cs.size()), val), ...);
 }
 
-void fast_io()
+// 在标准流第一次读写前调用; 后续不混用 scanf/printf 或 rw, O(1) 设置
+inline void fast_io()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -99,5 +106,25 @@ void debug_out(const H& h, const T&... t)
 #define debug(...) cerr << #__VA_ARGS__ << " = ", debug_out(__VA_ARGS__), cerr << "\n"
 #define debug_array(a, n) cerr << #a << ": "; for (int _i = 1; _i <= (n); _i++) cerr << a[_i] << " "; cerr << "\n"
 #endif
+
+/* Usage
+#include "utils.h"
+
+int main()
+{
+    fast_io();
+    int n;
+    if (!(cin >> n)) return 0;          // 输入示例: 3
+    VI a(n + 11, -1), b(n + 1, -1);
+    z_fill_n(n, 0, a, b);              // 下标 0 也会填充, a[n+10] 保留原值
+    cout << a[0] << ' ' << b[n] << ' ' << a[n + 10] << '\n'; // 0 0 -1
+    cout << (MAX_LL == LLONG_MAX) << '\n'; // 1, INF 是哨兵而非类型最大值
+#ifdef LOCAL
+    debug(n, b.size());                // 仅 LOCAL 时定义调试宏, 写入 cerr
+    debug_array(b, n);                 // 打印 b[1..n]
+#endif
+    // endl 在本库为 '\n', 不主动刷新; 交互题应显式 flush
+}
+*/
 
 #endif

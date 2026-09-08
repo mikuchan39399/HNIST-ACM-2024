@@ -66,7 +66,7 @@ static string rnd_signed(mt19937& rng, int len)
     string s = rnd_digits(rng, len);
     return (rng() & 1) ? "-" + s : s;
 }
-static LL rnd_ll(mt19937& rng) { return ((LL)rng() << 32 | rng()) % (LL)1e14 + 1; }
+static LL rnd_ll(mt19937& rng) { return (LL)(((u64)rng() << 32 | rng()) % 100000000000000ULL) + 1; }
 
 // ===================== 1. i128 全精确: 小值域全接口 =====================
 void test_i128_core()
@@ -267,10 +267,74 @@ void test_parse_io()
     }
 }
 
-int main()
+static void test_regressions()
 {
+    // 商高位的零必须删除, 否则打印、比较和后续运算不再使用同一规范表示
+    for (int sa : {-1, 1}) for (int sb : {-1, 1})
+    {
+        auto [q, r] = (BigInt("1000000000000000000") * sa).divmod(BigInt("9999999999") * sb);
+        assert(q == 100000000LL * sa * sb);
+        assert(q.str() == to_string(100000000LL * sa * sb));
+        assert(q.digits10() == 9 && r == 100000000LL * sa);
+        assert((q / q).str() == "1" && (q - q).str() == "0");
+    }
+    i128 lo = -((i128)1 << 126) - ((i128)1 << 126), hi = -(lo + 1);
+    for (i128 v : {lo, lo + 1, hi, (i128)LLONG_MIN, (i128)LLONG_MAX, (i128)ULLONG_MAX})
+        assert(BigInt(v).to_i128() == v && BigInt(i128_str(v)).to_i128() == v);
+    assert(BigInt(LLONG_MIN).to_LL() == LLONG_MIN);
+    assert(BigInt(ULLONG_MAX).str() == to_string(ULLONG_MAX));
+    for (string s : {"0", "-0", "+000", "-999999999999999999999", "1000000000000000000000"})
+    {
+        BigInt a(s), x = a;
+        x += x; assert(x == a * 2);
+        x = a; x -= x; assert(x.str() == "0" && x.sign() == 0);
+        x = a; x *= x; assert(x.str() == s_mul(a.abs().str(), a.abs().str()));
+        if (a) { x = a; x /= x; assert(x.str() == "1"); x = a; x %= x; assert(x.str() == "0"); }
+    }
+    BigInt a(77); istringstream empty(" "); empty >> a; assert(a == 77);
+    for (int n : {100000, 1, 9, 360, 100000}) {
+        string s(n, '9'); a = s;
+        assert(a.str() == s && a.digits10() == n);
+        a += 1; assert(a.str() == "1" + string(n, '0'));
+        a -= 1; assert(a.str() == s);
+        a = 0; assert(a.str() == "0" && a.digits10() == 1 && !a);
+    }
+}
+
+// 外部 Python int 提供独立大数答案; 默认仍执行本文件原生和十进制竖式对拍
+static void oracle_mode()
+{
+    string op, s, t;
+    while (cin >> op >> s)
+    {
+        BigInt a(s);
+        if (op == "str") cout << a.str();
+        else if (op == "sqrt") cout << a.sqrt();
+        else if (op == "fact") cout << BigInt::factorial(stoull(s));
+        else if (op == "i128") cout << i128_str(a.to_i128());
+        else {
+            cin >> t; BigInt b(t);
+            if (op == "add") cout << a + b;
+            else if (op == "sub") cout << a - b;
+            else if (op == "mul") cout << a * b;
+            else if (op == "div") { auto [q, r] = a.divmod(b); cout << q << ' ' << r; }
+            else if (op == "gcd") cout << gcd(a, b);
+            else if (op == "lcm") cout << lcm(a, b);
+            else if (op == "pow") cout << a.pow(stoll(t));
+            else if (op == "mod") cout << a.mod(stoll(t));
+            else if (op == "cmp") cout << (a < b ? -1 : a > b ? 1 : 0);
+            else assert(false);
+        }
+        cout << '\n';
+    }
+}
+
+int main(int argc, char** argv)
+{
+    if (argc == 2 && string(argv[1]) == "--oracle") { oracle_mode(); return 0; }
     assert(BigInt(7).pow(3) == BigInt(343));                  // constexpr 链路运行期复验
     assert(BigInt(114514).pow(2) == BigInt((LL)13113456196));
+    test_regressions();
     test_i128_core();
     test_mul_straddle();
     test_div_property();
@@ -278,6 +342,6 @@ int main()
     test_gcd_construct();
     test_factorial();
     test_parse_io();
-    cout << "All tests passed flawlessly!\n";
+    cout << "bigint_check passed: native boundaries / decimal multiplication / division / sqrt / gcd / factorial / IO\n";
     return 0;
 }

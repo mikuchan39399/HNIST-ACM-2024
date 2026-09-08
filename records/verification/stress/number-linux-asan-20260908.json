@@ -1,0 +1,336 @@
+{
+  "status": "PASS",
+  "platform": "linux",
+  "compiler": "g++-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O1",
+    "-g",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize-recover=all",
+    "-fno-omit-frame-pointer",
+    "-D_GLIBCXX_ASSERTIONS"
+  ],
+  "files": {
+    "algorithms/数学/数论/欧拉筛.cpp": "7993d71a71d7672f0b849cc5e79b66744d14e603c82d4967d3179b167f19f92e",
+    "algorithms/数学/数论/埃氏筛.cpp": "649d2140eac9ad9a1b48c823c4a2be6f155061165f9e9028bbc8f0c8c23da7df",
+    "algorithms/数学/数论/区间筛质数.cpp": "c2f845c337db4b992178b26fe1fb869f76bb54fdfe1f197a7b970b2318590b8a",
+    "algorithms/数学/数论/整数开方.cpp": "a8c23afed1e7f5bb20b24094b18e5c44e160948f3152a97885f3100c2d4a28d3",
+    "algorithms/数学/数论/约数个数及约数和公式法.cpp": "3ff20d568f2eb7b7ebc7a85e6200e15a1077373be1bc8040bf4d7873c1139c02",
+    "algorithms/数学/数论/除法上下取整.cpp": "847b5784bd7d6ccd031067c53d848dc2961d85088339a189def59c2a877a2a3d",
+    "algorithms/数学/数论/对拍/number_boundary_check.cpp": "93cce3737437567791e80e3dc44d62aeb96f6a29b6fd0623fb94a79a5cf0154f",
+    "algorithms/数学/数论/对拍/number_sieve_check.cpp": "6cb52f976daafa583e1a4fbac622173e055c5e727e8be298a752b71687b1dd90",
+    "algorithms/杂项/utils/utils.cpp": "162d7e3884215670b2bb015d4104c01dd0b381591bdd3b0f8abdd8c651be5a80"
+  },
+  "results": [
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/algorithms/数学/数论/对拍/number_boundary_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/number_boundary_check.linux"
+      ],
+      "exit": 0,
+      "seconds": 4.967,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/number_boundary_check.linux"
+      ],
+      "exit": 0,
+      "seconds": 0.288,
+      "stdout": "number boundaries: PASS (LL division/sqrt, 200000 divisor results)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/algorithms/数学/数论/对拍/number_sieve_check.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/number_sieve_check.linux"
+      ],
+      "exit": 0,
+      "seconds": 5.679,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/number_sieve_check.linux"
+      ],
+      "exit": 0,
+      "seconds": 3.865,
+      "stdout": "number sieves: PASS (10000000 table, rebuild, 1000000 interval, high squares)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-I/mnt/f/c++/my_code/HNIST-ACM-2024/zoi",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage0.linux.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage0.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 4.106,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage0.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.031,
+      "stdout": "1 0\n2^3 3^2 \n7\n2 3 5 7 \n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-I/mnt/f/c++/my_code/HNIST-ACM-2024/zoi",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage1.linux.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage1.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 3.978,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage1.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.024,
+      "stdout": "2 3 5 7 11 13 17 19 23 29 \n1 0\n0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-I/mnt/f/c++/my_code/HNIST-ACM-2024/zoi",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage2.linux.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage2.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 3.959,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage2.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.024,
+      "stdout": "97 101 103 107 109 \n0\n0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-I/mnt/f/c++/my_code/HNIST-ACM-2024/zoi",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage3.linux.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage3.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 2.814,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage3.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.021,
+      "stdout": "0 0\n3 3\n3 4\n3037000499 3037000500\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-I/mnt/f/c++/my_code/HNIST-ACM-2024/zoi",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage4.linux.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage4.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 2.88,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage4.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.026,
+      "stdout": "6 28\n1 1\n6 28\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-I/mnt/f/c++/my_code/HNIST-ACM-2024/zoi",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage5.linux.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage5.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 3.09,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/usage5.linux.exe"
+      ],
+      "exit": 0,
+      "seconds": 0.021,
+      "stdout": "-3 -2\n-3 -2\n2 3\n4611686018427387904\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-D_GLIBCXX_ASSERTIONS",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/link_a.linux.cpp",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/link_b.linux.cpp",
+        "-o",
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/linked.linux"
+      ],
+      "exit": 0,
+      "seconds": 5.245,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/mnt/f/c++/my_code/HNIST-ACM-2024/.zoi-checks/codex-work/number-audit/linked.linux"
+      ],
+      "exit": 0,
+      "seconds": 0.023,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++-13",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.003,
+      "stdout": "g++-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+      "stderr": ""
+    }
+  ]
+}

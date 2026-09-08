@@ -36,61 +36,106 @@
     {
       "template": "algorithms/数据结构/单调队列/单调队列.cpp",
       "suite": "algorithms/杂项/对拍/misc_check.cpp",
-      "api": ["mono_window 四种比较及平手策略, 返回下标", "mono_dp 有限前驱 min 转移"],
+      "api": [
+        "mono_window 四种比较及平手策略, 返回下标",
+        "mono_dp 有限前驱 min 转移"
+      ],
       "oracle": "400 组逐窗口全扫描及 600 组 O(nk) DP; 大滑窗独立分块前后缀, 大 DP multiset 保存全部合法前驱及常费用闭式答案",
-      "cases": ["20 万-1-257-20 万, 正序/倒序/全同/LL 极值交替/锯齿/随机, 六种窗口宽度与 k>n", "空态、同值左右下标、int 极值、300 组自定义载荷, 输入不变", "DP 大小多测、正/零/负常费用、两种大随机窗口、LL 合法极值"],
+      "cases": [
+        "20 万-1-257-20 万, 正序/倒序/全同/LL 极值交替/锯齿/随机, 六种窗口宽度与 k>n",
+        "空态、同值左右下标、int 极值、300 组自定义载荷, 输入不变",
+        "DP 大小多测、正/零/负常费用、两种大随机窗口、LL 合法极值"
+      ],
       "limitations": "输入含 0 号哨兵且 1-based, k>=1; 比较为固定一致顺序, 键不变; DP 仅示范指定递推, 所有加法在 LL 内; 大滑窗四种平手下标由小暴力补充, 大规模主要比最值",
       "summary": "显式滑窗/DP 骨架, 20 万长度与平手/时机边界纳入默认对拍"
     },
     {
       "template": "algorithms/数据结构/单调栈/单调栈.cpp",
       "suite": "algorithms/杂项/对拍/misc_check.cpp",
-      "api": ["mono_stack 左侧最近 < / <= / > / >=", "反转求右侧示例, 输入不变"],
+      "api": [
+        "mono_stack 左侧最近 < / <= / > / >=",
+        "反转求右侧示例, 输入不变"
+      ],
       "oracle": "600 组逐位置向左扫描; 大规模独立离散化加 Fenwick 前缀最大下标, 不用单调栈; 反转示例直接向右扫描",
-      "cases": ["20 万-0-1-257-20 万, 正序/倒序/全同/LL 极值交替/锯齿/随机, 四种关系逐下标核对", "空态/单元素、int 极值、重复调用、300 组自定义载荷"],
+      "cases": [
+        "20 万-0-1-257-20 万, 正序/倒序/全同/LL 极值交替/锯齿/随机, 四种关系逐下标核对",
+        "空态/单元素、int 极值、重复调用、300 组自定义载荷"
+      ],
       "limitations": "输入含 0 号哨兵且 1-based, 不存在为 0; 比较为固定一致顺序; 未把 README 的区间贡献提示实现为通用引擎, 按题改动需另验",
       "summary": "新入库的显式弹栈骨架, 四种关系与 20 万长度已接默认对拍"
     },
     {
       "template": "algorithms/数据结构/并查集/DSU.cpp",
       "suite": "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
-      "api": ["构造/init/find/merge/same/size"],
+      "api": [
+        "构造/init/find/merge/same/size"
+      ],
       "oracle": "300 组染色重标与独立分量计数; 大规模按链/星/平衡合并的闭式根与大小, 257 点分块公式核对",
-      "cases": ["20 万-0-1-37-20 万复位, 每轮链/星/平衡合并, 全点大小/根/重复及自合并", "20 万点分块森林随机连通与分量大小, 最早点在尚未压缩的长链上查根"],
+      "cases": [
+        "20 万-0-1-37-20 万复位, 每轮链/星/平衡合并, 全点大小/根/重复及自合并",
+        "20 万点分块森林随机连通与分量大小, 最早点在尚未压缩的长链上查根"
+      ],
       "limitations": "init 不超过构造容量; 根方向保持 v 的根挂到 u 的根, 非按大小合并; find 迭代路径压缩, 单次仍可能线性; 不支持删除或撤销",
       "summary": "20 万点退化链与分块森林、多测复位已验, 查根改迭代消除递归栈依赖"
     },
     {
       "template": "algorithms/数据结构/并查集/WDSU.cpp",
       "suite": "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
-      "api": ["构造/init/find/merge/same/query", "mod=0 普通距离及 mod>0 归一化"],
+      "api": [
+        "构造/init/find/merge/same/query",
+        "mod=0 普通距离及 mod>0 归一化"
+      ],
       "oracle": "原平移暴力每模式 300 组; 另六模式各 350 组约束图 BFS, 不复用势能合并公式; 20 万点按预设势能差给出答案",
-      "cases": ["链/星/平衡/分块森林各 20 万点和查询, mod=0/1/3/1000000007", "孤立点、合并方向、自合并、矛盾约束忽略、正反向距离, LLONG_MAX 模数与合法距离, INF 与连通结果碰撞", "20 万-0-1-17-20 万复位并切换四种模式, 核对地址/容量不变; 300 次小多测, 省略模数切回 0"],
+      "cases": [
+        "链/星/平衡/分块森林各 20 万点和查询, mod=0/1/3/1000000007",
+        "孤立点、合并方向、自合并、矛盾约束忽略、正反向距离, LLONG_MAX 模数与合法距离, INF 与连通结果碰撞",
+        "20 万-0-1-17-20 万复位并切换四种模式, 核对地址/容量不变; 300 次小多测, 省略模数切回 0"
+      ],
       "limitations": "所有距离加减中间值须在 LL 内; 已连通 merge 忽略矛盾, INF 可能也是合法距离需用 same 辨别; init 不超过构造容量, 复位后旧关系失效; 仅路径压缩, 单次查根仍可能线性",
       "summary": "归一化溢出与递归深栈已修, 独立 BFS、20 万点及跨模式容量复用已验"
     },
     {
       "template": "algorithms/数据结构/堆/左偏树/左偏树.cpp",
       "suite": "algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp",
-      "api": ["init/alive/same/merge/insert/pop/erase", "set_val/add_val/get_val 单点域", "heap_add/heap_mul/add_all 堆级域", "get_top_id/get_top_val/get_size/get_heap_sum/get_heap_count/get_roots_id"],
+      "api": [
+        "init/alive/same/merge/insert/pop/erase",
+        "set_val/add_val/get_val 单点域",
+        "heap_add/heap_mul/add_all 堆级域",
+        "get_top_id/get_top_val/get_size/get_heap_sum/get_heap_count/get_roots_id"
+      ],
       "oracle": "原两域各 300 组朴素成员表; 大数据独立 set 值编号排序及独立总和/偏移; 递减序列按编号与仿射公式核对",
-      "cases": ["大小根堆各 20 万-1-20 万复位, 大轮各 10 万次单点覆盖/增量/全局偏移, 惰删偶数点后弹空", "20 万点递减权连续合并形成线性父链, 查最早点; 10 万堆级加/全局加及正倍乘后弹空", "300 次小容量重建, 同值按小编号, 死点返回值, 插入/弹空, 大小零复位"],
+      "cases": [
+        "大小根堆各 20 万-1-20 万复位, 大轮各 10 万次单点覆盖/增量/全局偏移, 惰删偶数点后弹空",
+        "20 万点递减权连续合并形成线性父链, 查最早点; 10 万堆级加/全局加及正倍乘后弹空",
+        "300 次小容量重建, 同值按小编号, 死点返回值, 插入/弹空, 大小零复位"
+      ],
       "limitations": "逻辑编号合法; heap_add/heap_mul 后仅堆级操作, 不对受影响堆用 get_val/set_val/add_val/erase; heap_mul 正数且全部中间值不溢出; RV 注释扩展未测; 查根迭代但单次仍可能线性",
       "summary": "20 万点混合操作与父链退化已验, 修复 Windows 递归查根栈溢出"
     },
     {
       "template": "algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp",
       "suite": "algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp",
-      "api": ["构造/init/new_node/insert/merge/pop", "empty/size/top/sum/top_pay", "merge_raw 独占无重叠建堆"],
+      "api": [
+        "构造/init/new_node/insert/merge/pop",
+        "empty/size/top/sum/top_pay",
+        "merge_raw 独占无重叠建堆"
+      ],
       "oracle": "300 组 multiset 历史快照; 另 300 组任意历史分叉并逐字段核对全部旧结点; 大数据单调/同值序列闭式答案",
-      "cases": ["大小根堆各三形态 20 万前缀版本及完整弹空, 历史 size/sum 回访, 单调键核对载荷, 最大使用 6987157 结点", "共享版本/自身合并、查询零分配、init 池复用、单点预算 300 次重建、自定义载荷、正负大数", "独占两堆 merge_raw 后再函数式共享; 自合并 30 次逻辑大小 2^30"],
+      "cases": [
+        "大小根堆各三形态 20 万前缀版本及完整弹空, 历史 size/sum 回访, 单调键核对载荷, 最大使用 6987157 结点",
+        "共享版本/自身合并、查询零分配、init 池复用、单点预算 300 次重建、自定义载荷、正负大数",
+        "独占两堆 merge_raw 后再函数式共享; 自合并 30 次逻辑大小 2^30"
+      ],
       "limitations": "所有旧根在 init 后停用; merge_raw 禁止共享或重叠输入, 仅小独占构造用例; 同值载荷不保证顺序; 逻辑大小须在 int 内, 求和不溢出; 800 万预留约 288 MB",
       "summary": "双堆型 20 万版本与历史不可变性已验, 明确原地合并的独占条件"
     },
     {
       "template": "algorithms/数据结构/树状数组/树状数组.cpp",
       "suite": "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
-      "api": ["BIT/BITR 构造/init/add/query", "BIT.pre/BITR.suf"],
+      "api": [
+        "BIT/BITR 构造/init/add/query",
+        "BIT.pre/BITR.suf"
+      ],
       "oracle": "原 300 组朴素数组逐点展开; 新增独立分块数组, 按元素与整块求和, 不使用 lowbit 或差分树",
       "cases": [
         "20 万-1-31-32-33-20 万复位, 两轮各 20 万随机/首尾/单点修改及随机查询, 最终逐点核对全部前后缀",
@@ -102,7 +147,9 @@
     {
       "template": "algorithms/数据结构/树状数组/二维树状数组.cpp",
       "suite": "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
-      "api": ["BIT2D 构造/init/add/query"],
+      "api": [
+        "BIT2D 构造/init/add/query"
+      ],
       "oracle": "原 300 组朴素矩阵; 在线按 12 个基矩形交集面积求和; 任意矩形批量修改后普通二维差分还原并建静态前缀和",
       "cases": [
         "2000×2000 两轮各 10 万在线修改/查询, 中间 1×2000/2000×1/1×1 复位; 贴边行列、末格与全域",
@@ -970,6 +1017,565 @@
       ],
       "summary": "独立 BCT 已对拍, 与 VBCC 共存和复位隔离也测了",
       "limitations": "不接收自环; 深链只到 2000 点"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": [
+        "构造容量、init、run、dist",
+        "单源、不可达 INF、每次 init 后复用",
+        "空/重复/全点多源，源集去重"
+      ],
+      "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
+      "cases": [
+        "固定种子42，int/LL × 有向/无向各1200图，非负/势函数负边无负环/任意混合权三域；每个合法源点，重边自环断连与重复运行",
+        "单点、自环正零负、不可达负环、run 判环 true 后原地换无边图；普通路径 INF-1、-8e18 与不可达负边隔离",
+        "20万-1-257-20万复位，前向链/跨点边与零权环；SPFA/BF另跑前向负链",
+        "20万重边产生过期堆项、20万重复源只扫描一次出边，大星/孤点交错与多源最近距离"
+      ],
+      "limitations": "n>=1 且在构造容量内，每次run前init；有限距离<INF，候选加法在LL内；边权非负且<INF",
+      "summary": "独立Floyd全源与多源，20万规模/重边/重复源复位"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": [
+        "构造容量、init、run、dist",
+        "单源、不可达 INF、每次 init 后复用"
+      ],
+      "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
+      "cases": [
+        "固定种子42，int/LL × 有向/无向各1200图，非负/势函数负边无负环/任意混合权三域；每个合法源点，重边自环断连与重复运行",
+        "单点、自环正零负、不可达负环、run 判环 true 后原地换无边图；普通路径 INF-1、-8e18 与不可达负边隔离",
+        "1800点完全DAG，距离 |u-v|；1800-1-257-1800逆链复位"
+      ],
+      "limitations": "n>=1 且在构造容量内，每次run前init；有限距离<INF，候选加法在LL内；边权非负且<INF",
+      "summary": "独立Floyd全源与1800稠密/逆链复位"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": [
+        "构造容量、init、run、dist",
+        "单源、不可达 INF、每次 init 后复用"
+      ],
+      "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
+      "cases": [
+        "固定种子42，int/LL × 有向/无向各1200图，非负/势函数负边无负环/任意混合权三域；每个合法源点，重边自环断连与重复运行",
+        "单点、自环正零负、不可达负环、run 判环 true 后原地换无边图；普通路径 INF-1、-8e18 与不可达负边隔离",
+        "20万-1-257-20万复位，前向链/跨点边与零权环；SPFA/BF另跑前向负链",
+        "1800反编号链；SPFA另测1800点先跨点后邻点的稀疏反复入队，1619100次扫边"
+      ],
+      "limitations": "n>=1 且在构造容量内，每次run前init；有限距离<INF，候选加法在LL内；允许负边但源点可达部分不得有负环；SPFA/BF最坏二次或更慢，20万顺序友好图通过不代表任意大图可承受",
+      "summary": "独立Floyd全源，20万容量/负链与1800退化，隔离不可达负环"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": [
+        "构造容量、init、run、dist",
+        "单源、不可达 INF、每次 init 后复用"
+      ],
+      "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
+      "cases": [
+        "固定种子42，int/LL × 有向/无向各1200图，非负/势函数负边无负环/任意混合权三域；每个合法源点，重边自环断连与重复运行",
+        "单点、自环正零负、不可达负环、run 判环 true 后原地换无边图；普通路径 INF-1、-8e18 与不可达负边隔离",
+        "20万-1-257-20万复位，前向链/跨点边与零权环；SPFA/BF另跑前向负链",
+        "1800反编号链；SPFA另测1800点先跨点后邻点的稀疏反复入队，1619100次扫边"
+      ],
+      "limitations": "n>=1 且在构造容量内，每次run前init；有限距离<INF，候选加法在LL内；允许负边但源点可达部分不得有负环；SPFA/BF最坏二次或更慢，20万顺序友好图通过不代表任意大图可承受",
+      "summary": "独立Floyd全源，20万容量/负链与1800退化，隔离不可达负环"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": [
+        "构造容量、init、run、dist",
+        "整图判负环、run 自动复位、i128 工作距离"
+      ],
+      "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
+      "cases": [
+        "固定种子42，int/LL × 有向/无向各1200图，非负/势函数负边无负环/任意混合权三域；每个合法源点，重边自环断连与重复运行",
+        "单点、自环正零负、不可达负环、run 判环 true 后原地换无边图；普通路径 INF-1、-8e18 与不可达负边隔离",
+        "12点/-1e18负自环溢出反例、LLONG_MIN负自环与两边LLONG_MIN无环链",
+        "20万-1-257-20万容量与前向负链；1800反向负链以及零/负闭环，达到n轮/路径边数的边界"
+      ],
+      "limitations": "n>=1 且在构造容量内，Graph 的有符号整数边权至多 LL；dist 是 i128 判环工作量，不能当成普通最短距离；BF 最坏 O(n(n+m))、SPFA 最坏 O(nm+n)，20万顺序友好图通过不代表任意大图可承受",
+      "summary": "独立Floyd判环、跨分量/复位/大权溢出反例、20万容量与1800退化"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
+      "suite": "algorithms/图论/对拍/graph_check.cpp",
+      "api": [
+        "构造容量、init、run、dist",
+        "整图判负环、run 自动复位、i128 工作距离"
+      ],
+      "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
+      "cases": [
+        "固定种子42，int/LL × 有向/无向各1200图，非负/势函数负边无负环/任意混合权三域；每个合法源点，重边自环断连与重复运行",
+        "单点、自环正零负、不可达负环、run 判环 true 后原地换无边图；普通路径 INF-1、-8e18 与不可达负边隔离",
+        "12点/-1e18负自环溢出反例、LLONG_MIN负自环与两边LLONG_MIN无环链",
+        "20万-1-257-20万容量与前向负链；1800反向负链以及零/负闭环，达到n轮/路径边数的边界"
+      ],
+      "limitations": "n>=1 且在构造容量内，Graph 的有符号整数边权至多 LL；dist 是 i128 判环工作量，不能当成普通最短距离；BF 最坏 O(n(n+m))、SPFA 最坏 O(nm+n)，20万顺序友好图通过不代表任意大图可承受",
+      "summary": "独立Floyd判环、跨分量/复位/大权溢出反例、20万容量与1800退化"
+    },
+    {
+      "template": "algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp",
+      "suite": "algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp",
+      "api": [
+        "build(g,n)自动复位",
+        "连通bool、weight、components、edges偶数半边编号",
+        "断连最小生成森林、原图不变"
+      ],
+      "oracle": "小图枚举全部边子集，以独立全表重染色判森林并取最小总权，不用DSU或MST模板作暴力；大图已知负权骨架/平行正差边和完全图距离下界，返回森林另用BFS核验分量",
+      "cases": [
+        "int/LL各800图，n<=7/m<=12，重边自环负权零权断连和单点；重复build",
+        "LLONG_MIN/MAX边、负自环、8e18森林总权，不以INF或-1作权值哨兵",
+        "Kruskal20万-1-257-20万链/星/分块森林/零权；Prim2000-1-257-2000同形态；两版2000点完全图与大-小-大复位，选边不重且跨满各原分量"
+      ],
+      "limitations": "n>=1，成对半边的无向Graph且权为int/LL；总权每次累加在LL内；不承诺同权时两算法选同一棵树；Graph clear后旧边编号失效；Prim为O(n²+m)朴素版，20万规模只验Kruskal",
+      "summary": "独立枚举森林，负权/断连/LL极值；20万Kruskal与2000稠密双算法，返回边及复位"
+    },
+    {
+      "template": "algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp",
+      "suite": "algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp",
+      "api": [
+        "build(g,n)自动复位",
+        "连通bool、weight、components、edges偶数半边编号",
+        "断连最小生成森林、原图不变"
+      ],
+      "oracle": "小图枚举全部边子集，以独立全表重染色判森林并取最小总权，不用DSU或MST模板作暴力；大图已知负权骨架/平行正差边和完全图距离下界，返回森林另用BFS核验分量",
+      "cases": [
+        "int/LL各800图，n<=7/m<=12，重边自环负权零权断连和单点；重复build",
+        "LLONG_MIN/MAX边、负自环、8e18森林总权，不以INF或-1作权值哨兵",
+        "Kruskal20万-1-257-20万链/星/分块森林/零权；Prim2000-1-257-2000同形态；两版2000点完全图与大-小-大复位，选边不重且跨满各原分量"
+      ],
+      "limitations": "n>=1，成对半边的无向Graph且权为int/LL；总权每次累加在LL内；不承诺同权时两算法选同一棵树；Graph clear后旧边编号失效；Prim为O(n²+m)朴素版，20万规模只验Kruskal",
+      "summary": "独立枚举森林，负权/断连/LL极值；20万Kruskal与2000稠密双算法，返回边及复位"
+    },
+    {
+      "template": "algorithms/数学/数论/mint.cpp",
+      "suite": "algorithms/数学/数论/对拍/mint_check.cpp",
+      "api": [
+        "所有支持整数构造/val、双向四则与比较、自别名复合赋值、constexpr 除法",
+        "pow(i128全域)/inv、合法十进制流输入输出、init_fact/comb及公开表"
+      ],
+      "oracle": "独立倍加模乘与高位扫描幂, 128位逐位归一化; 逆元以互素条件及乘积为1唯一判定; 小组合数逐行Pascal, 大组合数埃氏筛+Legendre阶乘赋值, SPF逐最小质因子核对; 大素数Lucas-Lehmer及合数因子证书",
+      "cases": [
+        "保留300轮原回归, 15种模数各350轮; 64/128位极值、模数2至2^62-1、直乘临界三值、强伪素数、负指数最小i128反例",
+        "三种模数各20万连续运算与20万位输入; 两种素数和两种合数各20万-0-1-257-20万重建, 全阶乘/逆阶乘或SPF核对",
+        "小规模全部n/k与越界k, 大规模中间k独立比对; 素数表每轮n次组合数查询, 不同模数共享表隔离、重复include"
+      ],
+      "limitations": "模数编译期固定且1<MOD<2^62; 不支持u128/浮点构造; 求逆、除数、负幂底数须可逆; 输入为合法十进制; 素数阶乘n<MOD且查询已预处理; 合数comb单次约O(k log²n), 不承诺高频大k性能; 不是Lucas或动态模数组件",
+      "summary": "15种模数边界与20万运算/输入/表重建; 修复最小i128负幂溢出、constexpr除法及反向整数比较"
+    },
+    {
+      "template": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+      "suite": "algorithms/图论/优化建图/对拍/treegraph_check.cpp",
+      "api": [
+        "build(lca,n)、重复建图与独立中继容量",
+        "add_p2p/add_p2path/add_path2p",
+        "add_p2new/add_path2new/add_path2path 返回值与中继组合",
+        "int/LL/Empty、g/tot 与外置 LCA/Dijkstra 组装"
+      ],
+      "oracle": "按原森林独立 BFS 取路径, 逐点展开逻辑边并以 Floyd 求全点对; Empty 用显式可达性核对; 大链闭式祖先和距离, 星/二叉/孤立点闭式答案",
+      "cases": [
+        "固定种子 42, int/LL/Empty 各 400 组至 18 点和 65 操作, 全原点及返回中继点作源",
+        "空骨架无隐式树边、断连操作原子不变、跨树路径间连接、单点/重叠/反向端点、零权/重边/1e12/INF-1、负权单向连接",
+        "40-1-2-17-40 重建及中继预算恰好用满, 每路径至多4边/路径间至多8边",
+        "默认 5万-1-17-5万深链、每次百万混合操作, 20万点星/二叉/孤立森林, 单原点20万中继"
+      ],
+      "limitations": "静态已建表森林, 外置提供者须有根深度1、fa[k][u]及断连返回-1的lca; 路径端点限原点, 中继不超预算; 只保证可达性和权值路径语义, 不用于计数; 定位O(T+log n)而非O(1); 深链采用闭式提供者, 不改变或覆盖库内LCA递归栈限制; 距离数值限制由下游决定",
+      "summary": "树路径最多4段、路径间最多8边; 三种边权独立暴力、百万操作与20万森林及容量复用已覆盖"
+    },
+    {
+      "template": "algorithms/数学/高精度计算/高精度.cpp",
+      "suite": "algorithms/数学/高精度计算/对拍/bigint_check.cpp",
+      "api": [
+        "构造/赋值/规范化、str/流、sign/digits10/abs/bool",
+        "四则/比较/复合赋值、自别名、divmod、mod",
+        "pow/sqrt/gcd/lcm/factorial、to_LL/to_i128"
+      ],
+      "oracle": "原生 i128 精确答案、独立十进制竖式乘法与阶乘链; sqrt/除法性质与构造 gcd 辅助核对; 额外 Python int 深测由 check_bigint_rw.py 单独存证, 不冒充无参数套件的覆盖",
+      "cases": [
+        "小值域300组全接口, 乘法跨40块阈值到900位; 除法300组、sqrt300组、gcd200组、阶乘0..300、串与流300组",
+        "商高位零导致打印/比较错误的四种符号反例; i128完整有符号边界、LL最小值、ULL最大值",
+        "自加减乘除模、EOF保留值; 10万-1-9-360-10万位赋值与全长进借位"
+      ],
+      "limitations": "只接受合法十进制; 原生构造为<=64位整数或有符号i128, 不接u128; 除数非零、sqrt非负、pow指数非负、mod模数为正LL、窄化结果须在范围内; 十万位乘除开方与100000!的独立答案另见专项深测, 不承诺所有评测环境耗时",
+      "summary": "修复商前导零和最小i128转换; 全接口原生/竖式对拍及十万位复位, 更大运算有独立Python验收"
+    },
+    {
+      "template": "algorithms/杂项/快读快写/快读快写.cpp",
+      "suite": "algorithms/杂项/对拍/rw_check.cpp",
+      "api": [
+        "read/write: bool、8/16/32/64位整数、i128/u128、double、string、char、C字符串",
+        "EOF保留参数、end字符/无结尾、flush_io、缓冲区跨界"
+      ],
+      "oracle": "标准to_chars生成整数文本并核对原生值; strtod解析、独立ostringstream定点六位格式化; 文件重定向后逐字节比较, 极值含硬编码十进制答案",
+      "cases": [
+        "十种原生整数各3000随机值及极值; bool 0/1、i128/u128极值在4MiB边界41个起点",
+        "double最大有限值/负零/次正规/科学计数法及约1万随机位模式; 4096位前导零与超过4MiB浮点token",
+        "空串/单字节/4MiB前后/8MiB以上/再单字节, 六种ASCII空白、0xff与内嵌NUL输出",
+        "百万64位整数逐值/逐字节核对, 重复显式flush和各类型EOF"
+      ],
+      "limitations": "合法空白分隔token, 整数在目标类型内, bool使用0/1; double读十进制/科学计数法, 写固定六位而非无损往返; 不与其他标准流读写混用, 不作为交互输入方案; 正常退出析构刷写由check_bigint_rw.py外部子进程另验",
+      "summary": "修复超长浮点输入越界、最大double截断及空白/bool支持; 百万整数与4MiB跨界逐字节通过"
+    },
+    {
+      "template": "algorithms/杂项/快读快写/快读快写.cpp",
+      "suite": "algorithms/杂项/对拍/misc_check.cpp",
+      "api": [
+        "整数/128位/double/string读写、EOF、显式flush"
+      ],
+      "oracle": "固定输入的原生值断言与独立拼接输出字节, Windows/Linux真实标准流重定向",
+      "cases": [
+        "LL/ULL/i128/u128极值、科学计数法、超过4MiB长词、缓冲区边界、无结尾、EOF"
+      ],
+      "limitations": "共享杂项套件仅保留基础冒烟; 完整类型/浮点/百万输入范围看rw_check, 退出析构由外部深测另验",
+      "summary": "共享杂项组装与原有快读写冒烟保留, 专项深测另有独立套件"
+    },
+    {
+      "template": "algorithms/数学/组合数学/循环求组合数.cpp",
+      "suite": "algorithms/数学/组合数学/对拍/comb_check.cpp",
+      "api": [
+        "binom_loop(n,k,p), 对称缩小 k、越界 k 返回 0、运行时素数模"
+      ],
+      "oracle": "小组合数 u128 精确整数递推; 大 n 小 k 在整数域逐因子 gcd 约分后倍加模乘; 大 k 用埃氏筛和 Legendre 阶乘赋值",
+      "cases": [
+        "n<=120 全 n/k, 多种素数模, n 跨模数而 min(k,n-k)<p",
+        "5 种素数模各 160 个 LL 上界/随机大 n, k<=80 与 n-k 对称查询",
+        "n=400000/k=200000, 模 1e9+7 与 2^61-1; k=-1/n+1"
+      ],
+      "limitations": "n>=0, p 为调用方保证的素数且 2<=p<=LLONG_MAX; 有效 k 的 min(k,n-k)<p; O(k+log p) 单次, 无预处理; 不是任意合数模或跨分母 p 因子的算法",
+      "summary": "精确小数、LL 上界与 20 万循环独立对拍; 大 n 小 k 无需建到 n, 中间乘法用 i128"
+    },
+    {
+      "template": "algorithms/数学/组合数学/打表杨辉三角求组合数.cpp",
+      "suite": "algorithms/数学/组合数学/对拍/comb_check.cpp",
+      "api": [
+        "PascalComb::init/comb, 公开 mod/c, 独立实例与多测换模数重建"
+      ],
+      "oracle": "n<=120 以 u128 精确组合数取模; 大表独立埃氏筛/Legendre 抽查, 每格范围与对称性、全行和及低阶闭式答案",
+      "cases": [
+        "15 种模数含 1、合数、2^31 两侧和 LLONG_MAX, 小规模全部 n/k 与越界 k",
+        "6 种模数各 2000-0-1-257-2000, 遍历全部已建表格, 每轮 40 个任意位置质因数答案",
+        "不同对象保持旧表, 行长度仅 n+1, 模 1 的首列与对角线归零"
+      ],
+      "limitations": "0<=n<INT_MAX, 1<=mod<=LLONG_MAX, 实际规模须容纳 O(n²) 时间/空间; 查询 n 在已建范围内; c[n] 只有 0..n",
+      "summary": "合数/模 1 与 LL 上界已验, 2000 规模跨模重建; 下三角存储和 O(1) 查询"
+    },
+    {
+      "template": "algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp",
+      "suite": "algorithms/数学/组合数学/对拍/comb_check.cpp",
+      "api": [
+        "PrimeComb::init/comb, 公开 mod/fact/inv_fact, 运行时换模与对象隔离"
+      ],
+      "oracle": "小组合数 u128 精确答案; 全阶乘独立倍加模乘/小模 LL 直乘与逆元乘积唯一性; 中间 k 用埃氏筛+Legendre",
+      "cases": [
+        "小规模所有合法 n/k 与越界 k, 素数 2 起及 2^61-1",
+        "两种模数各 20万-0-1-257-20万重建, 全阶乘/逆阶乘与边界查询",
+        "500 万阶乘及逆阶乘逐项核对, C(5000000,2500000) 独立答案, 再缩至模 2 的零阶表",
+        "Lucas 复用同一类型, 多实例不共享状态, 全家重复 include 同场编译"
+      ],
+      "limitations": "调用方保证 p 为素数, 0<=n<p 且 n<INT_MAX, 查询 n 已预处理; 16(n+1) B 有效表数据, 缩表保留容量; 固定模数可用 mint, 本件不做 Lucas 自动路由",
+      "summary": "素数阶乘与 500 万表逐项验收, 多测可换模; Lucas 复用此表, 固定模数与 mint 功能重合"
+    },
+    {
+      "template": "algorithms/数学/组合数学/卢卡斯定理求组合数.cpp",
+      "suite": "algorithms/数学/组合数学/对拍/comb_check.cpp",
+      "api": [
+        "Lucas::init/comb, table 引用真实 PrimeComb, 大 n/k、越界 k 与换模重建"
+      ],
+      "oracle": "小数以 u128 精确组合数; 大数用 p 进阶乘赋值和去 p 因子的单位阶乘, 扩欧求逆, 不使用数位组合乘积作参照; 模 2 另用子掩码判奇偶",
+      "cases": [
+        "200003-2-3-5-97-257-100003-2-200003 换模, 独立筛确认测试素数, 全阶乘/逆元核对",
+        "每种模数 2000 个随机 LL n/k 加 2000 个逐位构造非零答案及对称查询",
+        "p^j 前后、LLONG_MAX、k=0/n/-1/n+1; 模 2 的负指数旧死循环回归",
+        "额外 20 万次模 2 的 63 位随机/非零查询, 另一对象不受重建影响"
+      ],
+      "limitations": "p>=2 为调用方保证的 int 素数且 O(p) 表能放下; 0<=n<=LLONG_MAX; 非扩展 Lucas, 不适合 1e9 级模数整表; 原地重建覆盖旧表",
+      "summary": "修复模 2 初始化死循环, 20 万素数表及 20 万查询已验; 复用阶乘表并提供完整 Usage"
+    },
+    {
+      "template": "algorithms/杂项/utils/utils.cpp",
+      "suite": "algorithms/杂项/对拍/tool_core_check.cpp",
+      "api": [
+        "类型别名/数值常量、dx4/dy4/dx8/dy8、z_fill_n、fast_io"
+      ],
+      "oracle": "类型断言、标准极值与枚举方向集合; 逐元素检查实际填充和未触及尾部, 标准流 tie 读回",
+      "cases": [
+        "20万-0-1-257-20万, vector<int>/LL/bool/string 与空容器, 下标 0 和 n+10 余量边界",
+        "重复 include, fast_io 解除 cin/cout 绑定"
+      ],
+      "limitations": "z_fill_n 保持从 0 填 min(n+10,size) 个元素, 不扩容也不清远端尾部; 每个容器 size>=n>=0; fast_io 在首次 IO 前调用且不混用其他标准流 IO; endl 宏不刷新",
+      "summary": "别名/常量/方向与 20 万填充边界已验, fast_io 改 inline, n+10 在 size_t 域计算"
+    },
+    {
+      "template": "algorithms/杂项/utils/utils.cpp",
+      "suite": "algorithms/杂项/对拍/utils_local_check.cpp",
+      "api": [
+        "LOCAL 下 debug/debug_array, 多参数与 1-based 数组输出"
+      ],
+      "oracle": "重定向 cerr 并逐字比较固定期望文本",
+      "cases": [
+        "数值与 size_t 混合, 数组含负值, 重复 include"
+      ],
+      "limitations": "仅 LOCAL 分支定义调试宏; debug_array 按 1..n 且调用方保证容量, 保留现有语句宏使用方式",
+      "summary": "LOCAL 调试宏已用真实 cerr 输出核验"
+    },
+    {
+      "template": "algorithms/杂项/128位整数/128int.cpp",
+      "suite": "algorithms/杂项/对拍/tool_core_check.cpp",
+      "api": [
+        "i128/u128 别名、i128 十进制流提取与插入、EOF"
+      ],
+      "oracle": "硬编码完整 i128 极值; 独立二进制逐位转十进制字符串, 不用模板十进制除法产生参照",
+      "cases": [
+        "完整有符号 i128 边界、LL/ULL 边界、正负零和正号、六种空白、1 万随机 128 位",
+        "10 万前导零后最小负数, 20 万连续值读写和 EOF 保留值"
+      ],
+      "limitations": "合法十进制 token 且值在 i128 内, 不模拟标准流的十六进制/格式宽度; u128 仅别名不提供本文件流重载, 可用 rw; IO 不是对所有算术的溢出保护",
+      "summary": "修复 -2^127 读入溢出, 独立字符串答案与 20 万值流读写已验"
+    },
+    {
+      "template": "algorithms/杂项/随机数/z_rnd.cpp",
+      "suite": "algorithms/杂项/随机数/对拍/rnd_check.cpp",
+      "api": [
+        "z_rnd(hi,lo=0)、z_rnd(hi,lo,engine), 原生整数和浮点路径"
+      ],
+      "oracle": "值域与端点性质, 同种子独立引擎复现, 固定种子分桶和原有宽松分布检查; 常零/全一引擎专测浮点端点",
+      "cases": [
+        "16 种整数含 bool/字符类的完整范围、退化区间与 0/1",
+        "float/double/long double, 极大异号端点、次正规、相邻浮点、相等端点和半开上界",
+        "原 300 随机区间和 100 万整数分桶, 三种浮点各 20 万分桶"
+      ],
+      "limitations": "整数至多 64 位; 浮点端点有限且 lo<=hi, 相等时返回端点; 离散浮点近似均匀, 测试不是统计证明; MT 非安全随机源, 不给 SipHash 生成密钥; 跨标准库不承诺分布序列一致",
+      "summary": "补 bool/字符分布与浮点宽度溢出, 可传固定引擎, 完整类型边界和百万分布冒烟已验"
+    },
+    {
+      "template": "algorithms/杂项/防卡/哈希防卡.cpp",
+      "suite": "algorithms/杂项/对拍/hash_check.cpp",
+      "api": [
+        "custom_hash 默认/固定密钥构造、整数/整数对/string_view 哈希、拷贝与容器使用"
+      ],
+      "oracle": "作者 CC0 C 参考 SipHash-4-8, 先用官方 64 个 2-4 向量验证参考路径; map/set 独立核对容器操作, 固定攻击夹具桶统计",
+      "cases": [
+        "4000 组随机密钥/0..4096 字节输入, 64 个前缀, 空串/高字节/内嵌 NUL/百万字节及整数极值",
+        "20万-0-1-257-20万 map, 复制/移动/rehash/删除/查询, 2 万长前缀字符串及整数对",
+        "默认整数 hash 的 5000 个同桶键, 4 个固定密钥分布回归, 百万整数 hash 计时"
+      ],
+      "limitations": "64 位目标; 防护依赖默认 random_device 的熵与密钥保密, 固定密钥仅对拍; 不承诺无碰撞或 unordered_map 最坏 O(1); 桶阈值只约束固定夹具, 有限测试不能证明密码安全",
+      "summary": "升级作者保守版 SipHash-4-8, 独立参考核验与 20 万容器操作; 原整数调用仍可用, 新增字符串/整数对"
+    },
+    {
+      "template": "algorithms/杂项/防卡/哈希防卡.cpp",
+      "suite": "algorithms/杂项/对拍/misc_check.cpp",
+      "api": [
+        "custom_hash 作为 unordered_map<uint64_t,int> 的哈希器"
+      ],
+      "oracle": "已插入键全部可查和桶分布粗检",
+      "cases": [
+        "10 万随机键插入/查询, reserve 与固定粗阈值"
+      ],
+      "limitations": "共享 misc 仅功能冒烟; 不把桶统计当安全证明, 密钥和独立参考见 hash_check",
+      "summary": "既有 10 万整数哈希容器组装回归保留"
+    },
+    {
+      "template": "algorithms/杂项/离散化/离散化.cpp",
+      "suite": "algorithms/杂项/对拍/tool_core_check.cpp",
+      "api": [
+        "Dcr 构造/add/reserve/build/clear、排名与逆映射、size、拷贝"
+      ],
+      "oracle": "std::set 去重排序并用 std::map 生成排名, 输入全部元素参与",
+      "cases": [
+        "20万-0-1-257-20万, 升序/降序极值、全同、随机重复",
+        "string/内嵌 NUL/中文/整数对, 自动 build, 追加更小值重排名, clear 后重用和拷贝隔离"
+      ],
+      "limitations": "索引 1-based, 输入不自动丢弃第 0 项; size/逆映射须已 build, 追加后旧排名失效; < 和 == 一致, 浮点不含 NaN, 不同值数<=INT_MAX; 不直接修改 v 后沿用旧状态",
+      "summary": "20 万多形态及字符串/整数对已验, 补 clear 和排名有效性契约"
+    },
+    {
+      "template": "algorithms/杂项/离散化/离散化.cpp",
+      "suite": "algorithms/杂项/对拍/misc_check.cpp",
+      "api": [
+        "Dcr add/build/size、排名与逆映射"
+      ],
+      "oracle": "sort+unique 与 lower_bound",
+      "cases": [
+        "300 组小整数数组, 显式忽略调用方的输入哨兵后 add"
+      ],
+      "limitations": "共享 misc 仅基础组装回归, 完整复用与规模看 tool_core_check",
+      "summary": "既有离散化小规模组装回归保留"
+    },
+    {
+      "template": "algorithms/杂项/主元素问题/Misra-Gries.cpp",
+      "suite": "algorithms/杂项/对拍/tool_core_check.cpp",
+      "api": [
+        "majority_element_k 候选抵消与二次计数、严格阈值、输入不变"
+      ],
+      "oracle": "std::map 完整统计各值真实频次后筛选",
+      "cases": [
+        "三值域长度 0..8 全枚举与 k=0..n+2, 1000 随机序列",
+        "20万-0-1-257-20万, k=2/3/8/32 的全同/周期/全异/极值交替",
+        "恰好阈值、空序列、k>n 及 int 的 k 极值"
+      ],
+      "limitations": "返回无序不同值, 严格次数>floor(n/k); k<2 返回空, 全部输入元素参与; O(n min(k,n)) 时间, 适合小 k; 改成单遍流式不能省掉本函数二次核验",
+      "summary": "小域穷举及 20 万小 k 已验, 加守卫与完整题目用法, 明确二次计数和复杂度"
+    },
+    {
+      "template": "algorithms/字符串/字典树/字典树.cpp",
+      "suite": "algorithms/字符串/字典树/对拍/trie_check.cpp",
+      "api": [
+        "insert/walk/count_prefix/count_word, insert_num/max_xor, clear"
+      ],
+      "oracle": "独立字符串数组逐项比对前缀和单词, 数组扫描所有异或候选; 大规模连续整数仍全扫描答案",
+      "cases": [
+        "K=26/62/2 各300组随机; 空串、完整62字符集、重复值、LLONG_MAX和第62位、空树",
+        "20万长串三轮复用, 20万个整数两轮插入及每轮80次全量暴力查询; 清空后空树哨兵"
+      ],
+      "limitations": "合法字符集; 字符串和非负 LL 整数接口不混用; 单对象/版本元素数<=INT_MAX; max_nodes 足够且索引能放入 int; clear 保留容量但旧结点/版本句柄失效; 不支持删除",
+      "summary": "普通字符串计数与非负整数最大异或; 20万长串/整数及多测复用"
+    },
+    {
+      "template": "algorithms/字符串/字典树/可持久化字典树.cpp",
+      "suite": "algorithms/字符串/字典树/对拍/trie_check.cpp",
+      "api": [
+        "整数/字符串 insert 从任意历史根分叉, size/clear",
+        "单根及多根 max_xor/count_prefix, lcp_len, kth_xor 含重复"
+      ],
+      "oracle": "完整字符串快照扫描; 随机版本树沿parent直接枚举路径值; 第k大枚举笛卡尔积排序; 大数据全数组扫描或0/1配对计数闭式, 不复用Trie遍历",
+      "cases": [
+        "原有链式/区间/第k大各300组; 新增K=1/2/10/26/62各100组80次分叉, HB=0/1/10/30/62/63各100组80次分叉与80次路径查询; 每次插入逐结点核对旧池未修改",
+        "20万长串三轮迭代插入; HB30的20万版本两轮, 每轮80个大区间暴力; 单根/空根/空差集/空xs/k越界与LL高位",
+        "7万重复元素x4万根=28亿中间计数及抵消; 20万x20万=400亿配对, 第k大覆盖200亿分界及越界"
+      ],
+      "limitations": "合法字符集; 字符串和非负 LL 整数接口不混用; 单对象/版本元素数<=INT_MAX; max_nodes 足够且索引能放入 int; clear 保留容量但旧结点/版本句柄失效; 不支持删除; HB在0..63且所有整数和查询值放进HB+1位; 根差按每个值的重复次数非负; 多根正/负侧计数和分别<=LLONG_MAX; xs.size()<=INT_MAX",
+      "summary": "任意历史分叉、树路径根差、前缀/LCP与异或第k大; 20万规模和超int计数已测"
+    },
+    {
+      "template": "algorithms/字符串/字典树/字典树.cpp",
+      "suite": "algorithms/字符串/字典树/对拍/trie_capacity_check.cpp",
+      "api": [
+        "精确 max_nodes 含根容量, clear 复用, 重复 include"
+      ],
+      "oracle": "显式枚举空串/abc/ab及整数0, 检查计数、结点数和已预留存储地址",
+      "cases": [
+        "300轮容量1/4/65精确用满, 重复插入不增结点; clear后重建无脏边; const查询由主套件使用"
+      ],
+      "limitations": "合法字符集; 字符串和非负 LL 整数接口不混用; 单对象/版本元素数<=INT_MAX; max_nodes 足够且索引能放入 int; clear 保留容量但旧结点/版本句柄失效; 不支持删除",
+      "summary": "普通Trie包含根的预算、重复插入和300轮清空重建"
+    },
+    {
+      "template": "algorithms/字符串/字典树/可持久化字典树.cpp",
+      "suite": "algorithms/字符串/字典树/对拍/trie_capacity_check.cpp",
+      "api": [
+        "每次HB+2/串长+1分配, 哨兵不计cap, clear复用与旧版本"
+      ],
+      "oracle": "固定空串/a和两次整数插入的闭式结果, 独立核对实际新增结点与旧版本元素数",
+      "cases": [
+        "HB=0..63每种10轮精确用满; 空串+a的3结点及HB3的5结点300轮复用; cap0空版本; 重复include同场编译"
+      ],
+      "limitations": "合法字符集; 字符串和非负 LL 整数接口不混用; 单对象/版本元素数<=INT_MAX; max_nodes 足够且索引能放入 int; clear 保留容量但旧结点/版本句柄失效; 不支持删除; HB在0..63且所有整数和查询值放进HB+1位; 根差按每个值的重复次数非负; 多根正/负侧计数和分别<=LLONG_MAX; xs.size()<=INT_MAX",
+      "summary": "全部64种HB的精确预算, 空串也复制根, 空哨兵不占cap"
+    },
+    {
+      "template": "algorithms/数学/数论/欧拉筛.cpp",
+      "suite": "algorithms/数学/数论/对拍/number_sieve_check.cpp",
+      "api": [
+        "LinearSieve::init/is_prime/factorize, lp/primes/n"
+      ],
+      "oracle": "小表独立试除; 大表Sundaram奇合数枚举; 每个lp为质数且整除原数, 按商的lp验证非降分解唯一性; factorize质因子有序且乘回原数",
+      "cases": [
+        "300轮随机0..1000表, 逐数试除核验质数及分解",
+        "1000万-0-1-2-257-100万-1000万重建; 全表判素和有序质数列表, 每轮至多2万分解验证, 另一对象保持不变"
+      ],
+      "limitations": "0<=n<INT_MAX且内存足够; 查询0..n, 分解1..n; init全量重建并保留容量; 不内置phi/mu; primes下标0起",
+      "summary": "欧拉线性筛、最小质因子与快速分解; 千万表全量核验和跨规模重建"
+    },
+    {
+      "template": "algorithms/数学/数论/埃氏筛.cpp",
+      "suite": "algorithms/数学/数论/对拍/number_sieve_check.cpp",
+      "api": [
+        "Eratosthenes::init/is_prime, prime/primes/n"
+      ],
+      "oracle": "独立试除核验小表, Sundaram按(2i+1)(2j+1)=2(i+j+2ij)+1枚举奇合数得到大表参照",
+      "cases": [
+        "300轮随机0..1000表, 逐数试除核验质数及分解",
+        "1000万-0-1-2-257-100万-1000万重建; 全表判素和有序质数列表, 每轮至多2万分解验证, 另一对象保持不变"
+      ],
+      "limitations": "0<=n<INT_MAX且内存足够, 查询0..n; vector<bool>位压缩, 不提供最小质因子; init全量重建且保留容量; primes下标0起",
+      "summary": "位压缩埃氏筛, 千万表逐点判素及质数顺序核验"
+    },
+    {
+      "template": "algorithms/数学/数论/区间筛质数.cpp",
+      "suite": "algorithms/数学/数论/对拍/number_sieve_check.cpp",
+      "api": [
+        "segmented_sieve(l,r), 实际复用Eratosthenes"
+      ],
+      "oracle": "百万宽低区间按独立Sundaram表核对完整输出, 大坐标短区间逐数试除",
+      "cases": [
+        "[0,100万]及后半区间, 空区间含LLONG_MIN/MAX端点; p=2/3/5/97/997/999983的p²前后各128点与单点p²",
+        "300个随机1e10内短区间, 检查质数列表顺序和端点"
+      ],
+      "limitations": "返回闭区间全部质数; l先截到2, 空区间直接返回; sqrt(r)<INT_MAX且基础表和区间表均可存, 仍须筛到sqrt(r), 不面向LLONG_MAX附近区间",
+      "summary": "百万宽区间与近1e12平方边界, 位压缩并复用基础筛"
+    },
+    {
+      "template": "algorithms/数学/数论/区间筛质数.cpp",
+      "suite": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
+      "api": [
+        "segmented_sieve(l,r)"
+      ],
+      "oracle": "独立逐数试除, 枚举完整区间质数列表",
+      "cases": [
+        "1000个含小负端点的随机短区间, [2,3]、反向区间、全体小于2; 重复include"
+      ],
+      "limitations": "返回闭区间全部质数; l先截到2, 空区间直接返回; sqrt(r)<INT_MAX且基础表和区间表均可存, 仍须筛到sqrt(r), 不面向LLONG_MAX附近区间",
+      "summary": "小区间全量试除, 负端点截断和空区间"
+    },
+    {
+      "template": "algorithms/数学/数论/整数开方.cpp",
+      "suite": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
+      "api": [
+        "floor_isqrt/ceil_isqrt"
+      ],
+      "oracle": "纯整数二分并用i128乘方判断, 不复用浮点估计与修正",
+      "cases": [
+        "1000组原有随机与LL极值, 10万随机非负LL加10万随机根的平方前/自身/后一共40万调用, LLONG_MAX往下10001个值",
+        "非正数统一0, 重复include"
+      ],
+      "limitations": "输入LL, x<=0返回0; 固定位宽中浮点估计后整数修正; ceil结果可到3037000500",
+      "summary": "整数二分独立核验四十万量级平方边界及LL上界"
+    },
+    {
+      "template": "algorithms/数学/数论/约数个数及约数和公式法.cpp",
+      "suite": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
+      "api": [
+        "deprime(int)->pair<int,LL>, 无全局cnt/sum"
+      ],
+      "oracle": "1..20万通过枚举约数的倍数累加得全部答案; 大int独立枚举因子对; 不用质因数乘法公式作参照",
+      "cases": [
+        "20万个连续输入, 300个大int含INT_MAX往下100个值, 原有1000随机及大合数",
+        "x=1, 素数/质数幂/多质因子, 返回结果跨调用保存, 重复include"
+      ],
+      "limitations": "只接正int, 约数和LL/个数int; O(sqrt x)用于少量输入, 非64位分解器; 旧全局cnt/sum调用改为结构化绑定返回值",
+      "summary": "20万约数答案和int上界; 返回值隔离, 不再覆盖全局变量"
+    },
+    {
+      "template": "algorithms/数学/数论/除法上下取整.cpp",
+      "suite": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
+      "api": [
+        "floor_div/ceil_div, include守卫"
+      ],
+      "oracle": "提升i128并把分母归正, 用非负绝对值的整除/加分母取整, 不复用模板余数符号条件",
+      "cases": [
+        "a=-200..200,b=-50..50的合法笛卡尔积; LL上下界/0/±1/±2等交叉; 20万对完整64位随机有符号输入",
+        "正负分子分母、整除/非整除、LLONG_MIN除正数或其他负数; 重复include"
+      ],
+      "limitations": "b!=0且(a,b)!=(LLONG_MIN,-1), 因其数学结果不在LL内; 不用返回哨兵伪装无效除法",
+      "summary": "全符号组合和LL极值, 20万随机除法; 明确不可表示商的契约"
     }
   ]
 }

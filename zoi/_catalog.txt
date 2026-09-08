@@ -54,6 +54,7 @@ eulerPointUndirected	algorithms/图论/欧拉图/无向图欧拉点路径.cpp
 eulerPointDirected	algorithms/图论/欧拉图/有向图欧拉点路径.cpp
 topo	algorithms/图论/拓扑排序/拓扑排序.cpp
 segGraph	algorithms/图论/优化建图/线段树优化建图.cpp
+treeGraph	algorithms/图论/优化建图/树上倍增优化建图.cpp
 ^dinic	algorithms/图论/网络流/最大流/Dinic.txt
 ^mcmf	algorithms/图论/网络流/最小费用最大流/MCMF.txt
 dij	algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp
@@ -63,12 +64,16 @@ bf	algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp
 bfRing	algorithms/图论/最短路问题/判断负环/bf_-ring.cpp
 spfaRing	algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp
 floyd	algorithms/图论/最短路问题/全源最短路径/floyd.cpp
+kruskal	algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp
+prim	algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp
 trie	algorithms/字符串/字典树/字典树.cpp
 persistentTrie	algorithms/字符串/字典树/可持久化字典树.cpp
 ^acam	algorithms/字符串/AC自动机/AC自动机.txt
 ^sam	algorithms/字符串/后缀自动机/后缀自动机.txt
 ^suffixArray	algorithms/字符串/后缀数组/后缀数组.txt
 mint	algorithms/数学/数论/mint.cpp
+eulerSieve	algorithms/数学/数论/欧拉筛.cpp
+eratosthenes	algorithms/数学/数论/埃氏筛.cpp
 segSieve	algorithms/数学/数论/区间筛质数.cpp
 intSqrt	algorithms/数学/数论/整数开方.cpp
 divisorSums	algorithms/数学/数论/约数个数及约数和公式法.cpp

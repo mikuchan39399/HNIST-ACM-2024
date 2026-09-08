@@ -9,8 +9,66 @@
 #include "../z_rnd.cpp"
 using namespace std;
 
+template<class T>
+static void integer_edges()
+{
+    mt19937_64 a(42), b(42);
+    T lo = numeric_limits<T>::lowest(), hi = numeric_limits<T>::max();
+    for (int i = 0; i < 10000; i++)
+    {
+        T x = z_rnd(hi, lo, a), y = z_rnd(hi, lo, b);
+        assert(x == y && x >= lo && x <= hi);
+    }
+    assert(z_rnd(lo, lo, a) == lo && z_rnd(hi, hi, a) == hi);
+    for (int i = 0; i < 1000; i++) assert(z_rnd((T)1, (T)0, a) <= (T)1);
+}
+struct ZeroEngine
+{
+    using result_type = uint64_t;
+    static constexpr uint64_t min() { return 0; }
+    static constexpr uint64_t max() { return UINT64_MAX; }
+    uint64_t operator()() { return 0; }
+};
+struct MaxEngine : ZeroEngine
+{
+    uint64_t operator()() { return UINT64_MAX; }
+};
+template<class T>
+static void floating_edges()
+{
+    mt19937_64 a(123), b(123);
+    const T max = numeric_limits<T>::max(), tiny = numeric_limits<T>::denorm_min();
+    for (auto [lo, hi] : {pair<T,T>{-max, max}, {-max, -max / 2}, {max / 2, max},
+                          {-tiny, tiny}, {0, tiny}, {1, nextafter(T(1), T(2))}, {-10, 20}})
+    {
+        for (int i = 0; i < 10000; i++)
+        {
+            T x = z_rnd(hi, lo, a), y = z_rnd(hi, lo, b);
+            assert(isfinite(x) && x >= lo && x < hi && x == y);
+        }
+        ZeroEngine z;
+        MaxEngine m;
+        assert(z_rnd(hi, lo, z) == lo);
+        T top = z_rnd(hi, lo, m);
+        assert(isfinite(top) && top >= lo && top < hi);
+    }
+    assert(z_rnd(max, max, a) == max);
+    assert(z_rnd(-max, -max, a) == -max);
+    assert(z_rnd(T(0), T(0), a) == 0);
+    int buckets[10]{};
+    for (int i = 0; i < 200000; i++) buckets[(int)(z_rnd(T(1), T(0), a) * 10)]++;
+    for (int c : buckets) assert(18000 < c && c < 22000);
+}
 int main()
 {
+    integer_edges<bool>(); integer_edges<char>();
+    integer_edges<signed char>(); integer_edges<unsigned char>();
+    integer_edges<short>(); integer_edges<unsigned short>();
+    integer_edges<int>(); integer_edges<unsigned>();
+    integer_edges<long>(); integer_edges<unsigned long>();
+    integer_edges<long long>(); integer_edges<unsigned long long>();
+    integer_edges<wchar_t>(); integer_edges<char8_t>(); integer_edges<char16_t>(); integer_edges<char32_t>();
+    floating_edges<float>(); floating_edges<double>(); floating_edges<long double>();
     mt19937 par(42);
     // 300 组随机区间: 值域包含
     for (int t = 0; t < 300; t++)

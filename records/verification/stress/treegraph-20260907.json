@@ -1,0 +1,52 @@
+{
+  "compiler": "g++-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+  "files": {
+    "algorithms/图论/优化建图/对拍/treegraph_check.cpp": "eacd17e1f35d024bd9d5f27467aa18cb76cbf0ceeb6f0a25a32c63a471a5171d",
+    "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp": "c0354e2f5d0c681f40e4edcb82d323f61d381a8cb15e2fd5ab456c472c326f84",
+    "algorithms/杂项/utils/utils.cpp": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758",
+    "algorithms/图论/图的存储/Graph.cpp": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48",
+    "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp": "15029b41362c8e58e1e021fd50ccc658fe674bd9ebd148b1d25f63d8a12484ba",
+    "algorithms/图论/优化建图/树上倍增优化建图.cpp": "4432d877a02a27acc8235abea6e16576f795a6ee0a7cc12af44649a1acb3cc23"
+  },
+  "results": [
+    {
+      "mode": "normal",
+      "flags": [
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-O2"
+      ],
+      "exitCode": 0,
+      "seconds": 2.042,
+      "peakRssKiB": 235596,
+      "stdout": "treegraph_check passed: 3 x 400 random forests, boundaries, 50000/1000000 chain, 200000 forests and relay capacity\n",
+      "status": "PASS"
+    },
+    {
+      "mode": "asan",
+      "flags": [
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-UNDEBUG",
+        "-D_GLIBCXX_ASSERTIONS",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-omit-frame-pointer",
+        "-fno-sanitize-recover=all"
+      ],
+      "exitCode": 0,
+      "seconds": 12.876,
+      "peakRssKiB": 838972,
+      "stdout": "treegraph_check passed: 3 x 400 random forests, boundaries, 50000/1000000 chain, 200000 forests and relay capacity\n",
+      "status": "PASS"
+    }
+  ],
+  "stable": true
+}

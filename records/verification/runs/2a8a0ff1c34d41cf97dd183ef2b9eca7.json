@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "2a8a0ff1c34d41cf97dd183ef2b9eca7",
+  "startedUtc": "2026-09-08T05:08:07.3416605Z",
+  "finishedUtc": "2026-09-08T05:08:12.5771440Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/bigint-rw/runner-bigint",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "716cfed4efd16910d89a2995e3099aefebf5f9b33ccc5b17ec9e37f585d699b3",
+      "files": [
+        {
+          "path": "algorithms/数学/高精度计算/zoi/bigint.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数学/高精度计算/对拍/bigint_check.cpp",
+          "hash": "699330ed6aef5efe95e008f79619213e8dd77855cf8f2100c2d6fb1120d5d0dd"
+        },
+        {
+          "path": "algorithms/数学/高精度计算/高精度.cpp",
+          "hash": "77a8d1fdb59d59a0688fa663644f5a512e3daea8ff3deb00e009603043d78c6f"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "bff81974b53500db85c12657f446392164a78fe239b78dbf26b2c2b9ef06198c"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "8162d0d0d5ab02f4eaf0f2ee6c20aadb095b1c294f94b36f1df047a1839c573b"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "d06c472762e4c11e623289e941afb0ab3abfcd11c2cc677d00374a9038003263"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数学/高精度计算/高精度.cpp",
+          "hash": "2f9c521de17f9e99177987a46afd7564b2e00595a4c9729195c809544ae168d1",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数学/高精度计算/对拍/bigint_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.858
+    }
+  ]
+}

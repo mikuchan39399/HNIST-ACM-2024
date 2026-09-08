@@ -8,7 +8,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 
 更新：`./scripts/make_reliability.ps1`；只读检查：`./scripts/make_reliability.ps1 -Check`。普通回归不会改写本表。
 
-## A 类：有直接对拍引用的现役模板 [53]
+## A 类：有直接对拍引用的现役模板 [66]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
@@ -37,7 +37,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [ebcc - algorithms/图论/连通性相关/Tarjan_EBCC.cpp](<../algorithms/图论/连通性相关/Tarjan_EBCC.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
 | [vbcc - algorithms/图论/连通性相关/Tarjan_VBCC.cpp](<../algorithms/图论/连通性相关/Tarjan_VBCC.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
 | [bct - algorithms/图论/连通性相关/圆方树/BCT.cpp](<../algorithms/图论/连通性相关/圆方树/BCT.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)<br>[algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>) |
-| [lca - algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp](<../algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
+| [lca - algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp](<../algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp>) | [algorithms/图论/优化建图/对拍/treegraph_check.cpp](<../algorithms/图论/优化建图/对拍/treegraph_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
 | [hldlca - algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp](<../algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>) |
 | [hld - algorithms/图论/树上问题/树链剖分/HLD.cpp](<../algorithms/图论/树上问题/树链剖分/HLD.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp](<../algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp>) |
 | [virtualTree - algorithms/图论/树上问题/虚树/二次排序.cpp](<../algorithms/图论/树上问题/虚树/二次排序.cpp>) | [algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>)<br>[algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>) |
@@ -48,25 +48,38 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [center - algorithms/图论/树上问题/树的中心/树的中心.cpp](<../algorithms/图论/树上问题/树的中心/树的中心.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/树上问题/树的中心/对拍/center_check.cpp](<../algorithms/图论/树上问题/树的中心/对拍/center_check.cpp>) |
 | [topo - algorithms/图论/拓扑排序/拓扑排序.cpp](<../algorithms/图论/拓扑排序/拓扑排序.cpp>) | [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [segGraph - algorithms/图论/优化建图/线段树优化建图.cpp](<../algorithms/图论/优化建图/线段树优化建图.cpp>) | [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../algorithms/图论/优化建图/对拍/seggraph_check.cpp>) |
-| [dij - algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp](<../algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp>) | [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../algorithms/图论/优化建图/对拍/seggraph_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
+| [treeGraph - algorithms/图论/优化建图/树上倍增优化建图.cpp](<../algorithms/图论/优化建图/树上倍增优化建图.cpp>) | [algorithms/图论/优化建图/对拍/treegraph_check.cpp](<../algorithms/图论/优化建图/对拍/treegraph_check.cpp>) |
+| [dij - algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp](<../algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp>) | [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../algorithms/图论/优化建图/对拍/seggraph_check.cpp>)<br>[algorithms/图论/优化建图/对拍/treegraph_check.cpp](<../algorithms/图论/优化建图/对拍/treegraph_check.cpp>)<br>[algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [dijN - algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp](<../algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [spfa - algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp](<../algorithms/图论/最短路问题/单源最短路径/spfa%20存图.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [bf - algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp](<../algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [bfRing - algorithms/图论/最短路问题/判断负环/bf_-ring.cpp](<../algorithms/图论/最短路问题/判断负环/bf_-ring.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
 | [spfaRing - algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp](<../algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp>) | [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>) |
-| [trie - algorithms/字符串/字典树/字典树.cpp](<../algorithms/字符串/字典树/字典树.cpp>) | [algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>) |
+| [kruskal - algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp](<../algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp>) | [algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp](<../algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp>) |
+| [prim - algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp](<../algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp>) | [algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp](<../algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp>) |
+| [trie - algorithms/字符串/字典树/字典树.cpp](<../algorithms/字符串/字典树/字典树.cpp>) | [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)<br>[algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>) |
 | [persistentTrie - algorithms/字符串/字典树/可持久化字典树.cpp](<../algorithms/字符串/字典树/可持久化字典树.cpp>) | [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)<br>[algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>) |
 | [mint - algorithms/数学/数论/mint.cpp](<../algorithms/数学/数论/mint.cpp>) | [algorithms/数学/数论/对拍/mint_check.cpp](<../algorithms/数学/数论/对拍/mint_check.cpp>) |
-| [segSieve - algorithms/数学/数论/区间筛质数.cpp](<../algorithms/数学/数论/区间筛质数.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>) |
+| [eulerSieve - algorithms/数学/数论/欧拉筛.cpp](<../algorithms/数学/数论/欧拉筛.cpp>) | [algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
+| [eratosthenes - algorithms/数学/数论/埃氏筛.cpp](<../algorithms/数学/数论/埃氏筛.cpp>) | [algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
+| [segSieve - algorithms/数学/数论/区间筛质数.cpp](<../algorithms/数学/数论/区间筛质数.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>)<br>[algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
 | [intSqrt - algorithms/数学/数论/整数开方.cpp](<../algorithms/数学/数论/整数开方.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>) |
 | [divisorSums - algorithms/数学/数论/约数个数及约数和公式法.cpp](<../algorithms/数学/数论/约数个数及约数和公式法.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>) |
+| [divCeilFloor - algorithms/数学/数论/除法上下取整.cpp](<../algorithms/数学/数论/除法上下取整.cpp>) | [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>) |
 | [bigint - algorithms/数学/高精度计算/高精度.cpp](<../algorithms/数学/高精度计算/高精度.cpp>) | [algorithms/数学/高精度计算/对拍/bigint_check.cpp](<../algorithms/数学/高精度计算/对拍/bigint_check.cpp>) |
-| [rw - algorithms/杂项/快读快写/快读快写.cpp](<../algorithms/杂项/快读快写/快读快写.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>) |
+| [lucas - algorithms/数学/组合数学/卢卡斯定理求组合数.cpp](<../algorithms/数学/组合数学/卢卡斯定理求组合数.cpp>) | [algorithms/数学/组合数学/对拍/comb_check.cpp](<../algorithms/数学/组合数学/对拍/comb_check.cpp>) |
+| [binomLoop - algorithms/数学/组合数学/循环求组合数.cpp](<../algorithms/数学/组合数学/循环求组合数.cpp>) | [algorithms/数学/组合数学/对拍/comb_check.cpp](<../algorithms/数学/组合数学/对拍/comb_check.cpp>) |
+| [binomPascal - algorithms/数学/组合数学/打表杨辉三角求组合数.cpp](<../algorithms/数学/组合数学/打表杨辉三角求组合数.cpp>) | [algorithms/数学/组合数学/对拍/comb_check.cpp](<../algorithms/数学/组合数学/对拍/comb_check.cpp>) |
+| [binomFactInv - algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp](<../algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp>) | [algorithms/数学/组合数学/对拍/comb_check.cpp](<../algorithms/数学/组合数学/对拍/comb_check.cpp>) |
+| [utils - algorithms/杂项/utils/utils.cpp](<../algorithms/杂项/utils/utils.cpp>) | [algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>)<br>[algorithms/杂项/对拍/utils_local_check.cpp](<../algorithms/杂项/对拍/utils_local_check.cpp>) |
+| [rw - algorithms/杂项/快读快写/快读快写.cpp](<../algorithms/杂项/快读快写/快读快写.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>)<br>[algorithms/杂项/对拍/rw_check.cpp](<../algorithms/杂项/对拍/rw_check.cpp>) |
+| [i128 - algorithms/杂项/128位整数/128int.cpp](<../algorithms/杂项/128位整数/128int.cpp>) | [algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp](<../algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp>)<br>[algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>) |
 | [rnd - algorithms/杂项/随机数/z_rnd.cpp](<../algorithms/杂项/随机数/z_rnd.cpp>) | [algorithms/杂项/随机数/对拍/rnd_check.cpp](<../algorithms/杂项/随机数/对拍/rnd_check.cpp>) |
-| [customHash - algorithms/杂项/防卡/哈希防卡.cpp](<../algorithms/杂项/防卡/哈希防卡.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>) |
-| [discrete - algorithms/杂项/离散化/离散化.cpp](<../algorithms/杂项/离散化/离散化.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>) |
+| [customHash - algorithms/杂项/防卡/哈希防卡.cpp](<../algorithms/杂项/防卡/哈希防卡.cpp>) | [algorithms/杂项/对拍/hash_check.cpp](<../algorithms/杂项/对拍/hash_check.cpp>)<br>[algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>) |
+| [discrete - algorithms/杂项/离散化/离散化.cpp](<../algorithms/杂项/离散化/离散化.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>)<br>[algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>) |
+| [misraGries - algorithms/杂项/主元素问题/Misra-Gries.cpp](<../algorithms/杂项/主元素问题/Misra-Gries.cpp>) | [algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>) |
 
-## B 类：未发现直接对拍引用的现役模板 [22]
+## B 类：未发现直接对拍引用的现役模板 [14]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
@@ -84,14 +97,6 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [eulerPointUndirected - algorithms/图论/欧拉图/无向图欧拉点路径.cpp](<../algorithms/图论/欧拉图/无向图欧拉点路径.cpp>) | 未发现直接引用 |
 | [eulerPointDirected - algorithms/图论/欧拉图/有向图欧拉点路径.cpp](<../algorithms/图论/欧拉图/有向图欧拉点路径.cpp>) | 未发现直接引用 |
 | [floyd - algorithms/图论/最短路问题/全源最短路径/floyd.cpp](<../algorithms/图论/最短路问题/全源最短路径/floyd.cpp>) | 未发现直接引用 |
-| [divCeilFloor - algorithms/数学/数论/除法上下取整.cpp](<../algorithms/数学/数论/除法上下取整.cpp>) | 未发现直接引用 |
-| [lucas - algorithms/数学/组合数学/卢卡斯定理求组合数.cpp](<../algorithms/数学/组合数学/卢卡斯定理求组合数.cpp>) | 未发现直接引用 |
-| [binomLoop - algorithms/数学/组合数学/循环求组合数.cpp](<../algorithms/数学/组合数学/循环求组合数.cpp>) | 未发现直接引用 |
-| [binomPascal - algorithms/数学/组合数学/打表杨辉三角求组合数.cpp](<../algorithms/数学/组合数学/打表杨辉三角求组合数.cpp>) | 未发现直接引用 |
-| [binomFactInv - algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp](<../algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp>) | 未发现直接引用 |
-| [utils - algorithms/杂项/utils/utils.cpp](<../algorithms/杂项/utils/utils.cpp>) | 未发现直接引用 |
-| [i128 - algorithms/杂项/128位整数/128int.cpp](<../algorithms/杂项/128位整数/128int.cpp>) | 未发现直接引用 |
-| [misraGries - algorithms/杂项/主元素问题/Misra-Gries.cpp](<../algorithms/杂项/主元素问题/Misra-Gries.cpp>) | 未发现直接引用 |
 
 ## C 类：笔记条目（不参与编译） [17]
 
@@ -141,9 +146,10 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 | [algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 
-## 已发现的对拍套件 [24]
+## 已发现的对拍套件 [32]
 
 - [algorithms/图论/优化建图/对拍/seggraph_check.cpp](<../algorithms/图论/优化建图/对拍/seggraph_check.cpp>)
+- [algorithms/图论/优化建图/对拍/treegraph_check.cpp](<../algorithms/图论/优化建图/对拍/treegraph_check.cpp>)
 - [algorithms/图论/对拍/completed_graph_stress_check.cpp](<../algorithms/图论/对拍/completed_graph_stress_check.cpp>)
 - [algorithms/图论/对拍/graph_check.cpp](<../algorithms/图论/对拍/graph_check.cpp>)
 - [algorithms/图论/对拍/graph_core_check.cpp](<../algorithms/图论/对拍/graph_core_check.cpp>)
@@ -151,12 +157,15 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 - [algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp](<../algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp>)
 - [algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp>)
 - [algorithms/图论/树上问题/虚树/对拍/vt_check.cpp](<../algorithms/图论/树上问题/虚树/对拍/vt_check.cpp>)
+- [algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp](<../algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp>)
 - [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)
 - [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>)
 - [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)
 - [algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>)
 - [algorithms/数学/数论/对拍/mint_check.cpp](<../algorithms/数学/数论/对拍/mint_check.cpp>)
 - [algorithms/数学/数论/对拍/number_boundary_check.cpp](<../algorithms/数学/数论/对拍/number_boundary_check.cpp>)
+- [algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>)
+- [algorithms/数学/组合数学/对拍/comb_check.cpp](<../algorithms/数学/组合数学/对拍/comb_check.cpp>)
 - [algorithms/数学/高精度计算/对拍/bigint_check.cpp](<../algorithms/数学/高精度计算/对拍/bigint_check.cpp>)
 - [algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp](<../algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp>)
 - [algorithms/数据结构/并查集/对拍/dsu_check.cpp](<../algorithms/数据结构/并查集/对拍/dsu_check.cpp>)
@@ -165,5 +174,9 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 - [algorithms/数据结构/线段树/对拍/pst_check.cpp](<../algorithms/数据结构/线段树/对拍/pst_check.cpp>)
 - [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_check.cpp>)
 - [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>)
+- [algorithms/杂项/对拍/hash_check.cpp](<../algorithms/杂项/对拍/hash_check.cpp>)
 - [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>)
+- [algorithms/杂项/对拍/rw_check.cpp](<../algorithms/杂项/对拍/rw_check.cpp>)
+- [algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>)
+- [algorithms/杂项/对拍/utils_local_check.cpp](<../algorithms/杂项/对拍/utils_local_check.cpp>)
 - [algorithms/杂项/随机数/对拍/rnd_check.cpp](<../algorithms/杂项/随机数/对拍/rnd_check.cpp>)

@@ -152,6 +152,35 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
 
+  numeric-depth:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [regression, sanitizer]
+    steps:
+      - uses: actions/checkout@v5
+      - name: BigInt Python oracle and rw buffer/exit checks
+        run: |
+          if [ '${{ matrix.mode }}' = sanitizer ]; then
+            python3 scripts/check_bigint_rw.py --sanitize --report-dir .ci-results/numeric-depth-${{ matrix.mode }}
+          else
+            python3 scripts/check_bigint_rw.py --report-dir .ci-results/numeric-depth-${{ matrix.mode }}
+          fi
+      - name: Keep numeric depth evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: numeric-depth-${{ matrix.mode }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .ci-results/numeric-depth-*/summary.json
+            .ci-results/numeric-depth-*/*.log
+            .ci-results/numeric-depth-*/failure.txt
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: warn
+
   stress:
     runs-on: ubuntu-24.04
     timeout-minutes: 15

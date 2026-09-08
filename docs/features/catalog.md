@@ -75,6 +75,7 @@
 | [欧拉图 / 有向图欧拉点路径](<../../algorithms/图论/欧拉图/有向图欧拉点路径.cpp>) | [eulerPointDirected.h](<../../zoi/eulerPointDirected.h>) |
 | [拓扑排序 / 拓扑排序](<../../algorithms/图论/拓扑排序/拓扑排序.cpp>) | [topo.h](<../../zoi/topo.h>) |
 | [优化建图 / 线段树优化建图](<../../algorithms/图论/优化建图/线段树优化建图.cpp>) | [segGraph.h](<../../zoi/segGraph.h>) |
+| [优化建图 / 树上倍增优化建图](<../../algorithms/图论/优化建图/树上倍增优化建图.cpp>) | [treeGraph.h](<../../zoi/treeGraph.h>) |
 | [网络流 / 最大流 / Dinic](<../../algorithms/图论/网络流/最大流/Dinic.txt>) | 笔记（无跳板） |
 | [网络流 / 最小费用最大流 / MCMF](<../../algorithms/图论/网络流/最小费用最大流/MCMF.txt>) | 笔记（无跳板） |
 | [最短路问题 / 单源最短路径 / dijkstra_heap](<../../algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp>) | [dij.h](<../../zoi/dij.h>) |
@@ -84,6 +85,8 @@
 | [最短路问题 / 判断负环 / bf_-ring](<../../algorithms/图论/最短路问题/判断负环/bf_-ring.cpp>) | [bfRing.h](<../../zoi/bfRing.h>) |
 | [最短路问题 / 判断负环 / spfa_-ring](<../../algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp>) | [spfaRing.h](<../../zoi/spfaRing.h>) |
 | [最短路问题 / 全源最短路径 / floyd](<../../algorithms/图论/最短路问题/全源最短路径/floyd.cpp>) | [floyd.h](<../../zoi/floyd.h>) |
+| [生成树问题 / 最小生成树 / kruskal / Kruskal](<../../algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp>) | [kruskal.h](<../../zoi/kruskal.h>) |
+| [生成树问题 / 最小生成树 / prim / Prim](<../../algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp>) | [prim.h](<../../zoi/prim.h>) |
 
 ## 字符串
 
@@ -100,6 +103,8 @@
 | 条目 | 跳板或笔记 |
 |---|---|
 | [数论 / mint](<../../algorithms/数学/数论/mint.cpp>) | [mint.h](<../../zoi/mint.h>) |
+| [数论 / 欧拉筛](<../../algorithms/数学/数论/欧拉筛.cpp>) | [eulerSieve.h](<../../zoi/eulerSieve.h>) |
+| [数论 / 埃氏筛](<../../algorithms/数学/数论/埃氏筛.cpp>) | [eratosthenes.h](<../../zoi/eratosthenes.h>) |
 | [数论 / 区间筛质数](<../../algorithms/数学/数论/区间筛质数.cpp>) | [segSieve.h](<../../zoi/segSieve.h>) |
 | [数论 / 整数开方](<../../algorithms/数学/数论/整数开方.cpp>) | [intSqrt.h](<../../zoi/intSqrt.h>) |
 | [数论 / 约数个数及约数和公式法](<../../algorithms/数学/数论/约数个数及约数和公式法.cpp>) | [divisorSums.h](<../../zoi/divisorSums.h>) |
@@ -143,19 +148,10 @@
 
 ### 图论文档
 
-- [优化建图 / README.md](<../../algorithms/图论/优化建图/README.md>)
 - [树上问题 / 树的中心 / README.md](<../../algorithms/图论/树上问题/树的中心/README.md>)
 - [树上问题 / 树的直径 / README.md](<../../algorithms/图论/树上问题/树的直径/README.md>)
 - [树上问题 / 树的重心 / README.md](<../../algorithms/图论/树上问题/树的重心/README.md>)
 
 ### 数据结构文档
 
-- [单调栈 / README.md](<../../algorithms/数据结构/单调栈/README.md>)
-- [单调队列 / README.md](<../../algorithms/数据结构/单调队列/README.md>)
-- [堆 / 左偏树 / README.md](<../../algorithms/数据结构/堆/左偏树/README.md>)
-- [并查集 / README.md](<../../algorithms/数据结构/并查集/README.md>)
-- [有序表与平衡树 / README.md](<../../algorithms/数据结构/有序表与平衡树/README.md>)
-- [树状数组 / README.md](<../../algorithms/数据结构/树状数组/README.md>)
-- [线段树 / README.md](<../../algorithms/数据结构/线段树/README.md>)
-- [线段树 / 可持久化线段树 / README.md](<../../algorithms/数据结构/线段树/可持久化线段树/README.md>)
 - [线段树 / 泛型插件 / README.md](<../../algorithms/数据结构/线段树/泛型插件/README.md>)

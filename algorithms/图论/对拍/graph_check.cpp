@@ -420,80 +420,263 @@ static void test_graph_core()
     }
 }
 
-// ============ 段 5: 最短路家族 ============
-// 域 1 非负权: dij/dijN/spfa/bf 四引擎 dist 互拍 + 多源对拍双单源取 min
-// 域 2 负边 DAG(无环必无负环): spfa/bf 互拍, 判环双引擎必 false
-// 域 3 随机混合权: bfRing/spfaRing 互拍 | 定向: 埋负环必中, 无负环必过
-static void test_shortest_path()
+// ============ 最短路与负环: 独立 Floyd, 不以实现互拍作参照 ============
+using Wide = i128;
+static constexpr Wide FAR = Wide(1) << 110;
+struct PathOracle
 {
-    mt19937 rng(424242);
-    static Dijkstra dij{61};
-    static DijkstraN dijn{61};
-    static SPFA sp{61};
-    static BellmanFord bf{61};
-    static BFRing bfr{61};
-    static SPFARing spr{61};
-    for (int tc = 0; tc < 200; tc++)   // 域 1: 非负权四引擎互拍 + 多源
+    int n;
+    vector<vector<Wide>> d;
+    PathOracle(int n_) : n(n_), d(n + 1, vector<Wide>(n + 1, FAR))
     {
-        int n = 1 + rng() % 40, m = rng() % 120;
-        Graph<true, LL> g{n, m};
-        for (int i = 0; i < m; i++)
-            g.add(1 + rng() % n, 1 + rng() % n, rng() % 21);
-        int s = 1 + rng() % n, s2 = 1 + rng() % n;
-        dij.init(n); dijn.init(n); sp.init(n); bf.init(n);
-        dij.run(s, g);
-        dijn.run(s, g);
-        sp.run(s, g);
-        bf.run(s, g);
-        for (int i = 1; i <= n; i++)
-            assert(dij.dist[i] == dijn.dist[i] && dij.dist[i] == sp.dist[i]
-                   && dij.dist[i] == bf.dist[i]);
-        VLL d1 = dij.dist;
-        VLL d2 = [&]{ dij.init(n); dij.run(s2, g); return dij.dist; }();
-        dij.init(n);
-        dij.run(VI{s, s2}, g);
-        for (int i = 1; i <= n; i++)
-            assert(dij.dist[i] == min(d1[i], d2[i]));
+        for (int i = 1; i <= n; i++) d[i][i] = 0;
     }
-    for (int tc = 0; tc < 200; tc++)   // 域 2: 负边 DAG
+    void edge(int u, int v, LL w) { d[u][v] = min(d[u][v], Wide(w)); }
+    void solve()
     {
-        int n = 1 + rng() % 40, m = rng() % 100;
-        Graph<true, LL> g{n, m};
+        for (int k = 1; k <= n; k++)
+            for (int i = 1; i <= n; i++)
+                for (int j = 1; j <= n; j++)
+                    if (d[i][k] != FAR && d[k][j] != FAR)
+                        d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+    }
+    bool ring(int s = 0) const
+    {
+        for (int k = 1; k <= n; k++)
+            if (d[k][k] < 0 && (!s || d[s][k] != FAR)) return true;
+        return false;
+    }
+    LL distance(const VI& sources, int v) const
+    {
+        Wide best = FAR;
+        for (int s : sources) best = min(best, d[s][v]);
+        if (best == FAR) return INF;
+        assert(best >= LLONG_MIN && best < INF);
+        return LL(best);
+    }
+};
+
+template <bool Dir, class W>
+static void small_paths()
+{
+    mt19937 rng(42);
+    Graph<Dir, W> g(20, 180);
+    Dijkstra heap(20);
+    DijkstraN dense(20);
+    SPFA sp(20);
+    BellmanFord bf(20);
+    BFRing br(20);
+    SPFARing sr(20);
+    for (int tc = 0; tc < 1200; tc++)
+    {
+        int n = 1 + rng() % 18, m = rng() % 100, mode = tc % 3;
+        g.clear();
+        PathOracle oracle(n);
+        VI potential(n + 1);
+        for (int i = 1; i <= n; i++) potential[i] = int(rng() % 61) - 30;
+        bool nonnegative = true;
         for (int i = 0; i < m; i++)
         {
             int u = 1 + rng() % n, v = 1 + rng() % n;
-            if (u == v) continue;
-            if (u > v) swap(u, v);   // 只加 u<v, 图必为 DAG
-            g.add(u, v, (LL)(rng() % 41) - 20);
+            LL w = rng() % 21;
+            if (mode == 1 && Dir) w += potential[v] - potential[u]; // 任意环权 >= 0
+            if (mode == 2) w -= 10;
+            g.add(u, v, W(w));
+            oracle.edge(u, v, w);
+            if constexpr (!Dir) oracle.edge(v, u, w);
+            nonnegative &= w >= 0;
         }
-        int s = 1 + rng() % n;
-        sp.init(n); bf.init(n);
-        sp.run(s, g); bf.run(s, g);
-        for (int i = 1; i <= n; i++) assert(sp.dist[i] == bf.dist[i]);
-        bfr.init(n); spr.init(n);
-        assert(!bfr.run(g) && !spr.run(g));
+        oracle.solve();
+        br.init(n); sr.init(n);
+        assert(br.run(g) == oracle.ring());
+        assert(sr.run(g) == oracle.ring());
+        assert(br.run(g) == oracle.ring() && sr.run(g) == oracle.ring()); // run 自带复位
+        for (int s = 1; s <= n; s++)
+        {
+            if (oracle.ring(s)) continue; // 普通最短路只要求源点可达部分无负环
+            sp.init(n); bf.init(n);
+            sp.run(s, g); bf.run(s, g);
+            if (nonnegative)
+            {
+                heap.init(n); dense.init(n);
+                heap.run(s, g); dense.run(s, g);
+            }
+            for (int v = 1; v <= n; v++)
+            {
+                LL expected = oracle.distance(VI{s}, v);
+                assert(sp.dist[v] == expected && bf.dist[v] == expected);
+                if (nonnegative) assert(heap.dist[v] == expected && dense.dist[v] == expected);
+                assert(sp.inq[v] == 0);
+            }
+        }
+        if (nonnegative)
+        {
+            VI sources;
+            if (tc % 4) sources = {n, 1, n, 1}; // 含重复, 单点图也有效
+            if (tc % 4 == 2) for (int i = 1; i <= n; i++) sources.push_back(i);
+            heap.init(n); heap.run(sources, g);
+            for (int v = 1; v <= n; v++) assert(heap.dist[v] == oracle.distance(sources, v));
+        }
     }
-    for (int tc = 0; tc < 200; tc++)   // 域 3: 混合权判环互拍
+}
+
+static void path_boundaries()
+{
+    Graph<true, LL> g(12, 30);
+    Dijkstra heap(12); DijkstraN dense(12); SPFA sp(12); BellmanFord bf(12);
+    BFRing br(12); SPFARing sr(12);
+    // 真距离 INF-1 不能误当不可达, 断连分量不应被访问
+    g.add(1, 2, INF - 3); g.add(2, 3, 2); g.add(4, 5, 100);
+    for (int rep = 0; rep < 3; rep++)
     {
-        int n = 2 + rng() % 20, m = rng() % 60;
-        Graph<true, LL> g{n, m};
-        for (int i = 0; i < m; i++)
-            g.add(1 + rng() % n, 1 + rng() % n, (LL)(rng() % 41) - 20);
-        bfr.init(n); spr.init(n);
-        assert(bfr.run(g) == spr.run(g));
+        heap.init(5); dense.init(5); sp.init(5); bf.init(5);
+        heap.run(1, g); dense.run(1, g); sp.run(1, g); bf.run(1, g);
+        for (const VLL* d : {&heap.dist, &dense.dist, &sp.dist, &bf.dist})
+        {
+            assert((*d)[1] == 0 && (*d)[2] == INF - 3 && (*d)[3] == INF - 1);
+            assert((*d)[4] == INF && (*d)[5] == INF);
+        }
     }
+    // 不可达负边不能从 INF 开始松弛
+    g.clear(); g.add(4, 5, -100);
+    sp.init(5); bf.init(5); sp.run(1, g); bf.run(1, g);
+    assert(sp.dist[5] == INF && bf.dist[5] == INF);
+    // 不可达负环: 普通最短路仍合法, 全图判环必须发现
+    g.clear(); g.add(1, 2, 7); g.add(4, 5, -3); g.add(5, 4, 2);
+    sp.init(5); bf.init(5); sp.run(1, g); bf.run(1, g);
+    assert(sp.dist[2] == 7 && bf.dist[2] == 7 && sp.dist[4] == INF && bf.dist[4] == INF);
+    br.init(5); sr.init(5); assert(br.run(g) && sr.run(g));
+    // 曾返回 true 后直接再跑同大小无边图, 队列/计数和距离都须干净
+    g.clear(); assert(!br.run(g) && !sr.run(g));
+    for (LL w : {LL(-1), LL(0), LL(1)})
     {
-        Graph<true, LL> g{4, 4};    // 定向: 环 1->2->3->1 总权 -3
-        g.add(1, 2, 1); g.add(2, 3, -5); g.add(3, 1, 1); g.add(3, 4, 2);
-        bfr.init(4); spr.init(4);
-        assert(bfr.run(g) && spr.run(g));
+        g.clear(); g.add(1, 1, w); br.init(1); sr.init(1);
+        assert(br.run(g) == (w < 0) && sr.run(g) == (w < 0));
     }
+    // 高绝对值的合法负路径, 结果无需落在 [-INF, INF) 的对称区间
+    g.clear(); g.add(1, 2, -4000000000000000000LL); g.add(2, 3, -4000000000000000000LL);
+    sp.init(3); bf.init(3); sp.run(1, g); bf.run(1, g);
+    assert(sp.dist[3] == -8000000000000000000LL && bf.dist[3] == sp.dist[3]);
+    br.init(3); sr.init(3); assert(!br.run(g) && !sr.run(g));
+    // 原 LL 工作距离会先溢出再判环, 12 点 / -1e18 自环为 UBSan 确定性反例
+    for (LL w : {-1000000000000000000LL, LLONG_MIN})
     {
-        Graph<true, LL> g{4, 4};    // 定向: 正环 + 悬挂负边, 无负环
-        g.add(1, 2, 5); g.add(2, 3, -1); g.add(1, 3, 3); g.add(3, 4, 0);
-        bfr.init(4); spr.init(4);
-        assert(!bfr.run(g) && !spr.run(g));
+        g.clear(); g.add(1, 1, w); br.init(12); sr.init(12);
+        assert(br.run(g) && sr.run(g));
+        g.clear(); g.add(1, 2, LLONG_MIN); g.add(2, 3, LLONG_MIN);
+        br.init(3); sr.init(3); assert(!br.run(g) && !sr.run(g));
+        assert(br.dist[3] == Wide(LLONG_MIN) * 2 && sr.dist[3] == br.dist[3]);
     }
+}
+
+struct CountPathGraph
+{
+    Graph<true, LL>& graph;
+    long long visits = 0;
+    struct Iter
+    {
+        Graph<true, LL>::Iter it;
+        long long* visits;
+        auto& operator*() { ++*visits; return *it; }
+        Iter& operator++() { ++it; return *this; }
+        bool operator!=(const Iter& rhs) const { return it != rhs.it; }
+    };
+    struct Adj
+    {
+        Graph<true, LL>::Adj adj;
+        long long* visits;
+        Iter begin() { return {adj.begin(), visits}; }
+        Iter end() { return {adj.end(), visits}; }
+    };
+    Adj operator[](int u) { return {graph[u], &visits}; }
+};
+
+static void path_scale()
+{
+    constexpr int N = 200000;
+    Graph<true, LL> g(N, 2 * N);
+    Dijkstra heap(N); SPFA sp(N); BellmanFord bf(N); BFRing br(N); SPFARing sr(N);
+    for (int n : {N, 1, 257, N})
+    {
+        // 长链与跨点边, 大-小-大复位, 零边权时保留零权环
+        for (LL w : {3LL, 0LL})
+        {
+            g.clear();
+            for (int i = 1; i + 2 <= n; i++) g.add(i, i + 2, 2 * w + 1);
+            for (int i = 1; i < n; i++) g.add(i, i + 1, w);
+            g.add(n, 1, 0);
+            heap.init(n); sp.init(n); bf.init(n); br.init(n); sr.init(n);
+            heap.run(1, g); sp.run(1, g); bf.run(1, g);
+            assert(!br.run(g) && !sr.run(g));
+            for (int i = 1; i <= n; i++)
+                assert(heap.dist[i] == (i - 1) * w && sp.dist[i] == (i - 1) * w && bf.dist[i] == (i - 1) * w);
+            heap.init(n); heap.run(VI{1, n, n}, g);
+            for (int i = 1; i <= n; i++) assert(heap.dist[i] == (i == n ? 0 : (i - 1) * w));
+        }
+        // 20 万点负链, 正向扫点可线性收敛; 测容量与算术, 不冒充 BF 最坏时间
+        g.clear();
+        for (int i = 1; i < n; i++) g.add(i, i + 1, -1000000000LL);
+        sp.init(n); bf.init(n); br.init(n); sr.init(n);
+        sp.run(1, g); bf.run(1, g);
+        assert(!br.run(g) && !sr.run(g));
+        for (int i = 1; i <= n; i++) assert(sp.dist[i] == -1000000000LL * (i - 1) && bf.dist[i] == sp.dist[i]);
+        // 星与孤点交替, 防旧源/旧距离渗入下一测
+        g.clear();
+        for (int i = 2; i <= n; i += 2) g.add(n, i, i == n ? 0 : i);
+        heap.init(n); heap.run(n, g);
+        for (int i = 1; i <= n; i++) assert(heap.dist[i] == (i == n ? 0 : (i % 2 == 0 ? LL(i) : INF)));
+    }
+    // 两点 20 万重边, 邻接顺序使每条边都产生更优堆项, 实测堆空间按 m 而非 n
+    g.clear();
+    for (int w = 1; w <= N; w++) g.add(1, 2, w);
+    heap.init(2); heap.run(1, g); assert(heap.dist[2] == 1);
+    CountPathGraph repeated{g};
+    heap.init(2); heap.run(VI(N, 1), repeated);
+    assert(heap.dist[2] == 1 && repeated.visits == N);
+    // 1800 点稠密图, 边权 |u-v|; 最短距离有闭式答案
+    constexpr int D = 1800;
+    g.clear();
+    for (int u = 1; u <= D; u++)
+        for (int v = u + 1; v <= D; v++) g.add(u, v, v - u);
+    DijkstraN dense(D);
+    dense.init(D); dense.run(1, g);
+    for (int i = 1; i <= D; i++) assert(dense.dist[i] == i - 1);
+    // 同为非负稀疏图, 邻接顺序先走跨点边会使普通 SPFA 反复入队
+    g.clear();
+    for (int i = 1; i < D; i++) g.add(i, i + 1, 3);
+    for (int i = 1; i + 2 <= D; i++) g.add(i, i + 2, 7);
+    CountPathGraph counted{g};
+    sp.init(D); sp.run(1, counted);
+    for (int i = 1; i <= D; i++) assert(sp.dist[i] == 3LL * (i - 1));
+    assert(counted.visits > LL(D) * D / 4);
+    cout << "[INFO] SPFA bad-order sparse graph: n=" << D << ", edge visits=" << counted.visits << '\n';
+    // 反编号链迫使 BF/全源 SPFA 扫描二次量级, 覆盖正确判定的 n-1/n 轮边界
+    for (int n : {D, 1, 257, D})
+    {
+        g.clear();
+        for (int i = n; i > 1; i--) g.add(i, i - 1, -1);
+        sp.init(n); bf.init(n); br.init(n); sr.init(n);
+        sp.run(n, g); bf.run(n, g);
+        assert(!br.run(g) && !sr.run(g));
+        for (int i = 1; i <= n; i++) assert(sp.dist[i] == i - n && bf.dist[i] == i - n);
+        if (n > 1)
+        {
+            g.add(1, n, n - 1); assert(!br.run(g) && !sr.run(g));
+            g.add(1, n, n - 2); assert(br.run(g) && sr.run(g));
+        }
+        g.clear();
+        for (int i = n; i > 1; i--) g.add(i, i - 1, 1);
+        dense.init(n); dense.run(n, g);
+        for (int i = 1; i <= n; i++) assert(dense.dist[i] == n - i);
+    }
+}
+
+static void test_shortest_path()
+{
+    small_paths<true, int>(); small_paths<true, LL>();
+    small_paths<false, int>(); small_paths<false, LL>();
+    path_boundaries(); path_scale();
+    cout << "[PASS] shortest paths: independent Floyd, 4800 graphs, all sources, 200000 scale, 1800 dense/degenerate\n";
 }
 
 // ============ 段 7: Graph 赋值语义 ============

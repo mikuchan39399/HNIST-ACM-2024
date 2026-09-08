@@ -29,6 +29,8 @@
 
 ## 如何补测试
 
+BigInt 和 rw 的原生套件分别用 `-Filter bigint`、`-Filter rw_check`；rw 被共享的 `misc_check` 引用，修改后还须跑 `-Filter misc`。
+
 先读 `rule.md` 第 9 节和 `rules/pitfalls.md`。每个新 bug 留一个确定性反例；同类接口再用独立暴力对拍，固定种子和操作顺序，以便复现。
 
 边界按契约选择：空态/单元素、全相等/全负值、合法数值上界、首尾与完整区间、容量恰好用满、大—小—大复位、历史版本分叉与回访、链/星/森林/重边。返回值哨兵与合法数据范围要分清，不拿越界输入制造伪 bug。
@@ -38,9 +40,23 @@
 `TEST GAP` 只表示没有直接 include 证据，include 过也不代表所有接口和边界都已验证。历史清扫与验证记录见 `rules/sweep-board.md`，不能替代本次运行报告。
 
 `seggraph_check` 无参数即执行独立 Floyd/可达性对拍、SCC 组装和 20 万点/操作及中继点压力,
-因此自动进入普通与 sanitizer CI, 不需要另加压力 profile。范围与数值限制见优化建图 README。
+因此自动进入普通与 sanitizer CI, 不需要另加压力 profile。范围与数值限制见优化建图源码契约与验证明细。
+
+`treegraph_check` 无参数执行 int/LL/Empty 各 400 组独立 BFS 路径展开和 Floyd/可达性对拍，核对所有原点及返回中继点。
+默认另验 5万-1-17-5万深链与每轮百万混合操作、20万点星/二叉/孤立森林、单原点20万中继、断连原子性与边数上界。
+深链使用闭式祖先提供者，随机森林和20万浅树使用真实 LCA，不改变原 LCA 的递归栈契约；套件自动进入普通与 sanitizer CI。
+
+`graph_check` 的最短路部分使用独立 i128 Floyd，int/LL × 有向/无向共 4800 图，逐合法源点核对四版距离与两版全图判环。默认覆盖重复/空多源、不可达负环、INF-1、LL 极值负环溢出反例、20 万容量与多测、1800 点稠密/逆链及普通 SPFA 反复入队。普通 SPFA 的 20 万点坏顺序反例曾触发 120 秒超时，默认用 1800 点同形态保留退化验证，不把友好规模通过宣称为最坏性能。
+
+`mst_check` 直接引用 Kruskal/Prim，两种权值各 800 图用全部边子集和独立重染色求最小森林。默认另验负自环、重边、断连、LL 极值、选边与原图不变、20 万点 Kruskal 链/星/森林和 2000 点完全图，含大-小-大重建。新套件与升级后的 graph_check 都被普通及 sanitizer CI 自动发现，无额外手动参数。
+
+`mint_check` 保留原 300 轮并默认加入 15 种模数各 350 轮、i128 最小负指数、constexpr 除法和双向比较。
+独立参照采用倍加模乘、高位扫描幂、Pascal 与埃氏筛加 Legendre；默认另验 20 万连续运算、20 万位输入及四种模数的 20万-0-1-257-20万表重建。
+运行 `./scripts/run_checks.ps1 -Filter mint_check` 即包含全部深测，普通与 sanitizer CI 自动发现，无需额外参数。合数模只测试少量大 k 查询，不承诺高频查询性能，见 [mint 验证](../records/verification/mint-20260907.md)。
 
 ## CI 与入口自检
+
+`check_verification_test.ps1` 自动验证分项范围隔离、摘要/JSON 排版不失效、源码/依赖/执行脚本变化、运行期间变化、旧证据处理、最新失败优先和语法/回归隔离；包含同套件两个模板的真实编译与生成表验收。既有普通 CI 已调用这个脚本，升级测试直接自动生效。维护这部分仍需本地 PS5.1/PS7 双版本验证，运行 `./scripts/check_verification_test.ps1`；状态解释见 [验证指南](../docs/verification/README.md#什么时候需要重验)。
 
 `python scripts/check_docs.py --self-test` 与 `python scripts/check_docs.py` 自动在普通 CI 执行。
 前者验证断链/孤页/错锚点等失败路径, 后者分别检查用户 README 与 AI AGENTS 对全部受管 Markdown 的可达性,
@@ -129,10 +145,56 @@ A/B/C 分别是带直接引用的 catalog 引擎、未发现直接引用的引�
 
 runner 自动记录源码与依赖指纹、环境和运行结果, 并生成 [口语概览](../docs/verification/status.md) 与 [AI 明细](../docs/verification/details.md). 只重新判断当前源码是否仍被旧结果覆盖时运行 `./scripts/make_verification.ps1`. 具体范围登记、CI 导入和状态规则见 [指南](../docs/verification/README.md). 原 reliability 表继续只负责静态资产关联.
 
+## 杂项底座深度验证
+
+`hash_check` 用 SipHash 作者的 CC0 参考代码核对 4-8 轮实现，参考路径先核对官方 64 个 2-4 向量。
+默认包含 4000 个随机密钥/字节用例、百万字节输入、20 万容器操作及构造性同桶夹具；
+计时只打印本机样本，桶阈值只检查固定用例，不能用有限随机实验声称密码安全或最坏常数复杂度。
+`tool_core_check` 验 utils/i128/Dcr/Misra-Gries，含 128 位完整上下界、20 万流输入、20 万离散化与小 k 主元素；
+`utils_local_check` 独立核对 LOCAL 调试文本，`rnd_check` 补所有整数类别、有限浮点极值与可复现引擎。
+这几份无参数套件均由普通/sanitizer CI 自动发现，原 misc 的组装回归保留。
+utils 与 i128 是公共依赖，改动后重跑受影响全体，不只跑新增用例；详细结果与哈希来源见 [专项记录](../records/verification/misc-20260908.md)。
+
+## 组合数学四件深度验证
+
+`./scripts/run_checks.ps1 -Filter comb_check` 直接运行循环法、杨辉三角、素数阶乘表和 Lucas 的真实源码。
+无参数默认用例含精确 u128 小组合数、整数因子约分、埃氏筛/Legendre、p 进单位阶乘等独立参照；
+大规模包括 20 万循环、2000 杨辉表、500 万阶乘表、20 万 Lucas 查询，以及换模数和大—小—大重建。
+Lucas 随机测试同时构造非零答案，避免只测到数位不合法的零结果；模 2 有专门回归。
+同套件重复 include 四份源码，防重名/守卫退化；由既有普通与 sanitizer CI 自动发现，无额外参数入口。
+四份 Usage 的本地编译、指定输入/空输入、展开恢复及旧错误反例另见 [专项证据](../records/verification/combinatorics-20260908.md)。
+
+## bigint 与 rw 深度验证
+
+`python scripts/check_bigint_rw.py --compiler g++ --report-dir .zoi-checks/codex-work/bigint-rw-depth` 使用 Python 3.8+ 标准库大整数提供独立答案；Linux 加 `--sanitize` 验 ASan/UBSan。脚本在指定目录编译、执行并保存带依赖 SHA-256 的 `summary.json`，失败或超时不报通过，原生套件的 runner 记录仍单独生成。
+
+固定种子 20260908，共 5663 组 Python 答案，含 40 块 Karatsuba 临界、除法商估计与规范化、正负号、平方数及前后邻值、十万位进借位/乘除/开方、不等长乘除、连续 Fibonacci 的 gcd/lcm、非负幂与 100000!。不是只用 BigInt 自身乘法验证自己的除法或开方。
+
+rw 原生套件含全部整数类型与 i128/u128 边界、bool、最大有限 double/负零/次正规数、超 4 MiB 浮点 token、六种 ASCII 空白、文本和百万整数逐字节比对。深测另用独立子进程验证退出析构刷写，并从两份源码提取原样 Usage，实际编译、核对正常输入及 EOF。
+
+既有普通/sanitizer runner 自动发现 `rw_check.cpp`；额外 Python 深测由 CI 的 `numeric-depth` 普通与 sanitizer 两个模式自动执行。专项报告从 [验证索引](../records/verification/README.md) 进入；学习状态与测试结果分别维护。
+
+## Trie 双件深度验证
+
+`./scripts/run_checks.ps1 -Filter trie` 运行普通/持久化 Trie 的两套默认测试，由既有普通及 sanitizer CI 自动发现。
+原有字符串、整数、区间和第 k 大随机暴力保留，新增五种字符集及六种位深的历史分叉，逐结点验证旧池不变。
+版本树路径独立沿 parent 枚举，字符串直接扫描快照，第 k 大展开小笛卡尔积排序。
+默认还跑 20 万长串三轮复用、20 万 HB30 版本两轮与大区间全扫描，28 亿多根中间计数及抵消、400 亿配对的第 k 大分界。
+容量套件覆盖 HB=0..63 的精确预算、根/哨兵区别、空串复制根与多测复用；契约外负数、非法字符、逐值为负的差集不当作合法输入。
+专项记录见 [Trie 报告](../records/verification/trie-20260908.md)，其中 1 MiB 栈对照是本地额外诊断，默认 CI 不主动修改栈限制。
+
+## 数论基础与两种筛
+
+`./scripts/run_checks.ps1 -Filter number` 自动运行 `number_boundary_check` 与 `number_sieve_check`，两套默认 main 均由既有普通/sanitizer CI 发现，无额外压力参数。
+两筛按千万—0—1—2—257—百万—千万重建；小表以试除核对，大表由独立 Sundaram 奇合数枚举逐点核验，并以唯一分解检查最小质因子。
+区间筛覆盖百万宽区间及约1e12的平方数前后，独立试除负责高坐标短区间。约数统计在1..20万逐点与倍数累加参照比对。
+取整除法覆盖20万组完整64位有符号随机值与全符号边界，参照提升i128；整数开方以整数二分验40万组级数据及LL上界。
+除零与LLONG_MIN/-1因结果无定义或超出返回类型不作为合法调用。莫比乌斯笔记未列入可运行验收；完整说明见[数论报告](../records/verification/number-theory-20260908.md)。
+
 ## 手册自动检查
 
 样例含七层嵌套目录；PDF 检查读取实际字号及位置，验证目录页和正文都逐层收敛、子级缩进正确且目录行不重叠。深目录也必须出现在目录页中，不能用截断深度掩盖样式问题。
 
-`./scripts/check_booklet.ps1` 在 PS 5.1/7 检查发现和 Markdown 转换，不要求 Typst；`-Render` 实际编译样例与 1200 行增长/奇数页场景。构建审计检查实现连同说明各占独立页段，PDF 检查逐项核对文件夹与源码的书签层级、纸面目录文本和起页。共 17 次构建包含新增/改名目录、纯空目录筛选、旧题记不再读取、同目录源码全部收录与逐实现起页、目录与唯一同名源码合用标题，以及行内/独立/表格公式、分式/上下标/求和/伸缩括号和代码中的美元符号，以及未知命令、错误分组、未闭合公式、原始 Typst 注入的拒绝路径。诊断放 `.zoi-checks/booklet-test-*`，按现有工作区清理约定管理。
+`./scripts/check_booklet.ps1` 在 PS 5.1/7 检查发现和 Markdown 转换，不要求 Typst；`-Render` 实际编译样例与 1200 行增长/奇数页场景。构建审计检查实现连同说明各占独立页段，PDF 检查逐项核对文件夹与源码的书签层级、纸面目录文本和起页。共 18 次构建包含新增/改名目录、纯空目录筛选、旧题记不再读取、同目录源码全部收录与逐实现起页、目录与唯一同名源码合用标题，README 主副标题、自动编号小节、公式标签、连续提示与 90 行长表跨栏，以及行内/独立/表格公式、分式/上下标/求和/伸缩括号和代码中的美元符号，以及未知命令、错误分组、未闭合公式、原始 Typst 注入的拒绝路径。诊断放 `.zoi-checks/booklet-test-*`，按现有工作区清理约定管理。
 
-`python scripts/check_booklet_pdf.py <PDF> [--root <样例库根>]` 需 pypdf，独立将完整 PDF 的目录清单与实际算法目录树对账，核对目录/说明标题、编号正文、数学字体、增长行序与 MIKU 页脚；构建另核对数学节点数量，视觉抽查负责确认符号含义与布局。CI booklet 作业每次自动完整生成并执行这些检查，成功附件是对应提交的手册；操作见 [手册指南](../docs/booklet/README.md)。
+`python scripts/check_booklet_pdf.py <PDF> [--root <样例库根>]` 需 pypdf，独立将完整 PDF 的目录清单与实际算法目录树对账，核对目录/说明标题、编号正文、数学字体、增长行序与 MIKU 页脚。对样例 PDF 另读取实际绘制的主副标题、小节、公式标签和提示字号，核对字面量保留，并自动检查同目录 `long-manual.pdf` 的 90 行顺序和跨栏/页重复表头；构建另核对数学节点数量，视觉抽查负责确认符号含义与布局。CI booklet 作业每次自动完整生成并执行这些检查，成功附件是对应提交的手册；操作见 [手册指南](../docs/booklet/README.md)。

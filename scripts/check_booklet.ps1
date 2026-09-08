@@ -36,9 +36,13 @@ Put ('algorithms/domain/'+$pluginFolder+'/solution.cpp') 'int main() { return 0;
 $manual=@'
 # SHARED_MANUAL
 
+> `TreeCenter<G>` SUBTITLE_KEEP
+
 Paragraph **BOLD_KEEP** and `CODE_KEEP`, [LINK_KEEP](<a.cpp>) #not-code $ [ ] \.
 
 Inline $x_i^2+1$ MATH_INLINE_KEEP; code `$literal$`.
+
+**FORMULA_CAPTION_KEEP**
 
 $$\sum_{i=1}^{n}i=\frac{n(n+1)}{2}$$
 
@@ -53,6 +57,13 @@ MATH_DISPLAY_KEEP
 1. NUMBERED_ONE_KEEP
 2. NUMBERED_TWO_KEEP
 - BULLET_KEEP
+
+### SUBHEADING_KEEP
+
+> **NOTE_LABEL_KEEP** NOTE_BODY_KEEP
+> NOTE_CONTINUATION_KEEP #read("private") <not-a-label>
+
+## SECOND_SECTION_KEEP
 
 | Column | Meaning |
 |---|---|
@@ -94,15 +105,26 @@ Assert ($s.IndexOf('SOURCE_B') -lt $s.IndexOf('// manual: ') -and $s.IndexOf('//
 Assert (-not $s.Contains('MUST_NOT_PRINT')) 'Ancestor, descendant or roadmap leaked into booklet'
 Assert ($s.Contains('PLUGIN_KEEP')) 'Commented Usage main hid a real plugin'
 Assert ($s.Contains('#include \"c.h\"')) 'Filtered include map confused equal basenames'
-foreach ($marker in @('BOLD_KEEP','CODE_KEEP','LINK_KEEP','NUMBERED_ONE_KEEP','NUMBERED_TWO_KEEP','BULLET_KEEP','TABLE_KEEP','SECOND_ROW_KEEP','FENCED_KEEP','LAST_MANUAL_KEEP')) {
+foreach ($marker in @('BOLD_KEEP','CODE_KEEP','LINK_KEEP','NUMBERED_ONE_KEEP','NUMBERED_TWO_KEEP','BULLET_KEEP','TABLE_KEEP','SECOND_ROW_KEEP','FENCED_KEEP','LAST_MANUAL_KEEP','TreeCenter<G>','SUBTITLE_KEEP','FORMULA_CAPTION_KEEP','SUBHEADING_KEEP','NOTE_LABEL_KEEP','NOTE_BODY_KEEP','NOTE_CONTINUATION_KEEP','<not-a-label>','SECOND_SECTION_KEEP')) {
     Assert ($s.Contains($marker)) ('Markdown content lost: '+$marker)
 }
 Assert ($s.Contains('#table(') -and $s.Contains('#strong[')) 'Markdown formatting not rendered'
+Assert ($s.Contains('size: 12pt, weight: "bold", fill: manual-ink') -and $s.Contains('size: 6.6pt, fill: luma(90)')) 'Manual title/subtitle hierarchy lost'
+Assert ($s.Contains('luma(135), "01"') -and $s.Contains('luma(135), "02"') -and $s.Contains('size: 7.5pt, weight: "bold", fill: manual-ink')) 'Section numbering/subheading lost'
+Assert ($s.Contains('size: 6.2pt, fill: luma(90)') -and $s.Contains('left: none, right: none, top: none, bottom: 0.3pt')) 'Formula captions/table rules lost'
+Assert ($s.Contains('#enum(start: 1,') -and $s.Contains('#list(indent: 7pt,') -and $s.Contains('#text("NUMBERED_TWO_KEEP")')) 'Hanging lists lost items or numbering'
+Assert ($s.Contains('#text(" NOTE_BODY_KEEP")') -and $s.Contains('#text("NOTE_CONTINUATION_KEEP #read(\"private\") <not-a-label>")')) 'Note continuation interpreted as markup or dropped'
 Assert ($s.Contains('frac(') -and $s.Contains('lr(ceil.l') -and $s.Contains('sum _(i = 1) ^(n)') -and $s.Contains('"$literal$"')) 'Math structure or code isolation broken'
 Assert ($s.Contains('// directory: algorithms/domain/empty') -and $s.Contains('// directory: algorithms/domain/family/nested')) 'Empty/nested directory was omitted'
 Assert (-not $s.Contains('outlined: false, "a"') -and $s.Contains('// entry: algorithms/domain/family/a.cpp') -and $s.Contains('// entry: algorithms/domain/family/b.cpp')) 'Sibling sources were hidden from contents'
 Assert ($s.IndexOf('#pagebreak(weak: true)', $s.IndexOf('SOURCE_A')) -lt $s.IndexOf('SOURCE_B')) 'Sibling entries lost independent page starts'
 Write-Host '[PASS] adjacent discovery / shared once after siblings / roadmap exclusion / Markdown content and structure'
+# Long descriptions must flow across columns/pages, without a giant unbreakable box.
+$longManual=$manual+"`n`n## LONG_SECTION_KEEP`n`n| Long key | Long value |`n|---|---|`n"+((1..90 | ForEach-Object { '| ROW_'+$_+' | Long table text that wraps inside narrow booklet columns without dropping content. |' }) -join "`n")
+Put 'algorithms/domain/family/README.md' $longManual
+$long=Build 'b' 0 0 'out/long-manual.pdf'
+Assert ($long.Contains('ROW_90') -and $long.Contains('table.header(')) 'Long manual table truncated or lost repeating header'
+Put 'algorithms/domain/family/README.md' $manual
 $s=Build 'b'
 Assert ($s.Contains('SOURCE_B') -and -not $s.Contains('SOURCE_A') -and $s.Contains('SHARED_MANUAL')) 'Filtered sibling lost its manual'
 $s=Build 'empty'

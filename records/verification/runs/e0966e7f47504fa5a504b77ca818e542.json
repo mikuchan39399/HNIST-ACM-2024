@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "id": "e0966e7f47504fa5a504b77ca818e542",
+  "startedUtc": "2026-09-08T05:08:26.3228226Z",
+  "finishedUtc": "2026-09-08T05:08:32.1674446Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/bigint-rw/runner-misc",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "b424f01ece86cef1a11042cedcec0a07eec88e0b46237450c31df5863fa6dd48",
+      "files": [
+        {
+          "path": "algorithms/数据结构/单调栈/monoStack.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数据结构/单调栈/单调栈.cpp",
+          "hash": "afe5bf6f3515ba6cceb3ea126cf8f6cadcaae99d913fe16333aee9e1b718de01"
+        },
+        {
+          "path": "algorithms/数据结构/单调队列/monoQueue.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数据结构/单调队列/单调队列.cpp",
+          "hash": "f0901fe2b1301df5d76fa2ee98c94ec5a228d052161b7a51e8fbdf0f6453a519"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f823c0a9901e40e5a2847b810dff9fee7f505153cc2037d2d504d3e29dec6758"
+        },
+        {
+          "path": "algorithms/杂项/对拍/misc_check.cpp",
+          "hash": "cbeaef66eec6c810d75676f357878a7b17781a342e73265fa8c874b766a4ce50"
+        },
+        {
+          "path": "algorithms/杂项/快读快写/zoi/rw.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/快读快写/快读快写.cpp",
+          "hash": "f01aa5aab92b105222e33aed286e9a9ca677cd2b9f3652dbdf38b09d6fd43b09"
+        },
+        {
+          "path": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "dbe48812c15a3ad8637723c8e3316c711a8036313462e778578cac26925ef08c"
+        },
+        {
+          "path": "algorithms/杂项/防卡/哈希防卡.cpp",
+          "hash": "ead95a622d79e4d09371c8f26cc6e42f6e37e1278d42a9c2ad0428343202ad74"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "8162d0d0d5ab02f4eaf0f2ee6c20aadb095b1c294f94b36f1df047a1839c573b"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "d06c472762e4c11e623289e941afb0ab3abfcd11c2cc677d00374a9038003263"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/单调栈/单调栈.cpp",
+          "hash": "cceebf172e6b56cac7f88e96c6332b47154561cbf8ee63cd8693ffa377b7ecb2",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/单调队列/单调队列.cpp",
+          "hash": "dd49b8905d994705f86f3e2271b80eccf58343917755b3ac5ac13bc3e5e97ad3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/快读快写/快读快写.cpp",
+          "hash": "91a943f97197a365b93c6cdb8cdfcd3a90c6e528b57bbea5eb4b77e6217f60da",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/misc_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.4
+    }
+  ]
+}
