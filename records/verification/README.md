@@ -10,6 +10,7 @@ runs 中的 JSON 由 run_checks.ps1 自动写入, 每轮独立记录, 不手工�
 
 | 范围 | 报告 |
 |---|---|
+| CI 图论专项入口失败 | [名称遮蔽、Usage 误识别与完整 profile 复验](ci-stress-20260908.md) |
 | 目录同步与 utils 数值工具合并 | [全库回归、Linux sanitizer 与双版 PowerShell](../tooling/layout-20260908.md) |
 | 数论两筛与现役四件 | [千万筛表、独立参照与整数边界](number-theory-20260908.md) |
 | Trie 双件 | [历史分叉、20万规模、长串栈与大计数](trie-20260908.md) |

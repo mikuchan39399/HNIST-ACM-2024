@@ -100,7 +100,7 @@ NAME 为 `lca-vt` 或 `completed-graph`, 无需另行手动触发。`lca-vt` (�
 - 两份 LCA 与两份虚树四种组合, 百万点星/二叉/随机树/链块森林, 必须通过
 - 百万点深链在测试子进程 256 MiB 栈下执行, 必须通过
 - 两份 LCA 各自用 ASan/UBSan 在 8 MiB 栈下探测 20 万点链; 正常完成记 PASS, 只有退出码 1 且明确诊断 `ERROR: AddressSanitizer: stack-overflow` 才记 STACK_LIMIT。超时、普通段错误、断言失败、其他内存错误及 UB 仍判失败
-- `--self-test` 检查失败分类, 并实际制造非零退出和超时; CI 先自检再跑压力
+- `--self-test` 检查失败分类、非零退出和超时，并走两种 profile 的真实参数解析/源码定位/快照/报告路径；依赖快照忽略 Usage、注释和 raw string 中的示例，真实依赖缺失仍失败。CI 先自检再跑完整压力
 
 报告 `.ci-results/stress-lca-vt/summary.json` 记录每项命令、编译参数、栈限制、退出码、状态和源码/依赖哈希, stdout/stderr 单列, 随 `stress-*` artifact 上传。STACK_LIMIT 是已记录的环境限制, 不表示该深链用例通过; 小规模/20 万点默认套件继续在普通及 sanitizer 作业中自动执行。
 

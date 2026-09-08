@@ -12,10 +12,11 @@ import sys
 import tempfile
 import time
 import unittest
-from source_lookup import suite
+from unittest import mock
+from source_lookup import suite as find_suite
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE = suite(ROOT, 'lca_vt_stress_check.cpp')
+SOURCE = find_suite(ROOT, 'lca_vt_stress_check.cpp')
 
 
 def classify(code, output, timed_out=False, probe=False, success_marker="lca_vt_stress_check passed"):
@@ -42,7 +43,13 @@ def snapshot(source=SOURCE):
         body = path.read_text(encoding="utf-8").replace("\r\n", "\n")
         files[name] = hashlib.sha256(body.encode("utf-8")).hexdigest()
         if path.suffix in (".cpp", ".h", ".hpp"):
-            for inc in re.findall(r'^\s*#\s*include\s+"([^"]+)"', body, re.M):
+            # Preserve offsets/newlines and quoted operands, but ignore Usage,
+            # commented directives and raw-string examples. Conditional branches
+            # both remain dependencies; missing real includes must still fail.
+            pattern = r'''R"(?P<delimiter>[^ ()\\\t\r\n]{0,16})\(.*?\)(?P=delimiter)"|"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'|/\*.*?\*/|//[^\r\n]*'''
+            code = re.sub(pattern, lambda m: re.sub(r'[^\r\n]', ' ', m[0])
+                          if m[0].startswith(('/', 'R"')) else m[0], body, flags=re.S)
+            for inc in re.findall(r'^\s*#\s*include\s+"([^"]+)"', code, re.M):
                 pending.append(path.parent / inc)
     return dict(sorted(files.items()))
 
@@ -82,6 +89,43 @@ def run_case(name, argv, report, seconds, stack_kib=None, probe=False, compile_o
 
 
 class FailureTests(unittest.TestCase):
+    def test_snapshot_real_dependencies_and_examples(self):
+        with tempfile.TemporaryDirectory(dir=ROOT / ".zoi-checks") as tmp:
+            folder = Path(tmp)
+            source, dependency = folder / "source.cpp", folder / "real.hpp"
+            dependency.write_text("// real dependency\n", encoding="utf-8")
+            source.write_text('#include "real.hpp"\n/* Usage\n#include "missing-usage.h"\n*/\n'
+                              '// #include "missing-comment.h"\n'
+                              'const char* sample = R"demo(\n#include "missing-raw.h"\n)demo";\n', encoding="utf-8")
+            relative = source.relative_to(ROOT).as_posix()
+            before = snapshot(relative)
+            self.assertIn(dependency.relative_to(ROOT).as_posix(), before)
+            self.assertFalse(any("missing-" in name for name in before))
+            dependency.write_text("// changed real dependency\n", encoding="utf-8")
+            self.assertNotEqual(before, snapshot(relative))
+            source.write_text('#include "missing-real.hpp"\n', encoding="utf-8")
+            with self.assertRaises(FileNotFoundError):
+                snapshot(relative)
+
+    def test_both_profile_entry_points_reach_compilation(self):
+        # Execute real main()/source discovery/snapshot/report writing; replace
+        # only compiler execution. A failed compile must propagate to the gate.
+        for profile, filename in (("lca-vt", "lca_vt_stress_check.cpp"),
+                                  ("completed-graph", "completed_graph_stress_check.cpp")):
+            with self.subTest(profile=profile), tempfile.TemporaryDirectory(dir=ROOT / ".zoi-checks") as tmp:
+                argv = [__file__, "--profile", profile, "--report-dir", tmp]
+                with mock.patch.object(sys, "argv", argv), \
+                     mock.patch.object(subprocess, "check_output", return_value="fixture compiler\n"), \
+                     mock.patch(__name__ + ".run_case", return_value={"status": "FAIL"}) as runner:
+                    self.assertEqual(main(), 1)
+                self.assertEqual(runner.call_count, 2)
+                for call in runner.call_args_list:
+                    self.assertIn(find_suite(ROOT, filename), call[0][1])
+                result = json.loads((Path(tmp) / "summary.json").read_text(encoding="utf-8"))
+                self.assertEqual(result["profile"], profile)
+                self.assertTrue(result["stable"])
+                self.assertTrue(result["failed"])
+
     def test_classification(self):
         self.assertEqual(classify(0, "lca_vt_stress_check passed"), "PASS")
         self.assertEqual(classify(0, ""), "FAIL")
@@ -124,7 +168,7 @@ def main():
     report = (ROOT / (args.report_dir or (".ci-results/stress-" + args.profile))).resolve()
     report.mkdir(parents=True, exist_ok=True)
     completed = args.profile == "completed-graph"
-    source = suite(ROOT, 'completed_graph_stress_check.cpp') if completed else SOURCE
+    source = find_suite(ROOT, 'completed_graph_stress_check.cpp') if completed else SOURCE
     marker = "completed_graph_stress_check passed" if completed else "lca_vt_stress_check passed"
     size = "200000" if completed else "1000000"
     before = snapshot(source)
