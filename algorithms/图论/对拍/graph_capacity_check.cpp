@@ -51,19 +51,19 @@ void paths_and_mst()
     {
         int n = points(tc);
         star(g, n);
-        heap.init(n); dense.init(n); spfa.init(n); bf.init(n); sr.init(n); br.init(n);
-        heap.run(1, g); dense.run(1, g); spfa.run(1, g); bf.run(1, g);
+
+        heap.run(1, g, n); dense.run(1, g, n); spfa.run(1, g, n); bf.run(1, g, n);
         for (int u = 1; u <= n; u++)
         {
             LL want = u == 1 ? 0 : 1;
             assert(heap.dist[u] == want && dense.dist[u] == want);
             assert(spfa.dist[u] == want && bf.dist[u] == want);
         }
-        assert(!sr.run(g) && !br.run(g));
+        assert(!sr.run(g, n) && !br.run(g, n));
         assert(kr.build(g, n) && pr.build(g, n));
         assert(kr.weight == n - 1 && pr.weight == n - 1);
         g.add(1, 1, -1);
-        assert(sr.run(g) && br.run(g));
+        assert(sr.run(g, n) && br.run(g, n));
         assert(heap.dist[CAP] == MARK && dense.dist[CAP] == MARK);
         assert(spfa.dist[CAP] == MARK && bf.dist[CAP] == MARK);
         assert(sr.dist[CAP] == MARK && br.dist[CAP] == MARK);
@@ -86,15 +86,15 @@ void connectivity()
             dg.add(1, u);
             if (tc % 2) dg.add(u, 1);
         }
-        s.init(n); s.build(dg, n); s.build_dag_unique(dg);
+        s.build(dg, n); s.build_dag_unique(dg);
         assert(s.scc_cnt == (tc % 2 ? 1 : n));
         assert(topo.build(dg, n) == (tc % 2 == 0 || n == 1));
         assert(topo.in.size() == (size_t)n + 1);
-        e.init(n); e.build(ug, n); e.build_tree(ug);
+        e.build(ug, n); e.build_tree(ug);
         assert(e.ebcc_cnt == n && e.tree.edge_cnt() == n - 1);
         assert((int)e.get_bridges(ug).size() == n - 1);
-        v.init(n); v.build(ug, n); v.build_tree();
-        b.init(n); b.build(ug, n); b.build_tree();
+        v.build(ug, n); v.build_tree();
+        b.build(ug, n); b.build_tree();
         assert(v.vbcc_cnt == max(1, n - 1) && b.vbcc_cnt == v.vbcc_cnt);
         assert(v.cut[1] == (n > 2) && b.cut[1] == (n > 2));
         assert(v.tree.edge_cnt() == (n == 1 ? 1 : 2 * (n - 1)));
@@ -116,7 +116,7 @@ void trees()
     {
         int n = points(tc);
         star(g, n);
-        l.init(n); l.build(g); hl.init(n); hl.build(g); h.init(n); h.build(g);
+        l.build(g, n); hl.build(g, n, -1); h.build(g, n, -1);
         for (int u = 1; u <= n; u++)
         {
             assert(l.lca(1, u) == 1 && hl.lca(1, u) == 1);
@@ -146,7 +146,7 @@ void compressed_graphs()
     for (int tc = 0; tc < ROUNDS; tc++)
     {
         int n = points(tc);
-        star(tree, n); l.init(n); l.build(tree);
+        star(tree, n); l.build(tree, n);
         sg.build(n); tg.build(l, n);
         assert(sg.tot == 3 * n - 2);
         assert(tg.tot == 3 * n - 2); // 星形树只有长度 2 的非平凡倍增段

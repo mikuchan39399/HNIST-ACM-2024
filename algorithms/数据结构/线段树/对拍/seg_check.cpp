@@ -85,7 +85,7 @@ struct InfoC
 void test_seg_tree()
 {
     mt19937 rng(1926);
-    // 模式 A+B: 区间加/单点/查询/二分, static 实例跨组 init 复用
+    // 模式 A+B: 区间加/单点/查询/二分, static 实例跨组 build 复用
     static SegTree<InfoS, TagS> seg(70);
     for (int tc = 0; tc < 300; tc++)
     {
@@ -98,7 +98,6 @@ void test_seg_tree()
             a[i] = {1, v, v};
             ref[i] = v;
         }
-        seg.init(n);
         seg.build(a);
         for (int t = 0, ops = 100; t < ops; t++)
         {
@@ -167,7 +166,6 @@ void test_seg_tree()
             a[i] = {1, v, v};
             ref[i] = v;
         }
-        seg.init(n);
         seg.build(a);
         for (int t = 0, ops = 60; t < ops; t++)
         {
@@ -182,7 +180,7 @@ void test_seg_tree()
             }
             else if (op == 1)
             {
-                seg.modify(l, r, {0, false});      // 空标记 no-op
+                seg.modify(l, r, {0, false}); // 空标记 no-op
             }
             else
             {
@@ -309,7 +307,7 @@ void test_dy_seg_tree()
                 else
                 {
                     l = 1;
-                    r = far[rng() % 5];   // 全窗 + 大段虚点
+                    r = far[rng() % 5]; // 全窗 + 大段虚点
                 }
                 LL sm = 0, m;
                 if (r <= 200)
@@ -324,7 +322,7 @@ void test_dy_seg_tree()
                 }
                 else
                 {
-                    m = 0;   // 范围含海量未触碰位(值 0)
+                    m = 0; // 范围含海量未触碰位(值 0)
                     for (auto& [k, v] : mp)
                     {
                         if (k >= l && k <= r)
@@ -369,7 +367,7 @@ void test_st_table()
         for (int j = 1; j <= n; j++) a[j] = (LL)(rng() % 201) - 100;
         for (int mode = 0; mode < 2; mode++)
         {
-            ST st(1);              // 故意开小, 验自动扩容
+            ST st(1); // 故意开小, 验自动扩容
             st.build(a, mode == 0);
             int q = 30;
             while (q--)
@@ -491,7 +489,7 @@ void test_advanced()
         vector<LL> a(n+1);
         vector<InfoA> info(n+1);
         for(int i=1;i<=n;i++) { a[i]=(int)(rng()%101)-50; info[i]={1,a[i],a[i],a[i]}; }
-        fixed.init(n); fixed.build(info);
+        fixed.build(info);
         affine_case(fixed,a,rng);
         DySegTree<InfoA,TagA> dyn(n,2*n-1);
         if(tc%2) dyn.build(info); else fill(a.begin(),a.end(),0);
@@ -563,7 +561,7 @@ void test_target_scale()
     }
     for(int m:{1,2,65537,n})
     {
-        s.init(m); a.assign(m+1,{});
+        a.assign(m+1,{});
         for(int i=1;i<=m;i++) a[i]={1,i,i};
         s.build(a); s.modify(1,m,{-1000000000000LL});
         for(int q=0;q<25000;q++)

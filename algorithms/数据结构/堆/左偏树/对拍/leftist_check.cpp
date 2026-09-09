@@ -279,7 +279,7 @@ static void persistent_test(mt19937& rng)
     static PersistentLeftist<LL, less<LL>> pl(2000000);
     for (int tc = 0; tc < 300; tc++)
     {
-        pl.init();
+        pl.clear();
         vector<int> rts{0};
         vector<multiset<LL>> snaps(1);
         for (int op = 0, ops = 120; op < ops; op++)
@@ -394,7 +394,7 @@ void persistent_large()
     PersistentLeftist<LL,Cmp> t(8000000);
     for (int shape = 0; shape < 3; ++shape)
     {
-        t.init();
+        t.clear();
         VI roots(N+1);
         LL sign = Max ? -1 : 1;
         for (int i = 1; i <= N; ++i)
@@ -426,7 +426,7 @@ void persistent_sharing()
     mt19937 rng(42);
     for (int tc = 0; tc < 300; ++tc)
     {
-        t.init();
+        t.clear();
         VI roots{0};
         vector<multiset<LL>> ref(1);
         for (int i = 0; i < 60; ++i)
@@ -462,7 +462,7 @@ void persistent_sharing()
         }
     }
     // merge_raw 只用于独占且互不重叠的新堆, 不与共享版本混用
-    t.init();
+    t.clear();
     int a=t.new_node(4,40), b=t.new_node(-2,20);
     int raw=t.merge_raw(a,b);
     assert(t.top(raw)==-2 && t.top_pay(raw)==20 && t.sum(raw)==2 && t.size(raw)==2);
@@ -510,7 +510,7 @@ void reset_and_payload()
     LeftistTree<LL,greater<LL>> t(3,2);
     for(int tc=0;tc<300;++tc)
     {
-        p.init();
+        p.clear();
         int r=p.new_node(-1000000000000LL,{1,99});
         assert(p.top_pay(r).stamp==99);
         r=p.insert(r,1000000000000LL,{2,88});
@@ -530,8 +530,8 @@ void reset_and_payload()
         assert(t.tot==3 && t.get_val(1)==-2 && t.get_size(1)==1);
     }
     PersistentLeftist<> one(1);
-    for(int i=0;i<300;++i) { one.init(); assert(one.new_node(i)==1); assert(one.pop(1)==0); }
-    p.init();
+    for(int i=0;i<300;++i) { one.clear(); assert(one.new_node(i)==1); assert(one.pop(1)==0); }
+    p.clear();
     int r=p.new_node(1);
     for(int i=0;i<30;++i) r=p.merge(r,r);
     assert(p.size(r)==(1<<30) && p.sum(r)==(1LL<<30));

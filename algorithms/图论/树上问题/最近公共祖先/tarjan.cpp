@@ -1,6 +1,7 @@
 // zoi: tarjanLca
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 using VI = vector<int>;
@@ -9,12 +10,12 @@ struct TarjanLCA
 {
     int n, m;
     int edge_cnt, q_cnt;
-    
+
     // 树边前向星
     VI head;
     VI to;
     VI nxt;
-    
+
     // 询问前向星
     VI q_head;
     VI q_to;
@@ -43,7 +44,7 @@ struct TarjanLCA
         m = _m;
         edge_cnt = 0;
         q_cnt = 0;
-        
+
         for (int i = 1; i <= n; i++)
         {
             head[i] = 0;
@@ -70,8 +71,13 @@ struct TarjanLCA
         q_head[u] = q_cnt;
     }
 
+    // 保留已添加树边和询问, 自动复位并查集与访问状态后重算答案
+    // 时间 O((n+m) alpha(n)) | 递归栈 O(h), 查询两点须属于同一棵树
     void build()
     {
+        fill(vis.begin(), vis.begin() + n + 1, 0);
+        fill(ans.begin(), ans.begin() + m + 1, 0);
+        for (int i = 1; i <= n; i++) fa[i] = i;
         for (int i = 1; i <= n; i++)
         {
             if (!vis[i])
@@ -83,7 +89,7 @@ struct TarjanLCA
 private:
     int find(int x)
     {
-        if (fa[x] == x) 
+        if (fa[x] == x)
         {
             return x;
         }
@@ -96,14 +102,14 @@ private:
         for (int i = head[u]; i; i = nxt[i])
         {
             int v = to[i];
-            if (vis[v]) 
+            if (vis[v])
             {
                 continue;
             }
             tarjan(v);
             fa[v] = u;
         }
-        
+
         for (int i = q_head[u]; i; i = q_nxt[i])
         {
             int v = q_to[i];
@@ -115,33 +121,34 @@ private:
     }
 };
 
-/* 
+/*
 void solve()
 {
-    int n, m, root; 
-    cin >> n >> m >> root;
-    
+    int n, m;
+    cin >> n >> m;
+
     // 显式传入 2 * m
     TarjanLCA lca(n, 2 * m);
-    
+
     for (int i = 1; i < n; i++)
     {
-        int u, v; 
+        int u, v;
         cin >> u >> v;
         lca.add_edge(u, v);
         lca.add_edge(v, u);
     }
-    
+
     for (int i = 1; i <= m; i++)
     {
-        int u, v; 
+        int u, v;
         cin >> u >> v;
         lca.add_query(u, v, i);
         lca.add_query(v, u, i);
     }
-    
-    lca.build();
-    
+
+    lca.build(); // 自动清计算状态, 保留刚添加的边和询问
+    lca.build(); // 可以重复计算同一批输入
+
     for (int i = 1; i <= m; i++)
     {
         cout << lca.ans[i] << '\n';

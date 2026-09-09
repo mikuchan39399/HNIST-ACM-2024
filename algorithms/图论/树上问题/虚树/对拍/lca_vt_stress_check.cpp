@@ -101,11 +101,11 @@ struct Check
     void build(const Ref& r, int hld_root = -1)
     {
         g.clear();
-        dfn.init(r.n);
-        hld.init(r.n);
+
+
         for (int u = 1; u <= r.n; u++) if (r.par[u]) g.add(u, r.par[u], r.pw[u]);
-        dfn.build(g);
-        hld.build(g, hld_root);
+        dfn.build(g, r.n);
+        hld.build(g, r.n, hld_root);
     }
     template <class L>
     void members(L& l, const Ref& r)
@@ -222,8 +222,8 @@ static void small()
         {
             int root = 1 + rng() % n;
             Ref rr = reroot(r, root);
-            c.hld.init(n);
-            c.hld.build(c.g, root);
+
+            c.hld.build(c.g, n, root);
             c.members(c.hld, rr);
             for (int u = 1; u <= n; u++) for (int v = 1; v <= n; v++)
             {
@@ -250,8 +250,8 @@ static void small()
         c.virtuals(c.hld, r, {3, 2, 3}, 2);
     }
     c.g.clear();
-    c.dfn.init(0); c.hld.init(0);
-    c.dfn.build(c.g); c.hld.build(c.g);
+
+    c.dfn.build(c.g, 0); c.hld.build(c.g, 0, -1);
     assert(c.dfn.idx == 0 && c.hld.dfn_idx == 0);
     assert(c.dfn.lca(VI{}) == -1 && c.hld.lca(VI{}) == -1);
     cout << "small: 400 weighted forests, all pairs, four combinations, HLD reroot and LL boundaries passed" << endl;
@@ -321,12 +321,12 @@ int main(int argc, char** argv)
             cerr << "probe " << mode << " n=" << n << endl;
             if (mode == "--probe-dfn")
             {
-                LCA l(n); l.build(g);
+                LCA l(n); l.build(g, n);
                 assert(l.lca(max(1, n / 2), n) == max(1, n / 2));
             }
             else
             {
-                HLD_LCA l(n); l.build(g);
+                HLD_LCA l(n); l.build(g, n, -1);
                 assert(l.lca(max(1, n / 2), n) == max(1, n / 2));
             }
             cout << "probe passed" << endl;

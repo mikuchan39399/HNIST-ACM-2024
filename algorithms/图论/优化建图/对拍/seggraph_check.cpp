@@ -20,7 +20,7 @@ void test_seg_graph()
 {
     mt19937 rng(786786);
     static SegGraph<LL> sg{61, 4000};
-    static SegGraph<Empty> se{61, 4000};   // 无权实例(偏序用法), 同拓扑互拍
+    static SegGraph<Empty> se{61, 4000}; // 无权实例(偏序用法), 同拓扑互拍
     static Dijkstra d1{254};
     static Dijkstra d2{41};
     static Graph<true, LL> gn{41, 200000};
@@ -90,14 +90,14 @@ void test_seg_graph()
                 for (int j = l2; j <= r2; j++) gn.add(u, j, w + w2);
             }
         }
-        assert(se.tot == sg.tot && se.g.edge_cnt() == sg.g.edge_cnt());   // Empty 与 LL 同拓扑
+        assert(se.tot == sg.tot && se.g.edge_cnt() == sg.g.edge_cnt()); // Empty 与 LL 同拓扑
         int s = 1 + rng() % n;
-        d1.init(sg.tot);
-        d1.run(s, sg.g);
-        d2.init(n);
-        d2.run(s, gn);
+
+        d1.run(s, sg.g, sg.tot);
+
+        d2.run(s, gn, n);
         for (int i = 1; i <= n; i++)
-            assert(d1.dist[i] == d2.dist[i]);   // 原点最短路逐点互拍
+            assert(d1.dist[i] == d2.dist[i]); // 原点最短路逐点互拍
     }
 }
 
@@ -163,10 +163,10 @@ void test_independent_small()
         int k = id.size() - 1;
         for (int mid = 1; mid <= k; mid++) for (int u = 1; u <= k; u++) for (int v = 1; v <= k; v++)
             if (d[u][mid] != INF && d[mid][v] != INF) d[u][v] = min(d[u][v], d[u][mid] + d[mid][v]);
-        scc.init(sg.tot); scc.build(sg.g, sg.tot);
+        scc.build(sg.g, sg.tot);
         for (int u = 1; u <= k; u++)
         {
-            dij.init(sg.tot); dij.run(id[u], sg.g);
+            dij.run(id[u], sg.g, sg.tot);
             VI seen(se.tot + 1), que{id[u]}; seen[id[u]] = 1;
             for (size_t i = 0; i < que.size(); i++) for (auto& e : se.g[que[i]])
                 if (!seen[e.v]) { seen[e.v] = 1; que.push_back(e.v); }
@@ -180,7 +180,7 @@ void test_independent_small()
     }
     sg.build(3);
     sg.add_p2r(1, 2, 2, INF - 2); sg.add_r2p(2, 2, 3, 1);
-    dij.init(sg.tot); dij.run(1, sg.g);
+    dij.run(1, sg.g, sg.tot);
     assert(dij.dist[2] == INF - 2 && dij.dist[3] == INF - 1);
 }
 
@@ -195,13 +195,13 @@ void test_large()
         sg.build(n);
         assert(sg.tot == 3 * n - 2 && sg.g.edge_cnt() == 4 * n - 4);
         for (int i = 0; i < cap; i++) sg.add_p2r(1, 1, n, i % 17);
-        dij.init(sg.tot); dij.run(1, sg.g);
+        dij.run(1, sg.g, sg.tot);
         for (int u = 1; u <= n; u++) assert(dij.dist[u] == 0);
-        dij.init(sg.tot); dij.run(n, sg.g);
+        dij.run(n, sg.g, sg.tot);
         for (int u = 1; u <= n; u++) assert(dij.dist[u] == (u == n ? 0 : INF));
         sg.build(n);
         for (int i = 0; i < cap; i++) sg.add_r2p(1, n, 1, 1000000000000LL + i % 17);
-        dij.init(sg.tot); dij.run(n, sg.g);
+        dij.run(n, sg.g, sg.tot);
         for (int u = 1; u <= n; u++)
             assert(dij.dist[u] == (u == n ? 0 : u == 1 ? 1000000000000LL : INF));
         sg.build(n);
@@ -222,7 +222,7 @@ void test_large()
             int l = 1 + i % n, r = min(n, l + n / 2);
             sg.add_p2r(1, l, r, 1); sg.add_p2p(1, l, 0);
         }
-        dij.init(sg.tot); dij.run(1, sg.g);
+        dij.run(1, sg.g, sg.tot);
         for (int u = 1; u <= n; u++) assert(dij.dist[u] == 0);
     }
 }
@@ -248,7 +248,7 @@ void test_relay_budget()
             relay.push_back(id); previous = id;
         }
         assert(sg.tot == 3 * n - 2 + q);
-        dij.init(sg.tot); dij.run(1, sg.g);
+        dij.run(1, sg.g, sg.tot);
         for (int id : relay)
         {
             int op = id - (3 * n - 2) - 1;

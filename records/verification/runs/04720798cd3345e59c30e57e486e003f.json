@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "id": "04720798cd3345e59c30e57e486e003f",
+  "startedUtc": "2026-09-09T12:27:01.3796179Z",
+  "finishedUtc": "2026-09-09T12:27:05.7565620Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/lifecycle-20260909/logs-first",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "672a7c474cbedee5fecf70f3d995591d1e73740ef55dfa1810433b83596bc6b3",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/图论/对拍/lifecycle_check.cpp",
+          "hash": "3feddee855cf31aba43fa43660f4656370a5813d6fb9494c31cea6af6a7bddf2"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/tarjan.cpp",
+          "hash": "b8a6c58f14014f547463390fae521841ce475b2bbdfb38aab0469af3506efd40"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/树上倍增LCA.cpp",
+          "hash": "6b7c1984df3f7d1a8fe9de7c680796cef4b0ac34a01196a33573c128994a4e97"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/欧拉序LCA.cpp",
+          "hash": "553326bb87ef249c415f76203279b844c5ce976b9d4682a931796a5bffa3d98f"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "6a12a3195faca4471f8a16ea6be043877cc7e6f2e5c132bef83d6bfae1019884"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "98ababa585ee90dc5912f40fc9535f725424ff1eef4d82db69b987c016f6b51c"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "a051425d2d452ea2707e7eb1404ce33091dc5567b0e0f272cd7ea72e5309bf4f"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "5caa97fc7d8348b5bf303ace14b097837152f6655883101c1e25b39801cba736"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "a298e57d644f95c94718d702e90eb1118f2dd82aa86d740292466ea7f0671d9c"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/可持久化线段树/主席树.cpp",
+          "hash": "b7e5ed5ac7f4a58a257547dcf87457fefd711ad67b446e06d8168ec3929e9ed1"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp",
+          "hash": "0b2b1144f00a8deecff5b99f049a000c8ebc0b66dcbf6fa8121f5d79bf4a9cf4"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "1a55d37e39f91ff14483deabd51c6a00bb286bded81542e641e144e3847d06ff"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [],
+      "stable": true,
+      "path": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.036
+    }
+  ]
+}

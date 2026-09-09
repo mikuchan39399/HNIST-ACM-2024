@@ -16,7 +16,7 @@ struct HLD
 {
     int n, dfn_idx;
     VI fa, dep, sz, son, top, dfn, seg;
-    // 分配 max_n 个点的剖链表, 首次可直接 build
+    // 分配 max_n 个点的剖链表, build 显式传本轮点数和根
     // 时间 O(max_n) | 空间 O(max_n)
     HLD(int max_n = 0) : n(max_n), dfn_idx(0),
         fa(max_n + 10, 0), dep(max_n + 10, 0), sz(max_n + 10, 0),
@@ -31,11 +31,12 @@ struct HLD
         dfn_idx = 0;
         z_fill_n(n, 0, fa, dep, sz, son, top, dfn, seg);
     }
-    // 按 root 剖分所在树, -1 表示逐棵取最小编号点为根, 重建前先 init(n)
+    // 按 root 剖分所在树, -1 表示逐棵取最小编号点为根, 自动复位旧表, root 必须显式传入
     // 时间 O(n) | 递归栈 O(h), h 为最大树高
     template <class G>
-    void build(G& g, int root = -1)
+    void build(G& g, int _n, int root)
     {
+        init(_n);
         if (root != -1)
         {
             dfs1(root, 0, g);
@@ -137,15 +138,15 @@ Info query_subtree(HLD& h, SegTree<Info, Tag>& t, int u)
 Graph<false> g(3, 2);
 g.add(1, 2); g.add(2, 3);
 HLD hld(3);
-hld.build(g, 1);                         // 不指定根时扫描全部森林
+hld.build(g, 3, 1); // root=-1 时扫描全部森林
 VLL a{0, 2, 3, 5};
 vector<Info> b(4);
-for (int i = 1; i <= 3; i++) b[i] = {a[hld.seg[i]], 1}; // 原点权搬到 dfn 序
+for (int i = 1; i <= 3; i++) b[i] = Info(a[hld.seg[i]]); // 原点权搬到 dfn 序
 SegTree<Info, Tag> tr(3);
 tr.build(b);
 modify_path(hld, tr, 1, 3, {4});
 cout << query_path(hld, tr, 1, 3).sum << '\n'; // 22
 modify_subtree(hld, tr, 2, {-1});
-cout << query_subtree(hld, tr, 2).sum << '\n';  // 14
-// 多测先 g.clear(), hld.init(n), tr.init(n), 再加边、剖链、搬点权并建线段树
+cout << query_subtree(hld, tr, 2).sum << '\n'; // 14
+// 多测先 g.clear() 再加边, hld.build(g,n,root) 自动复位, 搬点权后 tr.build(b)
 */

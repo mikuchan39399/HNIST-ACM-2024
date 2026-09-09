@@ -164,9 +164,9 @@ CI 自动复验; 现行指南、专项证据和原文快照的导航边界见 [�
   BCT 独立类型配 Z_OI_BCT 守卫 , 不依赖或复用 VBCC 类型 , 两者可以同场实例化.
   本轮最终覆盖包含现役轻件(最短路/欧拉/拓扑等), 不按代码短免验; k 短路弃置留档不回归。
   TopoSort.build(g,n) 仅复制本轮 0..n 的入度, 不改原图, 时间 O(n+m), 不随图预留容量扫描; 空图返回 true。
-  Graph 可只传点容量而省略边预留, add 按需扩边; 点表不自动扩容, 全局对象每轮仍须 clear 与按契约 init(n)。
+  Graph 可只传点容量而省略边预留, add 按需扩边; 点表不自动扩容, 外置图每轮 clear, 完整 build/run 显式传本轮 n 并自带复位。
   图论容量专项区分一次性构造、实际点边数和上轮清理; Floyd 旧矩阵例程只清本轮 1..n 方阵。
-  单源最短路每次 run 前 init, 有限距离 < INF 且候选加法在 LL 内; Dijkstra 仅非负权, 堆含过期项按 O(n+m) 预算。
+  单源最短路 run(source,g,n) 自带复位, 判负环 run(g,n); 有限距离 < INF 且候选加法在 LL 内; Dijkstra 仅非负权, 堆含过期项按 O(n+m) 预算。
   SPFA/BF 普通版只要求源点可达部分无负环, 不内置判环; 两份全图判环 run 自带复位, 工作距离引用库内 i128,
   Graph 边权仍为 int/LL, 不另造图容器。普通 SPFA 可在非负稀疏图退化, 20 万顺序友好样例不代表最坏性能。
   Kruskal/朴素 Prim 共用 build(g,n), 接无向 Graph, 返回连通 bool; weight/components/edges 保留最小生成森林,
@@ -207,7 +207,7 @@ PersSegTree 红线: Tag 永久化只限加法类可交换标记; find_kth 只在
   根外置, build 追加而不清池, 改值域后旧域根停用; query/find 不开点, 加法 Info 可维护和/最值。
 左偏树: 私有 merge_trees/find_root(树级) + 公开 merge/alive(逻辑编号级)。
   find_root 经用户批准采用迭代路径压缩, 合并保持递归; 父链可线性, 不承诺单次 α(N)。
-  整堆懒标记后禁用单点 get_val/set_val/add_val/erase; 持久化 merge_raw 仅独占无重叠堆, init 使旧根失效。
+  整堆懒标记后禁用单点 get_val/set_val/add_val/erase; 持久化 merge_raw 仅独占无重叠堆, clear 使旧根失效。
 树状数组: BIT/BITR 区间加与区间和, BIT2D 稠密矩形加与矩形和; 构造即全零, init 在原容量内复位;
   差分取负、坐标乘积和查询中间值均须不溢出 LL, 默认 bit_check 自动验证 20 万长度与 2000×2000 矩阵。
 带权并查集: merge 对已连通两点忽略新约束, 不判矛盾; query 的 INF 可能与合法距离碰撞, 用 same 区分;
@@ -250,15 +250,18 @@ PersSegTree 红线: Tag 永久化只限加法类可交换标记; find_kth 只在
   bad_alloc——用户报莫名其妙的内存错误, 先想这条。
 
 ## 6. 复位语义
-init(n): 算法器复位。成员容器 clear + 最小复位集 + n 重配 + 计数器
-         归零。多测标配: 全局静态实例 + 每测 init。
-clear(): 纯容器复位。只擦用过的部分, O(used), 容量保留, n 不变。
+build/run: 完整输入具备后一次重建结果, 内部复位必要计算状态, 不要求调用者先 init。
+         构造容量与本轮 n 分离; LCA build(g,n), HLD/HLD_LCA build(g,n,root) 的 root 显式传 -1 或根编号,
+         旧 HLD 两参数调用必须编译失败, 不把原 root 静默解释成 n; 连通性四件及派生图重建也自带复位。
+init(n,配置): 建立可继续填输入/做操作的初始状态, 如 DSU/BIT/点权/离线询问/预处理表; 不强制每类都有 init。
+clear(): 丢弃当前内容, 保留容量与配置, 旧句柄失效; 只处理必要状态, 不扫描未用预留容量。
 set_n(n): 只改值域不碰池。(统一叫 set_n; set_range 是漂移写法,
          见到就改。)
 哪些字段要清, 口诀: "先读后写"和"只写不清"的清, "先写后读"的免。
   (dfn/rt/cut/deg 必清; low/rmq/fa/rnk 可免。)
-三种流派: 纯容器只 clear | 算法器 init 委托 | build 自带 clear。
-谁知道哪些状态脏了, 复位的职责就在谁那层。
+外置输入由调用者维护; 离线 Tarjan build 保留边和询问, 重心 build 保留 pt, 内部计算结果自行复位。
+共享池内新建根/持久化版本及局部递归不清池, 派生图 build_tree/build_dag 只清自己的输出。
+完整逐项审查与迁移见 [生命周期记录](records/verification/lifecycle-20260909.md); 新模板按状态所有权核对, 不按名字机械清空。
 
 ## 7. 命名规范
 类型 CamelCase(SegTree/Info/Tag/VBCC) | 函数和成员 snake_case
@@ -282,7 +285,7 @@ Info 必写三样: LL len=0(判空单位元+虚拟结点长度) | void apply(Tag
       friend operator+(两方任一 len==0 直接返回另一方)
       SegTree/DySegTree 的 modify 要求 break_cond/tag_cond, 非势能题也须提供恒 false/true;
       两者 find 的 pred 判断区间中是否存在合格点, 不做前缀累积; DySegTree 的 Info{} 补 len 须表示零值区间,
-      query/find 下传也可能开点; clear 保留值域, init 改值域, build 自带清空, SegTree 重建仍先 init。
+      query/find 下传也可能开点; clear 保留值域, init 改值域; 普通/动态 build(a) 自带复位并按 a.size()-1 设置 n。
       其他引擎按实际调用契约提供, 不把所有 Info 都强制做成同一个接口全集。
 Tag 必写: void apply(Tag) 叠加。pushdown 型引擎还要 clear()/has_tag()。
       可选 split_tag/get_real_tag——引擎用 if constexpr(requires{...})

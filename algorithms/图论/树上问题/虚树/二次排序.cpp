@@ -61,16 +61,16 @@ g.add(1, 2, 3);
 g.add(2, 3, 5);
 g.add(2, 4, 7);
 LCA lca(4);
-lca.build(g);
+lca.build(g, 4);
 VirtualTree vt(4);
 VI keys{4, 3, 4};
-vt.build(keys, lca, 1);       // keys 不变, 虚树边为 1-2, 2-3, 2-4
+vt.build(keys, lca, 1); // keys 不变, 虚树边为 1-2, 2-3, 2-4
 cout << vt.tree.edge_cnt() << endl; // 3
 for (auto& e : vt.tree[2])
     cout << e.v << ' ' << e.w << endl;
-vt.build(VI{3}, lca, 4);      // root 可不是祖先, 保留 3, 4 及其 LCA 2
-vt.build(VI{}, lca);          // 清空, 连 root 也不保留
-vt.build(VI{1}, lca);         // 单点 1 无边, 不靠 tree.used 枚举它
-vt.clear();                  // 同一原树反复 build 会自动 clear
-// 换原树时复用 g.clear(), lca.init(n), 重建 LCA 后再 build 虚树
+vt.build(VI{3}, lca, 4); // root 可不是祖先, 保留 3, 4 及其 LCA 2
+vt.build(VI{}, lca); // 清空, 连 root 也不保留
+vt.build(VI{1}, lca); // 单点 1 无边, 不靠 tree.used 枚举它
+vt.clear(); // 同一原树反复 build 会自动 clear
+// 换原树时复用 g.clear() 并重填边, lca.build(g,n) 后再 build 虚树
 */

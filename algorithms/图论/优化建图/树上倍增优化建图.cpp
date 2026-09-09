@@ -144,9 +144,9 @@ int main()
     Graph<false, int> tree(5, 3);
     tree.add(1, 2, 3);
     tree.add(2, 3, 4);
-    tree.add(2, 4, 5);              // 5 是孤立点
+    tree.add(2, 4, 5); // 5 是孤立点
     LCA lca(5);
-    lca.build(tree);
+    lca.build(tree, 5);
     TreeGraph<int> tg(5, 100, 3);
     tg.build(lca, 5);
     for (int u = 1; u <= 5; u++)
@@ -159,13 +159,13 @@ int main()
     tg.add_p2path(q, 3, 4, lca, 1);
     cout << tg.add_path2new(1, 5, lca) << endl; // -1, 不耗中继预算
     Dijkstra dij(tg.tot);
-    dij.init(tg.tot);
-    dij.run(5, tg.g);
+
+    dij.run(5, tg.g, tg.tot);
     for (int u = 1; u <= 5; u++)
         cout << (dij.dist[u] == INF ? -1 : dij.dist[u]) << " \n"[u == 5];
     tree.clear();
-    lca.init(1);
-    lca.build(tree);
-    tg.build(lca, 1);               // 原点和中继预算复用, 旧编号失效
+
+    lca.build(tree, 1);
+    tg.build(lca, 1); // 原点和中继预算复用, 旧编号失效
 }
 */

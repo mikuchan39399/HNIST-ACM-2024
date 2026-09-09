@@ -87,15 +87,15 @@ void test_lca_engines()
 {
     mt19937 rng(42);
     static Graph<false> g(60, 60);
-    static HLD_LCA hl(60);    // static + init 复用, 覆盖多测路径
+    static HLD_LCA hl(60); // static + init 复用, 覆盖多测路径
     static LCA dfn(60);
     for (int tc = 0; tc < 300; tc++)
     {
         int n = 1 + rng() % 50;
         g.clear();
         BruteLca br(n);
-        hl.init(n);
-        dfn.init(n);
+
+
         for (int v = 1; v <= n; v++)
         {
             int p = 0;
@@ -103,8 +103,8 @@ void test_lca_engines()
             br.add(v, p);
             if (p) g.add(p, v);
         }
-        hl.build(g);
-        dfn.build(g);
+        hl.build(g, n, -1);
+        dfn.build(g, n);
         for (int u = 1; u <= n; u++) assert(dfn.sz[u] == br.sub_sz(u));
         for (int t = 0; t < 40; t++)
         {
@@ -153,7 +153,7 @@ bool brute_has_cycle(int n, const vector<PII>& es)
 void test_topo_sort()
 {
     mt19937 rng(42);
-    static Graph<true> g(60, 240);      // static + clear 复用, 覆盖多测路径
+    static Graph<true> g(60, 240); // static + clear 复用, 覆盖多测路径
     static TopoSort ts;
     for (int tc = 0; tc < 300; tc++)
     {
@@ -169,7 +169,7 @@ void test_topo_sort()
         }
         VI in_backup = g.in_deg;
         bool dag = ts.build(g, n);
-        assert(g.in_deg == in_backup);  // 契约: 不动原图
+        assert(g.in_deg == in_backup); // 契约: 不动原图
         assert(dag == !brute_has_cycle(n, es));
         if (dag)
         {
@@ -179,15 +179,15 @@ void test_topo_sort()
             for (int i = 0; i < n; i++)
             {
                 assert(ord[i] >= 1 && ord[i] <= n);
-                assert(pos[ord[i]] == 0);  // 每点恰一次
+                assert(pos[ord[i]] == 0); // 每点恰一次
                 pos[ord[i]] = i + 1;
             }
             for (auto& [u, v] : es)
-                assert(pos[u] < pos[v]);   // 边方向与序一致
+                assert(pos[u] < pos[v]); // 边方向与序一致
         }
         else
         {
-            assert((int)ts.get().size() < n);  // 有环时收不满
+            assert((int)ts.get().size() < n); // 有环时收不满
         }
     }
 }
@@ -401,7 +401,7 @@ static void test_graph_core()
         VI din(n + 1, 0), dout(n + 1, 0), udeg(n + 1, 0);
         for (int i = 0; i < m; i++)
         {
-            int u = 1 + rng() % n, v = 1 + rng() % n;   // 允许自环/重边
+            int u = 1 + rng() % n, v = 1 + rng() % n; // 允许自环/重边
             dg.add(u, v);
             de.push_back({u, v});
             dout[u]++;
@@ -532,19 +532,19 @@ static void small_paths()
             nonnegative &= w >= 0;
         }
         oracle.solve();
-        br.init(n); sr.init(n);
-        assert(br.run(g) == oracle.ring());
-        assert(sr.run(g) == oracle.ring());
-        assert(br.run(g) == oracle.ring() && sr.run(g) == oracle.ring()); // run 自带复位
+
+        assert(br.run(g, n) == oracle.ring());
+        assert(sr.run(g, n) == oracle.ring());
+        assert(br.run(g, n) == oracle.ring() && sr.run(g, n) == oracle.ring()); // run 自带复位
         for (int s = 1; s <= n; s++)
         {
             if (oracle.ring(s)) continue; // 普通最短路只要求源点可达部分无负环
-            sp.init(n); bf.init(n);
-            sp.run(s, g); bf.run(s, g);
+
+            sp.run(s, g, n); bf.run(s, g, n);
             if (nonnegative)
             {
-                heap.init(n); dense.init(n);
-                heap.run(s, g); dense.run(s, g);
+
+                heap.run(s, g, n); dense.run(s, g, n);
             }
             for (int v = 1; v <= n; v++)
             {
@@ -559,7 +559,7 @@ static void small_paths()
             VI sources;
             if (tc % 4) sources = {n, 1, n, 1}; // 含重复, 单点图也有效
             if (tc % 4 == 2) for (int i = 1; i <= n; i++) sources.push_back(i);
-            heap.init(n); heap.run(sources, g);
+            heap.run(sources, g, n);
             for (int v = 1; v <= n; v++) assert(heap.dist[v] == oracle.distance(sources, v));
         }
     }
@@ -574,8 +574,8 @@ static void path_boundaries()
     g.add(1, 2, INF - 3); g.add(2, 3, 2); g.add(4, 5, 100);
     for (int rep = 0; rep < 3; rep++)
     {
-        heap.init(5); dense.init(5); sp.init(5); bf.init(5);
-        heap.run(1, g); dense.run(1, g); sp.run(1, g); bf.run(1, g);
+
+        heap.run(1, g, 5); dense.run(1, g, 5); sp.run(1, g, 5); bf.run(1, g, 5);
         for (const VLL* d : {&heap.dist, &dense.dist, &sp.dist, &bf.dist})
         {
             assert((*d)[1] == 0 && (*d)[2] == INF - 3 && (*d)[3] == INF - 1);
@@ -584,32 +584,32 @@ static void path_boundaries()
     }
     // 不可达负边不能从 INF 开始松弛
     g.clear(); g.add(4, 5, -100);
-    sp.init(5); bf.init(5); sp.run(1, g); bf.run(1, g);
+    sp.run(1, g, 5); bf.run(1, g, 5);
     assert(sp.dist[5] == INF && bf.dist[5] == INF);
     // 不可达负环: 普通最短路仍合法, 全图判环必须发现
     g.clear(); g.add(1, 2, 7); g.add(4, 5, -3); g.add(5, 4, 2);
-    sp.init(5); bf.init(5); sp.run(1, g); bf.run(1, g);
+    sp.run(1, g, 5); bf.run(1, g, 5);
     assert(sp.dist[2] == 7 && bf.dist[2] == 7 && sp.dist[4] == INF && bf.dist[4] == INF);
-    br.init(5); sr.init(5); assert(br.run(g) && sr.run(g));
+    assert(br.run(g, 5) && sr.run(g, 5));
     // 曾返回 true 后直接再跑同大小无边图, 队列/计数和距离都须干净
-    g.clear(); assert(!br.run(g) && !sr.run(g));
+    g.clear(); assert(!br.run(g, 5) && !sr.run(g, 5));
     for (LL w : {LL(-1), LL(0), LL(1)})
     {
-        g.clear(); g.add(1, 1, w); br.init(1); sr.init(1);
-        assert(br.run(g) == (w < 0) && sr.run(g) == (w < 0));
+        g.clear(); g.add(1, 1, w);
+        assert(br.run(g, 1) == (w < 0) && sr.run(g, 1) == (w < 0));
     }
     // 高绝对值的合法负路径, 结果无需落在 [-INF, INF) 的对称区间
     g.clear(); g.add(1, 2, -4000000000000000000LL); g.add(2, 3, -4000000000000000000LL);
-    sp.init(3); bf.init(3); sp.run(1, g); bf.run(1, g);
+    sp.run(1, g, 3); bf.run(1, g, 3);
     assert(sp.dist[3] == -8000000000000000000LL && bf.dist[3] == sp.dist[3]);
-    br.init(3); sr.init(3); assert(!br.run(g) && !sr.run(g));
+    assert(!br.run(g, 3) && !sr.run(g, 3));
     // 原 LL 工作距离会先溢出再判环, 12 点 / -1e18 自环为 UBSan 确定性反例
     for (LL w : {-1000000000000000000LL, LLONG_MIN})
     {
-        g.clear(); g.add(1, 1, w); br.init(12); sr.init(12);
-        assert(br.run(g) && sr.run(g));
+        g.clear(); g.add(1, 1, w);
+        assert(br.run(g, 12) && sr.run(g, 12));
         g.clear(); g.add(1, 2, LLONG_MIN); g.add(2, 3, LLONG_MIN);
-        br.init(3); sr.init(3); assert(!br.run(g) && !sr.run(g));
+        assert(!br.run(g, 3) && !sr.run(g, 3));
         assert(br.dist[3] == Wide(LLONG_MIN) * 2 && sr.dist[3] == br.dist[3]);
     }
 }
@@ -650,33 +650,33 @@ static void path_scale()
             for (int i = 1; i + 2 <= n; i++) g.add(i, i + 2, 2 * w + 1);
             for (int i = 1; i < n; i++) g.add(i, i + 1, w);
             g.add(n, 1, 0);
-            heap.init(n); sp.init(n); bf.init(n); br.init(n); sr.init(n);
-            heap.run(1, g); sp.run(1, g); bf.run(1, g);
-            assert(!br.run(g) && !sr.run(g));
+
+            heap.run(1, g, n); sp.run(1, g, n); bf.run(1, g, n);
+            assert(!br.run(g, n) && !sr.run(g, n));
             for (int i = 1; i <= n; i++)
                 assert(heap.dist[i] == (i - 1) * w && sp.dist[i] == (i - 1) * w && bf.dist[i] == (i - 1) * w);
-            heap.init(n); heap.run(VI{1, n, n}, g);
+            heap.run(VI{1, n, n}, g, n);
             for (int i = 1; i <= n; i++) assert(heap.dist[i] == (i == n ? 0 : (i - 1) * w));
         }
         // 20 万点负链, 正向扫点可线性收敛; 测容量与算术, 不冒充 BF 最坏时间
         g.clear();
         for (int i = 1; i < n; i++) g.add(i, i + 1, -1000000000LL);
-        sp.init(n); bf.init(n); br.init(n); sr.init(n);
-        sp.run(1, g); bf.run(1, g);
-        assert(!br.run(g) && !sr.run(g));
+
+        sp.run(1, g, n); bf.run(1, g, n);
+        assert(!br.run(g, n) && !sr.run(g, n));
         for (int i = 1; i <= n; i++) assert(sp.dist[i] == -1000000000LL * (i - 1) && bf.dist[i] == sp.dist[i]);
         // 星与孤点交替, 防旧源/旧距离渗入下一测
         g.clear();
         for (int i = 2; i <= n; i += 2) g.add(n, i, i == n ? 0 : i);
-        heap.init(n); heap.run(n, g);
+        heap.run(n, g, n);
         for (int i = 1; i <= n; i++) assert(heap.dist[i] == (i == n ? 0 : (i % 2 == 0 ? LL(i) : INF)));
     }
     // 两点 20 万重边, 邻接顺序使每条边都产生更优堆项, 实测堆空间按 m 而非 n
     g.clear();
     for (int w = 1; w <= N; w++) g.add(1, 2, w);
-    heap.init(2); heap.run(1, g); assert(heap.dist[2] == 1);
+    heap.run(1, g, 2); assert(heap.dist[2] == 1);
     CountPathGraph repeated{g};
-    heap.init(2); heap.run(VI(N, 1), repeated);
+    heap.run(VI(N, 1), repeated, 2);
     assert(heap.dist[2] == 1 && repeated.visits == N);
     // 1800 点稠密图, 边权 |u-v|; 最短距离有闭式答案
     constexpr int D = 1800;
@@ -684,14 +684,14 @@ static void path_scale()
     for (int u = 1; u <= D; u++)
         for (int v = u + 1; v <= D; v++) g.add(u, v, v - u);
     DijkstraN dense(D);
-    dense.init(D); dense.run(1, g);
+    dense.run(1, g, D);
     for (int i = 1; i <= D; i++) assert(dense.dist[i] == i - 1);
     // 同为非负稀疏图, 邻接顺序先走跨点边会使普通 SPFA 反复入队
     g.clear();
     for (int i = 1; i < D; i++) g.add(i, i + 1, 3);
     for (int i = 1; i + 2 <= D; i++) g.add(i, i + 2, 7);
     CountPathGraph counted{g};
-    sp.init(D); sp.run(1, counted);
+    sp.run(1, counted, D);
     for (int i = 1; i <= D; i++) assert(sp.dist[i] == 3LL * (i - 1));
     assert(counted.visits > LL(D) * D / 4);
     cout << "[INFO] SPFA bad-order sparse graph: n=" << D << ", edge visits=" << counted.visits << '\n';
@@ -700,18 +700,18 @@ static void path_scale()
     {
         g.clear();
         for (int i = n; i > 1; i--) g.add(i, i - 1, -1);
-        sp.init(n); bf.init(n); br.init(n); sr.init(n);
-        sp.run(n, g); bf.run(n, g);
-        assert(!br.run(g) && !sr.run(g));
+
+        sp.run(n, g, n); bf.run(n, g, n);
+        assert(!br.run(g, n) && !sr.run(g, n));
         for (int i = 1; i <= n; i++) assert(sp.dist[i] == i - n && bf.dist[i] == i - n);
         if (n > 1)
         {
-            g.add(1, n, n - 1); assert(!br.run(g) && !sr.run(g));
-            g.add(1, n, n - 2); assert(br.run(g) && sr.run(g));
+            g.add(1, n, n - 1); assert(!br.run(g, n) && !sr.run(g, n));
+            g.add(1, n, n - 2); assert(br.run(g, n) && sr.run(g, n));
         }
         g.clear();
         for (int i = n; i > 1; i--) g.add(i, i - 1, 1);
-        dense.init(n); dense.run(n, g);
+        dense.run(n, g, n);
         for (int i = 1; i <= n; i++) assert(dense.dist[i] == n - i);
     }
 }
@@ -746,9 +746,9 @@ void test_graph_assign()
     for (int tc = 0; tc < 300; tc++)
     {
         int n = 1 + rng() % 40, m = rng() % 80;
-        Graph<true> a1(n, m);         // 有向 Empty (SCC 形态)
-        Graph<true, LL> a2(n, m);     // 有向 LL (SegGraph 形态)
-        Graph<false, LL> a3(n, m);    // 无向 LL (带权连通性形态)
+        Graph<true> a1(n, m); // 有向 Empty (SCC 形态)
+        Graph<true, LL> a2(n, m); // 有向 LL (SegGraph 形态)
+        Graph<false, LL> a3(n, m); // 无向 LL (带权连通性形态)
         for (int i = 0; i < m; i++)
         {
             int u = 1 + rng() % n, v = 1 + rng() % n;

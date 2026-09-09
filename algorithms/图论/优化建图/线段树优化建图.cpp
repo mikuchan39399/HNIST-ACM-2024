@@ -77,7 +77,7 @@ private:
     }
     int build_out(int l, int r)
     {
-        if (l == r) return l;          // 叶子 = 原点 id
+        if (l == r) return l; // 叶子 = 原点 id
         int p = ++tot, mid = (l + r) >> 1;
         tlc[p] = build_out(l, mid);
         trc[p] = build_out(mid + 1, r);
@@ -124,13 +124,13 @@ int main()
     sg.add_r2r(1, 2, 5, 5, 7);
     int v = sg.add_r2new(2, 3, 1);
     int t = sg.add_p2new(v, 2);
-    sg.add_p2r(t, 4, 5, 1);          // 中继点可继续连边
+    sg.add_p2r(t, 4, 5, 1); // 中继点可继续连边
 
     Dijkstra dij(sg.tot);
-    dij.init(sg.tot);
-    dij.run(1, sg.g);                // 非负权, 只取 1 .. n 的原点答案
+
+    dij.run(1, sg.g, sg.tot); // 非负权, 只取 1 .. n 的原点答案
     for (int i = 1; i <= sg.n; i++)
         cout << dij.dist[i] << " \n"[i == sg.n];
-    sg.build(2);                    // 清图并重置中继点编号
+    sg.build(2); // 清图并重置中继点编号
 }
 */

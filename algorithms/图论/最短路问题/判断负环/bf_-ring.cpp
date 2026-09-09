@@ -21,8 +21,9 @@ struct BFRing
     // 返回整图是否有负环, 每次自动清空工作表, 不修改图
     // 最坏时间 O(n(n+m)) | 额外空间 O(1)
     template <class G>
-    bool run(G& g)
+    bool run(G& g, int _n)
     {
+        init(_n);
         z_fill_n(n, 0, dist);
         for (int i = 1; i <= n; i++)
         {
@@ -34,7 +35,7 @@ struct BFRing
                         dist[v] = dist[u] + w;
                         flag = true;
                     }
-            if (!flag) return false;   // n 轮内收敛 = 无负环
+            if (!flag) return false; // n 轮内收敛 = 无负环
         }
         return true;
     }
@@ -46,11 +47,11 @@ int main()
     Graph<true, LL> g(4, 3);
     g.add(1, 2, 5); g.add(3, 4, -2); g.add(4, 3, 1);
     BFRing bf(4);
-    bf.init(4);
-    cout << bf.run(g) << '\n'; // 1, 从 1 不可达的负环也会发现
+
+    cout << bf.run(g, 4) << '\n'; // 1, 从 1 不可达的负环也会发现
     g.clear(); g.add(1, 2, -3);
-    cout << bf.run(g) << '\n'; // 0, run 自带复位
-    bf.init(1); g.clear();
-    cout << bf.run(g) << '\n'; // 0
+    cout << bf.run(g, 4) << '\n'; // 0, run 自带复位
+     g.clear();
+    cout << bf.run(g, 1) << '\n'; // 0
 }
 */

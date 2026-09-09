@@ -17,7 +17,7 @@ struct HLD_LCA
     int n, dfn_idx;
     VI fa, dep, sz, son, top, dfn, rt;
     VLL dis;
-    // 分配 max_n 个点的查询表, 首次可直接 build
+    // 分配 max_n 个点的查询表, build 显式传本轮点数和根
     // 时间 O(max_n) | 空间 O(max_n)
     HLD_LCA(int max_n = 0) : n(max_n), dfn_idx(0),
         fa(max_n + 10, 0), dep(max_n + 10, 0), sz(max_n + 10, 0),
@@ -32,11 +32,12 @@ struct HLD_LCA
         dfn_idx = 0;
         z_fill_n(n, 0, fa, dep, sz, son, top, dfn, rt, dis);
     }
-    // 按 root 建表, -1 表示每棵树取最小编号点为根, 指定根时仅处理所在树; 重建前先 init(n)
+    // 按 root 建表, -1 表示每棵树取最小编号点为根, 指定根时仅处理所在树; 自动复位旧表, root 必须显式传入
     // 时间 O(n) | 递归栈 O(h), h 为最大树高
     template <class G>
-    void build(G& g, int root = -1)
+    void build(G& g, int _n, int root)
     {
+        init(_n);
         if (root != -1)
         {
             dfs1(root, 0, root, g);
@@ -107,7 +108,7 @@ private:
             }
             else
             {
-                dis[v] = dis[u] + e.w;      // 针对自定义边权请修改这里
+                dis[v] = dis[u] + e.w; // 针对自定义边权请修改这里
             }
             dfs1(v, u, root, g);
             sz[u] += sz[v];
@@ -133,12 +134,12 @@ private:
 /*
  * Usage:
  * // 内存严苛场景轻量版; 需 jump / fa[k] 祖先表请用 DFN_LCA
- * Graph<false> g(n, n - 1);      // 带边权: Graph<false, LL> + g.add(u, v, w)
+ * Graph<false> g(n, n - 1); // 带边权: Graph<false, LL> + g.add(u, v, w)
  * HLD_LCA lca(n);
  * for (int i = 1; i < n; i++) { int u, v; cin >> u >> v; g.add(u, v); }
- * lca.build(g);                  // 指定根: lca.build(g, root)
- * lca.lca(u, v);                 // LCA; 不连通 -1; 多点: lca.lca({u, v, w})
- * lca.dist(u, v);                // 树上真实距离, 边权图自动按 w 累计
+ * lca.build(g, n, -1); // 指定根: lca.build(g, n, root)
+ * lca.lca(u, v); // LCA; 不连通 -1; 多点: lca.lca({u, v, w})
+ * lca.dist(u, v); // 树上真实距离, 边权图自动按 w 累计
  * // 直读: dep 深度 | fa 父 | sz 子树 | son 重儿子 | top 链顶 | dfn 时间戳 | rt 所在根
  * // build 为递归 DFS, 深链依赖评测机栈宽(同 DFN_LCA)
  */

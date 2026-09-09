@@ -24,7 +24,7 @@ struct SCC
         sta.reserve(max_n + 10);
     }
     // 复位本轮结果与内部图; n 不超过构造时的 N, 原图需另行 clear()
-    // 时间 O(n + 上轮点数) | 额外空间 O(1)
+    // 时间 O(n + 上轮结果大小) | 额外空间 O(1)
     void init(int _n)
     {
         n = _n;
@@ -33,20 +33,21 @@ struct SCC
         dfn_idx = scc_cnt = 0;
         sta.clear();
     }
-    // 将 g 的 1 .. n 点划分到 bel; 每轮先 init(n), 边权不参与计算
-    // 时间: O(n + m) | 空间: O(n)
+    // 将 g 的 1 .. n 点划分到 bel; 自动复位旧结果, 不修改原图, 边权不参与计算
+    // 时间: O(n + m + 上轮结果大小) | 空间: O(n)
     template <class G>
     void build(G& g, int _n)
     {
-        n = _n;
+        init(_n);
         for (int i = 1; i <= n; i++)
             if (!dfn[i]) tarjan(g, i);
     }
-    // 向 dag 追加跨分量边, 保留重边, 丢弃权值; 重建先 dag.clear()
+    // 重建 dag 的跨分量边, 保留重边, 丢弃权值; 自动清掉旧 dag
     // 时间 O(n + m) | 额外空间 O(m)
     template <class G>
     void build_dag(G& g)
     {
+        dag.clear();
         for (int u = 1; u <= n; u++)
         {
             for (auto& e : g[u])
@@ -56,11 +57,12 @@ struct SCC
             }
         }
     }
-    // 向 dag 追加去重后的跨分量边; 与 build_dag 二选一, 重建先 dag.clear()
+    // 重建 dag 的去重跨分量边; 与 build_dag 二选一, 自动清掉旧 dag
     // 时间 O(n + m log m) | 额外空间 O(m)
     template <class G>
     void build_dag_unique(G& g)
     {
+        dag.clear();
         VPII edges;
         for (int u = 1; u <= n; u++)
         {
@@ -117,7 +119,7 @@ int main()
     cin >> n >> m;
     SCC scc(n, m);
     Graph<true> g(n, m);
-    scc.init(n);
+
     for (int i = 1; i <= m; i++)
     {
         int u, v;

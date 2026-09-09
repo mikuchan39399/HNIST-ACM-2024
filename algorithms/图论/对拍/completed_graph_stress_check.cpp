@@ -220,7 +220,7 @@ static void hld_small()
             par[v] = order[i]; depth[v] = depth[par[v]] + 1;
             children[par[v]].push_back(v); order.push_back(v);
         }
-        h.init(n); h.build(g, root); tree.init(n);
+        h.build(g, n, root);
         VLL ref(n + 1); vector<AuditInfo> data(n + 1);
         for (int u = 1; u <= n; u++)
         {
@@ -259,7 +259,7 @@ static void hld_small()
             assert(result.len == expected.len && result.sum == expected.sum && result.mx == expected.mx);
         }
     }
-    h.init(0); Graph<false> empty; h.build(empty); assert(h.dfn_idx == 0);
+     Graph<false> empty; h.build(empty, 0, -1); assert(h.dfn_idx == 0);
 }
 
 static void hld_bulk(int cap, bool deep)
@@ -270,7 +270,7 @@ static void hld_bulk(int cap, bool deep)
     {
         g.clear();
         for (int u = 2; u <= n; u++) g.add(deep ? u - 1 : u / 2, u);
-        h.init(n); h.build(g); t.init(n);
+        h.build(g, n, -1);
         vector<AuditInfo> data(n + 1, {1, 0, 0}); t.build(data);
         VLL ref(n + 1); LL global = 0;
         for (int op = 0; op < 100000; op++)
@@ -344,7 +344,7 @@ static void connectivity(int cap, bool deep)
     for (int n : {cap, 1, cap}) for (int kind = 0; kind < 4; kind++)
     {
         int width = deep ? n : 64;
-        s.init(n); e.init(n); v.init(n); b.init(n); dg.clear(); ug.clear();
+            dg.clear(); ug.clear();
         VPII edges;
         if (kind) for (int u = 2; u <= n; u++)
         {
@@ -376,7 +376,7 @@ static void connectivity(int cap, bool deep)
         }
         check_blocks(v, n, kind, edges, width); check_blocks(b, n, kind, edges, width);
         // 圆方森林接 HLD, 只给圆点记 1, 方点记 0
-        HLD h(n + b.vbcc_cnt); h.build(b.tree);
+        HLD h(n + b.vbcc_cnt); h.build(b.tree, n + b.vbcc_cnt, -1);
         SegTree<AuditInfo, AuditTag> t(n + b.vbcc_cnt);
         vector<AuditInfo> data(n + b.vbcc_cnt + 1);
         for (int u = 1; u <= n + b.vbcc_cnt; u++) data[h.dfn[u]] = {1, u <= n ? 1LL : 0LL, u <= n ? 1LL : 0LL};

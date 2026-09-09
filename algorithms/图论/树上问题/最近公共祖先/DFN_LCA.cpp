@@ -22,7 +22,7 @@ struct LCA
     VI dep, dfn, rnk, rt, sz;
     VLL dis;
     VVI rmq, fa;
-    // 分配 max_n 个点的查询表, 首次可直接 build
+    // 分配 max_n 个点的查询表, build 显式传本轮点数
     // 时间 O(max_n log max_n) | 空间 O(max_n log max_n)
     LCA(int max_n = 0) : n(max_n), idx(0),
         max_bit(max_n == 0 ? 0 : __lg(max_n)),
@@ -42,11 +42,12 @@ struct LCA
         max_bit = n == 0 ? 0 : __lg(n);
         z_fill_n(n, 0, dep, dfn, rt, sz, dis);
     }
-    // 为 g 中 1 到 n 的森林建表, 重建前先 init(n)
+    // 为 g 中 1 到 n 的森林建表, 自动复位旧表, 不修改原图
     // 时间 O(n log n) | 递归栈 O(h), h 为最大树高
     template <class G>
-    void build(G& g)
+    void build(G& g, int _n)
     {
+        init(_n);
         for (int i = 1; i <= n; i++)
             if (!dfn[i]) dfs(i, 0, i, g);
         for (int k = 1; k <= max_bit; k++)
@@ -160,7 +161,7 @@ private:
             if constexpr (is_same_v<decltype(e.w), Empty>)
                 dis[v] = dis[u] + 1;
             else
-                dis[v] = dis[u] + e.w;  // 自定义边权请修改此处
+                dis[v] = dis[u] + e.w; // 自定义边权请修改此处
             dfs(v, u, root, g);
             sz[u] += sz[v];
         }
@@ -170,14 +171,14 @@ private:
 
 /*
  * Usage:
- * // 森林自动多根, 每棵树取最小编号点为根; 多测先 init(n)
- * Graph<false> g(n, n - 1);      // 带边权: Graph<false, LL> + g.add(u, v, w)
+ * // 森林自动多根, 每棵树取最小编号点为根; 每轮直接 build 并传实际点数
+ * Graph<false> g(n, n - 1); // 带边权: Graph<false, LL> + g.add(u, v, w)
  * LCA lca(n);
  * for (int i = 1; i < n; i++) { int u, v; cin >> u >> v; g.add(u, v); }
- * lca.build(g);
- * lca.lca(u, v);                 // 不连通 -1; 多点: lca.lca({u, v, w})
- * lca.dist(u, v);                // 真实距离, 边权图自动按 w 累计
- * lca.jump(u, v, k);             // u 沿 u->v 方向 k 步; k<=0 返 u, 超路长返 v
+ * lca.build(g, n);
+ * lca.lca(u, v); // 不连通 -1; 多点: lca.lca({u, v, w})
+ * lca.dist(u, v); // 真实距离, 边权图自动按 w 累计
+ * lca.jump(u, v, k); // u 沿 u->v 方向 k 步; k<=0 返 u, 超路长返 v
  * // 直读: dep | dfn/rnk 时间戳正反 | rt 所在根 | sz 子树大小 | fa[k][u] 2^k 祖先
  * // 子树 u = dfn 区间 [dfn[u], dfn[u]+sz[u]-1]; 递归 build 依赖评测机栈宽
  */

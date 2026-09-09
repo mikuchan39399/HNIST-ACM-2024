@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "id": "16ad48ae88944956ae15d424ef3e7ed2",
+  "startedUtc": "2026-09-09T12:59:57.5229787Z",
+  "finishedUtc": "2026-09-09T13:00:04.0598705Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/lifecycle-20260909/scope-final-seg_check",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "4689b5f91b88bb034494c33c49837ba84e42b208758d5d708455c4cb98a66ff3",
+      "files": [
+        {
+          "path": "algorithms/数据结构/ST表/ST表.cpp",
+          "hash": "c679f04c5816bc4608e70a3d82399479fb12ee0eb83304464ff6cd55840026bf"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/对拍/seg_check.cpp",
+          "hash": "f748d27d259b2b6f7870c13d8973dd54bbe2b93b62878ceac20273c350904182"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型动态线段树.cpp",
+          "hash": "d77327ba18c5bf250aa726186187fcdca0979b3d7af21c52fabf4a1d810e4fb2"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "1a55d37e39f91ff14483deabd51c6a00bb286bded81542e641e144e3847d06ff"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/ST表/ST表.cpp",
+          "hash": "b57a987297a678bd0dffd8f7c3b3e647d9e6fb6d9d993b4c89279d84174f2654",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/线段树/泛型动态线段树.cpp",
+          "hash": "8f8482c3a840bbc1ab1ac23a8a83f41e4753c449d8c8329441b752b072608210",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "3364129b5a145cf974d1c1b725bc261bf7e090a84ce0b45fb41e4228e51c2d84",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/线段树/对拍/seg_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 6.208
+    }
+  ]
+}

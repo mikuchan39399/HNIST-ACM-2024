@@ -2,6 +2,8 @@
 
 目标是尽早发现会丢区域赛分数的错误。随机对拍、确定性边界、语法检查和 sanitizer 分工不同，不能互相替代。
 
+生命周期专项覆盖完整 build/run 不先 init 的复用路径。`lifecycle_check` 每组 350 轮, 核对备用三份 LCA、连通性派生图重建、普通线段树旧懒标记以及必须保留的离线输入/重心点权/持久化版本; `segfhq_lifecycle_check` 用 350×100 独立数组操作与 20万-1-0-257-20万复用验证旧树套树新入口。既有图论和普通线段树套件也已迁移为直接 build/run, 两份新套件由普通及 sanitizer CI 自动发现。全部现役条目与例外见 [生命周期清单](../records/verification/lifecycle-20260909.md)。
+
 线段树常用插件用 `./scripts/run_checks.ps1 -Filter seg_plugins`。套件直接 include 七份插件，逐数组暴力检查全部维护量，普通/动态树各 64 轮×320 次；默认另跑每组 20万-1-257-20万复位、长短区间交错修改和查询。Binary/Linear 只验完整 build，其余五组另验 1e9 稀疏零域。`*_check.cpp` 自动发现，普通与 sanitizer CI 都执行，无需手动添加 suite 名。专题边界与证据见 [插件验证](../records/verification/seg-plugins-20260907.md)。
 
 在仓库根目录运行：

@@ -26,7 +26,7 @@ struct EBCC
         sta.reserve(max_n + 10);
     }
     // 复位本轮结果与内部图; n 不超过构造时的 N, 原图需另行 clear()
-    // 时间 O(n + 上轮点数) | 额外空间 O(1)
+    // 时间 O(n + 上轮结果大小) | 额外空间 O(1)
     void init(int _n)
     {
         n = _n;
@@ -36,20 +36,21 @@ struct EBCC
         sta.clear();
         ebcc_points.assign(1, VI());
     }
-    // 求 1 .. n 的边双, 结果写入 bel 与 ebcc_points; 每轮先 init(n)
-    // 时间: O(n + m) | 空间: O(n)
+    // 求 1 .. n 的边双, 结果写入 bel 与 ebcc_points; 自动复位旧结果, 不修改原图
+    // 时间: O(n + m + 上轮结果大小) | 空间: O(n)
     template <class G>
     void build(G& g, int _n)
     {
-        n = _n;
+        init(_n);
         for (int i = 1; i <= n; i++)
             if (!dfn[i]) tarjan(g, i, -1);
     }
-    // 向 tree 追加桥森林, 点号为 bel; 每轮 build 后调用一次, 重建先 tree.clear()
+    // 重建 tree 的桥森林, 点号为 bel; 每轮 build 后调用一次, 自动清掉旧 tree
     // 时间 O(m) | 额外空间 O(n)
     template <class G>
     void build_tree(G& g)
     {
+        tree.clear();
         for (size_t i = 0; i < g.edges.size(); i += 2)
         {
             int u = g.edges[g.rev(i)].v;
@@ -115,7 +116,7 @@ int main()
     cin >> n >> m;
     EBCC ebcc(n);
     Graph<false> g(n, m);
-    ebcc.init(n);
+
     for (int i = 1; i <= m; i++)
     {
         int u, v;

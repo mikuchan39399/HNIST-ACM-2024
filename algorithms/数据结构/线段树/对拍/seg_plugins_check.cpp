@@ -123,7 +123,7 @@ template<int K> void small()
             if constexpr (K == 4) a[i] = (i + tc) % 2;
             init[i] = leaf<K>(a[i], i);
         }
-        seg.init(n); seg.build(init); dy.build(init);
+        seg.build(init); dy.build(init);
         // 初始化、空单位元、跨左/右的合并顺序。
         verify<K>(seg.query(1, n) + I<K>{}, a, 1, n);
         verify<K>(I<K>{} + dy.query(1, n), a, 1, n);
@@ -182,7 +182,7 @@ template<int K> void large()
             if constexpr (K == 4) a[i] = i % 2;
             init[i] = leaf<K>(a[i], i);
         }
-        seg.init(size); seg.build(init);
+        seg.build(init);
         verify<K>(seg.query(1, size), a, 1, size);
         for (int q = 0; q < 20; q++)
         {

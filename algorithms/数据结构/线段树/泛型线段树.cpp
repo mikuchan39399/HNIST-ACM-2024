@@ -35,9 +35,13 @@ struct SegTree
     // 返回闭区间 [x,y] 合并后的 Info
     // 时间: O(log n) | 空间: O(log n)
     Info query(int x, int y) { return query(1, 1, n, x, y); }
-    // 用 a[1..n] 建树, a[0] 不用; 重建前先 init(n) 清除旧标记
+    // 用 a[1..m] 替换旧树并清除旧标记, m = a.size()-1 不超过容量; a[0] 不用, m=0 为空树
     // 时间: O(n) | 空间: O(log n)
-    void build(const vector<Info>& a) { build(1, 1, n, a); }
+    void build(const vector<Info>& a)
+    {
+        n = (int)a.size() - 1;
+        if (n > 0) build(1, 1, n, a);
+    }
     // 返回 [start, n] 内满足 pred 的最左位置, 不存在或 start 越界返回 -1
     // 时间: O(log n) | 空间: O(log n)
     template<class Pred>
@@ -81,6 +85,7 @@ private:
     }
     void build(int p, int l, int r, const vector<Info>& a)
     {
+        tag[p] = Tag{};
         if (l == r)
         {
             info[p] = a[l];

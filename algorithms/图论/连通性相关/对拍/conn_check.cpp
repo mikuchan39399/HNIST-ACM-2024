@@ -122,14 +122,14 @@ static void test_scc()
 {
     static SCC scc(30, 300);
     static Graph<true, Empty> ge(30, 300);
-    static Graph<true, LL> gw(30, 300);   // 带权形态: SegGraph 注入通道
+    static Graph<true, LL> gw(30, 300); // 带权形态: SegGraph 注入通道
     static SCC sccw(30, 300);
     for (auto [n, es] : cases(true))
     {
-        scc.init(n); sccw.init(n); ge.clear(); gw.clear();
+          ge.clear(); gw.clear();
         for (auto [u, v] : es) { ge.add(u, v); gw.add(u, v, -1LL * u); }
         scc.build(ge, n);
-        sccw.build(gw, n);                // 带权鸭子等价
+        sccw.build(gw, n); // 带权鸭子等价
         for (int u = 1; u <= n; u++) assert(sccw.bel[u] == scc.bel[u]);
 
         // 暴力: Warshall 传递闭包, 类标记 = 类内最小编号
@@ -198,7 +198,7 @@ static void test_ebcc()
     for (auto [n, es] : inputs)
     {
         int m = es.size();
-        ebcc.init(n); g.clear();
+         g.clear();
         for (auto [u, v] : es) g.add(u, v);
         ebcc.build(g, n);
 
@@ -276,7 +276,7 @@ static void test_vbcc()
     for (auto [n, es] : cases(false))
     {
         int m = es.size();
-        vbcc.init(n); g.clear();
+        g.clear();
         for (auto [u, v] : es) g.add(u, v);
         vbcc.build(g, n);
 
@@ -379,7 +379,7 @@ static void test_vbcc()
         for (int root : {1, n})
         {
             CheckedBlock part(n);
-            part.init(n); part.build(g, n, root);
+            part.build(g, n, root);
             vector<VI> restricted;
             for (auto block : exp_sets) if (lab0[block[0]] == lab0[root]) restricted.push_back(block);
             vector<VI> actual(part.vbcc_cir.begin() + 1, part.vbcc_cir.end());
@@ -447,7 +447,7 @@ static void test_capacity()
     for (int n : {N, 1, N, 2, N})
         for (int kind = 0; kind < 4; kind++)
         {
-            scc.init(n); ebcc.init(n); vbcc.init(n); dg.clear(); ug.clear();
+              dg.clear(); ug.clear();
             if (kind != 0)
                 for (int u = 2; u <= n; u++)
                 {
@@ -483,7 +483,7 @@ static void test_capacity()
     // 点边预算均用满的稠密图；SCC 的 DAG 容量也恰好容纳全部跨分量边。
     const int K = 20, M = K * (K - 1) / 2;
     SCC full(K, M); Graph<true> g(K, M);
-    full.init(K);
+
     for (int u = 1; u <= K; u++) for (int v = u + 1; v <= K; v++) g.add(u, v);
     full.build(g, K); full.build_dag(g);
     assert(full.scc_cnt == K && full.dag.edge_cnt() == M);
@@ -498,7 +498,7 @@ static void test_coexist()
     g.add(1, 2); g.add(2, 3);
     VBCC vbcc(3);
     BCT bct(3);
-    vbcc.init(3); bct.init(3);
+
     vbcc.build(g, 3); bct.build(g, 3);
     vbcc.build_tree(); bct.build_tree();
     assert(vbcc.cut[2] && bct.cut[2]);

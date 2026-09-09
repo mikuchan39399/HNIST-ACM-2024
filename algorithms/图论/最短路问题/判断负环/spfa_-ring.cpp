@@ -22,8 +22,9 @@ struct SPFARing
     // 返回整图是否有负环, 每次自动清空工作表, 不修改图
     // 最坏时间 O(nm+n) | 额外空间 O(n)
     template <class G>
-    bool run(G& g)
+    bool run(G& g, int _n)
     {
+        init(_n);
         z_fill_n(n, 0, dist, cnt, inq);
         queue<int> q;
         for (int i = 1; i <= n; i++) { q.push(i); inq[i] = 1; }
@@ -51,11 +52,11 @@ int main()
     Graph<true, LL> g(4, 3);
     g.add(1, 2, 5); g.add(3, 4, -2); g.add(4, 3, 1);
     SPFARing sp(4);
-    sp.init(4);
-    cout << sp.run(g) << '\n'; // 1, 从 1 不可达的负环也会发现
+
+    cout << sp.run(g, 4) << '\n'; // 1, 从 1 不可达的负环也会发现
     g.clear(); g.add(1, 2, -3);
-    cout << sp.run(g) << '\n'; // 0, run 自带复位
-    sp.init(1); g.clear();
-    cout << sp.run(g) << '\n'; // 0
+    cout << sp.run(g, 4) << '\n'; // 0, run 自带复位
+     g.clear();
+    cout << sp.run(g, 1) << '\n'; // 0
 }
 */

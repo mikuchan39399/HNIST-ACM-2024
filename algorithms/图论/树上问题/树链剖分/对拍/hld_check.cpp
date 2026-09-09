@@ -1,5 +1,5 @@
 // ============ hld_check HLD+泛型线段树 回归套件 ============
-// 覆盖: HLD 剖链(单树 build(g,root) + 森林 build(g) 全扫含孤立点) ×
+// 覆盖: HLD 剖链(单树 build(g,n,root) + 森林 build(g,n,-1) 全扫含孤立点) ×
 //       SegTree<Info,Tag> 路径加/查 + 子树加/查, 对拍朴素 parent-walk;
 //       static 实例跨组 init 复用(多测路径); 跨分量路径不属契约, 同根才测
 // 纪律: 改动 HLD / 泛型线段树 模板, 必重跑本套件
@@ -61,11 +61,11 @@ void test_hld_single()
             ch[u].push_back(v);
             g.add(u, v);
         }
-        hld.init(n);
-        hld.build(g, 1);
+
+        hld.build(g, n, 1);
         vector<InfoH> b(n + 1);
         for (int i = 1; i <= n; i++) b[i] = {1, ref[hld.seg[i]]};
-        tr.init(n);
+
         tr.build(b);
         auto sub_apply = [&](int r, LL k)
         {
@@ -103,7 +103,7 @@ void test_hld_single()
                     ref[u] += k;
                     u = par[u];
                 }
-                ref[u] += k;   // LCA
+                ref[u] += k; // LCA
             }
             else if (op == 1) // 路径查
             {
@@ -133,7 +133,7 @@ void test_hld_single()
     }
 }
 
-// 模式 B: 森林 150 轮(一半点孤立成单点树), build(g) 全森林扫描
+// 模式 B: 森林 150 轮(一半点孤立成单点树), build(g,n,-1) 全森林扫描
 void test_hld_forest()
 {
     mt19937 rng(3369);
@@ -159,11 +159,11 @@ void test_hld_forest()
                 g.add(u, v);
             }
         }
-        hld.init(n);
-        hld.build(g);
+
+        hld.build(g, n, -1);
         vector<InfoH> b(n + 1);
         for (int i = 1; i <= n; i++) b[i] = {1, ref[hld.seg[i]]};
-        tr.init(n);
+
         tr.build(b);
         auto sub_apply = [&](int r, LL k)
         {
@@ -204,7 +204,7 @@ void test_hld_forest()
                         ref[u] += k;
                         u = par[u];
                     }
-                    ref[u] += k;   // LCA
+                    ref[u] += k; // LCA
                 }
                 else
                 {

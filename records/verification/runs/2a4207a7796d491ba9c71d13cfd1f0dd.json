@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "id": "2a4207a7796d491ba9c71d13cfd1f0dd",
+  "startedUtc": "2026-09-09T12:59:45.1827098Z",
+  "finishedUtc": "2026-09-09T12:59:52.6691858Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/lifecycle-20260909/scope-final-lca_vt_stress_check",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "c461563b11c64dea53df1898b99a76b1165836796c6853e0bc3beb1358e61a23",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "087bd7de81efbb8ca744c258cd455683a567f888235e61a062f59c629f0c4ade"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "a706493e4f57f2749fe89d2209732a1b57fcc5b91c3783a13c5c142707b00f26"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+          "hash": "11fdcfcf25dc72b8fe58f1f7d268de084947c00b8ef0c0827cb8e88c3825cb9c"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+          "hash": "3e5949785039c6166d99014b8b1d43ca08e1ce4a46ab04db5bfc9753cdf8d70c"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+          "hash": "4d1e342af070e352f1847d8452d975da06b07d4a7c7239cba744d6c4fab8584b"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "afc37f911006c0a012ce9ef2d24a088de0a9ff07c6697fcc1d510b85677ca87c",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "42c2cb7a5e256984e29c64eb0a8a60d3bae0e73f866606b88f36e058d356a68b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+          "hash": "8c3e686cc650fcba6aa6a42ea1835e47fe6e173cf3cf7adf4929ab35448cc77b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+          "hash": "cb8a47a8fa37c397c98cfb43c289a9fd3ec88045d85cf82fe9aaa647ad72ddad",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 7.108
+    }
+  ]
+}

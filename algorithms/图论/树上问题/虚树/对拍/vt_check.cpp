@@ -18,7 +18,7 @@
 
 using namespace std;
 
-using T3 = tuple<int, int, LL>;   // (min(u,v), max(u,v), w) 规范边
+using T3 = tuple<int, int, LL>; // (min(u,v), max(u,v), w) 规范边
 
 // 从 Graph<false, LL> 收集规范边集(每条逻辑边取偶数下标半边)
 static vector<T3> collect_edges(Graph<false, LL>& g)
@@ -92,8 +92,8 @@ static void check_case(int n, const vector<T3>& edges, const VI& keys, int root)
         if (p) expect.push_back({min(p, v), max(p, v), dis[v] - dis[p]});
     }
     sort(expect.begin(), expect.end());
-    lca.init(n);
-    lca.build(g);
+
+    lca.build(g, n);
     auto verify = [&](auto& vt)
     {
         VI input = keys;
@@ -129,12 +129,12 @@ int main()
         Graph<false, Empty> g(n, n);
         for (int i = 2; i <= n; i++)
         {
-            if (i == n && n >= 3 && rng() % 6 == 0) continue;   // 偶发孤立点(森林)
+            if (i == n && n >= 3 && rng() % 6 == 0) continue; // 偶发孤立点(森林)
             par[i] = 1 + rng() % (i - 1);
             g.add(i, par[i]);
         }
-        lca.init(n);
-        lca.build(g);
+
+        lca.build(g, n);
 
         // 独立暴力: 深度 + 朴素 lca(爬父链)
         VI dep(n + 1, 0);
@@ -173,7 +173,7 @@ int main()
         {
             if (v == 1) continue;
             int p = par[v];
-            while (!vs.count(p)) p = par[p];   // 1 ∈ V' 保证终止
+            while (!vs.count(p)) p = par[p]; // 1 ∈ V' 保证终止
             expect.push_back({min(p, v), max(p, v), (LL)(dep[v] - dep[p])});
         }
         sort(expect.begin(), expect.end());
@@ -203,7 +203,7 @@ int main()
     }
 
     check_case(2, {{1, 2, 3}}, {2, 2}, 1); // 旧栈版重复点会生成 2-2 自环
-    check_case(2, {{1, 2, 3}}, {1}, 2);    // root 非祖先, 旧栈版会生成 1-1 自环
+    check_case(2, {{1, 2, 3}}, {1}, 2); // root 非祖先, 旧栈版会生成 1-1 自环
     check_case(4, {{1, 2, 3}, {2, 3, 5}, {2, 4, 7}}, {4, 3, 4}, 4);
     check_case(4, {{1, 2, -3}, {2, 3, 0}, {2, 4, 1000000000000LL}}, {3, 4}, 1);
     check_case(3, {{1, 2, 1}}, {2, 3}, 1); // 跨分量, 清掉上组非空树

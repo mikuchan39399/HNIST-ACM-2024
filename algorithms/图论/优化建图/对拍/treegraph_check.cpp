@@ -47,8 +47,8 @@ void verify(TreeGraph<W>& tg, Oracle& ref, const VI& ids)
         else
         {
             Dijkstra dij(tg.tot);
-            dij.init(tg.tot);
-            dij.run(ids[s], tg.g);
+
+            dij.run(ids[s], tg.g, tg.tot);
             for (int v = 1; v <= n; v++) assert(dij.dist[ids[v]] == d[s][v]);
         }
     }
@@ -75,7 +75,7 @@ void random_cases()
                 forest.add(u, v, 1);
                 ref.tree[u].push_back(v); ref.tree[v].push_back(u);
             }
-        lca.init(n); lca.build(forest);
+        lca.build(forest, n);
         tg.build(lca, n);
         VI ids(n + 1); iota(ids.begin(), ids.end(), 0);
         verify(tg, ref, ids); // 树只定义路径, 不自动成为可走的边
@@ -186,7 +186,7 @@ void deterministic()
     TreeGraph<LL> big(40, 0, 1);
     big.build(chain, 40);
     big.add_path2path(1, 7, 19, 40, chain, INF - 1);
-    Dijkstra dij(big.tot); dij.run(1, big.g);
+    Dijkstra dij(big.tot); dij.run(1, big.g, big.tot);
     for (int u = 19; u <= 40; u++) assert(dij.dist[u] == INF - 1);
     assert(dij.dist[2] == INF && dij.dist[18] == INF);
     big.build(chain, 40);
@@ -219,7 +219,7 @@ void large_chain()
             assert(p == base + i);
         }
         assert(tg.g.edge_cnt() - before <= 8 * q);
-        Dijkstra dij(tg.tot); dij.run(1, tg.g);
+        Dijkstra dij(tg.tot); dij.run(1, tg.g, tg.tot);
         for (int u = 2; u <= size; u++) assert(dij.dist[u] == 7);
         for (int i = 1; i <= q; i++) assert(dij.dist[base+i] == (i%3 == 0 ? 0 : i%3 == 1 ? 2 : 3));
     }
@@ -236,19 +236,19 @@ void large_forest()
         forest.clear();
         for (int u = 2; u <= n; u++)
             if (mode < 2) forest.add(u, mode == 0 ? 1 : u / 2, 1);
-        lca.init(n); lca.build(forest); tg.build(lca, n);
+        lca.build(forest, n); tg.build(lca, n);
         int base = tg.tot;
         for (int u = 1; u <= n; u++)
         {
             int p = tg.add_path2path(1, 1, u, u, lca, 5);
             assert(p == base + u); // 两条路径可分属不同连通块
         }
-        Dijkstra dij(tg.tot); dij.run(1, tg.g);
+        Dijkstra dij(tg.tot); dij.run(1, tg.g, tg.tot);
         for (int u = 2; u <= n; u++) assert(dij.dist[u] == 5);
         assert(dij.dist[1] == 0);
     }
     TreeGraph<Empty> empty(1, 2*n, n);
-    lca.init(1); forest.clear(); lca.build(forest); empty.build(lca, 1);
+     forest.clear(); lca.build(forest, 1); empty.build(lca, 1);
     int p = 1;
     for (int i = 1; i <= n; i++) p = empty.add_p2new(p);
     assert(p == n+1 && empty.g.edge_cnt() == n);

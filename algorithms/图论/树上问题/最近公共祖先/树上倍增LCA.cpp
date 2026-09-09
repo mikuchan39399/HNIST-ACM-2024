@@ -19,16 +19,20 @@ struct LCA
     VVI f;
     VI dep, rt;
 
-    LCA(int _n, const VI& _head, const VI& _to, const VI& _nxt) : n(_n), 
+    LCA(int _n, const VI& _head, const VI& _to, const VI& _nxt) : n(_n),
         head(_head), to(_to), nxt(_nxt)
     {
         f.assign(n + 10, VI(25, 0));
         dep.assign(n + 10, 0);
         rt.assign(n + 10, 0);
     }
-    
-    void build()
+
+    // 从绑定的前向星重建 1.._n 森林, 自动复位 rt, _n 不超过构造容量
+    // 时间 O(_n log _n) | 递归栈 O(h), 固定倍增层数仅覆盖小于 2^21 的点数
+    void build(int _n)
     {
+        n = _n;
+        fill(rt.begin(), rt.begin() + n + 1, 0);
         for (int i = 1; i <= n; i++)
         {
             if (!rt[i])
@@ -46,7 +50,7 @@ struct LCA
         }
 
         if (dep[u] < dep[v]) swap(u, v);
-        
+
         for (int i = 20; i >= 0; i--)
         {
             if (dep[f[u][i]] >= dep[v])
@@ -54,7 +58,7 @@ struct LCA
                 u = f[u][i];
             }
         }
-        
+
         if (u == v) return u;
 
         for (int i = 20; i >= 0; i--)
@@ -73,12 +77,12 @@ private:
         f[u][0] = p;
         dep[u] = dep[p] + 1;
         rt[u] = root;
-        
+
         for (int i = 1; i <= 20; i++)
         {
             f[u][i] = f[f[u][i - 1]][i - 1];
         }
-        
+
         for (int i = head[u]; i; i = nxt[i])
         {
             int v = to[i];
@@ -87,3 +91,15 @@ private:
         }
     }
 };
+/* Usage
+int main()
+{
+    VI head{0, 1, 2}, to{0, 2, 1}, nxt{0, 0, 0}; // 0 号半边为空, 两条半边表示 1-2
+    LCA lc(2, head, to, nxt);
+    lc.build(2);
+    cout << lc.lca(1, 2) << '\n'; // 1
+    head[1] = head[2] = 0;
+    lc.build(2); // 修改绑定的前向星后直接重建, 不使用旧 rt
+    cout << (lc.lca(1, 2) == inf) << '\n'; // 1, 两点断连
+}
+*/

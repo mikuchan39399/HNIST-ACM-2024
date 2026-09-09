@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 using namespace std;
 
@@ -12,20 +13,25 @@ struct LCA
 {
     int n;
     int idx = 0;
-    const VI& head;  
-    const VI& to; 
+    const VI& head;
+    const VI& to;
     const VI& nxt;
     VI dep, pre;
     VVI rmq;
-    LCA(int _n, const VI& _head, const VI& _to, const VI& _nxt) : n(_n), 
+    LCA(int _n, const VI& _head, const VI& _to, const VI& _nxt) : n(_n),
         head(_head), to(_to), nxt(_nxt)
     {
         dep.assign(n + 1, 0);
         pre.assign(n + 1, 0);
         rmq.assign(2 * n + 1, VI(floor(log2(2 * n)) + 10, 0));
     }
-    void build(int root = 1)
+    // 从绑定的前向星重建 _n 点树, root 必须显式传入, _n 不超过构造容量
+    // 时间 O(_n log _n) | 递归栈 O(h), 查询点须在 root 所在树内
+    void build(int _n, int root)
     {
+        n = _n;
+        fill(dep.begin(), dep.begin() + n + 1, 0);
+        fill(pre.begin(), pre.begin() + n + 1, 0);
         idx = 0;
         dfs(root, 0);
         for (int k = 1; (1 << k) <= idx; k++)
@@ -34,7 +40,7 @@ struct LCA
             {
                 int u = rmq[i][k - 1];
                 int v = rmq[i + (1 << (k - 1))][k - 1];
-                rmq[i][k] = dep[u] < dep[v] ? u : v; 
+                rmq[i][k] = dep[u] < dep[v] ? u : v;
             }
         }
     }
@@ -66,3 +72,15 @@ private:
         }
     }
 };
+
+/* Usage
+int main()
+{
+    VI head{0, 1, 2}, to{0, 2, 1}, nxt{0, 0, 0};
+    LCA lc(2, head, to, nxt);
+    lc.build(2, 1); // 点数、根都显式传入
+    cout << lc.lca(1, 2) << '\n'; // 1
+    lc.build(2, 2); // 换根重建, 无需手动清表
+    cout << lc.lca(1, 2) << '\n'; // 2
+}
+*/

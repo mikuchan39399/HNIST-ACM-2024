@@ -6,7 +6,8 @@
       "suite": "algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp",
       "api": [
         "七组真实 Info/Tag 的 build、modify、query 与复位",
-        "加/赋值/模仿射平方和/异或计数/01连续段/最大子段/绝对下标等差"
+        "加/赋值/模仿射平方和/异或计数/01连续段/最大子段/绝对下标等差",
+        "build(a) 自动设置长度并清除旧标记"
       ],
       "oracle": "逐元素数组更新并扫描全部维护量; 最大子段小数据枚举所有子段, 大数据独立前缀最小值; 模运算暴力使用 __int128",
       "cases": [
@@ -116,17 +117,18 @@
       "template": "algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp",
       "suite": "algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp",
       "api": [
-        "构造/init/new_node/insert/merge/pop",
+        "构造/clear/new_node/insert/merge/pop",
         "empty/size/top/sum/top_pay",
-        "merge_raw 独占无重叠建堆"
+        "merge_raw 独占无重叠建堆",
+        "clear 保留池容量并使旧根失效"
       ],
       "oracle": "300 组 multiset 历史快照; 另 300 组任意历史分叉并逐字段核对全部旧结点; 大数据单调/同值序列闭式答案",
       "cases": [
         "大小根堆各三形态 20 万前缀版本及完整弹空, 历史 size/sum 回访, 单调键核对载荷, 最大使用 6987157 结点",
-        "共享版本/自身合并、查询零分配、init 池复用、单点预算 300 次重建、自定义载荷、正负大数",
+        "共享版本/自身合并、查询零分配、clear 池复用、单点预算 300 次重建、自定义载荷、正负大数",
         "独占两堆 merge_raw 后再函数式共享; 自合并 30 次逻辑大小 2^30"
       ],
-      "limitations": "所有旧根在 init 后停用; merge_raw 禁止共享或重叠输入, 仅小独占构造用例; 同值载荷不保证顺序; 逻辑大小须在 int 内, 求和不溢出; 800 万预留约 288 MB",
+      "limitations": "所有旧根在 clear 后停用; merge_raw 禁止共享或重叠输入, 仅小独占构造用例; 同值载荷不保证顺序; 逻辑大小须在 int 内, 求和不溢出; 800 万预留约 288 MB",
       "summary": "双堆型 20 万版本与历史不可变性已验, 明确原地合并的独占条件"
     },
     {
@@ -359,19 +361,20 @@
       "template": "algorithms/数据结构/线段树/泛型线段树.cpp",
       "suite": "algorithms/数据结构/线段树/对拍/seg_check.cpp",
       "api": [
-        "构造/init/build",
+        "构造/直接 build 自动复位",
         "modify/query",
         "find_first/find_last",
-        "split_tag/get_real_tag"
+        "split_tag/get_real_tag",
+        "build(a) 自动设置长度并清除旧标记"
       ],
       "oracle": "小数组逐点展开并扫描; 大范围加和用独立差分 Fenwick 积分; 单调数组找位置用编号公式",
       "cases": [
         "保留旧随机加法/赋值; mt19937(42) 400 组仿射含赋值/取负非交换叠加, len/sum/min/max 和左右查找",
         "400 组整域等差标记分裂与子区间查询; 400 组 chmin 剪枝及 get_real_tag 转换",
-        "20 万长度、20 万次区间修改及查询; 大-1-2-65537-大 init/build 和 1e12 负偏移找位置"
+        "20 万长度、20 万次区间修改及查询; 大-1-2-65537-大 build 自动复位 和 1e12 负偏移找位置"
       ],
-      "limitations": "区间非空且合法, 重建前 init; find 是区间存在性判据, 不累积前缀; 势能复杂度由代数保证; 等差用例只向整域施加局部标记",
-      "summary": "区间代数、左右查找及 20 万规模已验; 重建前 init"
+      "limitations": "区间非空且合法, build 自动复位; find 是区间存在性判据, 不累积前缀; 势能复杂度由代数保证; 等差用例只向整域施加局部标记",
+      "summary": "区间代数、左右查找及 20 万规模已验; build 自动复位"
     },
     {
       "template": "algorithms/图论/优化建图/线段树优化建图.cpp",
@@ -397,9 +400,9 @@
     {
       "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
       "api": [
-        "init",
         "run(s,sg.g)",
-        "dist"
+        "dist",
+        "run(sources,g,n) 自动复位"
       ],
       "oracle": "SegGraph 逻辑操作独立展开, Floyd 全点对; 大图闭式距离",
       "cases": [
@@ -413,9 +416,9 @@
     {
       "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
       "api": [
-        "init",
         "build(sg.g,sg.tot)",
-        "bel"
+        "bel",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "独立 Floyd 双向可达判定原点与用户中继的强连通关系; 大图按 32 点分块闭式分组",
       "cases": [
@@ -539,7 +542,6 @@
       "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
       "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
       "api": [
-        "init",
         "build",
         "任意根",
         "fa",
@@ -547,7 +549,8 @@
         "dfn",
         "seg",
         "sz",
-        "路径与子树修改查询"
+        "路径与子树修改查询",
+        "build(g,n,root) 自动复位且 root 显式传入"
       ],
       "oracle": "独立 BFS 父表、儿子表枚举与朴素点值; 大树按编号爬父链",
       "cases": [
@@ -561,11 +564,11 @@
       "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
       "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
       "api": [
-        "init",
         "build",
         "bel",
         "scc_cnt",
-        "build_dag"
+        "build_dag",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "按生成结构闭式划分 SCC, 核对成员唯一性与缩点边数",
       "cases": [
@@ -579,12 +582,12 @@
       "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
       "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
       "api": [
-        "init",
         "build",
         "bel",
         "ebcc_cnt",
         "get_bridges",
-        "build_tree"
+        "build_tree",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "按生成结构闭式划分 EBCC, 独立原边序核对桥",
       "cases": [
@@ -598,11 +601,11 @@
       "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
       "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
       "api": [
-        "init",
         "build",
         "vbcc_cir",
         "cut",
-        "build_tree"
+        "build_tree",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "独立构造规范点双集合、割点与圆方边关联",
       "cases": [
@@ -616,12 +619,12 @@
       "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
       "suite": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
       "api": [
-        "init",
         "build",
         "vbcc_cir",
         "cut",
         "build_tree",
-        "HLD 组装"
+        "HLD 组装",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "独立构造点双与圆方边, 圆点记 1 后核对 HLD 路径计数",
       "cases": [
@@ -635,18 +638,19 @@
       "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
       "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
       "api": [
-        "init/build",
+        "直接 build 自动复位",
         "lca(u,v)",
         "lca(nodes)",
         "dist",
         "jump",
         "dep/dis/rt/sz/dfn/rnk/fa[0]",
-        "虚树双实现组装"
+        "虚树双实现组装",
+        "build(g,n) 自动复位"
       ],
       "oracle": "独立父表爬链与路径权和; 大链用编号闭式答案; 虚树以原父树删枝、必选点及多有效儿子分叉点构造, 不调用被测 LCA",
       "cases": [
         "默认 mt19937(42), 400 组最多 40 点带权树/森林全点对, 另有 3 个固定零权/LL 两端权和样例, 跳转负/零/路径中点/终点/越过终点",
-        "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 init 复用",
+        "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 直接重建复用",
         "默认 20 万点星/二叉/随机树/64 点链块森林, 每形态 10 万次查询, 四种 LCA 与虚树组合核对",
         "全点、2n 长重复输入、空集、单点、稀疏关键点及大-小-大重建; 百万点/增栈深链/默认栈探针由独立 CI stress 作业执行, 专项报告单列"
       ],
@@ -657,18 +661,19 @@
       "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
       "suite": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
       "api": [
-        "init/build",
-        "build(g,root)",
+        "直接 build 自动复位",
+        "build(g,n,root)",
         "lca(u,v)",
         "lca(nodes)",
         "dist",
         "dep/dis/rt/sz/dfn/fa",
-        "虚树双实现组装"
+        "虚树双实现组装",
+        "build(g,n,root) 自动复位且 root 显式传入"
       ],
       "oracle": "独立父表爬链与路径权和, 指定根由原边表独立 BFS 重建父表; 虚树以父树删枝构造, 不调用被测 LCA",
       "cases": [
         "默认 mt19937(42), 400 组最多 40 点带权树/森林全点对, 其中 200 组连通树再测随机指定根与两种虚树, 另测零权及逼近 LL 两端的权和",
-        "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 init 复用",
+        "空及重复多点 LCA, 跨分量、空森林, 成员表核对与 直接重建复用",
         "默认 20 万点星/二叉/随机树/64 点链块森林, 每形态 10 万次查询, 四种 LCA 与虚树组合核对",
         "全点、2n 长重复输入、空集、单点、稀疏关键点及大-小-大重建; 独立 CI stress 作业另列百万点和栈探针报告"
       ],
@@ -755,14 +760,14 @@
       "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
       "suite": "algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp",
       "api": [
-        "init",
         "build(g,1)",
-        "build(g)",
+        "build(g,n,-1)",
         "dfn/seg",
         "modify_path",
         "query_path",
         "modify_subtree",
-        "query_subtree"
+        "query_subtree",
+        "build(g,n,root) 自动复位且 root 显式传入"
       ],
       "oracle": "独立父表逐级爬链与儿子表遍历, 朴素点权数组逐点加和",
       "cases": [
@@ -818,18 +823,18 @@
       "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
       "api": [
-        "init",
         "build",
         "lca(u,v)",
         "lca(nodes)",
         "dist",
         "jump",
-        "sz"
+        "sz",
+        "build(g,n) 自动复位"
       ],
       "oracle": "独立父表逐级爬链, 递归计子树大小, 路径步数模拟",
       "cases": [
         "300 组 1 到 50 点无权森林, mt19937(42)",
-        "静态实例 init 复用, 每组 40 次随机点对与跳转",
+        "静态实例 直接重建复用, 每组 40 次随机点对与跳转",
         "1 到 6 个点的点集查询, 跨树返回值, 非正步数及超路长跳转"
       ],
       "summary": "无权森林的单点对/点集 LCA、距离、跳转和子树大小已对拍",
@@ -839,16 +844,16 @@
       "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
       "api": [
-        "init",
-        "build(g)",
+        "build(g,n,-1)",
         "lca(u,v)",
         "lca(nodes)",
-        "dist"
+        "dist",
+        "build(g,n,root) 自动复位且 root 显式传入"
       ],
       "oracle": "独立父表逐级爬链与路径步数",
       "cases": [
         "300 组 1 到 50 点无权森林, mt19937(42)",
-        "静态实例 init 复用, 每组 40 次随机点对",
+        "静态实例 直接重建复用, 每组 40 次随机点对",
         "1 到 6 个点的点集查询及跨树返回值"
       ],
       "summary": "默认根无权森林的单点对/点集 LCA 与距离已对拍",
@@ -953,7 +958,8 @@
       "api": [
         "build",
         "build_dag",
-        "build_dag_unique"
+        "build_dag_unique",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "Warshall 与跨分量边多重集",
       "cases": [
@@ -970,7 +976,8 @@
       "api": [
         "build",
         "get_bridges",
-        "build_tree"
+        "build_tree",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "逐边删除、去桥连通块与成员集合",
       "cases": [
@@ -989,7 +996,8 @@
         "build(root)",
         "build_tree",
         "get_bel_vbccs",
-        "get_cuts_vbcc"
+        "get_cuts_vbcc",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "逐点删除与枚举极大点双集合",
       "cases": [
@@ -1008,7 +1016,8 @@
         "build(root)",
         "build_tree",
         "get_bel_vbccs",
-        "get_cuts_vbcc"
+        "get_cuts_vbcc",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "逐点删除与枚举极大点双集合",
       "cases": [
@@ -1023,9 +1032,10 @@
       "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
       "api": [
-        "构造容量、init、run、dist",
-        "单源、不可达 INF、每次 init 后复用",
-        "空/重复/全点多源，源集去重"
+        "构造容量、run 显式传n自动复位、dist",
+        "单源、不可达 INF、每次 run 自动复位",
+        "空/重复/全点多源，源集去重",
+        "run(sources,g,n) 自动复位"
       ],
       "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
       "cases": [
@@ -1034,15 +1044,16 @@
         "20万-1-257-20万复位，前向链/跨点边与零权环；SPFA/BF另跑前向负链",
         "20万重边产生过期堆项、20万重复源只扫描一次出边，大星/孤点交错与多源最近距离"
       ],
-      "limitations": "n>=1 且在构造容量内，每次run前init；有限距离<INF，候选加法在LL内；边权非负且<INF",
+      "limitations": "n>=1 且在构造容量内，run显式传n并自动复位；有限距离<INF，候选加法在LL内；边权非负且<INF",
       "summary": "独立Floyd全源与多源，20万规模/重边/重复源复位"
     },
     {
       "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
       "api": [
-        "构造容量、init、run、dist",
-        "单源、不可达 INF、每次 init 后复用"
+        "构造容量、run 显式传n自动复位、dist",
+        "单源、不可达 INF、每次 run 自动复位",
+        "run(s,g,n) 自动复位"
       ],
       "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
       "cases": [
@@ -1050,15 +1061,16 @@
         "单点、自环正零负、不可达负环、run 判环 true 后原地换无边图；普通路径 INF-1、-8e18 与不可达负边隔离",
         "1800点完全DAG，距离 |u-v|；1800-1-257-1800逆链复位"
       ],
-      "limitations": "n>=1 且在构造容量内，每次run前init；有限距离<INF，候选加法在LL内；边权非负且<INF",
+      "limitations": "n>=1 且在构造容量内，run显式传n并自动复位；有限距离<INF，候选加法在LL内；边权非负且<INF",
       "summary": "独立Floyd全源与1800稠密/逆链复位"
     },
     {
       "template": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
       "api": [
-        "构造容量、init、run、dist",
-        "单源、不可达 INF、每次 init 后复用"
+        "构造容量、run 显式传n自动复位、dist",
+        "单源、不可达 INF、每次 run 自动复位",
+        "run(s,g,n) 自动复位"
       ],
       "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
       "cases": [
@@ -1067,15 +1079,16 @@
         "20万-1-257-20万复位，前向链/跨点边与零权环；SPFA/BF另跑前向负链",
         "1800反编号链；SPFA另测1800点先跨点后邻点的稀疏反复入队，1619100次扫边"
       ],
-      "limitations": "n>=1 且在构造容量内，每次run前init；有限距离<INF，候选加法在LL内；允许负边但源点可达部分不得有负环；SPFA/BF最坏二次或更慢，20万顺序友好图通过不代表任意大图可承受",
+      "limitations": "n>=1 且在构造容量内，run显式传n并自动复位；有限距离<INF，候选加法在LL内；允许负边但源点可达部分不得有负环；SPFA/BF最坏二次或更慢，20万顺序友好图通过不代表任意大图可承受",
       "summary": "独立Floyd全源，20万容量/负链与1800退化，隔离不可达负环"
     },
     {
       "template": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
       "api": [
-        "构造容量、init、run、dist",
-        "单源、不可达 INF、每次 init 后复用"
+        "构造容量、run 显式传n自动复位、dist",
+        "单源、不可达 INF、每次 run 自动复位",
+        "run(s,g,n) 自动复位"
       ],
       "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
       "cases": [
@@ -1084,15 +1097,16 @@
         "20万-1-257-20万复位，前向链/跨点边与零权环；SPFA/BF另跑前向负链",
         "1800反编号链；SPFA另测1800点先跨点后邻点的稀疏反复入队，1619100次扫边"
       ],
-      "limitations": "n>=1 且在构造容量内，每次run前init；有限距离<INF，候选加法在LL内；允许负边但源点可达部分不得有负环；SPFA/BF最坏二次或更慢，20万顺序友好图通过不代表任意大图可承受",
+      "limitations": "n>=1 且在构造容量内，run显式传n并自动复位；有限距离<INF，候选加法在LL内；允许负边但源点可达部分不得有负环；SPFA/BF最坏二次或更慢，20万顺序友好图通过不代表任意大图可承受",
       "summary": "独立Floyd全源，20万容量/负链与1800退化，隔离不可达负环"
     },
     {
       "template": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
       "api": [
-        "构造容量、init、run、dist",
-        "整图判负环、run 自动复位、i128 工作距离"
+        "构造容量、run 显式传n自动复位、dist",
+        "整图判负环、run 自动复位、i128 工作距离",
+        "run(g,n) 自动复位"
       ],
       "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
       "cases": [
@@ -1108,8 +1122,9 @@
       "template": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
       "suite": "algorithms/图论/对拍/graph_check.cpp",
       "api": [
-        "构造容量、init、run、dist",
-        "整图判负环、run 自动复位、i128 工作距离"
+        "构造容量、run 显式传n自动复位、dist",
+        "整图判负环、run 自动复位、i128 工作距离",
+        "run(g,n) 自动复位"
       ],
       "oracle": "独立 i128 Floyd，按负对角线与可达性判负环；所有合法源点逐点对照；大图采用链/星闭式距离，计数包装只记录真实模板扫边次数",
       "cases": [
@@ -1599,7 +1614,8 @@
       "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/build 与派生图复用"
+        "直接 build 自动复位 与派生图复用",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "有向星/双向星分量数和判环闭式答案, 无向星桥/点双/圆方树计数",
       "cases": [
@@ -1613,7 +1629,8 @@
       "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/build 与派生图复用"
+        "直接 build 自动复位 与派生图复用",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "有向星/双向星分量数和判环闭式答案, 无向星桥/点双/圆方树计数",
       "cases": [
@@ -1627,7 +1644,8 @@
       "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/build 与派生图复用"
+        "直接 build 自动复位 与派生图复用",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "有向星/双向星分量数和判环闭式答案, 无向星桥/点双/圆方树计数",
       "cases": [
@@ -1641,7 +1659,8 @@
       "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/build 与派生图复用"
+        "直接 build 自动复位 与派生图复用",
+        "build(g,n) 自动复位; 派生图由 build_dag/build_tree 重建"
       ],
       "oracle": "有向星/双向星分量数和判环闭式答案, 无向星桥/点双/圆方树计数",
       "cases": [
@@ -1655,7 +1674,8 @@
       "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/build 与树查询的容量复用"
+        "直接 build 自动复位 与树查询的容量复用",
+        "build(g,n) 自动复位"
       ],
       "oracle": "单位权星形树的祖先/距离/直径/中心/重心及虚树边数闭式答案",
       "cases": [
@@ -1669,7 +1689,8 @@
       "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/build 与树查询的容量复用"
+        "直接 build 自动复位 与树查询的容量复用",
+        "build(g,n,root) 自动复位且 root 显式传入"
       ],
       "oracle": "单位权星形树的祖先/距离/直径/中心/重心及虚树边数闭式答案",
       "cases": [
@@ -1683,7 +1704,8 @@
       "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/build 与树查询的容量复用"
+        "直接 build 自动复位 与树查询的容量复用",
+        "build(g,n,root) 自动复位且 root 显式传入"
       ],
       "oracle": "单位权星形树的祖先/距离/直径/中心/重心及虚树边数闭式答案",
       "cases": [
@@ -1781,7 +1803,8 @@
       "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/run 或 build 的容量复用"
+        "直接 run 自动复位 或 build 的容量复用",
+        "run(sources,g,n) 自动复位"
       ],
       "oracle": "单位权星形图闭式距离与生成树权和, 负自环判环",
       "cases": [
@@ -1795,7 +1818,8 @@
       "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/run 或 build 的容量复用"
+        "直接 run 自动复位 或 build 的容量复用",
+        "run(s,g,n) 自动复位"
       ],
       "oracle": "单位权星形图闭式距离与生成树权和, 负自环判环",
       "cases": [
@@ -1809,7 +1833,8 @@
       "template": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/run 或 build 的容量复用"
+        "直接 run 自动复位 或 build 的容量复用",
+        "run(s,g,n) 自动复位"
       ],
       "oracle": "单位权星形图闭式距离与生成树权和, 负自环判环",
       "cases": [
@@ -1823,7 +1848,8 @@
       "template": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/run 或 build 的容量复用"
+        "直接 run 自动复位 或 build 的容量复用",
+        "run(s,g,n) 自动复位"
       ],
       "oracle": "单位权星形图闭式距离与生成树权和, 负自环判环",
       "cases": [
@@ -1837,7 +1863,8 @@
       "template": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/run 或 build 的容量复用"
+        "直接 run 自动复位 或 build 的容量复用",
+        "run(g,n) 自动复位"
       ],
       "oracle": "单位权星形图闭式距离与生成树权和, 负自环判环",
       "cases": [
@@ -1851,7 +1878,8 @@
       "template": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
       "suite": "algorithms/图论/对拍/graph_capacity_check.cpp",
       "api": [
-        "init/run 或 build 的容量复用"
+        "直接 run 自动复位 或 build 的容量复用",
+        "run(g,n) 自动复位"
       ],
       "oracle": "单位权星形图闭式距离与生成树权和, 负自环判环",
       "cases": [
@@ -1930,6 +1958,266 @@
       ],
       "summary": "旧矩阵例程仅清本轮方阵, 非负图与大小复用已补验",
       "limitations": "保留旧 standalone main 和 N=110 的固定矩阵, 1<=n<110; 仅非负 int 小权值, 不覆盖负边/负环/大权溢出; 不代表已完成现代 Graph 引擎整理"
+    },
+    {
+      "template": "algorithms/图论/树上问题/最近公共祖先/树上倍增LCA.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "自动复位 build, 备用前向星/离线输入保留"
+      ],
+      "oracle": "独立 BFS 父表与朴素父链 LCA, 全点对核对",
+      "cases": [
+        "350 轮, 256-1-256-1 及随机树, 连续双 build 与欧拉序换根, 离线树边/询问数量保持"
+      ],
+      "limitations": "仅合法同树询问, 旧递归和倍增固定层数限制仍保留, 不宣称大规模现代化",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/图论/树上问题/最近公共祖先/欧拉序LCA.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "自动复位 build, 备用前向星/离线输入保留"
+      ],
+      "oracle": "独立 BFS 父表与朴素父链 LCA, 全点对核对",
+      "cases": [
+        "350 轮, 256-1-256-1 及随机树, 连续双 build 与欧拉序换根, 离线树边/询问数量保持"
+      ],
+      "limitations": "仅合法同树询问, 旧递归和倍增固定层数限制仍保留, 不宣称大规模现代化",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/图论/树上问题/最近公共祖先/tarjan.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "自动复位 build, 备用前向星/离线输入保留"
+      ],
+      "oracle": "独立 BFS 父表与朴素父链 LCA, 全点对核对",
+      "cases": [
+        "350 轮, 256-1-256-1 及随机树, 连续双 build 与欧拉序换根, 离线树边/询问数量保持"
+      ],
+      "limitations": "仅合法同树询问, 旧递归和倍增固定层数限制仍保留, 不宣称大规模现代化",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "完整分解及派生图反复重建"
+      ],
+      "oracle": "星形图闭式分量/边数",
+      "cases": [
+        "350 轮, 1000-1-1000-1, 重边 SCC DAG 与去重 DAG 交替, 桥/圆方森林重复构建, 原图边数不变"
+      ],
+      "limitations": "结构化复位专项, 随机语义保留在 conn_check",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "完整分解及派生图反复重建"
+      ],
+      "oracle": "星形图闭式分量/边数",
+      "cases": [
+        "350 轮, 1000-1-1000-1, 重边 SCC DAG 与去重 DAG 交替, 桥/圆方森林重复构建, 原图边数不变"
+      ],
+      "limitations": "结构化复位专项, 随机语义保留在 conn_check",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "完整分解及派生图反复重建"
+      ],
+      "oracle": "星形图闭式分量/边数",
+      "cases": [
+        "350 轮, 1000-1-1000-1, 重边 SCC DAG 与去重 DAG 交替, 桥/圆方森林重复构建, 原图边数不变"
+      ],
+      "limitations": "结构化复位专项, 随机语义保留在 conn_check",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "完整分解及派生图反复重建"
+      ],
+      "oracle": "星形图闭式分量/边数",
+      "cases": [
+        "350 轮, 1000-1-1000-1, 重边 SCC DAG 与去重 DAG 交替, 桥/圆方森林重复构建, 原图边数不变"
+      ],
+      "limitations": "结构化复位专项, 随机语义保留在 conn_check",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/数据结构/线段树/泛型线段树.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "完整 build 清状态, 共享版本/点权输入保留"
+      ],
+      "oracle": "数组等差求和与单点公式; 历史版本和带权重心确定性答案",
+      "cases": [
+        "普通树 350 轮含 20万-1-20万-1, 残留全域懒标记后重建、空树重建; 持久化 3 根独立答案, 重心重复 build 保留 pt"
+      ],
+      "limitations": "持久化和点权保留仅为确定性反例, 既有完整语义对拍仍单列",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/数据结构/线段树/可持久化线段树/主席树.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "完整 build 清状态, 共享版本/点权输入保留"
+      ],
+      "oracle": "数组等差求和与单点公式; 历史版本和带权重心确定性答案",
+      "cases": [
+        "普通树 350 轮含 20万-1-20万-1, 残留全域懒标记后重建、空树重建; 持久化 3 根独立答案, 重心重复 build 保留 pt"
+      ],
+      "limitations": "持久化和点权保留仅为确定性反例, 既有完整语义对拍仍单列",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "完整 build 清状态, 共享版本/点权输入保留"
+      ],
+      "oracle": "数组等差求和与单点公式; 历史版本和带权重心确定性答案",
+      "cases": [
+        "普通树 350 轮含 20万-1-20万-1, 残留全域懒标记后重建、空树重建; 持久化 3 根独立答案, 重心重复 build 保留 pt"
+      ],
+      "limitations": "持久化和点权保留仅为确定性反例, 既有完整语义对拍仍单列",
+      "summary": "生命周期重建与必须保留的输入/版本专项"
+    },
+    {
+      "template": "algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp",
+      "suite": "algorithms/数据结构/树套树/对拍/segfhq_lifecycle_check.cpp",
+      "api": [
+        "build(n), modify, query_rank/query_kth/query_pre/query_suf"
+      ],
+      "oracle": "独立数组逐点修改, 复制区间排序/二分",
+      "cases": [
+        "种子42, 350组各100混合操作, 重复 build 不增加池占用; 20万-1-0-257-20万重建及端点修改"
+      ],
+      "limitations": "旧固定值域与全局池预算保留; 测值0..200000, 未验任意高强度修改耗尽池, 不宣称整体最坏性能",
+      "summary": "旧树套树新增完整重建入口, 数组对拍和20万规模复用"
+    },
+    {
+      "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "新 build/run 签名可调用且旧缺点数签名不可调用"
+      ],
+      "oracle": "C++20 requires 与 static_assert 编译检查",
+      "cases": [
+        "LCA 两参数, HLD/HLD_LCA 三参数, 四版最短路三参数, 判负环拒绝旧单参数"
+      ],
+      "limitations": "此条仅验证接口可调用性, 运行时语义由其他相关套件单列",
+      "summary": "旧调用不能静默改变参数含义"
+    },
+    {
+      "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "新 build/run 签名可调用且旧缺点数签名不可调用"
+      ],
+      "oracle": "C++20 requires 与 static_assert 编译检查",
+      "cases": [
+        "LCA 两参数, HLD/HLD_LCA 三参数, 四版最短路三参数, 判负环拒绝旧单参数"
+      ],
+      "limitations": "此条仅验证接口可调用性, 运行时语义由其他相关套件单列",
+      "summary": "旧调用不能静默改变参数含义"
+    },
+    {
+      "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "新 build/run 签名可调用且旧缺点数签名不可调用"
+      ],
+      "oracle": "C++20 requires 与 static_assert 编译检查",
+      "cases": [
+        "LCA 两参数, HLD/HLD_LCA 三参数, 四版最短路三参数, 判负环拒绝旧单参数"
+      ],
+      "limitations": "此条仅验证接口可调用性, 运行时语义由其他相关套件单列",
+      "summary": "旧调用不能静默改变参数含义"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "新 build/run 签名可调用且旧缺点数签名不可调用"
+      ],
+      "oracle": "C++20 requires 与 static_assert 编译检查",
+      "cases": [
+        "LCA 两参数, HLD/HLD_LCA 三参数, 四版最短路三参数, 判负环拒绝旧单参数"
+      ],
+      "limitations": "此条仅验证接口可调用性, 运行时语义由其他相关套件单列",
+      "summary": "旧调用不能静默改变参数含义"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "新 build/run 签名可调用且旧缺点数签名不可调用"
+      ],
+      "oracle": "C++20 requires 与 static_assert 编译检查",
+      "cases": [
+        "LCA 两参数, HLD/HLD_LCA 三参数, 四版最短路三参数, 判负环拒绝旧单参数"
+      ],
+      "limitations": "此条仅验证接口可调用性, 运行时语义由其他相关套件单列",
+      "summary": "旧调用不能静默改变参数含义"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "新 build/run 签名可调用且旧缺点数签名不可调用"
+      ],
+      "oracle": "C++20 requires 与 static_assert 编译检查",
+      "cases": [
+        "LCA 两参数, HLD/HLD_LCA 三参数, 四版最短路三参数, 判负环拒绝旧单参数"
+      ],
+      "limitations": "此条仅验证接口可调用性, 运行时语义由其他相关套件单列",
+      "summary": "旧调用不能静默改变参数含义"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "新 build/run 签名可调用且旧缺点数签名不可调用"
+      ],
+      "oracle": "C++20 requires 与 static_assert 编译检查",
+      "cases": [
+        "LCA 两参数, HLD/HLD_LCA 三参数, 四版最短路三参数, 判负环拒绝旧单参数"
+      ],
+      "limitations": "此条仅验证接口可调用性, 运行时语义由其他相关套件单列",
+      "summary": "旧调用不能静默改变参数含义"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "新 build/run 签名可调用且旧缺点数签名不可调用"
+      ],
+      "oracle": "C++20 requires 与 static_assert 编译检查",
+      "cases": [
+        "LCA 两参数, HLD/HLD_LCA 三参数, 四版最短路三参数, 判负环拒绝旧单参数"
+      ],
+      "limitations": "此条仅验证接口可调用性, 运行时语义由其他相关套件单列",
+      "summary": "旧调用不能静默改变参数含义"
+    },
+    {
+      "template": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
+      "suite": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "api": [
+        "新 build/run 签名可调用且旧缺点数签名不可调用"
+      ],
+      "oracle": "C++20 requires 与 static_assert 编译检查",
+      "cases": [
+        "LCA 两参数, HLD/HLD_LCA 三参数, 四版最短路三参数, 判负环拒绝旧单参数"
+      ],
+      "limitations": "此条仅验证接口可调用性, 运行时语义由其他相关套件单列",
+      "summary": "旧调用不能静默改变参数含义"
     }
   ]
 }

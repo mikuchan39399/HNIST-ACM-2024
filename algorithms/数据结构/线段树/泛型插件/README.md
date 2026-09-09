@@ -16,7 +16,7 @@
 | [SegMaxSubarray](区间赋值与最大子段和.cpp) | 区间赋值；最大子段和、前后缀和 |
 | [SegLinear](区间等差加法与区间和.cpp) | 区间加等差数列；区间和 |
 
-每组尾部都有完整 Usage。普通线段树写 `SegTree<Info, Tag>`，叶子用 `Info(value)`；SegLinear 用 `Info(value, index)`。数组从 1 开始，多测先 `init(n)` 再 `build(a)`。
+每组尾部都有完整 Usage。普通线段树写 `SegTree<Info, Tag>`，叶子用 `Info(value)`；SegLinear 用 `Info(value, index)`。数组从 1 开始，多测直接 `build(a)`，内部按数组长度重建并清除旧标记。
 
 ## 标记复合：旧的在前，新的在后
 

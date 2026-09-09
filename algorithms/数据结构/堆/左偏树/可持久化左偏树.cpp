@@ -6,7 +6,7 @@
 
 
 // ============ 可持久化左偏树(函数式) ============
-// merge/insert/pop 只新增结点, 版本根由调用方保存; init 使全部旧根失效, merge_raw 另按独占契约使用
+// merge/insert/pop 只新增结点, 版本根由调用方保存; clear 使全部旧根失效, merge_raw 另按独占契约使用
 // less 为小根堆, greater 为大根堆; 同值不保证 payload 顺序, N 为本次堆的逻辑元素数
 // LL + int payload 每物理点 36 B; 预算 = 新单点数 + 所有 merge/pop 复制路径长度之和, 8e6 ≈ 288 MB
 // 允许合并共享版本和自身, 重叠元素重复计数; 逻辑大小须在 int 内, 值与求和中间值须在 T 内
@@ -29,7 +29,7 @@ struct PersistentLeftist
     }
     // 清空结点池并保留容量, 所有旧根停用
     // 时间: O(1) | 空间: O(1)
-    void init() { tot = 0; }
+    void clear() { tot = 0; }
     // 生成一个只含单点的新堆，返回物理节点编号
     // 时间: O(1) | 空间: O(1)
     int new_node(T v, Pay p = Pay())
@@ -111,7 +111,7 @@ private:
  *     cout << t.top_pay(b) << endl; // 20
  *     int d = t.merge(a, b); // 共享的 5 在新版本中出现两次
  *     cout << t.size(d) << ' ' << t.sum(d) << endl; // 3 12
- *     t.init(); // a/b/c/d 全部失效
+ *     t.clear(); // a/b/c/d 全部失效
  *     int e = t.new_node(7);
  *     cout << t.top(e) << endl; // 7
  * }

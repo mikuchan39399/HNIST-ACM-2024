@@ -27,7 +27,7 @@ struct BCT
         sta.reserve(max_n + 10);
     }
     // 复位本轮结果与内部图; n 不超过构造时的 N, 原图需另行 clear()
-    // 时间 O(n + 上轮点数) | 额外空间 O(1)
+    // 时间 O(n + 上轮结果大小) | 额外空间 O(1)
     void init(int _n)
     {
         n = _n;
@@ -37,12 +37,12 @@ struct BCT
         sta.clear();
         vbcc_cir.assign(1, VI{});
     }
-    // 求点双与割点; 先 init(n), root = -1 扫全图, 否则只扫 root 所在连通块
-    // 时间: O(n + m) | 空间: O(n)
+    // 求点双与割点; 自动复位旧结果, root = -1 扫全图, 否则只扫 root 所在连通块
+    // 时间: O(n + m + 上轮结果大小) | 空间: O(n)
     template <class G>
     void build(G& g, int _n, int root = -1)
     {
-        n = _n;
+        init(_n);
         if (root != -1)
         {
             tarjan(g, root, root);
@@ -51,10 +51,11 @@ struct BCT
         for (int i = 1; i <= n; i++)
             if (!dfn[i]) tarjan(g, i, i);
     }
-    // 向 tree 追加圆方森林, 每个方点连接该点双的全部圆点; 重建先 tree.clear()
+    // 重建 tree 的圆方森林, 每个方点连接该点双的全部圆点; 自动清掉旧 tree
     // 时间 O(n) | 额外空间 O(n)
     void build_tree()
     {
+        tree.clear();
         for (int i = 1; i <= vbcc_cnt; i++)
         {
             int u = n + i;
@@ -132,7 +133,7 @@ int main()
     cin >> n >> m;
     BCT bct(n);
     Graph<false> g(n, m);
-    bct.init(n);
+
     for (int i = 1; i <= m; i++)
     {
         int u, v;
