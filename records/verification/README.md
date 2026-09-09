@@ -10,6 +10,8 @@ runs 中的 JSON 由 run_checks.ps1 自动写入, 每轮独立记录, 不手工�
 
 | 范围 | 报告 |
 |---|---|
+| 图论全局容量与小测复用 | [29 份代码检查、25 份 Graph 体系回归与 Floyd 修复](graph-capacity-20260909.md) |
+| 拓扑排序大容量多测 | [入度复制范围修复与跨平台回归](topo-20260908.md) |
 | CI 图论专项入口失败 | [名称遮蔽、Usage 误识别与完整 profile 复验](ci-stress-20260908.md) |
 | 目录同步与 utils 数值工具合并 | [全库回归、Linux sanitizer 与双版 PowerShell](../tooling/layout-20260908.md) |
 | 数论两筛与现役四件 | [千万筛表、独立参照与整数边界](number-theory-20260908.md) |

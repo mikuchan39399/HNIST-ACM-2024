@@ -1,0 +1,96 @@
+{
+  "compiler": "g++-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+  "flags": [
+    "-std=c++20",
+    "-O1",
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize-recover=all",
+    "-fno-omit-frame-pointer",
+    "-D_GLIBCXX_ASSERTIONS"
+  ],
+  "results": [
+    {
+      "suite": "graph_check",
+      "phase": "compile",
+      "code": 0,
+      "seconds": 15.107,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "suite": "graph_check",
+      "phase": "run",
+      "code": 0,
+      "seconds": 8.129,
+      "stdout": "[INFO] SPFA bad-order sparse graph: n=1800, edge visits=1619100\n[PASS] shortest paths: independent Floyd, 4800 graphs, all sources, 200000 scale, 1800 dense/degenerate\nAll tests passed flawlessly!\n",
+      "stderr": ""
+    },
+    {
+      "suite": "completed_graph_stress_check",
+      "phase": "compile",
+      "code": 0,
+      "seconds": 11.96,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "suite": "completed_graph_stress_check",
+      "phase": "run",
+      "code": 0,
+      "seconds": 31.101,
+      "stdout": "properties passed\nHLD passed\nconnectivity passed\ncompleted_graph_stress_check passed\n",
+      "stderr": ""
+    }
+  ],
+  "graph_check": {
+    "files": {
+      ".github/workflows/ci.yml": "071c78fedcf1b5cdbca4f631db434910d2a772626153696a9e5e09852111f649",
+      "algorithms/图论/图的存储/Graph.cpp": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48",
+      "algorithms/图论/对拍/graph_check.cpp": "8aaba7e2caf9e62d9e744af750086748d84419476006eb7b0cc6fbf267078d57",
+      "algorithms/图论/拓扑排序/拓扑排序.cpp": "3b4551716fbfde2ad9c4ea3966c4191b4b643141f0f3d4cf1053a846f9a0df55",
+      "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp": "d17a6763c3a69861daccf6063e4014301158cf9ce0f7308042c18029f76086ec",
+      "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp": "dc7e53a374d57adc8597c01865b1921fc86297fe2c43e3e9269b0fce4d7d2e47",
+      "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp": "ed345af737a4e5fb9a6e8a9974eaa0d6cfcc26f659a682c43e352e0ec59b32ed",
+      "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp": "a05fb9fd6570c0c3e9ad4866e689458fdfdd950590694df04e0ccdb9f32e2b1c",
+      "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp": "c0354e2f5d0c681f40e4edcb82d323f61d381a8cb15e2fd5ab456c472c326f84",
+      "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp": "530357a761b223e3ff5f1e1285814471a3b8e206c821a0e17622ceb0f75665b7",
+      "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp": "15029b41362c8e58e1e021fd50ccc658fe674bd9ebd148b1d25f63d8a12484ba",
+      "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp": "844ea1cb045bcb06117f056dd232e85d32eec0815564ca1e270b6188b5ddf3b3",
+      "algorithms/图论/树上问题/树的直径/两次dfs.cpp": "6ad1bce0f05db2ef6b9e648ac82909b7678197d5d497f9a9bb380da214d32b9a",
+      "algorithms/图论/树上问题/树的直径/树形dp法.cpp": "cf3208de1074ad0ad9aded1d6c56f88eea3bbc530baa5598c8f328d78b513186",
+      "algorithms/图论/树上问题/树的重心/树的重心.cpp": "6a12a3195faca4471f8a16ea6be043877cc7e6f2e5c132bef83d6bfae1019884",
+      "algorithms/杂项/128位整数/128int.cpp": "342625247499d16412e8ae49d19b8ace26baa1048990d4146381dbaac8c94acd",
+      "algorithms/杂项/utils/utils.cpp": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f",
+      "scripts/check_lca_vt_extreme.py": "6c0d35cbab2f2b61ea3111db702fdf1032010332d8a8493bd33a693a64b19e86",
+      "scripts/source_lookup.py": "594097f028909a8876a5a050f2afdc4ed89736bc013886afce9945ecf8c1d5dc"
+    },
+    "stable": true
+  },
+  "completed_graph_stress_check": {
+    "files": {
+      ".github/workflows/ci.yml": "071c78fedcf1b5cdbca4f631db434910d2a772626153696a9e5e09852111f649",
+      "algorithms/图论/图的存储/Graph.cpp": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48",
+      "algorithms/图论/对拍/completed_graph_stress_check.cpp": "09158af4de9ec34a24c61e2552819a4e8bf366281f3f45ebbd119a28058023e8",
+      "algorithms/图论/拓扑排序/拓扑排序.cpp": "3b4551716fbfde2ad9c4ea3966c4191b4b643141f0f3d4cf1053a846f9a0df55",
+      "algorithms/图论/树上问题/树的中心/树的中心.cpp": "6cfac680803f486cc93fad0fd8e0f32bf7adec8c980ddb46c6b5eff0e6879488",
+      "algorithms/图论/树上问题/树的直径/两次dfs.cpp": "6ad1bce0f05db2ef6b9e648ac82909b7678197d5d497f9a9bb380da214d32b9a",
+      "algorithms/图论/树上问题/树的直径/树形dp法.cpp": "cf3208de1074ad0ad9aded1d6c56f88eea3bbc530baa5598c8f328d78b513186",
+      "algorithms/图论/树上问题/树的重心/树的重心.cpp": "6a12a3195faca4471f8a16ea6be043877cc7e6f2e5c132bef83d6bfae1019884",
+      "algorithms/图论/树上问题/树链剖分/HLD.cpp": "032076c5b37467fd46038d225302c03288cd5e2e518fa78421b95f11271c78d7",
+      "algorithms/图论/连通性相关/Tarjan_EBCC.cpp": "df1737bd192b0c2b794888781eb6213e3059bed66b9da3b4287fa06c7a72a858",
+      "algorithms/图论/连通性相关/Tarjan_SCC.cpp": "b6a333d47fb10a26116b550a75c49da7246dc176bd20445cbccc11b65754a4dc",
+      "algorithms/图论/连通性相关/Tarjan_VBCC.cpp": "f9699b4f2f9e00af3934c811c295b4cbe2bacb72fa20c19f86de69caa6976f09",
+      "algorithms/图论/连通性相关/圆方树/BCT.cpp": "42e7bfe56555711d1ccff3d1d164867cb3b9b381280723f3c1ca407a3c8451a1",
+      "algorithms/数据结构/线段树/泛型线段树.cpp": "1b250967a18393d513750f3772e9a3f60f695a26c7a034a7a1c84ecd6946d98b",
+      "algorithms/杂项/utils/utils.cpp": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f",
+      "scripts/check_lca_vt_extreme.py": "6c0d35cbab2f2b61ea3111db702fdf1032010332d8a8493bd33a693a64b19e86",
+      "scripts/source_lookup.py": "594097f028909a8876a5a050f2afdc4ed89736bc013886afce9945ecf8c1d5dc"
+    },
+    "stable": true
+  }
+}

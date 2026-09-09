@@ -191,6 +191,51 @@ void test_topo_sort()
         }
     }
 }
+// 大图容量配大量小测: 对应 P9520 双层 TreeGraph 的预留点数。
+// 用入度副本的有效范围检查初始化规模, 不依赖机器速度设时间门槛。
+void test_topo_large_capacity()
+{
+    Graph<true> g(8520710, 600);
+    TopoSort ts;
+    for (int tc = 0; tc < 1000; tc++)
+    {
+        int n = tc % 241;
+        g.clear();
+        VPII es;
+        VI degree(n + 1, 0);
+        auto add = [&](int u, int v)
+        {
+            es.emplace_back(u, v);
+            degree[v]++;
+            g.add(u, v);
+        };
+        for (int u = 2; u <= n; u++)
+        {
+            add(u - 1, u);
+            if (u % 7 == 0) add(u - 1, u);
+        }
+        if (n && tc % 3 == 0) add(n, 1);
+        bool dag = ts.build(g, n);
+        assert(ts.in.size() == (size_t)n + 1);
+        assert(equal(degree.begin(), degree.end(), g.in_deg.begin()));
+        assert(dag == !brute_has_cycle(n, es));
+        if (dag)
+        {
+            VI pos(n + 1, -1);
+            assert((int)ts.get().size() == n);
+            for (int i = 0; i < n; i++)
+            {
+                int u = ts.get()[i];
+                assert(u >= 1 && u <= n && pos[u] == -1);
+                pos[u] = i;
+            }
+            for (auto [u, v] : es) assert(pos[u] < pos[v]);
+        }
+        else assert((int)ts.get().size() < n);
+    }
+    g.clear();
+    assert(all_of(g.in_deg.begin(), g.in_deg.end(), [](int x) { return x == 0; }));
+}
 // ============ 段 3: 直径×2 vs 枚举起点, 重心 vs 逐点删除连通块 ============
 
 // 独立暴力: 扫描父表找邻边, 对每个起点或删点单独遍历, 总计 O(n^3)
@@ -740,6 +785,7 @@ int main()
 {
     test_lca_engines();
     test_topo_sort();
+    test_topo_large_capacity();
     test_tree_basic();
     test_centroid_boundaries();
     test_graph_core();

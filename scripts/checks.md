@@ -56,6 +56,10 @@ BigInt 和 rw 的原生套件分别用 `-Filter bigint`、`-Filter rw_check`；r
 
 ## CI 与入口自检
 
+`graph_capacity_check` 对 25 份统一 Graph 体系模板补容量专项：对象一次构造、20 万原点容量、外置图零边预留、四组各 1000 轮小测，核对闭式答案、实际编号和高位工作区哨兵。`floyd_capacity_check` 调用旧 Floyd 的真实 main，独立 Dijkstra 核验 304 组非负无向图及 109-1-109-1 复用，检查本轮矩阵外的哨兵不被清空。两者默认被普通与 sanitizer CI 发现；这是容量专项，不代替各模板完整语义验收，也不把边扩容等同于点表自动扩容。
+
+`graph_check` 的拓扑回归另含 8520710 点预留容量下连续 1000 组 0 到 240 点测试, 独立三色 DFS 判环并核对拓扑序和原图入度。入度副本的有效范围限定为 0..n, 用结构断言防止退回整容量复制, 不用机器相关的耗时门槛。20 万实际点数的大/空/单点/大复用继续由 `completed_graph_stress_check` 覆盖; 两个套件均自动进入普通与 sanitizer CI。
+
 `python scripts/check_layout.py --shell pwsh` 验证真实目录移动后的跳板/include 编译、元数据与链接迁移、新短名发现、只读幂等及重复/歧义拒绝；Windows 另用 `--shell powershell` 验 PS5.1。普通 CI 自动运行。同步不会生成独立暴力或提升学习状态，操作边界见[目录同步](../docs/maintenance/layout.md)。
 
 `check_verification_test.ps1` 自动验证分项范围隔离、摘要/JSON 排版不失效、源码/依赖/执行脚本变化、运行期间变化、旧证据处理、最新失败优先和语法/回归隔离；包含同套件两个模板的真实编译与生成表验收。既有普通 CI 已调用这个脚本，升级测试直接自动生效。维护这部分仍需本地 PS5.1/PS7 双版本验证，运行 `./scripts/check_verification_test.ps1`；状态解释见 [验证指南](../docs/verification/README.md#什么时候需要重验)。

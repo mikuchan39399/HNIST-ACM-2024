@@ -1,6 +1,6 @@
 // zoi: floyd
 #include <iostream>
-#include <cstring>
+#include <algorithm>
 using namespace std;
 int n, m;
 const int N = 110, M = 4510;
@@ -8,7 +8,8 @@ int dp[N][N];
 int main()
 {
     cin >> n >> m;
-    memset(dp, 0x3f, sizeof(dp));
+    // 只初始化本轮 1..n 的矩阵, 预留上限 N 不参与每轮清空。
+    for (int i = 1; i <= n; i++) fill(dp[i] + 1, dp[i] + n + 1, 0x3f3f3f3f);
     for(int i = 1; i <= n; i++) dp[i][i] = 0;
     for(int i = 1; i <= m; i++)
     {

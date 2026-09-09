@@ -1,0 +1,169 @@
+{
+  "schema": 1,
+  "id": "64afa4d63e01401bbd454175691fa0d0",
+  "startedUtc": "2026-09-08T14:13:16.0855271Z",
+  "finishedUtc": "2026-09-08T14:13:26.6783799Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/topo-fix-20260908/windows-completed-logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "68c3113300b75dcc42f51c9d5515eb1304e16ba70b87ba24388b2a9a80f3e190",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+          "hash": "09158af4de9ec34a24c61e2552819a4e8bf366281f3f45ebbd119a28058023e8"
+        },
+        {
+          "path": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+          "hash": "3b4551716fbfde2ad9c4ea3966c4191b4b643141f0f3d4cf1053a846f9a0df55"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+          "hash": "6cfac680803f486cc93fad0fd8e0f32bf7adec8c980ddb46c6b5eff0e6879488"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+          "hash": "6ad1bce0f05db2ef6b9e648ac82909b7678197d5d497f9a9bb380da214d32b9a"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+          "hash": "cf3208de1074ad0ad9aded1d6c56f88eea3bbc530baa5598c8f328d78b513186"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "6a12a3195faca4471f8a16ea6be043877cc7e6f2e5c132bef83d6bfae1019884"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "032076c5b37467fd46038d225302c03288cd5e2e518fa78421b95f11271c78d7"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "df1737bd192b0c2b794888781eb6213e3059bed66b9da3b4287fa06c7a72a858"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "b6a333d47fb10a26116b550a75c49da7246dc176bd20445cbccc11b65754a4dc"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "f9699b4f2f9e00af3934c811c295b4cbe2bacb72fa20c19f86de69caa6976f09"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "42e7bfe56555711d1ccff3d1d164867cb3b9b381280723f3c1ca407a3c8451a1"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "1b250967a18393d513750f3772e9a3f60f695a26c7a034a7a1c84ecd6946d98b"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "64957b0fdc75d62bb73b95561de61b08ef1e27c92f0a7e93d3e2ab6d6c599e03",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+          "hash": "44d8f066212136205daaa85622b58ee8761d175ba3ac444c3d2619bb12c4d2eb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+          "hash": "535f1ac592b9d2fd404f7f25e7f8623130b52339ff7e5f01da52cd1f949153fb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+          "hash": "266ec78957c09510558a2b0fa8bcee96e4f378a1067bfb6a9bbfbdac367e7a0b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+          "hash": "6a14448f349becc2cb8174cbdb15dbfab9ac30bc22dfd1512de279389550ca09",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "9fe73d52e6b1935790b36e7400c62c4c3cf1ca9d22ad3a7850b589a0c39924e4",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "835e08945ec89fd7697b70d1b30ec317af3bc8aba9d66e39f6865e550b13410c",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "0b6acf0b6123ad3a6201188aab471a49361db6965318f551835d8d63e2f48d4d",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "908cfb9a19f760396d92ae00219d24c60fcb9c3c4bb6411e5bf88ce4c4fd9bba",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "54e20e9e53239b146200b32433630605fc63ccb9d3fea5cae5c692472aed2508",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "e5f8e89616dd2c0dc4b136d5e2f69ffbc2bb445b793a8ac55b89b7bd091ed4c3",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 10.106
+    }
+  ]
+}
