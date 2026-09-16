@@ -1,0 +1,64 @@
+{
+  "date": "2026-09-11",
+  "platform": "Windows",
+  "typst": "typst 0.15.1 (9dfd3a08)",
+  "powershell51": "5.1.26100.9444",
+  "powershell7": "7.6.5",
+  "makeBookletSha256": "842A997847F875ABE0DF8496E91CF33DA8E4ADB3E4974E7D3714E737AB072B94",
+  "checkBookletSha256": "129D7B8AA9FA9C670EA7A0EE49B6E51E1D5E24940D3BABC31045CD9A808B69B1",
+  "pdfSha256": "2C856BB6387798814A12B7ED347250DC5F98533513BF2A4494584D6972739823",
+  "typSha256": "D7B14E58C63A1C1CBE0653CFFF0C7E71F276F8025D2567E57DB7743D063E088D",
+  "ps51Render": {
+    "exitCode": 0,
+    "builds": 18,
+    "fixture": ".zoi-checks/booklet-test-ccc8cfd3a3344ce78c0f3be3a097eccc",
+    "note": "Observed successful 18-build run; shared PASS retention later removed this fixture. Final AuditOnly ran after the cross-version JSON assertion adjustment."
+  },
+  "logs": {
+    "ps7-render.log": "[PASS] real Typst audit: quoted prefix / escaped literals / Unicode and spaced path / failure propagation\r\n[PASS] adjacent discovery / shared once after siblings / roadmap exclusion / Markdown content and structure\r\nException: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-a326f27bd3ef4800940e2742b9c232d1\\scripts\\booklet_tree.ps1:44\r\nLine |\r\n  44 |  �� ot $roots.Count) { throw 'No algorithm directory or source matched' }\r\n     |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | No algorithm directory or source matched\r\nException: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-a326f27bd3ef4800940e2742b9c232d1\\scripts\\make_booklet.ps1:214\r\nLine |\r\n 214 |  �� anonical) { throw 'A preview requires -OutFile in the workspace scrat ��\r\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | A preview requires -OutFile in the workspace scratch directory\r\n[PASS] scoped selection / no match failure / canonical preview protection\r\nException: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-a326f27bd3ef4800940e2742b9c232d1\\scripts\\booklet_markdown.ps1:158\r\nLine |\r\n 158 |  ��       if (-not $closed) { throw 'README has an unclosed code fence' }\r\n     |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | README has an unclosed code fence\r\nException: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-a326f27bd3ef4800940e2742b9c232d1\\scripts\\booklet_markdown.ps1:59\r\nLine |\r\n  59 |  ��             } else { throw ('Unsupported math command: \\'+$command) }\r\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Unsupported math command: \\unknown\r\nException: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-a326f27bd3ef4800940e2742b9c232d1\\scripts\\booklet_markdown.ps1:83\r\nLine |\r\n  83 |  �� ($Grouped -or $pairs.Count) { throw 'Unclosed math brace/delimiter' }\r\n     |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Unclosed math brace/delimiter\r\nException: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-a326f27bd3ef4800940e2742b9c232d1\\scripts\\booklet_markdown.ps1:44\r\nLine |\r\n  44 |  �� airs.Pop() -ne $delimiter) { throw 'Unmatched right math delimiter' }\r\n     |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Unmatched right math delimiter\r\nException: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-a326f27bd3ef4800940e2742b9c232d1\\scripts\\booklet_markdown.ps1:81\r\nLine |\r\n  81 |          } else { throw ('Unsupported character in math: '+$c) }\r\n     |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Unsupported character in math: #\r\nException: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-a326f27bd3ef4800940e2742b9c232d1\\scripts\\booklet_markdown.ps1:170\r\nLine |\r\n 170 |                  if (-not $closed) { throw 'Unclosed display math' }\r\n     |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Unclosed display math\r\n[PASS] new manual auto-discovery / malformed Markdown rejects / 1200-line growth / odd-page policy\r\nBooklet self-test: 18 builds passed; render=True; logs: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-a326f27bd3ef4800940e2742b9c232d1\r\n[OK] candidates=0; MiB=0; unmarked/failed/protected=51; keep per kind=3\r\n",
+    "powershell-audit.log": "[PASS] real Typst audit: quoted prefix / escaped literals / Unicode and spaced path / failure propagation\r\nBooklet audit self-test passed; logs: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-10e9d2e7feb04f3b9023f3dd1f241cc1\r\n[OK] candidates=0; MiB=0; unmarked/failed/protected=51; keep per kind=3\r\n",
+    "pwsh-audit.log": "[PASS] real Typst audit: quoted prefix / escaped literals / Unicode and spaced path / failure propagation\r\nBooklet audit self-test passed; logs: F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-bcf0501f00324abe97fd6f2b2e975e3e\r\n[REMOVE] F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-ccc8cfd3a3344ce78c0f3be3a097eccc (0.55 MiB)\r\n[OK] candidates=1; MiB=0.55; unmarked/failed/protected=51; keep per kind=3\r\n",
+    "canonical-build.log": "[OK] booklet: 95 catalog entries + 4 manuals, 11 plugins -> F:\\c++\\my_code\\HNIST-ACM-2024\\docs\\booklet\\output\\zoi-booklet-print.pdf\r\n[OK] reserve: 106 entries own separate page ranges including manuals\r\n[OK] coverage: 106 entries, 4 adjacent manuals; roadmap prose excluded\r\n[OK] directories: 189 real algorithm directories\r\n[OK] math: 32 equations typeset\r\n[OK] parity: skipped (SoloMin=0, fresh entry pages, no parity filler)\r\n",
+    "canonical-pdf-check.log": "[PASS] PDF contents: 277 directory/source titles; 106 independent entry starts\r\n[PASS] PDF: 143 pages, 189 directories, 4 manuals, 32 math equations, 18 headings/list checks, MIKU=[39]\r\n",
+    "before-fix.stderr": "error: expected expression\n  ┌─ <input-expression>:1:79\n  │\n1 │ query(metadata).filter(m=>type(m.value)==str and m.value.starts-with(entry-end:)).map(m=>(m.value,m.location().page()))\n  │                                                                                ^\n\nTypst audit query failed\r\n����λ�� F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-46989871f06444e88c12391250e472f1\\scripts\\make_booklet.p\r\ns1:239 �ַ�: 36\r\n+         if ($LASTEXITCODE -ne 0) { throw 'Typst audit query failed' }\r\n+                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : OperationStopped: (Typst audit query failed:String) [], RuntimeException\r\n    + FullyQualifiedErrorId : Typst audit query failed\r\n \r\n",
+    "before-fix.stdout": "[OK] booklet: 3 catalog entries + 1 manuals, 1 plugins -> F:\\c++\\my_code\\HNIST-ACM-2024\\.zoi-checks\\booklet-test-46989871f06444e88c12391250e472f1\\out\\book.pdf\n",
+    "fixture-pdf-check": "[PASS] PDF contents: 21 directory/source titles; 4 independent entry starts\n[PASS] PDF hierarchy: seven levels present; contents and body sizes descend\n[PASS] PDF manual style: title/subtitle/sections/caption/note sizes; literals; 90-row table flow and repeated header\n[PASS] PDF: 17 pages, 17 directories, 1 manuals, 4 math equations, 6 headings/list checks, MIKU=[]"
+  },
+  "cleanup": [
+    {
+      "path": ".zoi-checks/codex-work/booklet-argv-20260911",
+      "files": 7,
+      "bytes": 645744.0
+    },
+    {
+      "path": ".zoi-checks/booklet-test-46989871f06444e88c12391250e472f1",
+      "files": 22,
+      "bytes": 188739.0
+    },
+    {
+      "path": ".zoi-checks/booklet-test-4e5c899c232241e0acb753de9e1a1f8e",
+      "files": 5,
+      "bytes": 45686.0
+    },
+    {
+      "path": ".zoi-checks/booklet-test-83a5f985dcd34b6092d92051a2dfbfcd",
+      "files": 5,
+      "bytes": 45686.0
+    },
+    {
+      "path": ".zoi-checks/booklet-test-a326f27bd3ef4800940e2742b9c232d1",
+      "files": 61,
+      "bytes": 577310.0
+    },
+    {
+      "path": ".zoi-checks/booklet-test-10e9d2e7feb04f3b9023f3dd1f241cc1",
+      "files": 6,
+      "bytes": 45921.0
+    },
+    {
+      "path": ".zoi-checks/booklet-test-bcf0501f00324abe97fd6f2b2e975e3e",
+      "files": 6,
+      "bytes": 45906.0
+    }
+  ]
+}

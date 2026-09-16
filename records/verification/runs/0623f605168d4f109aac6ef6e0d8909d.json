@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "id": "0623f605168d4f109aac6ef6e0d8909d",
+  "startedUtc": "2026-09-15T13:35:26.2360495Z",
+  "finishedUtc": "2026-09-15T13:35:29.4638704Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/graph-family-refactor/runner/6eea539b96c144af96188e65405aa90c/logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "9ae6221fb5172b8fb8a5e6ff6a32d6c21dcaa45e264366c64c7f875a6f69b7b8",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+          "hash": "60ae99e550134eaa68bc3577bb4690e0bd311dadde30f8977fbca373715d8ec7"
+        },
+        {
+          "path": "algorithms/图论/优化建图/建图上下文.cpp",
+          "hash": "5698715493f098b13654ea93dc375046207881d62674799e39fc823bedb30f09"
+        },
+        {
+          "path": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "b822f7eceb8bd11cce23c3651fec596f72e004ff0c331ff6cab76ec76b47b066"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "739c97bb91c918007b0241c28cda0816c59a057a33c60c5b4797b8a8ba4ac733"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "9b5563d37602dbcbfd24b69989c38e9e2761060f27ac7e1acba98e8edc154c9e"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "601806f511de7b32dbf8e1016efd6946302a7438d2422feed149213d998d7fc9",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "a04e4c49ac63f21a42585055fd1a145f9fc95f0158a474d7a14880a31b252f08",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "399565823ddd9c3f7054d86a6d80ebfdd43c330761e3b675812ddd5ca8a8bd14",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 3.16
+    }
+  ]
+}

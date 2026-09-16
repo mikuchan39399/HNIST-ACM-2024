@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "id": "36f7d7bfdcb74f10bb7bb8818db5d5d9",
+  "startedUtc": "2026-09-15T14:43:47.5047274Z",
+  "finishedUtc": "2026-09-15T14:43:53.0509312Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/graph-constructor-comments/runner/d516cbbc1c564950b23e2338e9165129/logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "74221ed8f72ccf713a0e63e11aa3d2c48987bc9f18b8b48c84b619aedd4528b9",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/前缀优化建图.cpp",
+          "hash": "47896b22c4c8c5cf94b3e7ed1acf5f3b47feaa066c4d601dc70df9711f172c48"
+        },
+        {
+          "path": "algorithms/图论/优化建图/对拍/graphbuilder_check.cpp",
+          "hash": "19f2de59bc691c8f646fca88e6ceba336fb77aa83d91ed6284c9d8ecabe4a66a"
+        },
+        {
+          "path": "algorithms/图论/优化建图/建图上下文.cpp",
+          "hash": "8c9a46b947a48f668fa738bf9eddbb05e07747a866ed5f6bff4d89fae43ddddf"
+        },
+        {
+          "path": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "a66dcbf7d6b5b65311ffcfdde641cfe25ab66a854a226128e63c48ccb8b90076"
+        },
+        {
+          "path": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "b8f787f4101c03ab31979535857ecbb86131a5fbe5a61cc34e007c9aed946f90"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "739c97bb91c918007b0241c28cda0816c59a057a33c60c5b4797b8a8ba4ac733"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "9b5563d37602dbcbfd24b69989c38e9e2761060f27ac7e1acba98e8edc154c9e"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/优化建图/前缀优化建图.cpp",
+          "hash": "b95ffc5740c5961d4e9f3bc2eda4c83f8f6c51fb203ccc8312b30992b89c6341",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/优化建图/建图上下文.cpp",
+          "hash": "7076d32b4225027aa5c6741b2c41f23d2a318fb09a6092eb938d67741ba65ae3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "9b6af6f4a507ee0b90ddaa624f5175cf678567cbc5f68089f201ec28c5373db3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "fe1b25e2eb1d8dfe6496f317f831c444cc775b7a0623c59b1bd816bfc3f8bd9c",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/graphbuilder_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.195
+    }
+  ]
+}

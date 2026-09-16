@@ -8,6 +8,8 @@
 
 准备 Typst 0.15.1（本库验证版本）：放入 PATH，或把 typst.exe 放在 scripts 目录。中文字体使用 Noto Sans SC、Noto Sans CJK SC 或微软雅黑，脚本自动选本机可用字体；没有可用中文字体会报错。代码使用 Consolas 或 DejaVu Sans Mono。
 
+支持 Windows PowerShell 5.1 和 PowerShell 7，现有 VS Code 任务无需更换终端。PDF 编译后还会检查目录、条目页段、说明和公式；这些审计完成且任务退出码为 0，才算本次生成成功。
+
 唯一正式 PDF 是 `docs/booklet/output/zoi-booklet-print.pdf`，同目录保留同名 `.typ`。每次重建直接更新，保留第 39 页 MIKU ♡ 页脚，不再维护第二份正式版。PDF 为 A4 横向三栏，带目录、方向页眉、代码行数和指纹；生成物不提交 Git。
 
 ## 哪些内容会印进去

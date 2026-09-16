@@ -44,6 +44,21 @@ jobs:
         if: ${{ !cancelled() }}
         shell: pwsh
         run: ./scripts/check_booklet.ps1
+      - name: Install pinned Typst for Windows audit checks
+        shell: pwsh
+        run: |
+          $tools = Join-Path $PWD '.zoi-checks/codex-work/booklet-tools'
+          New-Item -ItemType Directory -Path $tools -Force | Out-Null
+          Invoke-WebRequest 'https://github.com/typst/typst/releases/download/v0.15.1/typst-x86_64-pc-windows-msvc.zip' -OutFile (Join-Path $tools 'typst.zip')
+          Expand-Archive -LiteralPath (Join-Path $tools 'typst.zip') -DestinationPath $tools
+          (Join-Path $tools 'typst-x86_64-pc-windows-msvc') | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Native Typst audit on Windows PowerShell 5.1
+        shell: powershell
+        run: ./scripts/check_booklet.ps1 -AuditOnly
+      - name: Native Typst audit on PowerShell 7
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: ./scripts/check_booklet.ps1 -AuditOnly
       - name: Keep setup diagnostics
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v6

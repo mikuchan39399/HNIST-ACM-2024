@@ -2,13 +2,17 @@
 
 这里只保存当时的方案和验证证据，不作为现行操作指南。使用入口见 [docs](../../docs/README.md)。
 
+日常修改直接维护最终代码、现行说明和验证状态，不要求向本目录新增实施记录、逐步 diff 或修改前快照。仅在现行正文和自动报告不足以承载重要结论，或用户明确要求时补简短专项记录；执行 [协作约定](../../rules/collab.md#以最终结果为准)。既有档案继续保留供按需查阅。
+
+- Windows 手册审计：[PowerShell 5.1 引号修复、双版本渲染与整本 PDF 验证](booklet-argv-20260911.md)。
+
 - 目录结构自助维护：[路径依赖审计、自动同步与数论归档验证](layout-20260908.md)。
 
 - 展开恢复：[方案](expand/技术方案.md)、[实施](expand/实施记录.md)。
 - 架构整理：[裁决](architecture/架构裁决.md)、[实施](architecture/实施记录.md)。
 - 队友安装：[实施记录](setup/实施记录.md)。
 - 文档整理：[迁移对照与原文快照](docs-20260906/README.md)。
-- 持续交接：[协作历史](../../rules/sweep-history.md)；早期裁决：[规则历史](rule_history.md)。
+- 当前交接：[工作板](../../rules/sweep-board.md)；旧记录：[协作历史](../../rules/sweep-history.md)；早期裁决：[规则历史](rule_history.md)。
 - 功能总览与指南分离：[第二轮迁移记录](docs-20260906-pass2/README.md)。
 
 - 连通性四件套：[验证与注释整理](conn-20260906.md)。

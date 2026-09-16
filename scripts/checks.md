@@ -26,7 +26,7 @@
 - `ReportDir` 可指定日志目录，默认放在本次临时目录的 `logs` 下。并发运行须使用不同 ReportDir；默认整套串行执行。
 - `summary.json` 记录目标、阶段、退出码、结果和耗时；公共编译参数和编译器版本也有记录。失败时查看同名前缀的 stderr/stdout 日志。
 - 本地 `.zoi-checks` 和 `.ci-results` 不进 Git; 新版入口完成后标记现场, 成功的默认缓存每类自动保留三份,
-  FAIL/无标记/人工 codex-work 保留。`clean_checks.ps1` 默认只预览, `-Apply` 才清理, 不删除 `.ci-results` 或长期证据。
+  通用清理器跳过 FAIL/无标记/人工 codex-work；AI 自建的一次性测试用完后仍由创建者清理，正式对拍与 CI 依赖保留，见[工作区约定](../rules/collab.md#工作区与沉淀)。`clean_checks.ps1` 默认只预览, `-Apply` 才清理, 不删除 `.ci-results` 或长期证据。
   GitHub 上传日志保存 7 天。报告耗时仅用于定位慢测试，不作为 OJ 性能结论。
 
 ## 如何补测试
@@ -200,6 +200,8 @@ rw 原生套件含全部整数类型与 i128/u128 边界、bool、最大有限 d
 除零与LLONG_MIN/-1因结果无定义或超出返回类型不作为合法调用。莫比乌斯笔记未列入可运行验收；完整说明见[数论报告](../records/verification/number-theory-20260908.md)。
 
 ## 手册自动检查
+
+`./scripts/check_booklet.ps1 -AuditOnly` 使用真实 Typst 0.15.1 核对生产审计函数的原生参数传递、引号与反斜杠、中文输出和含空格/中文的路径，以及错误表达式退出状态。Windows setup CI 在 PS 5.1/7 分别执行；不需要额外字体。`-Render` 自动先跑同一检查，再跑原有构建样例，避免 SourceOnly 通过却漏掉原生调用错误。
 
 样例含七层嵌套目录；PDF 检查读取实际字号及位置，验证目录页和正文都逐层收敛、子级缩进正确且目录行不重叠。深目录也必须出现在目录页中，不能用截断深度掩盖样式问题。
 

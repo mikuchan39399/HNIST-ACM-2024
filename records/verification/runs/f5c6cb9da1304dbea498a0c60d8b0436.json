@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "id": "f5c6cb9da1304dbea498a0c60d8b0436",
+  "startedUtc": "2026-09-15T07:45:55.8074290Z",
+  "finishedUtc": "2026-09-15T07:46:02.8361370Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/prefixgraph-20260915/runner/5dc33dc6902845da9bd312a32ea317a9/logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "5424f52aa04a3fda96ff745afce5c7ce62f5c27bb63494497f7b646b2f92e323",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/前缀优化建图.cpp",
+          "hash": "9f7e91e9e114fd24dbf7dee3a7bd114dd80b5959c7fb89417a9f86f29e4e8641"
+        },
+        {
+          "path": "algorithms/图论/优化建图/对拍/prefixgraph_check.cpp",
+          "hash": "450d30d77d4b44af1b13969399448c38a9a7f100ad31a0cb2ad2d6ac17c797fc"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "3c27ffd0c09817ec3bfdcf47c2407692bb25929a63fbd89d477f281f4c697d48"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "739c97bb91c918007b0241c28cda0816c59a057a33c60c5b4797b8a8ba4ac733"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "9b5563d37602dbcbfd24b69989c38e9e2761060f27ac7e1acba98e8edc154c9e"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/优化建图/前缀优化建图.cpp",
+          "hash": "b5f3374558b1fe9649356ba01b1288095cc932d9f04148541a19a77219f7208a",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/prefixgraph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 6.709
+    }
+  ]
+}

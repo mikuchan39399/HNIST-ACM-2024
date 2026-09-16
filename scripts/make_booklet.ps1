@@ -231,14 +231,40 @@ foreach ($w in $script:warn) { Write-Host ('[WARN] ' + $w) -ForegroundColor Yell
 # NOTE: `typst query` output carries no location on current toolchains; the old
 #       JSON audit silently matched nothing (vacuous OK). eval() is the truth.
 function Invoke-BookletEval([string]$Expression) {
-    # Typst writes UTF-8 even when PowerShell is launched with redirected pipes.
-    $previousEncoding=[Console]::OutputEncoding
-    try {
-        [Console]::OutputEncoding=$enc
-        & $typst eval $Expression --in $typPath
-        if ($LASTEXITCODE -ne 0) { throw 'Typst audit query failed' }
+    # Bypass PowerShell's legacy native argument binder: PS 5.1 strips quotes
+    # inside Typst expressions. Use ArgumentList on .NET, CRT quoting on .NET FX.
+    $psi=New-Object Diagnostics.ProcessStartInfo
+    $psi.FileName=$typst
+    $psi.WorkingDirectory=$root
+    $psi.UseShellExecute=$false
+    $psi.CreateNoWindow=$true
+    $psi.RedirectStandardOutput=$true
+    $psi.RedirectStandardError=$true
+    $psi.StandardOutputEncoding=$enc
+    $psi.StandardErrorEncoding=$enc
+    $arguments=@('eval',$Expression,'--in',$typPath)
+    if ($psi.PSObject.Properties.Name -contains 'ArgumentList') {
+        foreach ($arg in $arguments) { $psi.ArgumentList.Add($arg) }
+    } else {
+        $quoted=foreach ($arg in $arguments) {
+            '"'+([regex]::Replace([regex]::Replace($arg,'(\\*)"','$1$1\"'),'(\\+)$','$1$1'))+'"'
+        }
+        $psi.Arguments=$quoted -join ' '
     }
-    finally { [Console]::OutputEncoding=$previousEncoding }
+    $process=New-Object Diagnostics.Process
+    $process.StartInfo=$psi
+    try {
+        [void]$process.Start()
+        $stdout=$process.StandardOutput.ReadToEndAsync()
+        $stderr=$process.StandardError.ReadToEndAsync()
+        $process.WaitForExit()
+        $result=$stdout.GetAwaiter().GetResult()
+        $diagnostic=$stderr.GetAwaiter().GetResult()
+        if ($process.ExitCode -ne 0) { throw ('Typst audit query failed: '+$diagnostic) }
+        if ($diagnostic) { Write-Host $diagnostic }
+        return $result
+    }
+    finally { $process.Dispose() }
 }
 $expr = 'query(heading).filter(h=>h.outlined and h.has(str(label))).map(h=>(h.label,h.location().page()))'
 $evalOut = Invoke-BookletEval $expr
@@ -252,7 +278,6 @@ foreach ($anchor in $expected) {
 $startPages=@{}
 foreach ($m in [regex]::Matches(($evalOut -join ' '), '"<(e-[a-zA-Z0-9]+)>",(\d+)')) { $startPages[$m.Groups[1].Value]=[int]$m.Groups[2].Value }
 $endEval=Invoke-BookletEval 'query(metadata).filter(m=>type(m.value)==str and m.value.starts-with("entry-end:")).map(m=>(m.value,m.location().page()))'
-if ($LASTEXITCODE -ne 0) { throw 'Entry reserve audit query failed' }
 $ends=[regex]::Matches(($endEval -join ' '), '"entry-end:(e-[a-zA-Z0-9]+)",(\d+)')
 if ($ends.Count -ne $expected.Count) { throw 'Entry reserve audit missed an end marker' }
 $previousEnd=0
@@ -265,7 +290,6 @@ Write-Host ('[OK] reserve: '+$ends.Count+' entries own separate page ranges incl
 if ($printedManuals.Count -ne $manuals.Count) { throw 'Manual discovery/emission mismatch' }
 $manualQuery = 'query(metadata).map(m=>m.value)'
 $manualEval = Invoke-BookletEval $manualQuery
-if ($LASTEXITCODE -ne 0) { throw 'Manual audit query failed' }
 foreach ($rd in $manuals.Keys) {
     if (([regex]::Matches(($manualEval -join ' '), [regex]::Escape((Typ-String $rd)))).Count -ne 1) { throw ('Missing or repeated manual: ' + $rd) }
 }
@@ -277,7 +301,7 @@ foreach ($dir in @($tree.Nodes.Values | Where-Object { $_.Selected })) {
 Write-Host ('[OK] directories: '+$script:printedDirs.Count+' real algorithm directories')
 $mathExpected=[regex]::Matches($s.ToString(),[regex]::Escape('#metadata("booklet-math")')).Count
 $mathActual=Invoke-BookletEval 'query(math.equation).len()'
-if ($LASTEXITCODE -ne 0 -or [int]($mathActual -join '') -ne $mathExpected) { throw 'Math equation coverage mismatch' }
+if ([int]($mathActual -join '') -ne $mathExpected) { throw 'Math equation coverage mismatch' }
 Write-Host ('[OK] math: '+$mathExpected+' equations typeset')
 
 # ---- parity audit: only meaningful when SoloMin>0 (duplex sheet fronts) ----

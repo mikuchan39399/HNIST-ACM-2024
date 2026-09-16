@@ -2,119 +2,70 @@
 #ifndef Z_OI_TREE_GRAPH
 #define Z_OI_TREE_GRAPH
 
-#include "../图的存储/Graph.cpp"
+#include "建图上下文.cpp"
 
-// 倍增段含向上连续 2^k 个点, 入段子连父、出段父连子, 0 层共用原点, 骨架边权为 0
-// 路径按 LCA 分两半, 每半用首尾两个可重叠段覆盖, 一条路径至多 4 段, 不用于统计路径条数
-// 原点 1 .. n, 中继点由接口返回, g 为最终有向图; 原树只定义路径, 可通行的树边须自行加入 g
-// 外置 LCA 须提供 dep/fa[k][u]/lca(u,v), 根深度为 1、空祖先为 0、断连返回 -1
-// build 和后续连边使用同一份未改变的森林建表, 路径端点只用原点, 两条路径可分属不同树
-// N/Q/M 为原点上限/中继上限/预留边数, L = floor(log2 N) + 1, 点容量 V = N(2L - 1) + Q
-// 点表与倍增编号表约 16V + 8NL B, 每边 int/LL/Empty 为 12/16/8 B; 外置 LCA 与下游另计
-// N = 5e4, Q = 1e6, M = 11e6 时 int 约 179.2 MB, 不含分配器及边扩容余量
-// 权值限制由下游决定, 默认 W() 为零权; 加边时间按均摊计, T 为一次外置 LCA 查询时间
-template <class W = LL>
-struct TreeGraph
+// 树上倍增覆盖与最终图分离, 树点 1..w 只用于 LCA, id[u] 决定连接哪个已有图点
+// In 汇集/Out 分发独立开启, 单方向最多 w*floor(log2 w) 个辅助点及两倍骨架边
+// 编号表每方向约 4wL B, L=floor(log2 w)+1; 原树边不自动加入最终图
+// LCA 提供 dep/fa[k][u]/lca(u,v), 根深 1、空祖先 0、断连 -1; 建表后森林不变
+// 每路径至多四个可重叠段, 不保留路径计数或网络流容量语义; 结构依赖未清空的上下文
+template <class W = LL, bool In = true, bool Out = true>
+struct TreeLinks
 {
-    int n = 0, tot = 0;
-    Graph<true, W> g;
-    // 分配原点及中继容量, max_extra = -1 时取 max_n; max_m 只预留边, 边数组仍可扩容
-    // 时间 O(N log N + Q) | 空间 O(N log N + Q + M)
-    TreeGraph(int max_n = 0, int max_m = 0, int max_extra = -1) :
-        g(max_n * (2 * levels(max_n) - 1) + (max_extra < 0 ? max_n : max_extra), max_m),
-        point_cap(max_n), extra_cap(max_extra < 0 ? max_n : max_extra), base(0),
-        in(levels(max_n), VI(max_n + 1)), out(levels(max_n), VI(max_n + 1))
-    {}
-    // 用已建表的 1 .. _n 清图重建骨架, 1 <= _n <= max_n, 中继预算复位且旧虚点编号失效
-    // 时间 O(_n log _n + 上轮清图开销) | 额外空间 O(1), K = floor(log2 _n) 时至多 _n * (2K + 1) 点、4 * _n * K 边
+    static_assert(In || Out);
+    GraphBuilder<W>& b;
+    int n = 0;
+    // 绑定同权值类型的 builder, 不清图; builder 须先 init, 后续 build(lca, id) 使用已建表的 LCA
+    // w 为树点数, 每启用一个方向在 builder 另留至多 w * floor(log2(max(w,1))) 个点, builder 不销毁或移动
+    // 时间 O(1) | 空间 O(1)
+    TreeLinks(GraphBuilder<W>& builder) : b(builder) {}
+    // 按 1-based id 追加森林倍增骨架, id[u] 是树点 u 的既有图点编号
+    // 时间 O(w log(w+1)) | 索引与新增点边 O(w log(w+1))
     template <class LCA>
-    void build(LCA& lca, int _n)
-    {
-        assert(_n >= 1 && _n <= point_cap);
-        n = _n;
-        tot = n;
-        g.clear();
-        for (int u = 1; u <= n; u++) in[0][u] = out[0][u] = u;
-        for (int k = 1; k < levels(n); k++)
-        {
-            for (int u = 1; u <= n; u++)
-            {
-                in[k][u] = out[k][u] = 0;
-                if (lca.dep[u] < (1 << k)) continue;
-                int v = lca.fa[k - 1][u];
-                in[k][u] = ++tot;
-                out[k][u] = ++tot;
-                g.add(in[k - 1][u], in[k][u]);
-                g.add(in[k - 1][v], in[k][u]);
-                g.add(out[k][u], out[k - 1][u]);
-                g.add(out[k][u], out[k - 1][v]);
-            }
-        }
-        base = tot;
-    }
-    // 添加 u 到 v 权为 w 的单向边, 点参数可用原点或返回的中继点
-    // 时间 O(1) | 新增 1 条边
-    void add_p2p(int u, int v, W w = W()) { g.add(u, v, w); }
-    // 从 u 向路径 a-b 每个原点连权为 w 的边, a-b 断连时返回 false 且不改图
-    // 时间 O(T + log n) | 新增至多 4 条边, 额外空间 O(1)
+    void build(LCA& lca, const VI& id) { build_maps(lca, id, id); }
+    // 按同样大小的 1-based 源/目标映射追加双向骨架, 两组状态可不同
+    // 时间 O(w log(w+1)) | 索引与新增点边 O(w log(w+1))
     template <class LCA>
-    bool add_p2path(int u, int a, int b, LCA& lca, W w = W())
-    {
-        auto ns = cover(a, b, lca, out);
-        for (int v : ns) if (v) g.add(u, v, w);
-        return ns[0] != 0;
-    }
-    // 从路径 a-b 每个原点向 v 连权为 w 的边, a-b 断连时返回 false 且不改图
-    // 时间 O(T + log n) | 新增至多 4 条边, 额外空间 O(1)
+    void build(LCA& lca, const VI& src, const VI& dst) requires (In && Out) { build_maps(lca, src, dst); }
+    // 返回树路径 u-v 的汇集出口, 未用槽为 0, 断连时全 0, 使用建图时的同一森林
+    // 时间 O(T + log w) | 返回 4 个槽, T 为 lca 查询时间
     template <class LCA>
-    bool add_path2p(int a, int b, int v, LCA& lca, W w = W())
-    {
-        auto ns = cover(a, b, lca, in);
-        for (int u : ns) if (u) g.add(u, v, w);
-        return ns[0] != 0;
-    }
-    // 新建中继点并从 u 连权为 w 的边进入, 返回中继编号
-    // 时间 O(1) | 新增 1 点、1 边
-    int add_p2new(int u, W w = W())
-    {
-        int p = new_point();
-        add_p2p(u, p, w);
-        return p;
-    }
-    // 新建中继点并从路径 a-b 每个原点连权为 w 的边进入, 断连返回 -1 且不耗预算
-    // 时间 O(T + log n) | 新增 1 点、至多 4 边, 额外空间 O(1)
+    array<int, 4> in_cover(int u, int v, LCA& lca) const requires In { return cover(u, v, lca, in); }
+    // 返回树路径 u-v 的分发入口, 未用槽为 0, 断连时全 0
+    // 时间 O(T + log w) | 返回 4 个槽, T 为 lca 查询时间
     template <class LCA>
-    int add_path2new(int a, int b, LCA& lca, W w = W())
-    {
-        auto ns = cover(a, b, lca, in);
-        if (!ns[0]) return -1;
-        int p = new_point();
-        for (int u : ns) if (u) g.add(u, p, w);
-        return p;
-    }
-    // 从路径 a-b 向路径 c-d 全连接并返回中继编号, 任一路径断连则返回 -1 且不改图
-    // 时间 O(T + log n) | 新增 1 点、至多 8 边, 入中继为零权、出中继为 w, 额外空间 O(1)
-    template <class LCA>
-    int add_path2path(int a, int b, int c, int d, LCA& lca, W w = W())
-    {
-        auto src = cover(a, b, lca, in), dst = cover(c, d, lca, out);
-        if (!src[0] || !dst[0]) return -1;
-        int p = new_point();
-        for (int u : src) if (u) g.add(u, p);
-        for (int v : dst) if (v) g.add(p, v, w);
-        return p;
-    }
+    array<int, 4> out_cover(int u, int v, LCA& lca) const requires Out { return cover(u, v, lca, out); }
 private:
-    int point_cap, extra_cap, base;
     VVI in, out;
     static int levels(int x) { return x <= 1 ? 1 : __lg(x) + 1; }
-    int new_point()
+    template <class LCA>
+    void build_maps(LCA& lca, const VI& src, const VI& dst)
     {
-        assert(tot - base < extra_cap);
-        return ++tot;
+        assert(src.size() == dst.size() && !src.empty());
+        n = (int)src.size() - 1;
+        if constexpr (In) in.assign(levels(n), VI(n + 1)), in[0] = src;
+        if constexpr (Out) out.assign(levels(n), VI(n + 1)), out[0] = dst;
+        for (int k = 1; k < levels(n); k++)
+            for (int u = 1; u <= n; u++)
+            {
+                if (lca.dep[u] < (1 << k)) continue;
+                int v = lca.fa[k - 1][u];
+                if constexpr (In)
+                {
+                    in[k][u] = b.new_node();
+                    b.add(in[k - 1][u], in[k][u]);
+                    b.add(in[k - 1][v], in[k][u]);
+                }
+                if constexpr (Out)
+                {
+                    out[k][u] = b.new_node();
+                    b.add(out[k][u], out[k - 1][u]);
+                    b.add(out[k][u], out[k - 1][v]);
+                }
+            }
     }
     template <class LCA>
-    array<int, 4> cover(int u, int v, LCA& lca, VVI& table)
+    array<int, 4> cover(int u, int v, LCA& lca, const VVI& table) const
     {
         array<int, 4> res{};
         int l = lca.lca(u, v), cnt = 0;
@@ -133,6 +84,104 @@ private:
         half(u);
         if (v != l) half(v);
         return res;
+    }
+};
+
+// 单结构兼容封装, 复用 TreeLinks, 原点 1..n, build 仍清图与重置中继预算
+// 原树和 LCA 外置且结构保持不变; N = max_n, Q = 实际中继预算, L = floor(log2(max(N,1))) + 1
+// 点容量 V=N(2L-1)+Q, 图点表约 16V B, 双向索引约 8nL B, 边 Empty/int/LL 为 8/12/16 B
+// 点参数可用返回中继, 路径参数使用原树点; 所有权值限制由下游决定, 对象不拷贝或移动
+template <class W = LL>
+struct TreeGraph
+{
+    GraphBuilder<W> b;
+    Graph<true, W>& g;
+    int n = 0;
+    int& tot;
+    TreeLinks<W> paths;
+    // max_n 仅为原树点数上限, 倍增骨架自动计入; max_m 预留全图边数(含骨架边), 默认 0, 不足自动扩容
+    // max_extra 仅为中继上限, add_path2path/add_path2new/add_p2new 成功各耗 1 个; 默认 -1 取 max_n, 不用中继传 0
+    // 两项点数上限取够用的上界即可, 固定不扩容; 构造后 build(lca, n), LCA 已建表且 1 <= n <= max_n
+    // 时间 O(NL + Q) | 空间 O(NL + Q + max_m), N/Q/L 见类头
+    TreeGraph(int max_n = 0, int max_m = 0, int max_extra = -1) :
+        b(max_n * (2 * levels(max_n) - 1) + (max_extra < 0 ? max_n : max_extra), max_m),
+        g(b.g), tot(b.tot), paths(b),
+        point_cap(max_n), extra_cap(max_extra < 0 ? max_n : max_extra), base(0)
+    {}
+    TreeGraph(const TreeGraph&) = delete;
+    TreeGraph& operator=(const TreeGraph&) = delete;
+    // 用已建表的 1 .. _n 清图重建骨架, 1 <= _n <= max_n, 中继预算复位且旧虚点编号失效
+    // 时间 O(_n log(_n+1) + 上轮清图开销) | 索引 O(_n log(_n+1)), 临时映射 O(_n), 骨架点边见类头
+    template <class LCA>
+    void build(LCA& lca, int _n)
+    {
+        assert(_n >= 1 && _n <= point_cap);
+        n = _n;
+        b.init(n);
+        VI id(n + 1);
+        iota(id.begin(), id.end(), 0);
+        paths.build(lca, id);
+        base = tot;
+    }
+    // 添加 u 到 v 权为 w 的单向边, 点参数可用原点或返回的中继点
+    // 时间 O(1) | 新增 1 条边
+    void add_p2p(int u, int v, W w = W()) { g.add(u, v, w); }
+    // 从 u 向路径 a-b 每个原点连权为 w 的边, a-b 断连时返回 false 且不改图
+    // 时间 O(T + log n) | 新增至多 4 条边, 额外空间 O(1)
+    template <class LCA>
+    bool add_p2path(int u, int a, int b, LCA& lca, W w = W())
+    {
+        auto ns = paths.out_cover(a, b, lca);
+        for (int v : ns) if (v) g.add(u, v, w);
+        return ns[0] != 0;
+    }
+    // 从路径 a-b 每个原点向 v 连权为 w 的边, a-b 断连时返回 false 且不改图
+    // 时间 O(T + log n) | 新增至多 4 条边, 额外空间 O(1)
+    template <class LCA>
+    bool add_path2p(int a, int b, int v, LCA& lca, W w = W())
+    {
+        auto ns = paths.in_cover(a, b, lca);
+        for (int u : ns) if (u) g.add(u, v, w);
+        return ns[0] != 0;
+    }
+    // 新建中继点并从 u 连权为 w 的边进入, 返回中继编号
+    // 时间 O(1) | 新增 1 点、1 边
+    int add_p2new(int u, W w = W())
+    {
+        int p = new_point();
+        add_p2p(u, p, w);
+        return p;
+    }
+    // 新建中继点并从路径 a-b 每个原点连权为 w 的边进入, 断连返回 -1 且不耗预算
+    // 时间 O(T + log n) | 新增 1 点、至多 4 边, 额外空间 O(1)
+    template <class LCA>
+    int add_path2new(int a, int b, LCA& lca, W w = W())
+    {
+        auto ns = paths.in_cover(a, b, lca);
+        if (!ns[0]) return -1;
+        int p = new_point();
+        for (int u : ns) if (u) g.add(u, p, w);
+        return p;
+    }
+    // 从路径 a-b 向路径 c-d 全连接并返回中继编号, 任一路径断连则返回 -1 且不改图
+    // 时间 O(T + log n) | 新增 1 点、至多 8 边, 入中继为零权、出中继为 w, 额外空间 O(1)
+    template <class LCA>
+    int add_path2path(int a, int b, int c, int d, LCA& lca, W w = W())
+    {
+        auto src = paths.in_cover(a, b, lca), dst = paths.out_cover(c, d, lca);
+        if (!src[0] || !dst[0]) return -1;
+        int p = new_point();
+        for (int u : src) if (u) g.add(u, p);
+        for (int v : dst) if (v) g.add(p, v, w);
+        return p;
+    }
+private:
+    int point_cap, extra_cap, base;
+    static int levels(int x) { return x <= 1 ? 1 : __lg(x) + 1; }
+    int new_point()
+    {
+        assert(tot - base < extra_cap);
+        return b.new_node();
     }
 };
 #endif
@@ -163,6 +212,11 @@ int main()
     dij.run(5, tg.g, tg.tot);
     for (int u = 1; u <= 5; u++)
         cout << (dij.dist[u] == INF ? -1 : dij.dist[u]) << " \n"[u == 5];
+    GraphBuilder<int> b(40, 100);
+    b.init(10);
+    TreeLinks<int, false, true> dst(b);
+    dst.build(lca, VI{0, 6, 7, 8, 9, 10}); // 原树点 u 映射为图点 u+5
+    b.link(VI{1}, dst.out_cover(2, 4, lca), 3); // 图点 1 -> 状态点 7,9
     tree.clear();
 
     lca.build(tree, 1);

@@ -1,4 +1,4 @@
-param([switch]$Render)
+param([switch]$Render,[switch]$AuditOnly)
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'check_process.ps1')
@@ -15,7 +15,34 @@ Put 'scripts/placeholder' ''
 foreach ($name in @('make_booklet.ps1','booklet_markdown.ps1','booklet_tree.ps1')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $fixture ('scripts/'+$name)) }
 $compiler=(Get-Command typst -ErrorAction SilentlyContinue | Select-Object -First 1).Source
 if (-not $compiler -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'typst.exe'))) { $compiler=Join-Path $PSScriptRoot 'typst.exe' }
-if ($Render -and -not $compiler) { throw 'Render tests require Typst' }
+if (($Render -or $AuditOnly) -and -not $compiler) { throw 'Render/audit tests require Typst' }
+if ($Render -or $AuditOnly) {
+    # Load the actual audit function without running the complete generator.
+    # This lets Windows CI exercise Typst's native argv/UTF-8/error path without fonts.
+    $tokens=$null; $parseErrors=$null
+    $ast=[Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot 'make_booklet.ps1'),[ref]$tokens,[ref]$parseErrors)
+    Assert ($parseErrors.Count -eq 0) 'Generator parse failed'
+    $definition=$ast.Find({param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Invoke-BookletEval'},$true)
+    Assert ($null -ne $definition) 'Production audit function missing'
+    . ([scriptblock]::Create($definition.Extent.Text))
+    $typst=$compiler
+    $typPath=Join-Path $fixture ('audit path '+[char]0x4E2D+'.typ')
+    [IO.File]::WriteAllText($typPath,'#metadata("entry-end:e-probe")',$enc)
+    $result=Invoke-BookletEval 'query(metadata).filter(m=>type(m.value)==str and m.value.starts-with("entry-end:")).map(m=>m.value)'
+    $values=ConvertFrom-Json -InputObject $result
+    Assert ($values.Count -eq 1 -and ($values -join '') -ceq 'entry-end:e-probe') 'Quoted metadata query lost its prefix'
+    $values=ConvertFrom-Json -InputObject (Invoke-BookletEval '("a\"b\\c", str.from-unicode(0x4E2D))')
+    Assert ($values.Count -eq 2 -and $values[0] -ceq 'a"b\c' -and $values[1] -ceq [string][char]0x4E2D) 'Escaped quotes/backslashes or UTF-8 output changed'
+    $rejected=$false
+    try { $null=Invoke-BookletEval 'let' } catch { $rejected=$_.Exception.Message.StartsWith('Typst audit query failed:') }
+    Assert $rejected 'Invalid Typst expression did not propagate its exit status'
+    Write-Host '[PASS] real Typst audit: quoted prefix / escaped literals / Unicode and spaced path / failure propagation'
+    if ($AuditOnly) {
+        Write-Host ('Booklet audit self-test passed; logs: '+$fixture)
+        Complete-CheckWorkspace $fixture 'tooling'
+        return
+    }
+}
 $catalog="a`talgorithms/domain/family/a.cpp`nb`talgorithms/domain/family/b.cpp`nc`talgorithms/domain/other/a.cpp`n"
 Put 'zoi/_catalog.txt' $catalog
 Put 'algorithms/domain/family/a.cpp' "#include `"../other/a.cpp`"`nint SOURCE_A;"

@@ -87,6 +87,8 @@
 | [最短路问题 / 全源最短路径 / floyd](<../../algorithms/图论/最短路问题/全源最短路径/floyd.cpp>) | [floyd.h](<../../zoi/floyd.h>) |
 | [生成树问题 / 最小生成树 / kruskal / Kruskal](<../../algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp>) | [kruskal.h](<../../zoi/kruskal.h>) |
 | [生成树问题 / 最小生成树 / prim / Prim](<../../algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp>) | [prim.h](<../../zoi/prim.h>) |
+| [优化建图 / 前缀优化建图](<../../algorithms/图论/优化建图/前缀优化建图.cpp>) | [prefixGraph.h](<../../zoi/prefixGraph.h>) |
+| [优化建图 / 建图上下文](<../../algorithms/图论/优化建图/建图上下文.cpp>) | [graphBuilder.h](<../../zoi/graphBuilder.h>) |
 
 ## 字符串
 
