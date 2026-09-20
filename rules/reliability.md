@@ -22,7 +22,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [monoQueue - algorithms/数据结构/单调队列/单调队列.cpp](<../algorithms/数据结构/单调队列/单调队列.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>) |
 | [monoStack - algorithms/数据结构/单调栈/单调栈.cpp](<../algorithms/数据结构/单调栈/单调栈.cpp>) | [algorithms/杂项/对拍/misc_check.cpp](<../algorithms/杂项/对拍/misc_check.cpp>) |
 | [bit - algorithms/数据结构/树状数组/树状数组.cpp](<../algorithms/数据结构/树状数组/树状数组.cpp>) | [algorithms/数据结构/树状数组/对拍/bit_check.cpp](<../algorithms/数据结构/树状数组/对拍/bit_check.cpp>) |
-| [bit2d - algorithms/数据结构/树状数组/二维树状数组.cpp](<../algorithms/数据结构/树状数组/二维树状数组.cpp>) | [algorithms/数据结构/树状数组/对拍/bit_check.cpp](<../algorithms/数据结构/树状数组/对拍/bit_check.cpp>) |
+| [bit2d - algorithms/数据结构/树状数组/二维树状数组.cpp](<../algorithms/数据结构/树状数组/二维树状数组.cpp>) | [algorithms/数据结构/树状数组/对拍/bit_check.cpp](<../algorithms/数据结构/树状数组/对拍/bit_check.cpp>)<br>[algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp](<../algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp>) |
 | [segFhq - algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp](<../algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp>) | [algorithms/数据结构/树套树/对拍/segfhq_lifecycle_check.cpp](<../algorithms/数据结构/树套树/对拍/segfhq_lifecycle_check.cpp>) |
 | [st - algorithms/数据结构/ST表/ST表.cpp](<../algorithms/数据结构/ST表/ST表.cpp>) | [algorithms/数据结构/线段树/对拍/seg_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_check.cpp>) |
 | [skiplist - algorithms/数据结构/有序表与平衡树/跳表.cpp](<../algorithms/数据结构/有序表与平衡树/跳表.cpp>) | [algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp](<../algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp>) |
