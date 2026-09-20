@@ -8,7 +8,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 
 更新：`./scripts/make_reliability.ps1`；只读检查：`./scripts/make_reliability.ps1 -Check`。普通回归不会改写本表。
 
-## A 类：有直接对拍引用的现役模板 [71]
+## A 类：有直接对拍引用的现役模板 [73]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
@@ -83,6 +83,8 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [misraGries - algorithms/杂项/主元素问题/Misra-Gries.cpp](<../algorithms/杂项/主元素问题/Misra-Gries.cpp>) | [algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>) |
 | [prefixGraph - algorithms/图论/优化建图/前缀优化建图.cpp](<../algorithms/图论/优化建图/前缀优化建图.cpp>) | [algorithms/图论/优化建图/对拍/graphbuilder_check.cpp](<../algorithms/图论/优化建图/对拍/graphbuilder_check.cpp>)<br>[algorithms/图论/优化建图/对拍/prefixgraph_check.cpp](<../algorithms/图论/优化建图/对拍/prefixgraph_check.cpp>) |
 | [graphBuilder - algorithms/图论/优化建图/建图上下文.cpp](<../algorithms/图论/优化建图/建图上下文.cpp>) | [algorithms/图论/优化建图/对拍/graphbuilder_check.cpp](<../algorithms/图论/优化建图/对拍/graphbuilder_check.cpp>) |
+| [pbsPointer - algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp](<../algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp>) | [algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp](<../algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp>) |
+| [pbsRollback - algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp](<../algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp>) | [algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp](<../algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp>) |
 
 ## B 类：未发现直接对拍引用的现役模板 [9]
 
@@ -146,7 +148,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 | [algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 
-## 已发现的对拍套件 [38]
+## 已发现的对拍套件 [39]
 
 - [algorithms/图论/优化建图/对拍/graphbuilder_check.cpp](<../algorithms/图论/优化建图/对拍/graphbuilder_check.cpp>)
 - [algorithms/图论/优化建图/对拍/prefixgraph_check.cpp](<../algorithms/图论/优化建图/对拍/prefixgraph_check.cpp>)
@@ -185,4 +187,5 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 - [algorithms/杂项/对拍/rw_check.cpp](<../algorithms/杂项/对拍/rw_check.cpp>)
 - [algorithms/杂项/对拍/tool_core_check.cpp](<../algorithms/杂项/对拍/tool_core_check.cpp>)
 - [algorithms/杂项/对拍/utils_local_check.cpp](<../algorithms/杂项/对拍/utils_local_check.cpp>)
+- [algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp](<../algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp>)
 - [algorithms/杂项/随机数/对拍/rnd_check.cpp](<../algorithms/杂项/随机数/对拍/rnd_check.cpp>)

@@ -137,6 +137,8 @@
 | [防卡 / 哈希防卡](<../../algorithms/杂项/防卡/哈希防卡.cpp>) | [customHash.h](<../../zoi/customHash.h>) |
 | [离散化 / 离散化](<../../algorithms/杂项/离散化/离散化.cpp>) | [discrete.h](<../../zoi/discrete.h>) |
 | [主元素问题 / Misra-Gries](<../../algorithms/杂项/主元素问题/Misra-Gries.cpp>) | [misraGries.h](<../../zoi/misraGries.h>) |
+| [离线算法 / 整体二分 / 整体二分_指针](<../../algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp>) | [pbsPointer.h](<../../zoi/pbsPointer.h>) |
+| [离线算法 / 整体二分 / 整体二分_回滚](<../../algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp>) | [pbsRollback.h](<../../zoi/pbsRollback.h>) |
 
 ## 算法说明文档
 

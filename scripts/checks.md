@@ -29,6 +29,8 @@
   通用清理器跳过 FAIL/无标记/人工 codex-work；AI 自建的一次性测试用完后仍由创建者清理，正式对拍与 CI 依赖保留，见[工作区约定](../rules/collab.md#工作区与沉淀)。`clean_checks.ps1` 默认只预览, `-Apply` 才清理, 不删除 `.ci-results` 或长期证据。
   GitHub 上传日志保存 7 天。报告耗时仅用于定位慢测试，不作为 OJ 性能结论。
 
+`./scripts/run_checks.ps1 -Filter parallel_binary_search` 同时验证两份整体二分真实实现，长度 1..6 的三值数组穷举所有合法查询，600 组随机排序对照，以及五种 n=m=20 万的正序、倒序、全同、交替极值和随机数组。大数据按闭式答案或整段/短段排序独立核对，含单点、空询问和大—小—大调用，另核对外部离散表、插入位置与询问 id 的排列、按值接收不改原表及 move 转移；自动进入普通与 sanitizer CI。只覆盖静态第 k 小，不代表改题或带修改版本通过。
+
 ## 如何补测试
 
 BigInt 和 rw 的原生套件分别用 `-Filter bigint`、`-Filter rw_check`；rw 被共享的 `misc_check` 引用，修改后还须跑 `-Filter misc`。

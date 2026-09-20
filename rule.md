@@ -224,6 +224,11 @@ PersSegTree 红线: Tag 永久化只限加法类可交换标记; find_kth 只在
   mono_dp 仅示范有限前驱 min 转移, 初值 f[0]=0, k>=1 且加法在 LL 内; 不当作任意 DP 引擎。
   已撤下 MonotonicQueue/init/get_min/get_max, 迁移时注意最值列表改为按右端点索引的下标数组;
   misc_check 默认包含两件的独立暴力和 20 万规模, 自动进入普通及 sanitizer CI。
+整体二分: pbsRollback/pbsPointer 为固定内核加题目骨架, 两份独立 range_kth 静态代表实现;
+  PBSRollback/PBSPointer 公开统一 Event, range_kth(n,q,d) 接收先插入后询问的 1-based 事件表; d 由调用方先 build, val 为离散排名。
+  q 按值接收, 可 move(q) 转移, 每次调用重建状态; 返回 ans[id] 原值, id 为 1..m 的排列, 尾部 Usage 负责离散化、造事件及 IO。
+  回滚版维护当前左半贡献与剩余 k, 指针版维护全局 val<=mid 与原 k; 改题显露 Event/统计/分流, 不混用状态。
+  两份均未实现带修改; parallel_binary_search_check 以排序与闭式参照覆盖小数据和五种 20 万规模, 自动进普通及 sanitizer CI。
 编译基线: 本库就是 C++20, requires/if constexpr/concepts/<bit> 随便用;
   存量 C++17 写法不回改。赛前确认评测机 GCC 版本号(-std 一样不代表
   库特性齐, z_fill_n 旧写法在老 GCC 直接报错就是教训)。

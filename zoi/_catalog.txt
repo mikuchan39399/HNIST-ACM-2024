@@ -104,3 +104,5 @@ misraGries	algorithms/杂项/主元素问题/Misra-Gries.cpp
 !algorithms/数据结构/线段树/泛型插件/*
 prefixGraph	algorithms/图论/优化建图/前缀优化建图.cpp
 graphBuilder	algorithms/图论/优化建图/建图上下文.cpp
+pbsPointer	algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp
+pbsRollback	algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp
