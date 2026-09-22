@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "id": "6d519c58785c4107bbaac86c9f88c4d0",
+  "startedUtc": "2026-09-22T12:39:03.9758360Z",
+  "finishedUtc": "2026-09-22T12:39:12.8358112Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/vjudge-utils-compat/tool_core",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "7124d7d3c1252fda9965970240c614d5555e23e4f10d6146a03283ec73c32d5e",
+      "files": [
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "342625247499d16412e8ae49d19b8ace26baa1048990d4146381dbaac8c94acd"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "cb90ecc9f317e5013bed90964d78a540495913ba05ae8dac43fc8eb28b2b21b3"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/主元素问题/Misra-Gries.cpp",
+          "hash": "87e178fb318896a7f3f0307c884a02831a86fd26d898daca7f0030f019ba4b38"
+        },
+        {
+          "path": "algorithms/杂项/主元素问题/misraGries.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/对拍/tool_core_check.cpp",
+          "hash": "d80a2f34b53a91cc84d00e2734b2d4e5c5e3b735e5063038da175ee28b21fa62"
+        },
+        {
+          "path": "algorithms/杂项/离散化/discrete.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "599e6c1663780adbb7678d602bef4e7043c6699a4803d715baef93a0faeb32d9"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "66a7505b1f119db33e61d154659e56477767f99d768b1c3683615f538538d86b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/utils/utils.cpp",
+          "hash": "38f6a585b635dacedfdca2c90f69351d91d4a21bb97911619f368c86d8ebc2fb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/主元素问题/Misra-Gries.cpp",
+          "hash": "3ef3b852bbce939ace741285c478f3989fb82b148cc1c47188d785dd4def98cb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "b418ea77d017e5f32aad8b10d5abdd5bfe30b8df02c5d0dffe8d9c5400a92c8b",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/tool_core_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 8.556
+    }
+  ]
+}

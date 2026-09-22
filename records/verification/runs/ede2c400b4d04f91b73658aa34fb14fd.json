@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "id": "ede2c400b4d04f91b73658aa34fb14fd",
+  "startedUtc": "2026-09-22T12:39:17.1491926Z",
+  "finishedUtc": "2026-09-22T12:39:19.4015561Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/vjudge-utils-compat/utils_local",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "02ebb3d87ec564a34b12a9df017f0e91805a929f71ebb6a6ff167eae9f0f8221",
+      "files": [
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "cb90ecc9f317e5013bed90964d78a540495913ba05ae8dac43fc8eb28b2b21b3"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/对拍/utils_local_check.cpp",
+          "hash": "3a6a22a8fff3ae45e995d9227d1d81a7b8616e026024303ccda1cafab80ce067"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/杂项/utils/utils.cpp",
+          "hash": "0b1770b260d25688b9037f3b927fe36b65f2369874ff955045e83f133632a046",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/utils_local_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 2.149
+    }
+  ]
+}

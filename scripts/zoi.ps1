@@ -1,8 +1,9 @@
 param(
-    [Parameter(Position = 0)][ValidateSet('expand', 'restore', 'status', 'forget')][string]$Action = 'expand',
+    [Parameter(Position = 0)][ValidateSet('expand', 'export', 'restore', 'status', 'forget')][string]$Action = 'expand',
     [Parameter(Position = 1)][string]$Target = '',
     [switch]$Force,
-    [switch]$NoClipboard
+    [switch]$NoClipboard,
+    [switch]$FromStdin
 )
 # ASCII only for Windows PowerShell 5.1. Source files are UTF-8.
 # Generated blocks are immutable; code outside them remains editable.
@@ -11,6 +12,7 @@ $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
 if ($Action -eq 'expand' -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'sync_layout.ps1'))) { & (Join-Path $PSScriptRoot 'sync_layout.ps1') }
 $enc = New-Object Text.UTF8Encoding($false, $true)
+if ($Action -eq 'export') { [Console]::InputEncoding=$enc; [Console]::OutputEncoding=$enc }
 $comparison = [StringComparer]::Ordinal
 if ([IO.Path]::DirectorySeparatorChar -eq '\') { $comparison = [StringComparer]::OrdinalIgnoreCase }
 function New-Map { return ,(New-Object 'Collections.Generic.Dictionary[string,object]' ($comparison)) }
@@ -237,11 +239,13 @@ function Process-File([string]$src) {
     if ($src -notmatch '\.cpp$' -or $src -match '\.zoi\.cpp$') { throw "Expected a source .cpp (not a backup): $src" }
     $jp=Journal-Path $src; $sp=State-Path $src
     if ([IO.File]::Exists($jp)) {
-        if ($Action -eq 'status') { throw "Pending transaction; expand/restore will recover it: $jp" }
+        if ($Action -in @('status','export')) { throw "Pending transaction; expand/restore will recover it: $jp" }
         Finish-Journal $src
     }
     if (-not [IO.File]::Exists($src)) { throw "Missing source; state/backup preserved: $src" }
-    $before=Read-Text $src; $compact=$before; $state=$null; $legacy=$false
+    $before=Read-Text $src
+    if ($FromStdin) { $before=[Console]::In.ReadToEnd() }
+    $compact=$before; $state=$null; $legacy=$false
     $bak=[IO.Path]::ChangeExtension($src, '.zoi.cpp'); $sha=[IO.Path]::ChangeExtension($src, '.zoi.sha')
     if ([IO.File]::Exists($sp)) {
         if ([IO.File]::Exists($bak) -or [IO.File]::Exists($sha)) { throw "Mixed new/legacy state: $src" }
@@ -250,6 +254,7 @@ function Process-File([string]$src) {
         else { $compact=Fold $before $state ($Action -eq 'forget') }
     } elseif ([IO.File]::Exists($bak)) {
         $legacy=$true
+        if ($Action -eq 'export') { throw 'Legacy backup: run expand once to migrate before automatic submission.' }
         if ($Action -eq 'forget') {
             if (-not [IO.File]::Exists($sha) -or (Read-Text $sha).Trim() -notmatch '^[a-fA-F0-9]{40}$') {
                 throw 'Forget needs a valid legacy SHA sidecar; unknown backups are preserved.'
@@ -268,6 +273,13 @@ function Process-File([string]$src) {
     if ($Action -eq 'status') {
         $tag='unmanaged'; if ($null -ne $state) { $tag='recoverable' }; if ($legacy) { $tag='legacy: ready to migrate/restore' }
         Write-Host "[OK] $tag : $src"; return
+    }
+    if ($Action -eq 'export') {
+        # Reuse the same parser, but never commit source/state or touch the clipboard.
+        $r=Expand-Source $src $compact ([Guid]::NewGuid().ToString('N'))
+        $code=[regex]::Replace($r.text.TrimStart([char]0xfeff), '(?m)^// zoi:(?:begin|end) [a-f0-9]{32}:b[0-9]+\r?\n', '')
+        [Console]::Out.Write($code)
+        return
     }
     if ($Action -eq 'expand') {
         $id=[Guid]::NewGuid().ToString('N'); if ($null -ne $state) { $id=$state.id }
@@ -294,15 +306,16 @@ function Process-File([string]$src) {
     } else { Write-Host "[OK] unmanaged; unchanged: $src" }
 }
 try {
+    if ($FromStdin -and $Action -ne 'export') { throw '-FromStdin is only supported by export.' }
     if ($Force -and $Action -ne 'restore') { throw '-Force is only supported by restore (discard edits).' }
     if ($Target -eq '') {
-        if ($Action -in @('expand','forget')) { throw "$Action needs a source file" }
+        if ($Action -in @('expand','export','forget')) { throw "$Action needs a source file" }
         $Target=(Get-Location).Path
     }
     $full=$ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Target)
     $files=New-Map
     if ([IO.Directory]::Exists($full)) {
-        if ($Action -in @('expand','forget')) { throw "$Action needs a source file" }
+        if ($Action -in @('expand','export','forget')) { throw "$Action needs a source file" }
         foreach ($item in (Get-ChildItem -LiteralPath $full -Recurse -File)) {
             if ($item.Name -match '\.zoi\.(state\.json|pending\.json|cpp|sha)$') {
                 $p=$item.FullName -replace '\.zoi\.(state\.json|pending\.json|cpp|sha)$','.cpp'; $files[$p]=$true

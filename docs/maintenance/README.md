@@ -11,6 +11,7 @@
 | 测试行为、API 或边界用例 | 核对 rules/verification.json 的对应范围, 运行相关套件后查看自动生成的两层表 |
 | 指纹、证据或两层表生成器 | 运行 scripts/check_verification_test.ps1, 同时验证 PS5.1 / PS7 |
 | 展开/恢复 | 运行 scripts/zoi_check.ps1 |
+| 插件自动展开提交 | 运行 node scripts/check_submit_bridge.cjs 与 node scripts/check_vjudge_bridge.cjs；改展开内核还需 zoi_check；用 install_submit_bridge.cjs --check 核对实际插件，重载后验证，不用真实提交代替模拟测试 |
 | 安装/卸载、工作区配置、打包、清理 | 运行 scripts/check_setup.ps1 与 scripts/check_deployment.ps1, PS5.1/PS7 各验, 使用隔离配置 |
 | 资产扫描/测试入口 | 运行 scripts/check_inventory_test.ps1 / scripts/check_runner.ps1 |
 | 分享队友包 | VS Code 的 zoi-package 或 scripts/make_team_package.ps1, 默认 docs/releases/时间戳 ZIP |
@@ -19,12 +20,16 @@
 make_features 同时收集 algorithms 下的 Markdown, 在算法目录末尾生成按方向排列的说明入口, 不只链接源码; 新增说明后要重新生成。
 所有脚本放 scripts，库根从 PSScriptRoot 推导，不写本机绝对路径。打包收源码、受管文档、验证范围 JSON、自动运行证据及压力入口依赖的 .github 配置, 排除恢复备份、原始测试日志和已有发布包。
 
+VJudge 浏览器扩展位于 `scripts/vjudge-extension`，打包额外允许该目录的 `.js` 文件。它复用网页原生表单，并只观察对应提交请求的结果，不维护登录、验证码或固定语言 ID。网页选择器/表单变化时先核对现场和公开 bundle，再更新 DOM 契约夹具；只有模拟回归通过不能标为真实账号提交验证通过。CPH 补丁同时涉及宿主路由与面板按钮，卸载需一起撤回；洛谷两个已知版本独立匹配。
+
 安装 v3 管理 settings/tasks/keybindings 三个文档, v2 原快照可升级, 重装检查并补缺项;
 卸载精确恢复原文或保留后续无关修改。未知旧状态仍保留, 不猜测归属。AdoptExistingTasks 是显式的手写任务迁移,
 只接管指向当前库相应脚本的已知任务, 保留原快照供卸载恢复, 不自动接管冲突命令。
 启用补全/错误提示时记录旧值; 不安装扩展, 不改编译器 PATH。项目显式 includePath 可能覆盖用户默认值,
 configure-zoi 只处理调用方指定的工作区, 多个 C/C++ 配置逐一补路径; 手动改过的局部配置不强制回滚。
-快捷键冲突保留, 用 Ctrl+Alt+T / Ctrl+Alt+Z 提供固定入口, 不篡改 VS Code 的命令历史或抢占 Ctrl+Shift+P。
+快捷键冲突保留, 默认用 Ctrl+Alt+T / Ctrl+Alt+Z / Ctrl+Alt+R 提供任务列表、展开、恢复入口;
+install-zoi 的 -LuoguShortcuts 可选加入 Ctrl+Alt+P / Ctrl+Alt+Enter, 分别调用 luogu.searchProblem / luogu.sumbitCode（插件原命令含此拼写）。
+绑定沿用 v3 安装事务与 ownedKeys, 重装补缺、卸载保留用户原有或修改的绑定; 不篡改命令历史或抢占 Ctrl+Shift+P。
 打包排除规则必须相对库根计算, 不能因为库本身位于 .zoi-checks 或 releases 下就排空全部源码;
 拒绝跟随链接, 排除个人状态, 完成 ZIP 后再公布正式文件, 清理临时目录有有限重试。
 部署自检必须实际解压发布包并安装, 不能只检查 ZIP 名称。CI setup 作业自动跑两版 PowerShell 的部署自检。

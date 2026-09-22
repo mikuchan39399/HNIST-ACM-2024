@@ -16,8 +16,9 @@
 
 ## 10. 常用底座 (题目代码的地基, 不随题改)
 utils 母版(杂项\utils\utils.cpp): 别名全家 + 最值常量 + fast_io + 四个整数取整函数 +
-  debug/debug_array(LOCAL 包裹) + 方向数组(inline, 刻意非 const)。
+  debug/debug_array(LOCAL 包裹) + 方向数组(刻意非 const, C++17+ 为 inline, C++14 为各翻译单元独立的 static 数组)。
   自带 using namespace std 和常用头, include 它一个就够。
+  底座兼容 GNU C++14, string_view 按 C++17 启用, bit/concepts 按 C++20 启用; z_fill_n 在 C++14 用参数包初始化列表保持原填充范围。
 快读快写(杂项\快读快写\快读快写.cpp, 跳板名 rw): fread/fwrite 手动
   缓冲的 read/write 全家, 析构自动冲刷, utils_int 概念覆盖 __int128
   。库内引擎不用, 刷题按需 include。

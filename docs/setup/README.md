@@ -24,10 +24,22 @@
 | zoi-package | 从库当前源码生成 ZIP, 输出到库的 docs/releases/ |
 | zoi-clean-checks | 清理有完成标记的旧成功测试现场, 每类保留最近三份 |
 
-**快捷入口:** `Ctrl+Alt+T` 打开过滤为 `zoi-` 的任务列表, `Ctrl+Alt+Z` 展开当前 C++ 文件。
+**快捷入口:** `Ctrl+Alt+T` 打开过滤为 `zoi-` 的任务列表, `Ctrl+Alt+Z` 展开当前 C++ 文件, `Ctrl+Alt+R` 恢复当前文件的 include。展开、恢复前先保存代码。
 已有同名快捷键会保留并显示提示, 可用 `Ctrl+P` 输入 `task zoi-` 替代。也可打开“任务: 运行任务”并选择任务名称;
 右侧齿轮用于编辑配置, 不执行任务。`Ctrl+Shift+P` 的命令排序由 VS Code 管理, 本库不改命令历史或覆盖该快捷键。
 `Ctrl+Shift+B` 只有在 zoi-expand 是默认构建任务时才用于展开, 不会抢占原有默认构建。
+
+使用洛谷插件时，可额外安装两项快捷键：
+
+```powershell
+./scripts/install-zoi.ps1 -LuoguShortcuts
+```
+
+`Ctrl+Alt+P` 查看洛谷题目；`Ctrl+Alt+Enter` 提交当前代码，提交键要求光标位于可编辑的文件编辑器中。
+这只绑定插件命令；需要自动展开提交时，另按[提交适配说明](../expand/README.md#插件提交时自动展开)安装适配。
+CPH 原有的 `Ctrl+Alt+S` 不变。重复安装不重复添加快捷键，省略 `-LuoguShortcuts` 重装也不会移除已添加的洛谷键。
+安装器只检查用户 keybindings 中的同键冲突；其他扩展或内置命令的冲突应在 VS Code 快捷键页核对。
+卸载会撤回安装器新增的绑定，保留安装前已有绑定及后来被用户改动的绑定。
 
 安装器配置用户级库路径、CPH 的 `-I` 参数, 启用 C/C++ 补全/错误提示/IntelliSense, 缺省 C++ 标准设为 C++20。
 其他 include 路径、编译参数和任务保留, 但不会替自写编译任务或 Code Runner 添加参数;

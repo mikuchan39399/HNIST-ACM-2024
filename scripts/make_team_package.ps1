@@ -25,7 +25,7 @@ function Package-Files([string]$Directory) {
             if ($rel -match '(^|/)(\.git|\.vscode|\.zoi-checks|\.ci-results)(/|$)|^docs/(backups|releases|booklet/output)(/|$)') { continue }
             if ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw ('Reparse points cannot enter the package: '+$rel) }
             if ($entry.PSIsContainer) { $pending.Push($entry.FullName) }
-            elseif ($entry.Extension -in @('.ps1','.cmd','.cpp','.h','.txt','.md','.py','.typ','.json','.yml','.yaml') -and $entry.Name -notmatch '^\.|\.zoi[.-]|\.saved$|\.bak$') { $entry }
+            elseif (($entry.Extension -in @('.ps1','.cmd','.cjs','.cpp','.h','.txt','.md','.py','.typ','.json','.yml','.yaml') -or ($entry.Extension -eq '.js' -and $rel -like 'scripts/vjudge-extension/*')) -and $entry.Name -notmatch '^\.|\.zoi[.-]|\.saved$|\.bak$') { $entry }
         }
     }
 }

@@ -48,10 +48,18 @@ foreach ($n in @('b','c','e')) { Put ('zoi/'+$n+'.h') ("// zoi stub -> headers/$
 $original="// keep this comment`n#include `"b.h`" // first`n`n#include `"c.h`"`n#include `"b.h`"`nint main() { return left()+right() == 14 ? 0 : 1; }`n"
 Put 'problems/A.cpp' $original
 Compile-Run 'problems/A.cpp'
+Run export 'problems/A.cpp'
+$exported=[IO.File]::ReadAllText((Join-Path $fixture ('call-'+$script:calls+'.stdout.log')))
+Assert ($exported.Contains('inline int diamond') -and -not $exported.Contains('zoi:begin')) 'Export was not expanded/clean'
+Equal (Read 'problems/A.cpp') $original; Clean A
+Put 'problems/exported.cpp' $exported; Compile-Run 'problems/exported.cpp'
+Pass 'export returns compilable submission text without changing source/state'
 Run expand 'problems/A.cpp'
 Assert (([regex]::Matches((Read 'problems/A.cpp'),'inline int diamond')).Count -eq 1) 'Diamond was duplicated'
 Compile-Run 'problems/A.cpp'
 $expanded=Read 'problems/A.cpp'; $state=Read 'problems/A.zoi.state.json'
+Run export 'problems/A.cpp'
+Equal (Read 'problems/A.cpp') $expanded; Equal (Read 'problems/A.zoi.state.json') $state
 $stamp=(Get-Item -LiteralPath (Join-Path $fixture 'problems/A.cpp')).LastWriteTimeUtc
 Run expand 'problems/A.cpp'
 Equal (Read 'problems/A.cpp') $expanded
@@ -91,6 +99,7 @@ Run expand 'problems/A.cpp'
 Put 'problems/A.cpp' ((Read 'problems/A.cpp').Replace('return 7','return 9'))
 $edited=Read 'problems/A.cpp'
 Run expand 'problems/A.cpp' 1 'Edited generated block'
+Run export 'problems/A.cpp' 1 'Edited generated block'
 Run restore 'problems/A.cpp' 1 'Edited generated block'; Equal (Read 'problems/A.cpp') $edited
 Run forget 'problems/A.cpp'
 Assert ((Read 'problems/A.cpp').Contains('return 9') -and -not (Read 'problems/A.cpp').Contains('// zoi:')) 'Forget lost edits or kept markers'

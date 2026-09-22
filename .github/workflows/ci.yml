@@ -157,6 +157,12 @@ jobs:
         if: ${{ !cancelled() }}
         shell: pwsh
         run: ./scripts/zoi_check.ps1
+      - name: Check submission adapters without network submissions
+        if: ${{ !cancelled() }}
+        run: node scripts/check_submit_bridge.cjs
+      - name: Check VJudge handoff and native form contract
+        if: ${{ !cancelled() }}
+        run: node scripts/check_vjudge_bridge.cjs
       - name: Full regression
         if: ${{ !cancelled() }}
         shell: pwsh

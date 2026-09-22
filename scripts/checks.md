@@ -15,7 +15,17 @@
 ./scripts/run_checks.ps1 -Sanitize -Compiler g++-13 -TimeoutSec 180 -CompileTimeoutSec 180
 ./scripts/check_runner.ps1
 ./scripts/zoi_check.ps1
+node scripts/check_submit_bridge.cjs
+node scripts/check_vjudge_bridge.cjs
 ```
+
+VJudge 自检通过真实本机 HTTP 连接验证随机令牌、单次领取/许可、地址匹配、代码变动和超时；页面夹具检查 GNU C++20 优先、最高 GNU C++ 自动回退、旧标准顺序、禁用选项、比赛路由、CRLF/CR 到 LF 的编辑器规范化、原生提交成功/失败与真实源码改动的拒绝路径。Chrome worker 与 VS Code 宿主夹具检查先准备、许可时提示一次回退、最后提交的顺序，提示不等待确认；只填表检查也执行提交前校验。全程不向 OJ 提交，默认 CI 运行。提交适配自检另覆盖 utils 展开快照的 C++14/17/20 编译与运行、现代标准头启用边界、CPH 按钮/快捷键路由和洛谷 4.16/4.18 安装升级与卸载；实际 Chrome 登录、Companion 拉题和 OJ 评测需单独验收。
+
+加载本地 Chrome 扩展后运行 `node scripts/check_vjudge_chrome.cjs` 做真实表单检查，不发送 OJ 提交；也可传入一个 VJudge 题目 URL 检查自动回退。该交互检查不在 CI 中执行。
+
+页面夹具还模拟 Bootstrap 先创建表单、延迟显示窗口的时序，检查显示前不填表、不重复打开、显示超时及用户关闭后不提交；网页错误提示覆盖 DOM 尚未就绪和连接中断，避免阻塞式弹窗。
+
+2026-09-22 已用 Chrome 扩展 1.0.4 和 SPOJ-ABACABA 的真实展开代码完成实页校验：自动选中 `C++14 (gcc 8.3)`、保留 O2 和非公开选项，表单保持显示，提交前校验返回 PASS；此次没有发送 OJ 提交。该题源码副本另以本机 GCC 15.2 的 C++14 模式编译，核对 n=1…15 输出通过；这不等于在远端 GCC 8.3 上编译验证。CF 拉题在重启 CPH 接收服务后由用户确认恢复。
 
 - 默认只跑回归，`Filter` 是套件文件名中的普通子串，匹配不到会失败；它不按模板依赖自动选测试。
 - `Mode All` 跑全部对拍和全部非对拍 cpp 的语法检查；普通编译统一 C++20、O2、Wall/Wextra/Werror，并保留 assert。

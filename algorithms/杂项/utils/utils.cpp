@@ -12,7 +12,10 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#if __cplusplus >= 201703L
 #include <string_view>
+#endif
+#include <initializer_list>
 #include <vector>
 #include <utility>
 #include <tuple>
@@ -20,7 +23,10 @@
 #include <algorithm>
 #include <array>
 #include <bitset>
+#if __cplusplus >= 202002L
 #include <bit>
+#include <concepts>
+#endif
 #include <cmath>
 #include <functional>
 #include <map>
@@ -31,7 +37,6 @@
 #include <unordered_set>
 #include <stack>
 #include <chrono>
-#include <concepts>
 #include <random>
 
 using namespace std;
@@ -72,18 +77,32 @@ constexpr double MIN_DBL = -DBL_MAX;
  *   double 不可 memset 造最值(重复字节非合法浮点), 用 fill/vll 赋值
  */
 
+#if __cplusplus >= 201703L
 inline int dx4[4] = {0, 0, -1, 1};
 inline int dy4[4] = {1, -1, 0, 0};
 inline int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
 inline int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+#else
+// C++14 不支持内联变量, 旧 OJ 的单文件提交使用各翻译单元独立的方向数组
+[[gnu::unused]] static int dx4[4] = {0, 0, -1, 1};
+[[gnu::unused]] static int dy4[4] = {1, -1, 0, 0};
+[[gnu::unused]] static int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
+[[gnu::unused]] static int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
+#endif
 
 // 从下标 0 填到 min(n+10,size)-1, 含 1-based 哨兵与少量余量; 各容器 size>=n>=0
 // 时间为实际填充元素数之和, O(1) 额外空间; 不扩容, 不保证清空更远的旧数据
 template <class V, typename... CS>
 void z_fill_n(int n, V val, CS&... cs)
 {
+#if __cplusplus >= 201703L
     assert(n >= 0 && ((cs.size() >= (size_t)n) && ...));
     (fill(cs.begin(), cs.begin() + min((size_t)n + 10, cs.size()), val), ...);
+#else
+    assert(n >= 0);
+    (void)initializer_list<int>{(assert(cs.size() >= (size_t)n), 0)...};
+    (void)initializer_list<int>{(fill(cs.begin(), cs.begin() + min((size_t)n + 10, cs.size()), val), 0)...};
+#endif
 }
 
 // 在标准流第一次读写前调用; 后续不混用 scanf/printf 或 rw, O(1) 设置

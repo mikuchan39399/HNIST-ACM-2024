@@ -1,4 +1,4 @@
-param([string]$SettingsFile='', [string]$TasksFile='', [string]$KeybindingsFile='', [switch]$NoStubs,[switch]$AdoptExistingTasks)
+param([string]$SettingsFile='', [string]$TasksFile='', [string]$KeybindingsFile='', [switch]$NoStubs,[switch]$AdoptExistingTasks,[switch]$LuoguShortcuts)
 # Win11 ships PS5.1; no administrator, Git, Node or plugin install required.
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'zoi_setup.ps1')
@@ -113,10 +113,18 @@ try {
         $rawTasks=JC-Append $rawTasks (Setup-Json $t); $labels+=$def[0]
     }
     $ownedKeys=@(); if ($oldState -and $oldState.version -eq 3) { $ownedKeys=@($oldState.ownedKeys) }
-    foreach ($binding in @(
+    $bindings=@(
         @{key='ctrl+alt+z'; command='workbench.action.tasks.runTask'; args='zoi-expand'; when='editorLangId == cpp && !editorReadonly'},
+        @{key='ctrl+alt+r'; command='workbench.action.tasks.runTask'; args='zoi-restore'; when='editorLangId == cpp && !editorReadonly'},
         @{key='ctrl+alt+t'; command='workbench.action.quickOpen'; args='task zoi-'}
-    )) {
+    )
+    if ($LuoguShortcuts) {
+        $bindings+=@(
+            @{key='ctrl+alt+p'; command='luogu.searchProblem'},
+            @{key='ctrl+alt+enter'; command='luogu.sumbitCode'; when='editorTextFocus && !editorReadonly && resourceScheme == file'}
+        )
+    }
+    foreach ($binding in $bindings) {
         $found=@((JC-Value $keys) | Where-Object { $_.key -ieq $binding.key })
         if ($found.Count) { Write-Host ('[NOTE] existing shortcut preserved: '+$binding.key); continue }
         $raw=Setup-Json $binding; $keys=JC-Append $keys $raw; $ownedKeys+=$raw
@@ -156,6 +164,7 @@ try {
     Write-Host ('[PATH] keybindings: '+$paths.keys)
     Write-Host '[NEXT] Install/enable Microsoft C/C++ (ms-vscode.cpptools). Reload VS Code.'
     Write-Host '[NEXT] Open your problem folder and run zoi-configure once; explicit project settings can override user defaults.'
-    Write-Host '[KEY] Ctrl+Alt+Z expands the active saved .cpp; Ctrl+Alt+T opens task zoi-. Existing shortcuts are preserved.'
+    Write-Host '[KEY] Ctrl+Alt+Z expands; Ctrl+Alt+R restores includes; save the active .cpp first. Ctrl+Alt+T opens task zoi-. Existing shortcuts are preserved.'
+    if ($LuoguShortcuts) { Write-Host '[KEY] Luogu: Ctrl+Alt+P opens problems; Ctrl+Alt+Enter submits. Requires the Luogu extension.' }
 } catch { Write-Host ('[FAIL] '+$_.Exception.Message); exit 1 }
 finally { if ($null -ne $lock) { $lock.Dispose() } }

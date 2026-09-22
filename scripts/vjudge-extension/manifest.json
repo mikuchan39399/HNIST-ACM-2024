@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "ZOI VJudge Submit",
+  "version": "1.0.4",
+  "description": "从 CPH 提交展开代码到 VJudge，优先 GNU C++20，自动回退可用版本并通知 VS Code。",
+  "permissions": ["scripting"],
+  "host_permissions": ["https://vjudge.net/*", "https://vjudge.net.cn/*", "http://127.0.0.1/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [{
+    "matches": ["https://vjudge.net/*", "https://vjudge.net.cn/*"],
+    "js": ["handoff.js"],
+    "run_at": "document_start"
+  }]
+}

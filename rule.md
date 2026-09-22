@@ -11,9 +11,19 @@
 工具行为见 [使用文档](docs/README.md) 与 [维护流程](rules/workflow.md)。历史只供追溯，不与现行规则并行生效。
 临时文件位置与长期交接执行 [工作区与沉淀](rules/collab.md#工作区与沉淀), 不依赖会话记忆保存项目结论。
 工具交付须包含运行所需的配置依赖; 队友包与安装自检的现行范围见维护流程, 不只检查脚本文件存在。
+插件自动提交由 scripts/install_submit_bridge.cjs 适配 CPH Codeforces/VJudge 与洛谷提交入口;
+  scripts/submit_bridge.cjs 调用 zoi.ps1 export 生成提交快照，不修改源码/管理状态，不自动迁移库目录;
+  展开失败或编辑器版本变化必须停止提交。插件升级先核对入口，卸载只撤回本适配，保留其他补丁。
+  VJudge 拉题/建文件/样例复用 Competitive Companion 与 CPH，提交复用 Ctrl+Alt+S 和面板按钮；
+  scripts/vjudge-extension 是 Chrome MV3 扩展，只在主动提交时使用限时、单次授权的 loopback 快照，复用浏览器登录和原生表单；
+  动态选语言时优先 GNU C++20，否则选最高可用 GNU C++ 标准，同标准优先 64 位，未标明标准的 GNU C++ 仅作最后选择；
+  回退元数据随单次提交许可传回宿主，在提交前向 VS Code 提示实际编译器，无须确认；O2 仅在快照前加 GCC pragma，不改写语法；失败/未知结果不自动重试，验证码留给用户。
+  网页编辑器校验仅统一 CRLF/CR/LF 换行，不忽略其他源码差异；连接检查复用提交前校验但不能取得提交许可。
+  填表前等待原生窗口实际显示，不能把 DOM 创建当作显示完成；之后关闭窗口仍须拦截。网页错误用可关闭提示条，不阻塞页面。
 部署工具须验证真实 ZIP 解压安装、旧状态升级、项目 includePath 覆盖与快捷键冲突;
   用户级默认值不等于项目实际生效, 用 zoi-configure/doctor 显式处理当前刷题目录, 不扫描其他项目。
   安装注册九任务及可用快捷键, 打包默认输出 docs/releases, 私人安装/展开状态不得进入版本控制或队友包。
+  默认快捷键为 Ctrl+Alt+Z 展开、Ctrl+Alt+R 恢复、Ctrl+Alt+T 任务列表; -LuoguShortcuts 可选安装 Ctrl+Alt+P 查看洛谷题目和 Ctrl+Alt+Enter 提交，沿用 v3 冲突保留与可撤销安装机制。
   通用缓存清理器只自动清理有 PASS 完成标记的旧现场，每类保留三份，跳过失败、未知及 codex-work；AI 自建的一次性测试用完后按协作约定清理，正式对拍、CI 依赖与交付物保留。
   手册审计须保真传递 Typst 表达式中的引号并显式读取 UTF-8; Windows PS5.1/7 的真实原生审计检查与 SourceOnly 发现检查分别覆盖。
 
@@ -230,7 +240,8 @@ PersSegTree 红线: Tag 永久化只限加法类可交换标记; find_kth 只在
   range_kth(n,q,d) 复用 kth 并内建一维 BIT, 另需 pos/l/r 字段, 返回原值; d 先 build, val 为离散排名, id 为 1..m 的排列。
   保留裸事件循环、分流与递归: 回滚版扣减 k 并逐层撤销, 指针版保留原 k 并最终清空前缀; 不支持时间交错修改。
   Usage 含一维默认事件与二维自定义事件; parallel_binary_search_check 覆盖默认/自定义类型、两种 BIT 组合及外部状态复用, 自动进普通及 sanitizer CI。
-编译基线: 本库就是 C++20, requires/if constexpr/concepts/<bit> 随便用;
+编译基线: 算法模板保持 C++20, requires/if constexpr/concepts/<bit> 随便用;
+  utils 公共底座单独兼容 GNU C++14, 现代头按标准启用, 旧标准方向数组为各翻译单元独立的可变数组, z_fill_n 保持相同填充契约;
   存量 C++17 写法不回改。赛前确认评测机 GCC 版本号(-std 一样不代表
   库特性齐, z_fill_n 旧写法在老 GCC 直接报错就是教训)。
 递归深度: Tarjan/LCA/build 全递归, 1e6 深链 × 8MB 栈会爆。保持递归
