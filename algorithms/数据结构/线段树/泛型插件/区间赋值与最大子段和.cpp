@@ -3,8 +3,8 @@
 #include "../../../杂项/utils/utils.cpp"
 
 // 区间赋值, 查询非空最大子段和/前缀和/后缀和; 不支持区间加
-// 全负段返回最大元素; 空单位元 best=0 不是非空段答案; 中间值须在 LL 内
-// 合并/作用 O(1); Info 40B, Tag 16B; 普通树 n=2e5 约 44.8MB
+// 全负取最大元素; Info{} 仅为空单位元; 中间值须在 LL 内
+// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 45 MB
 namespace SegMaxSubarray
 {
 struct Tag
@@ -42,17 +42,3 @@ struct Info
 };
 }
 #endif
-
-/* Usage:
-#include "../泛型线段树.cpp"
-using Info = SegMaxSubarray::Info;
-using Tag = SegMaxSubarray::Tag;
-int main()
-{
-    vector<Info> a = {{}, Info(-2), Info(3), Info(-1), Info(4)};
-    SegTree<Info, Tag> seg(int(a.size()) - 1); seg.build(a);
-    cout << seg.query(1, 4).best << '\n'; // 6
-    seg.modify(1, 4, Tag::assign(-5));
-    cout << seg.query(1, 4).best << '\n'; // -5
-}
-*/

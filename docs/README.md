@@ -6,11 +6,12 @@
 |---|---|
 | 了解交付标准、何时需要工作板与记录 | [以最终结果为准的协作约定](../rules/collab.md#以最终结果为准) |
 | 查看自己的学习与整理进度 | [学习与入库进度](progress/README.md) |
-| 了解固定引擎、启发式模板与分块的设计分类 | [模板设计分类](features/template-design.md) |
+| 了解模板设计分类与赛场速查的注释取向 | [模板设计分类](features/template-design.md) |
 | 选择学习路线、查家族与待建目标 | [九方向路线图](roadmaps/README.md) |
 | 查随模板使用说明 | [算法说明目录](features/catalog.md#算法说明文档) |
 | 给队友装库或卸载 | [安装与卸载](setup/README.md) |
 | 写题、展开提交、恢复或清理状态 | [展开与恢复](expand/README.md) |
+| 用 CPH／洛谷自动展开提交，或连接 VJudge | [提交适配与 Chrome 扩展](expand/README.md#插件提交时自动展开) |
 | 查看每个模板测得怎样 | [口语概览](verification/status.md) / [AI 明细](verification/details.md) |
 | 查专项验证依据或既有方案 | [专项验证索引](../records/verification/README.md) / [工具与发布历史](../records/tooling/README.md) |
 | 看待办、有效交接或查阅旧记录 | [当前工作板](../rules/sweep-board.md) / [清扫历史](../rules/sweep-history.md) |

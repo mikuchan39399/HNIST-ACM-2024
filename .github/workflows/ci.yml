@@ -28,6 +28,12 @@ jobs:
         if: ${{ !cancelled() }}
         shell: pwsh
         run: ./scripts/check_setup.ps1
+      - name: Snippet installation on both Windows shells
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: |
+          python scripts/check_seg_snippet.py --shell powershell --install-only
+          python scripts/check_seg_snippet.py --shell pwsh --install-only
       - name: Deployment, workspace and cache tests on PowerShell 5.1
         if: ${{ !cancelled() }}
         shell: powershell
@@ -127,6 +133,8 @@ jobs:
         run: |
           g++ --version
           pwsh --version
+      - name: Snippet installation and segment-tree behavior
+        run: python3 scripts/check_seg_snippet.py
       - name: Check generated test inventory
         shell: pwsh
         run: ./scripts/make_reliability.ps1 -Check

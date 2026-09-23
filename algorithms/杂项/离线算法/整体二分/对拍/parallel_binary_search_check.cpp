@@ -1,6 +1,8 @@
 #include "../整体二分_回滚.cpp"
 #include "../整体二分_指针.cpp"
 #include "../../../../数据结构/树状数组/二维树状数组.cpp"
+#include "../../../../数据结构/树状数组/树状数组.cpp"
+#include "../../../离散化/离散化.cpp"
 
 using Ask = array<int, 3>;
 int case_cnt = 0;
@@ -32,8 +34,14 @@ void check(const VI& a, const vector<Ask>& ask, const VI& expected)
         reverse(rollback.begin() + n + 1, rollback.end());
         reverse(pointer.begin() + n + 1, pointer.end());
     }
-    auto x = PBSRollback::range_kth(n, rollback, d);
-    auto y = PBSPointer::range_kth(n, pointer, d);
+    BIT bit(n);
+    auto add = [&](const auto& e, int delta) { bit.add(e.pos, e.pos, delta); };
+    auto query = [&](const auto& e) { return bit.query(e.l, e.r); };
+    auto x = PBSRollback::find_first(n, d.size(), rollback, add, query);
+    for (int i = 1; i <= n; i++) assert(bit.query(i, i) == 0);
+    auto y = PBSPointer::find_first(n, d.size(), pointer, add, query);
+    for (int i = 1; i <= n; i++) assert(bit.query(i, i) == 0);
+    for (int i = 1; i <= m; i++) x[i] = d[x[i]], y[i] = d[y[i]];
     for (int i = 1; i <= n + m; i++)
     {
         auto verify = [&](const auto& e)
@@ -120,7 +128,7 @@ void check_rect(BIT2D& bit, const vector<VI>& a, const vector<RectAsk>& ask, con
         auto [x, y] = e.lo;
         bit.add(x, y, x, y, delta);
     };
-    auto count = [&](const RectEvent& e)
+    auto query = [&](const RectEvent& e)
     {
         const auto& before = original[e.stamp];
         assert(e.type == 1 && e.id == before.id && e.lo == before.lo && e.hi == before.hi);
@@ -137,15 +145,15 @@ void check_rect(BIT2D& bit, const vector<VI>& a, const vector<RectAsk>& ask, con
                 assert(bit.t1[x][y] == 0 && bit.t2[x][y] == 0 && bit.t3[x][y] == 0 && bit.t4[x][y] == 0);
     };
     const auto saved = q;
-    verify(PBSRollback::kth(n, d.size(), q, add, count));
+    verify(PBSRollback::find_first(n, d.size(), q, add, query));
     assert(q == saved);
-    verify(PBSPointer::kth(n, d.size(), q, add, count));
+    verify(PBSPointer::find_first(n, d.size(), q, add, query));
     assert(q == saved);
     if (n <= 50)
     {
         auto copy = q;
-        verify(PBSRollback::kth(n, d.size(), move(copy), add, count));
-        verify(PBSPointer::kth(n, d.size(), move(q), add, count));
+        verify(PBSRollback::find_first(n, d.size(), move(copy), add, query));
+        verify(PBSPointer::find_first(n, d.size(), move(q), add, query));
     }
     rect_cases++;
     rect_queries += m;
@@ -168,7 +176,7 @@ void brute_rect(BIT2D& bit, const vector<VI>& a, const vector<RectAsk>& ask)
 
 void custom_checks()
 {
-    // 自定义一维事件可直接用兼容入口, 无继承/类型转换; 附加字段可被完整复制
+    // 自定义一维事件可直接用通用入口, 无继承/类型转换; 附加字段可被完整复制
     struct MyEvent
     {
         int type, pos, val, l, r, k, id;
@@ -181,29 +189,22 @@ void custom_checks()
     vector<MyEvent> q{{}, {0, 2, d(-7), 0, 0, 0, 0, "second"}, {0, 1, d(12), 0, 0, 0, 0, "first"},
                       {1, 0, 0, 1, 2, 2, 2, "large"}, {1, 0, 0, 1, 2, 1, 1, "small"}};
     const auto saved = q;
-    assert(PBSRollback::range_kth(2, q, d) == VI({0, -7, 12}));
-    assert(PBSPointer::range_kth(2, q, d) == VI({0, -7, 12}));
     assert(q == saved);
     BIT one(2);
     auto add = [&](const MyEvent& e, int delta) { one.add(e.pos, e.pos, delta); };
-    auto count = [&](const MyEvent& e) { return one.query(e.l, e.r); };
+    auto query = [&](const MyEvent& e) { return one.query(e.l, e.r); };
     VI ranked{0, d(-7), d(12)};
-    assert(PBSRollback::kth(2, d.size(), q, add, count) == ranked);
+    assert(PBSRollback::find_first(2, d.size(), q, add, query) == ranked);
     assert(one.query(1, 1) == 0 && one.query(2, 2) == 0);
-    assert(PBSPointer::kth(2, d.size(), q, add, count) == ranked);
+    assert(PBSPointer::find_first(2, d.size(), q, add, query) == ranked);
     assert(one.query(1, 1) == 0 && one.query(2, 2) == 0);
     assert(q == saved);
-
     // 花括号实参无法推导 E, 确认缺省 E=Event 真正可用; V=1 不应触碰统计
-    Dcr<int> single;
-    single.add(42);
-    single.build();
-    assert(PBSRollback::range_kth(1, {{}, {0, 1, 1, 0, 0, 0, 0}, {1, 0, 0, 1, 1, 1, 1}}, single) == VI({0, 42}));
-    assert(PBSPointer::range_kth(1, {{}, {0, 1, 1, 0, 0, 0, 0}, {1, 0, 0, 1, 1, 1, 1}}, single) == VI({0, 42}));
     auto unused_add = [](const auto&, int) { assert(false); };
-    auto unused_count = [](const auto&) { assert(false); return 0; };
-    assert(PBSRollback::kth(1, 1, {{}, {0, 1, 1, 0, 0, 0, 0}, {1, 0, 0, 1, 1, 1, 1}}, unused_add, unused_count) == VI({0, 1}));
-    assert(PBSPointer::kth(1, 1, {{}, {0, 1, 1, 0, 0, 0, 0}, {1, 0, 0, 1, 1, 1, 1}}, unused_add, unused_count) == VI({0, 1}));
+    auto unused_query = [](const auto&) { assert(false); return 0; };
+    assert(PBSRollback::find_first(1, 1, {{}, {0, 1, 1, 0, 0, 0, 0}, {1, 0, 0, 1, 1, 1, 1}}, unused_add, unused_query) == VI({0, 1}));
+    assert(PBSPointer::find_first(1, 1, {{}, {0, 1, 1, 0, 0, 0, 0}, {1, 0, 0, 1, 1, 1, 1}}, unused_add, unused_query) == VI({0, 1}));
+
 
     BIT2D bit(500, 500);
     for (int mask = 0; mask < 81; mask++)
@@ -287,10 +288,19 @@ int main()
                                 {0, 2, d(7), 0, 0, 0, 0}, {1, 0, 0, 1, 3, 3, 2}, {1, 0, 0, 1, 2, 1, 1}};
     vector<PBSPointer::Event> p;
     for (auto e : r) p.push_back({e.type, e.pos, e.val, e.l, e.r, e.k, e.id});
-    assert(PBSRollback::range_kth(3, r, d) == VI({0, -5, 7}));
-    assert(PBSPointer::range_kth(3, p, d) == VI({0, -5, 7}));
-    assert(PBSRollback::range_kth(3, move(r), d) == VI({0, -5, 7}));
-    assert(PBSPointer::range_kth(3, move(p), d) == VI({0, -5, 7}));
+    BIT bit(3);
+    auto add = [&](const auto& e, int delta) { bit.add(e.pos, e.pos, delta); };
+    auto query = [&](const auto& e) { return bit.query(e.l, e.r); };
+    const VI ranked{0, d(-5), d(7)};
+    auto verify = [&](const VI& ans)
+    {
+        assert(ans == ranked);
+        for (int i = 1; i <= 3; i++) assert(bit.query(i, i) == 0);
+    };
+    verify(PBSRollback::find_first(3, d.size(), r, add, query));
+    verify(PBSPointer::find_first(3, d.size(), p, add, query));
+    verify(PBSRollback::find_first(3, d.size(), move(r), add, query));
+    verify(PBSPointer::find_first(3, d.size(), move(p), add, query));
 
     check({0, 25957, 6405, 15770, 26287, 26465},
           {{}, {2, 2, 1}, {3, 4, 1}, {4, 5, 1}, {1, 2, 2}, {4, 4, 1}},

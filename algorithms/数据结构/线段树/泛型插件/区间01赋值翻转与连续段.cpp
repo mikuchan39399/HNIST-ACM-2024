@@ -3,8 +3,8 @@
 #include "../../../杂项/utils/utils.cpp"
 
 // 01 赋值/翻转, 查询 1 个数与最长连续 0/1; 左右信息不可交换
-// 仅接已 build 的树: 全零段的 pre/suf/best[0] 也等于 len, 不能只补 len
-// 合并/作用 O(1); Info 32B, Tag 8B; 普通树 n=2e5 约 32MB
+// 必须 build; 全零段的 pre/suf/best[0] 等于 len, 不能只补 len
+// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 32 MB
 namespace SegBinary
 {
 struct Tag
@@ -56,18 +56,3 @@ struct Info
 };
 }
 #endif
-
-/* Usage:
-#include "../泛型线段树.cpp"
-using Info = SegBinary::Info;
-using Tag = SegBinary::Tag;
-int main()
-{
-    vector<Info> a(6, Info(0));
-    SegTree<Info, Tag> seg(int(a.size()) - 1); seg.build(a);
-    seg.modify(2, 4, {1, false});
-    seg.modify(3, 5, {-1, true}); // 0,1,0,0,1
-    auto v = seg.query(1, 5);
-    cout << v.ones << ' ' << v.best[0] << '\n'; // 2 2
-}
-*/

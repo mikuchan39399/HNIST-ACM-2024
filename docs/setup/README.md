@@ -70,6 +70,22 @@ CPH 直接按空格拆参数，不能靠加引号解决。库路径有空格时�
 
 该选项只接管指向当前库相应脚本的已知任务, 拒绝其他命令/库路径, 卸载时恢复原手写任务。
 
+## 在光标处插入 Info 和 Tag
+
+安装基础的“区间加、区间求和”代码片段：
+
+```powershell
+./scripts/install-seg-snippet.ps1
+```
+
+在 C++ 文件的函数外输入 `zoisegaddsum`，从补全列表选中后按 Enter 或 Tab 插入。没有出现补全时按 Ctrl+Space，或从命令面板执行“插入代码片段 / Insert Snippet”，选择 `ZOI: Range add / range sum Info Tag`。不需要打开任务列表，插入后可用 Ctrl+Z 撤销。
+
+片段只插入可直接编辑的 `Tag` 与 `Info`，维护 `len/sum`，不附加命名空间或主函数。文件需已有 `#include "seg.h"` 或 `#include "dynamicSeg.h"`；它们提供 LL 等底座。叶子用 `Info(value)`，区间加用 `seg.modify(l, r, {delta})`，区间和用 `seg.query(l, r).sum`；所有运算须在 LL 范围内。这里“修改”指加法，不是区间赋值。
+
+默认安装到 `%APPDATA%/Code/User/snippets/zoi-seg-add-sum.code-snippets`，不改设置、快捷键及已有 `cpp.json`。其他 Profile、便携版或远程环境传 `-SnippetsDir "实际 snippets 目录"`。若同名文件内容不同，脚本保留并报错，请先移走或改名；重复安装相同内容不会重复添加。
+
+撤销时运行 `./scripts/install-seg-snippet.ps1 -Uninstall`，自定义目录带上同样的 `-SnippetsDir`。仅删除与库中原文一致的本片段文件，用户改过的内容保留；此独立脚本不随主安装器卸载。片段原文位于 `scripts/snippets/seg-add-sum.json`，需要升级时先用旧版脚本卸载，再安装新版。
+
 ## 常见故障
 
 | 现象 | 检查或处理 |
@@ -88,6 +104,8 @@ CPH 直接按空格拆参数，不能靠加引号解决。库路径有空格时�
 运行成功会把展开结果复制到剪贴板; 编辑器红线属于 C/C++ 扩展, 与展开是否成功分开诊断。
 
 ## 卸载
+
+若安装过 CPH／洛谷提交适配或 VJudge Chrome 扩展，先按[提交适配说明](../expand/README.md#插件提交时自动展开)撤销补丁并移除浏览器扩展，再卸载库配置或删除队友包。下面的卸载器只处理库安装配置，不会自动撤回另行安装的提交适配。
 
 若用过 zoi-configure, 先对每个配置过的刷题目录撤销局部配置:
 

@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "id": "c033122b7e364e499c4dda2d8e42b4fe",
+  "startedUtc": "2026-09-21T01:54:01.2068372Z",
+  "finishedUtc": "2026-09-21T01:54:10.9609165Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".ci-results/pbs-find-first",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "a5332669dd584c1fcdae247d5ac902420500cc32b2fba848b3cb2f053271457f",
+      "files": [
+        {
+          "path": "algorithms/数据结构/树状数组/二维树状数组.cpp",
+          "hash": "0bf78664b2a2371cfd52f138c4586bd7c6e759ca529747d08b656c6a9871a679"
+        },
+        {
+          "path": "algorithms/数据结构/树状数组/树状数组.cpp",
+          "hash": "29e9c32508af128ba62fa1811c2297f64bfb3c5b4e9d9478f7b4875fff2a8c91"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7b3e0676d76f8f93050d24539c54d8a952a5b560ded40e270694d26940fbc11f"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离散化/discrete.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "599e6c1663780adbb7678d602bef4e7043c6699a4803d715baef93a0faeb32d9"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/bit2d.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/pbsPointer.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/pbsRollback.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp",
+          "hash": "97a7dea8b8b7623879b8a1a579f8b99cd76c707da4f9e0a1f653904abd97574e"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp",
+          "hash": "ef46de15aea90f59e3f897cd5fa9d49efa813c00fc7e2f113d3dcb461b935a31"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp",
+          "hash": "46004671ce0dd039ffc2857eb6af1a3b9e09d5ef31e62fc26a43c3965db4762d"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/树状数组/二维树状数组.cpp",
+          "hash": "92c0a523e25203fbef3b1abcfea52b0f45ef3eeae481a4e4d41ee5b457f4f26c",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp",
+          "hash": "ae59c64b59cdd7398b557b0ff2c4d1ac4af6f029d766efae21c1879cfda98cf0",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp",
+          "hash": "30479c1690fc6de89b3a923760f2e914141780c688220fde3298db3fa05a09e6",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 9.469
+    }
+  ]
+}

@@ -25,6 +25,9 @@
   安装注册九任务及可用快捷键, 打包默认输出 docs/releases, 私人安装/展开状态不得进入版本控制或队友包。
   默认快捷键为 Ctrl+Alt+Z 展开、Ctrl+Alt+R 恢复、Ctrl+Alt+T 任务列表; -LuoguShortcuts 可选安装 Ctrl+Alt+P 查看洛谷题目和 Ctrl+Alt+Enter 提交，沿用 v3 冲突保留与可撤销安装机制。
   通用缓存清理器只自动清理有 PASS 完成标记的旧现场，每类保留三份，跳过失败、未知及 codex-work；AI 自建的一次性测试用完后按协作约定清理，正式对拍、CI 依赖与交付物保留。
+基础 Info/Tag 插入使用 VS Code 原生 snippet, scripts/install-seg-snippet.ps1 独立安装/卸载;
+  原文 scripts/snippets/seg-add-sum.json, 前缀 zoisegaddsum, 仅区间加与求和, 不改用户设置/快捷键或其他片段。
+  同名异内容保留并报错, 自定义 Profile 用 SnippetsDir; check_seg_snippet.py 从实际 body 编译双树对拍并验证安装生命周期, 接默认 CI。
   手册审计须保真传递 Typst 表达式中的引号并显式读取 UTF-8; Windows PS5.1/7 的真实原生审计检查与 SourceOnly 发现检查分别覆盖。
 
 LLM 每次新增、修改或撤下模板、工具、测试、CI 功能, 收尾必须同时核对本文件与
@@ -79,9 +82,9 @@ CI 自动复验; 现行指南、专项证据和原文快照的导航边界见 [�
   SegTree 的 build(p,l,r,a); 正例: FHQ kth_of 配 split 句柄有组合
   价值)。wrapper 必须真调 primitive, 不许复制实现。
   布局规约: 私有函数全放结构体末尾, 每结构体唯一 private: 标签。
-- 内存账目一句话: 每结点 X B; 预算 = 从题面 n/m/q 算的公式, 代表规模 ≈ MB。
+- 类头/接口注释面向赛场速查: 保留调用所需前提、返回值与复杂度, 不逐字段展开字节账。
+  内存一句话给典型规模的约 MB 和主要另计项即可; 需手配内存池时仍说明容量口径与预算公式。
   禁 cache 评语/红线警告/"超预算触发 assert"复述(assert 行为全库统一)。
-  (2026/9/1 定, 样例: "每结点 32B; 预算 = 总插入次数, 4e6 ≈ 128MB")
 - 括号: 函数/结构体的 { 换行; if 单语句不带括号; 缩进 4 空格。
 - 类型别名一律 using(utils 提供), 不用 #define 造类型。
   泛型约束一律 C++20 concepts/requires, 禁 enable_if(全库 -std=c++20)。
@@ -90,7 +93,7 @@ CI 自动复验; 现行指南、专项证据和原文快照的导航边界见 [�
 - 谓词参数按值传(方便传匿名 lambda), 不用 Pred&。
 - 常量(inf/INF 0x3f 系、MAX/MIN_INT/_LL/_ULL/_DBL)都是 utils 自带,
   别重复定义。MOD 按题意。
-- 每份模板: 开头 #ifndef Z_OI_XXX 守卫, 尾部 Usage 块。
+- 每份模板: 开头 #ifndef Z_OI_XXX 守卫, 尾部 Usage 块; 线段树 Info/Tag 插件按用户要求不附 Usage, 只留实现与必要短注释。
   Empty/z_fill_n 这类小件靠守卫做到同文件多次 include 也安全。
   Graph 一律相对路径 #include 引用(旧的内嵌副本制已废弃);
   交 OJ 时用 zoi expand 原地组装, 见 §13。
@@ -116,7 +119,7 @@ CI 自动复验; 现行指南、专项证据和原文快照的导航边界见 [�
 本库追求组装可靠, 路线不同没有谁对谁错。
 三层:
 - 代数层 Info/Tag: 每题重写的部分, 唯一跨引擎共享的资产
-- 线段树常用代数按七个代表场景提供独立插件与 Usage, 不做操作和信息的笛卡尔积。每组以命名空间隔离, 普通头只引 utils; Tag::apply 先旧后新, Info{} 为合并单位元。Binary/Linear 必须 build, 其余五组可接动态树全零虚区间; 组合与限制见 [插件选型](algorithms/数据结构/线段树/泛型插件/README.md)。插件测试直接 include 真实文件, 默认 CI 跑双引擎和每组 20 万长度/操作, 不用测试里的复制品充数。旧势能/历史专题不因新增普通插件而视为验收。
+- 线段树常用代数按七个代表场景提供独立 Info/Tag 插件, 不附 Usage, 不做操作和信息的笛卡尔积。每组以命名空间隔离, 普通头只引 utils; Tag::apply 先旧后新, Info{} 为合并单位元。Binary/Linear 必须 build, 其余五组可接动态树全零虚区间; 组合与限制见 [插件选型](algorithms/数据结构/线段树/泛型插件/README.md)。插件测试直接 include 真实文件, 默认 CI 跑双引擎和每组 20 万长度/操作, 不用测试里的复制品充数。旧势能/历史专题不因新增普通插件而视为验收。
 - 引擎层: 定版后不动(显式标明的启发式示范骨架按题改)。接口跨引擎同名(modify/query/build/
   find_first/find_last), 肌肉记忆只有一套
 - 应用层 solve: 版本根、离散化、组装逻辑全放调用方
@@ -234,10 +237,11 @@ PersSegTree 红线: Tag 永久化只限加法类可交换标记; find_kth 只在
   mono_dp 仅示范有限前驱 min 转移, 初值 f[0]=0, k>=1 且加法在 LL 内; 不当作任意 DP 引擎。
   已撤下 MonotonicQueue/init/get_min/get_max, 迁移时注意最值列表改为按右端点索引的下标数组;
   misc_check 默认包含两件的独立暴力和 20 万规模, 自动进入普通及 sanitizer CI。
-整体二分: pbsRollback/pbsPointer 保留默认 Event, 两入口均以 E=Event 作缺省类型并可从 vector<E> 推导;
-  kth(n,V,q,add,count) 返回离散排名, q[0] 占位, 前 n 项插入、其后 m 项查询; E 含 int type/val/k/id, 其余坐标与元数据自定。
-  add(const E&,delta) 对插入加减 1, count(const E&) 统计固定查询集合; 外部统计初始为空且返回时恢复为空, q 按值接收可 move。
-  range_kth(n,q,d) 复用 kth 并内建一维 BIT, 另需 pos/l/r 字段, 返回原值; d 先 build, val 为离散排名, id 为 1..m 的排列。
+整体二分: pbsRollback/pbsPointer 保留默认 Event, 两版均以 E=Event 作缺省类型并可从 vector<E> 推导;
+  find_first(n,V,q,add,query) 返回离散排名, q[0] 占位, 前 n 项插入、其后 m 项查询; E 含固定名 int type/val/k/id, 不可改名或省略; 其余坐标与元数据自定, 改名时同步回调和初始化。
+  add(const E&,delta) 对插入加减 1, query(const E&) 统计固定查询集合; 外部统计初始为空且返回时恢复为空, q 按值接收可 move。
+  唯一调用接口为 find_first, 不保留旧名称或题目专用包装; 内核只引 utils, 一维/二维 BIT 与离散化由调用方显式引入。
+  第 k 小用例在外部建立 BIT 和 Dcr, val 为离散排名, 通过 d[ans[id]] 还原原值; 当前契约仍为静态单位计数, 不自动处理无解。
   保留裸事件循环、分流与递归: 回滚版扣减 k 并逐层撤销, 指针版保留原 k 并最终清空前缀; 不支持时间交错修改。
   Usage 含一维默认事件与二维自定义事件; parallel_binary_search_check 覆盖默认/自定义类型、两种 BIT 组合及外部状态复用, 自动进普通及 sanitizer CI。
 编译基线: 算法模板保持 C++20, requires/if constexpr/concepts/<bit> 随便用;

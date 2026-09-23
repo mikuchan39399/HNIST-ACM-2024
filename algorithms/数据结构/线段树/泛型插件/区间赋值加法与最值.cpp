@@ -2,14 +2,14 @@
 #define Z_OI_SEGASSIGNADD_PLUGIN
 #include "../../../杂项/utils/utils.cpp"
 
-// 赋值、加法, 查询和/最小值/最大值; 赋值 0 也是有效操作
-// 合并/作用 O(1); Info 32B, Tag 24B; 普通树 n=2e5 约 44.8MB
+// 区间赋值/加法, 查询和/最值; 中间值须在 LL 内
+// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 45 MB
 namespace SegAssignAdd
 {
 struct Tag
 {
     LL value = 0, add = 0;
-    bool has_set = false; // 先赋值(若有), 再加; 不用特殊数值代表未赋值
+    bool has_set = false; // 先赋值再加; 赋值 0 也有效
     static Tag assign(LL x) { return {x, 0, true}; }
     static Tag increase(LL x) { return {0, x, false}; }
     void apply(const Tag& t)
@@ -45,18 +45,3 @@ struct Info
 };
 }
 #endif
-
-/* Usage:
-#include "../泛型线段树.cpp"
-using Info = SegAssignAdd::Info;
-using Tag = SegAssignAdd::Tag;
-int main()
-{
-    vector<Info> a(5, Info(0));
-    SegTree<Info, Tag> seg(int(a.size()) - 1); seg.build(a);
-    seg.modify(1, 4, Tag::assign(-3));
-    seg.modify(2, 3, Tag::increase(5));
-    cout << seg.query(1, 4).sum << '\n'; // -2
-    seg.modify(1, 4, Tag::assign(0));
-}
-*/

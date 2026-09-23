@@ -7,6 +7,7 @@
 | 库里有什么 | [功能总览](../docs/features/README.md) |
 | 安装、卸载、VS Code 任务 | [安装指南](../docs/setup/README.md) |
 | 展开、恢复、状态清理 | [刷题指南](../docs/expand/README.md) |
+| CPH／洛谷自动展开提交、VJudge Chrome 扩展 | [提交适配](../docs/expand/README.md#插件提交时自动展开) |
 | 打印手册 | [手册指南](../docs/booklet/README.md) |
 | 脚本实现、跳板、事务、CI 与目录生成 | [工具维护说明](../docs/maintenance/README.md) |
 | 对拍现状、行为范围与运行证据 | [两层表使用与维护](../docs/verification/README.md) |

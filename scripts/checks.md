@@ -1,5 +1,7 @@
 # 对拍怎么跑
 
+`python scripts/check_seg_snippet.py` 验证实际代码片段安装、重复安装、冲突保留及卸载，并从 `scripts/snippets/seg-add-sum.json` 提取真实 body 编译，使用普通/动态线段树对拍 300 组随机操作、20 万长度及操作、负增量与超 int 总和。`--shell powershell --install-only` 单验 Windows PowerShell 5.1 安装流程；默认 CI 在 Windows 双 shell 验安装，在 Linux 验完整组合。成功后清理本次临时目录，失败保留现场。
+
 目标是尽早发现会丢区域赛分数的错误。随机对拍、确定性边界、语法检查和 sanitizer 分工不同，不能互相替代。
 
 生命周期专项覆盖完整 build/run 不先 init 的复用路径。`lifecycle_check` 每组 350 轮, 核对备用三份 LCA、连通性派生图重建、普通线段树旧懒标记以及必须保留的离线输入/重心点权/持久化版本; `segfhq_lifecycle_check` 用 350×100 独立数组操作与 20万-1-0-257-20万复用验证旧树套树新入口。既有图论和普通线段树套件也已迁移为直接 build/run, 两份新套件由普通及 sanitizer CI 自动发现。全部现役条目与例外见 [生命周期清单](../records/verification/lifecycle-20260909.md)。

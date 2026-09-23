@@ -2,15 +2,15 @@
 #define Z_OI_SEGLINEAR_PLUGIN
 #include "../../../杂项/utils/utils.cpp"
 
-// a[i] += k*i+b, 查询和; i 是建树时的绝对下标, 不随覆盖段重算
-// 仅接已 build 的树, 叶子须填 index; 所有乘加中间值须在 LL 内
-// 合并/作用 O(1); Info 24B, Tag 16B; 普通树 n=2e5 约 32MB
+// a[i] += k * i + b, 查询和; i 是建树时的绝对下标
+// 必须 build, 叶子 Info(value, index); 所有中间值须在 LL 内
+// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 32 MB
 namespace SegLinear
 {
 struct Tag
 {
     LL k = 0, b = 0;
-    // [l,r] 加 first,first+step,...; 范围仍由 modify(l,r,...) 指定
+    // [l, r] 加首项 first、公差 step 的数列; 仍须 modify(l, r, ...)
     static Tag progression(LL l, LL first, LL step) { return {step, first - step * l}; }
     void apply(const Tag& t) { k += t.k; b += t.b; }
     void clear() { *this = {}; }
@@ -33,17 +33,3 @@ struct Info
 };
 }
 #endif
-
-/* Usage:
-#include "../泛型线段树.cpp"
-using Info = SegLinear::Info;
-using Tag = SegLinear::Tag;
-int main()
-{
-    vector<Info> a(6);
-    for (int i = 1; i <= 5; i++) a[i] = Info(0, i);
-    SegTree<Info, Tag> seg(int(a.size()) - 1); seg.build(a);
-    seg.modify(2, 5, Tag::progression(2, 3, 2)); // 0,3,5,7,9
-    cout << seg.query(3, 4).sum << '\n'; // 12
-}
-*/
