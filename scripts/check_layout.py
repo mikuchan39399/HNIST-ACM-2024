@@ -112,6 +112,44 @@ class LayoutTests(unittest.TestCase):
         self.run_sync('-Check', success=False)
         self.assertEqual(before, self.hashes())
 
+    def test_node_modules_are_not_scanned_or_rewritten(self):
+        dependencies = {
+            'node_modules/pkg/README.md': '[source](../../algorithms/old/part.cpp)\n',
+            'scripts/statement-extension/node_modules/pkg/README.md':
+                '[source](../../../../algorithms/old/part.cpp)\n',
+            'algorithms/node_modules/pkg/core.cpp': self.read('algorithms/base/core.cpp'),
+        }
+        for name, text in dependencies.items():
+            self.put(name, text)
+        self.put('README.md', '[source](algorithms/old/part.cpp)\n')
+        self.move('algorithms/old/part.cpp', 'algorithms/new/part.cpp')
+        self.run_sync()
+        self.run_sync('-Check')
+        self.assertIn('algorithms/new/part.cpp', self.read('README.md'))
+        for name, text in dependencies.items():
+            self.assertEqual(self.read(name), text)
+
+    @unittest.skipIf(os.name == 'nt', 'POSIX npm uses symlinks; Windows uses command shims')
+    def test_node_modules_bin_symlink_is_ignored(self):
+        self.put('scripts/statement-extension/node_modules/tldts/bin/cli.js', '// npm binary\n')
+        link = self.root / 'scripts/statement-extension/node_modules/.bin/tldts'
+        link.parent.mkdir()
+        link.symlink_to('../tldts/bin/cli.js')
+        self.addCleanup(link.unlink)
+        self.run_sync()
+        self.run_sync('-Check')
+        self.assertTrue(link.is_symlink())
+
+    @unittest.skipIf(os.name == 'nt', 'POSIX symlink regression')
+    def test_source_symlink_still_refuses_without_writes(self):
+        link = self.root / 'algorithms/linked.cpp'
+        link.symlink_to('base/core.cpp')
+        self.addCleanup(link.unlink)
+        before = self.hashes()
+        run = self.run_sync(success=False)
+        self.assertIn(b'Layout refuses reparse point:', run.stdout)
+        self.assertEqual(before, self.hashes())
+
     def test_new_identity_is_registered_without_invented_semantics(self):
         self.put('algorithms/new/fresh.cpp', '// zoi: fresh\n#pragma once\n')
         before = self.read('rules/verification.json')

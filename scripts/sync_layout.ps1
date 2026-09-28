@@ -15,7 +15,7 @@ function Layout-Rel([string]$base,[string]$path) {
 }
 function Layout-Files([string]$dir) {
     foreach ($f in Get-ChildItem -LiteralPath $dir -Force) {
-        if ($f.Name -in @('.git','.zoi-checks','.ci-results','.vscode','__pycache__')) { continue }
+        if ($f.Name -in @('.git','.zoi-checks','.ci-results','.vscode','__pycache__','node_modules')) { continue }
         if ($f.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw ('Layout refuses reparse point: '+$f.FullName) }
         if ($f.PSIsContainer) {
             if ($f.FullName -in @((Join-Path $layoutRoot 'docs/releases'),(Join-Path $layoutRoot 'docs/backups'),(Join-Path $layoutRoot 'docs/booklet/output'))) { continue }
