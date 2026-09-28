@@ -171,6 +171,21 @@ jobs:
       - name: Check VJudge handoff and native form contract
         if: ${{ !cancelled() }}
         run: node scripts/check_vjudge_bridge.cjs
+      - name: Check AtCoder handoff and native form contract
+        if: ${{ !cancelled() }}
+        run: node scripts/check_atcoder_bridge.cjs
+      - name: Check YOUKNOWWHO problem links
+        if: ${{ !cancelled() }}
+        run: node scripts/check_youknowwho_links.cjs
+      - name: Install statement test dependencies
+        if: ${{ !cancelled() }}
+        working-directory: scripts/statement-extension
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Check statement parsing and package
+        if: ${{ !cancelled() }}
+        run: |
+          node scripts/check_statement.cjs
+          python3 scripts/package_statement.py
       - name: Full regression
         if: ${{ !cancelled() }}
         shell: pwsh

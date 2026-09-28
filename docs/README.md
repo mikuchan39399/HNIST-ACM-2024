@@ -11,7 +11,9 @@
 | 查随模板使用说明 | [算法说明目录](features/catalog.md#算法说明文档) |
 | 给队友装库或卸载 | [安装与卸载](setup/README.md) |
 | 写题、展开提交、恢复或清理状态 | [展开与恢复](expand/README.md) |
-| 用 CPH／洛谷自动展开提交，或连接 VJudge | [提交适配与 Chrome 扩展](expand/README.md#插件提交时自动展开) |
+| 用 CPH／洛谷自动展开提交，或连接 VJudge / AtCoder | [提交适配与 Chrome 扩展](expand/README.md#插件提交时自动展开) |
+| 给 YOUKNOWWHO 题单添加 VJudge 和 VS Code 导入按钮 | [题单链接](expand/README.md#youknowwho-题单链接) |
+| 在右侧查看 CF / AtCoder / VJudge 题面，或一键导入 | [右侧题面](expand/README.md#右侧题面与一键导入) |
 | 查看每个模板测得怎样 | [口语概览](verification/status.md) / [AI 明细](verification/details.md) |
 | 查专项验证依据或既有方案 | [专项验证索引](../records/verification/README.md) / [工具与发布历史](../records/tooling/README.md) |
 | 看待办、有效交接或查阅旧记录 | [当前工作板](../rules/sweep-board.md) / [清扫历史](../rules/sweep-history.md) |

@@ -14,18 +14,16 @@ $parent=Split-Path -Parent $output
 if (-not [IO.Directory]::Exists($parent)) { throw 'Output directory must exist' }
 . (Join-Path $PSScriptRoot 'check_inventory.ps1')
 $null=Get-CheckInventory $root
-$stage=Join-Path $parent ('zoi-package-'+[Guid]::NewGuid().ToString('N'))
-$package=Join-Path $stage 'HNIST-ZOI'
 $files=@()
 function Package-Files([string]$Directory) {
     $pending=New-Object 'Collections.Generic.Stack[string]'; $pending.Push($Directory)
     while ($pending.Count) {
         foreach ($entry in Get-ChildItem -LiteralPath $pending.Pop() -Force) {
             $rel=$entry.FullName.Substring($root.Length+1).Replace('\','/')
-            if ($rel -match '(^|/)(\.git|\.vscode|\.zoi-checks|\.ci-results)(/|$)|^docs/(backups|releases|booklet/output)(/|$)') { continue }
+            if ($rel -match '(^|/)(\.git|\.vscode|\.zoi-checks|\.ci-results|node_modules)(/|$)|^docs/(backups|releases|booklet/output)(/|$)') { continue }
             if ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw ('Reparse points cannot enter the package: '+$rel) }
             if ($entry.PSIsContainer) { $pending.Push($entry.FullName) }
-            elseif (($entry.Extension -in @('.ps1','.cmd','.cjs','.cpp','.h','.txt','.md','.py','.typ','.json','.yml','.yaml') -or ($entry.Extension -eq '.js' -and $rel -like 'scripts/vjudge-extension/*')) -and $entry.Name -notmatch '^\.|\.zoi[.-]|\.saved$|\.bak$') { $entry }
+            elseif (($entry.Extension -in @('.ps1','.cmd','.cjs','.cpp','.h','.txt','.md','.py','.typ','.json','.yml','.yaml') -or ($entry.Extension -eq '.js' -and $rel -like 'scripts/vjudge-extension/*') -or $rel -like 'scripts/statement-extension/*') -and $entry.Name -notmatch '^\.|\.zoi[.-]|\.saved$|\.bak$') { $entry }
         }
     }
 }
@@ -33,39 +31,39 @@ foreach ($dir in @('algorithms','zoi','scripts','rules','docs','records/tooling'
     $files += @(Package-Files (Join-Path $root $dir))
 }
 foreach ($name in @('rule.md','README.md','AGENTS.md','LICENSE','docs/releases/README.md','docs/backups/README.md')) { if ([IO.File]::Exists((Join-Path $root $name))) { $files += Get-Item -LiteralPath (Join-Path $root $name) } }
+Add-Type -AssemblyName System.IO.Compression
+$partial=$output+'.partial'
+if ([IO.File]::Exists($partial)) { throw 'Partial output already exists; preserved' }
+$outputStream=$null; $archive=$null; $ownsPartial=$false
 try {
-    [void][IO.Directory]::CreateDirectory($package)
+    $outputStream=[IO.File]::Open($partial,[IO.FileMode]::CreateNew,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None)
+    $ownsPartial=$true
+    $archive=New-Object IO.Compression.ZipArchive($outputStream,[IO.Compression.ZipArchiveMode]::Create,$true)
     $items=@()
     foreach ($f in $files) {
         if ($f.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Reparse points cannot enter the package' }
         $rel=$f.FullName.Substring($root.Length+1).Replace('\','/')
-        $dst=Join-Path $package $rel
-        [void][IO.Directory]::CreateDirectory((Split-Path -Parent $dst))
-        Copy-Item -LiteralPath $f.FullName -Destination $dst
-        $items += @{path=$rel; hash=(Get-FileHash -LiteralPath $dst -Algorithm SHA256).Hash}
+        # Read-lock the source while hashing and copying; the manifest describes the exact bytes delivered.
+        $inputStream=[IO.File]::Open($f.FullName,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
+        $sha=[Security.Cryptography.SHA256]::Create(); $entryStream=$null
+        try {
+            $hash=[BitConverter]::ToString($sha.ComputeHash($inputStream)).Replace('-','')
+            $inputStream.Position=0
+            $entry=$archive.CreateEntry('HNIST-ZOI/'+$rel,[IO.Compression.CompressionLevel]::Optimal)
+            $entryStream=$entry.Open(); $inputStream.CopyTo($entryStream)
+            $items += @{path=$rel; hash=$hash}
+        } finally { if ($entryStream) { $entryStream.Dispose() }; $sha.Dispose(); $inputStream.Dispose() }
     }
     $data=@{format=1; product='HNIST-ZOI-team-package'; files=$items}
-    [IO.File]::WriteAllText((Join-Path $package '.zoi-package.json'),($data | ConvertTo-Json -Depth 5),(New-Object Text.UTF8Encoding($false)))
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    $partial=$output+'.partial'
-    if ([IO.File]::Exists($partial)) { throw 'Partial output already exists; preserved' }
+    $bytes=(New-Object Text.UTF8Encoding($false)).GetBytes(($data | ConvertTo-Json -Depth 5))
+    $entryStream=$archive.CreateEntry('HNIST-ZOI/.zoi-package.json').Open()
     try {
-        [IO.Compression.ZipFile]::CreateFromDirectory($stage,$partial)
-        [IO.File]::Move($partial,$output)
-    } finally { if ([IO.File]::Exists($partial)) { [IO.File]::Delete($partial) } }
+        $entryStream.Write($bytes,0,$bytes.Length)
+    } finally { $entryStream.Dispose() }
+    $archive.Dispose(); $archive=$null; $outputStream.Dispose(); $outputStream=$null
+    [IO.File]::Move($partial,$output)
     Write-Host "[OK] team package: $output ($($items.Count) source files)"
 } finally {
-    # This fresh GUID staging folder belongs to this invocation and is confined
-    # to the caller's explicitly chosen output directory.
-    $resolved=[IO.Path]::GetFullPath($stage)
-    if (-not $resolved.StartsWith($parent+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)) { throw 'Unexpected staging path; retained' }
-    for ($attempt=0;$attempt -lt 5;$attempt++) {
-        try {
-            if ([IO.Directory]::Exists($resolved)) { Remove-Item -LiteralPath $resolved -Recurse -Force }
-            break
-        } catch {
-            if ($attempt -eq 4) { Write-Host ('[WARN] Temporary stage is still locked; retained: '+$resolved) }
-            else { Start-Sleep -Milliseconds 200 }
-        }
-    }
+    if ($archive) { $archive.Dispose() }; if ($outputStream) { $outputStream.Dispose() }
+    if ($ownsPartial -and [IO.File]::Exists($partial)) { [IO.File]::Delete($partial) }
 }

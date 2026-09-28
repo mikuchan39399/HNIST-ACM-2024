@@ -11,7 +11,9 @@
 | 测试行为、API 或边界用例 | 核对 rules/verification.json 的对应范围, 运行相关套件后查看自动生成的两层表 |
 | 指纹、证据或两层表生成器 | 运行 scripts/check_verification_test.ps1, 同时验证 PS5.1 / PS7 |
 | 展开/恢复 | 运行 scripts/zoi_check.ps1 |
-| 插件自动展开提交 | 运行 node scripts/check_submit_bridge.cjs 与 node scripts/check_vjudge_bridge.cjs；改展开内核还需 zoi_check；用 install_submit_bridge.cjs --check 核对实际插件，重载后验证，不用真实提交代替模拟测试 |
+| 插件自动展开提交 | 运行 node scripts/check_submit_bridge.cjs、node scripts/check_vjudge_bridge.cjs 与 node scripts/check_atcoder_bridge.cjs；改展开内核还需 zoi_check；用 install_submit_bridge.cjs --check 核对实际插件，重载后验证，不用真实提交代替模拟测试 |
+| YOUKNOWWHO 题单链接 | 运行 node scripts/check_youknowwho_links.cjs；核对来源编号与实际题目表格，重载 Chrome 扩展后验链接与动态渲染；打包含映射数据 |
+| 右侧题面与题单一键导入 | 按 scripts/checks.md 安装 DOM 测试依赖，运行 node scripts/check_statement.cjs 和 python scripts/package_statement.py；浏览器端改动兼验链接与提交回归；重载后分别核对真实页面读取、样例和 CPH 接收 |
 | 安装/卸载、工作区配置、打包、清理 | 运行 scripts/check_setup.ps1 与 scripts/check_deployment.ps1, PS5.1/PS7 各验, 使用隔离配置 |
 | 资产扫描/测试入口 | 运行 scripts/check_inventory_test.ps1 / scripts/check_runner.ps1 |
 | 分享队友包 | VS Code 的 zoi-package 或 scripts/make_team_package.ps1, 默认 docs/releases/时间戳 ZIP |
@@ -19,8 +21,13 @@
 功能细目由 make_features 复用 check_inventory 生成；-Check 只检查且过期失败。每次功能新增、修改或撤下均执行 [rule 双向同步要求](../../rule.md#适用范围与阅读顺序), 核对 LLM 规则与 docs/features/README.md 的用户说明, 不限于新增整个功能; 不手填生成数量或测试通过等级。
 make_features 同时收集 algorithms 下的 Markdown, 在算法目录末尾生成按方向排列的说明入口, 不只链接源码; 新增说明后要重新生成。
 所有脚本放 scripts，库根从 PSScriptRoot 推导，不写本机绝对路径。打包收源码、受管文档、验证范围 JSON、自动运行证据及压力入口依赖的 .github 配置, 排除恢复备份、原始测试日志和已有发布包。
+队友包直接将受管文件写入 ZIP，不复制到嵌套临时目录；源文件读锁期间计算 SHA-256 并复制同一数据流，清单与交付字节一致，避免额外目录层级触发 Windows PowerShell 5.1 长路径限制。失败只清理本次创建的 `.partial`，保留原有同名输出。
 
-VJudge 浏览器扩展位于 `scripts/vjudge-extension`，打包额外允许该目录的 `.js` 文件。它复用网页原生表单，并只观察对应提交请求的结果，不维护登录、验证码或固定语言 ID。网页选择器/表单变化时先核对现场和公开 bundle，再更新 DOM 契约夹具；只有模拟回归通过不能标为真实账号提交验证通过。CPH 补丁同时涉及宿主路由与面板按钮，卸载需一起撤回；洛谷两个已知版本独立匹配。
+ZOI Submit 浏览器扩展位于 `scripts/vjudge-extension`，打包额外允许该目录的 `.js` 文件。VJudge 观察原生提交请求；AtCoder 在原生表单校验后发送一次同源 POST，再核对唯一新增记录的题号和完整代码。不维护登录、验证码或固定语言 ID。网页选择器/表单变化时先核对现场和公开 bundle，再更新 DOM 契约夹具；只有模拟回归通过不能标为真实账号提交验证通过。CPH 补丁同时涉及宿主路由与面板按钮，须支持旧 VJudge 补丁迁移，卸载需一起撤回；洛谷两个已知版本独立匹配。
+
+ZOI 题面源码位于 `scripts/statement-extension`；`package_statement.py` 用标准库生成自包含 VSIX，运行时不依赖 npm。`vendor/sources.json` 记录 DOMPurify、markdown-it、KaTeX 和 PDF.js 的版本、官方 npm 包与完整性；升级时核对包完整性，保留许可证，并一起交付字体、CMap、worker 与 wasm。队友包包含整个运行目录，排除 `node_modules`；测试依赖只由该目录的锁文件安装。浏览器只读题面会话不能领取提交许可；使用 DOM 清洗、URL 限制与本地脚本，禁止直接执行远端题面 HTML 的脚本。两个题单观察器只在属性实际改变时写回，回归必须检查不会互相触发无限刷新。
+
+`youknowwho.js` 在隔离的 content script 中按表头识别题目列，刷新时断开观察器以避免自身插入触发循环；不要依赖 Chakra 生成类名。`youknowwho-data.js` 只包含公开编号：UVA 来源为 [uHunt API](https://uhunt.onlinejudge.org/api) 的 `/api/p`，取数组下标 0→1；LightOJ 来源为[官方旧题库](https://lightoj.com/problems/category/loj)，对应 `problemHandleStr`→`oldIdStr` 或可见 LOJ 编号。更新时保留来源与日期，未知条目走搜索，不把字符串 slug 或内部 ID 当成数字题号。仅重新生成页面链接，不触碰用户进度、筛选条件或浏览器登录。
 
 安装 v3 管理 settings/tasks/keybindings 三个文档, v2 原快照可升级, 重装检查并补缺项;
 卸载精确恢复原文或保留后续无关修改。未知旧状态仍保留, 不猜测归属。AdoptExistingTasks 是显式的手写任务迁移,

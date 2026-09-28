@@ -1,14 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "ZOI VJudge Submit",
-  "version": "1.0.4",
-  "description": "从 CPH 提交展开代码到 VJudge，优先 GNU C++20，自动回退可用版本并通知 VS Code。",
+  "name": "ZOI Submit",
+  "version": "1.4.0",
+  "description": "从 CPH 展开并提交到 VJudge / AtCoder；为 YOUKNOWWHO 题单补充原站或 VJudge 链接。",
   "permissions": ["scripting"],
-  "host_permissions": ["https://vjudge.net/*", "https://vjudge.net.cn/*", "http://127.0.0.1/*"],
+  "host_permissions": ["https://vjudge.net/*", "https://vjudge.net.cn/*", "https://atcoder.jp/*", "https://codeforces.com/*", "https://www.codeforces.com/*", "https://m1.codeforces.com/*", "https://m2.codeforces.com/*", "http://127.0.0.1/*"],
   "background": { "service_worker": "background.js" },
   "content_scripts": [{
-    "matches": ["https://vjudge.net/*", "https://vjudge.net.cn/*"],
+    "matches": ["https://vjudge.net/*", "https://vjudge.net.cn/*", "https://atcoder.jp/*"],
     "js": ["handoff.js"],
     "run_at": "document_start"
+  }, {
+    "matches": ["https://vjudge.net/*", "https://vjudge.net.cn/*", "https://atcoder.jp/*", "https://codeforces.com/*", "https://www.codeforces.com/*", "https://m1.codeforces.com/*", "https://m2.codeforces.com/*"],
+    "js": ["statement-handoff.js"],
+    "run_at": "document_start"
+  }, {
+    "matches": ["https://youkn0wwho.academy/topic-list*"],
+    "js": ["youknowwho-data.js", "youknowwho.js"],
+    "run_at": "document_idle"
   }]
 }

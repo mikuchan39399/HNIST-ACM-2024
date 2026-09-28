@@ -26,6 +26,7 @@
 #if __cplusplus >= 202002L
 #include <bit>
 #include <concepts>
+#include <ranges>
 #endif
 #include <cmath>
 #include <functional>
@@ -89,6 +90,30 @@ inline int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 [[gnu::unused]] static int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
 [[gnu::unused]] static int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 #endif
+
+// 用 b 更新 a 的最大/最小值, 更新返回 true, 否则返回 false; 相等时保留 a
+// 两参同型, 支持 < 和赋值; 各做一次比较, 至多一次赋值, 数值类型时空 O(1)
+template <class T>
+bool cmax(T& a, const T& b)
+{
+    if (a < b)
+    {
+        a = b;
+        return true;
+    }
+    return false;
+}
+
+template <class T>
+bool cmin(T& a, const T& b)
+{
+    if (b < a)
+    {
+        a = b;
+        return true;
+    }
+    return false;
+}
 
 // 从下标 0 填到 min(n+10,size)-1, 含 1-based 哨兵与少量余量; 各容器 size>=n>=0
 // 时间为实际填充元素数之和, O(1) 额外空间; 不扩容, 不保证清空更远的旧数据
@@ -185,6 +210,10 @@ int main()
     z_fill_n(n, 0, a, b);              // 下标 0 也会填充, a[n+10] 保留原值
     cout << a[0] << ' ' << b[n] << ' ' << a[n + 10] << '\n'; // 0 0 -1
     cout << (MAX_LL == LLONG_MAX) << '\n'; // 1, INF 是哨兵而非类型最大值
+    int mx = 3, mn = 3;
+    cmax(mx, 7);
+    cmin(mn, 1);
+    cout << mx << ' ' << mn << ' ' << cmax(mx, 7) << '\n'; // 7 1 0
 #ifdef LOCAL
     debug(n, b.size());                // 仅 LOCAL 时定义调试宏, 写入 cerr
     debug_array(b, n);                 // 打印 b[1..n]

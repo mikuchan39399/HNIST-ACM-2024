@@ -18,7 +18,7 @@ function problemUrl(value) {
 function isVjudge(value) { try { problemUrl(String(value)); return true; } catch { return false; } }
 
 // A submission exists in memory only. Claim and permit are each single-use.
-async function createSession(job, validate, { timeout = 120000, onFallback = () => {} } = {}) {
+async function createSession(job, validate, { timeout = 120000, onFallback = () => {}, name = 'VJudge' } = {}) {
     const token = crypto.randomBytes(32).toString('hex');
     let state = 'new', settle, timer;
     const done = new Promise(resolve => { settle = resolve; });
@@ -41,7 +41,7 @@ async function createSession(job, validate, { timeout = 120000, onFallback = () 
                 if (body.languageFallback === true) {
                     const language = String(body.language || '').trim().slice(0, 200);
                     if (!language) throw Error('回退编译器信息缺失，停止提交。');
-                    onFallback(language);
+                    onFallback(language, body.languageUnspecified === true);
                 }
                 state = 'permitted'; return reply(200, { allowed: true });
             }
@@ -54,7 +54,7 @@ async function createSession(job, validate, { timeout = 120000, onFallback = () 
     });
     server.requestTimeout = 10000;
     await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
-    timer = setTimeout(() => finish({ ok: false, message: state === 'new' ? 'Chrome 提交扩展未连接。请加载 scripts/vjudge-extension 后重试。' : '等待提交结果超时，请先检查 VJudge 提交记录；工具不会自动重试。' }), timeout);
+    timer = setTimeout(() => finish({ ok: false, message: state === 'new' ? 'Chrome 提交扩展未连接。请加载 scripts/vjudge-extension 后重试。' : `等待提交结果超时，请先检查 ${name} 提交记录；工具不会自动重试。` }), timeout);
     const target = new URL(job.url);
     target.hash += `${target.hash ? '&' : ''}zoi-submit=${server.address().port}.${token}`;
     return { url: target.href, port: server.address().port, token, done, cancel: () => finish({ ok: false, message: '已取消提交。' }) };
@@ -70,10 +70,10 @@ function openChrome(url) {
     });
 }
 
-async function submit(vscode, problem, prepareDocument) {
-    const url = problemUrl(problem.url), file = problem.srcPath;
-    if (!/\.cpp$/i.test(file)) throw Error('VJudge 自动提交目前只支持 .cpp（优先 GNU C++20，O2）。');
-    if (active.has(file)) throw Error('该文件已有 VJudge 提交在处理中，请先查看 Chrome 中的结果。');
+async function submit(vscode, problem, prepareDocument, { name = 'VJudge', url = problemUrl(problem.url), maxBytes = 4 * 1024 * 1024 } = {}) {
+    const file = problem.srcPath;
+    if (!/\.cpp$/i.test(file)) throw Error(`${name} 自动提交目前只支持 .cpp（优先 C++20，O2）。`);
+    if (active.has(file)) throw Error('该文件已有浏览器提交在处理中，请先查看 Chrome 中的结果。');
     active.add(file);
     let session;
     try {
@@ -82,15 +82,17 @@ async function submit(vscode, problem, prepareDocument) {
         const code = await prepareDocument(vscode, document);
         const validate = () => { if (!vscode.workspace.isTrusted || document.isClosed || version !== document.version || original !== document.getText()) throw Error('准备提交期间代码发生变化，本次提交已停止，请重新提交。'); };
         validate();
-        if (!code.trim() || Buffer.byteLength(code) > 4 * 1024 * 1024) throw Error('提交代码为空或超过 4 MiB。');
-        session = await createSession({ url, code: '#pragma GCC optimize("O2")\n' + code }, validate, {
-            onFallback: language => { void vscode.window.showWarningMessage(`VJudge：此题没有 GNU C++20，已自动改用 ${language}（O2）。代码需兼容该版本。`); },
+        const snapshot = '#pragma GCC optimize("O2")\n' + code;
+        if (!code.trim() || Buffer.byteLength(snapshot) > maxBytes) throw Error(`提交代码为空或展开后的快照超过 ${maxBytes / 1024} KiB。`);
+        session = await createSession({ url, code: snapshot }, validate, {
+            name,
+            onFallback: (language, unspecified) => { void vscode.window.showWarningMessage(`${name}：此题没有可用的 C++20，已自动改用 ${language}（O2）。` + (unspecified ? '该选项未标明标准，无法确认支持 C++11，请核对原 OJ 说明。' : '代码需兼容该版本。')); },
         });
         await openChrome(session.url);
-        vscode.window.showInformationMessage('正在连接 Chrome 提交 VJudge（优先 GNU C++20，O2）。');
+        vscode.window.showInformationMessage(`正在连接 Chrome 提交 ${name}（优先 C++20，O2）。`);
         const result = await session.done;
-        if (result.ok) vscode.window.showInformationMessage(`VJudge 已接收提交 #${result.runId}，请在网页查看评测结果。`);
-        else vscode.window.showErrorMessage('VJudge：' + (result.message || '未确认提交成功，请检查网页。'));
+        if (result.ok) vscode.window.showInformationMessage(`${name} 已接收提交 #${result.runId}，请在网页查看评测结果。`);
+        else vscode.window.showErrorMessage(name + '：' + (result.message || '未确认提交成功，请检查网页。'));
     } finally { session?.cancel(); active.delete(file); }
 }
 

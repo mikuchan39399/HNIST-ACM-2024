@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "569d9a4f92b34a6cb883605f12871a29",
+  "startedUtc": "2026-09-27T11:44:14.6375695Z",
+  "finishedUtc": "2026-09-27T11:44:16.7064193Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/kmp-cpp11-20260927/36c62db930404261931f688873f1b04c/logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "f908025e4fcd384968a0c8629b8b18cf537318986d42764e504f352795d4fbe5",
+      "files": [
+        {
+          "path": "algorithms/字符串/KMP/kmp.cpp",
+          "hash": "7dba39b435c13bec020ee626faf79436f0054c75423b83ff88b6d7b3ac11a658"
+        },
+        {
+          "path": "algorithms/字符串/KMP/对拍/kmp_check.cpp",
+          "hash": "d056e9d22c976985b3139c3b26557434117ce09b249cba6658e67003317e6c63"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "ba0226aafa9f52696d2a4c875f721c1097ba28e0e8bec6a27f260e027a82a1a4"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/KMP/kmp.cpp",
+          "hash": "e6c889baf9fe6de043876f4fbfccf2bf78dab0f5a6871b4bed99470e18c1b735",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/KMP/对拍/kmp_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 1.864
+    }
+  ]
+}

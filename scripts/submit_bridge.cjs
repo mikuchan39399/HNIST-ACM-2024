@@ -46,5 +46,7 @@ async function prepareFile(vscode, file) {
 }
 
 const vjudge = require('./vjudge_bridge.cjs');
+const atcoder = require('./atcoder_bridge.cjs');
 module.exports = { prepareDocument, prepareFile, isVjudge: vjudge.isVjudge,
+    isAtcoder: atcoder.isAtcoder, submitAtcoder: (vscode, problem) => atcoder.submit(vscode, problem, prepareDocument),
     submitVjudge: (vscode, problem) => vjudge.submit(vscode, problem, prepareDocument) };

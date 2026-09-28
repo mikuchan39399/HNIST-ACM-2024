@@ -7,12 +7,13 @@
 
 template <class T>
 concept Mintable = (is_integral_v<T> && sizeof(T) <= 8) || is_same_v<T, i128>;
-// 注: 严格 -std=c++20 下 libstdc++ 的 is_integral_v<__int128> 为 false, 故 i128 单列
 
-// 编译期固定模数 1 < MOD < 2^62, 每个对象只存 [0, MOD) 内的一个 LL。
-// 接收至多 64 位整数及有符号 i128; 四则与比较两侧均可混用整数。
-// 加减乘 O(1), 除法/逆元 O(log MOD); 求逆与负指数要求 gcd(x, MOD)=1。
-// 阶乘表与筛表按模数共享, 不调用 init_fact 就不分配; 不同模数互不影响。
+// 固定模数 1 < MOD < 2^62, PRIME 表示模数是否为素数
+// 构造接收至多 64 位整数及有符号 i128, 不要求小于 MOD, 自动归一化到 [0, MOD)
+// 无需 init_fact: 构造、val、四则、比较、pow、inv、流读写; 流输入须为合法十进制整数
+// 需先 init_fact(N): comb 及预处理表, 表下标范围 0..N, 单次查表时间/额外空间 O(1)
+// 素数模表: fact[i]=i! mod MOD, inv_fact[i] 为其逆元; 合数模只建最小质因子表 spf
+// 预处理表按模数共享, 最近一次 init_fact 决定可用范围, 缩表保留容量
 template <LL MOD>
 class ModLL
 {
@@ -47,9 +48,17 @@ public:
         }
         return true;
     }();
+    // 构造标准余数, 默认值为 0
+    // 时间: O(1) | 空间: O(1)
     constexpr ModLL() : x(0) {}
     constexpr ModLL(Mintable auto v) : x(norm(v)) {}
+
+    // 返回 [0, MOD) 内的整数值
+    // 时间: O(1) | 空间: O(1)
     constexpr LL val() const { return x; }
+
+    // 模四则、复合赋值与取负; ==/!= 比较标准余数, 两侧均可混用整数; 除法调用除数的 inv()
+    // 加减乘/取负/比较: 时间与额外空间 O(1); 除法的条件及开销见 inv
     constexpr ModLL& operator+=(const ModLL& r)
     {
         x += r.x - MOD;
@@ -71,11 +80,13 @@ public:
     constexpr ModLL operator-() const { return ModLL(-x); }
     friend constexpr bool operator==(const ModLL& l, const ModLL& r) { return l.x == r.x; }
     friend constexpr bool operator!=(const ModLL& l, const ModLL& r) { return l.x != r.x; }
-    // O(log(|n|+1)), n<0 另求逆; 约定 0^0=1, 支持 i128 全范围。
+
+    // 返回当前值的 n 次幂, 指数支持完整 i128 范围, 不要求 n < MOD, 约定 0^0=1
+    // n >= 0: 时间 O(log(n+1)), 额外空间 O(1); n < 0: 先 inv(), 再求 |n| 次幂, 开销相加
     constexpr ModLL pow(i128 n) const
     {
         ModLL r(1), a = *this;
-        u128 e = n; // 在无符号域取绝对值, 避免最小 i128 取负溢出
+        u128 e = n;
         if (n < 0) a = inv(), e = -e;
         for (; e; e >>= 1)
         {
@@ -84,7 +95,10 @@ public:
         }
         return r;
     }
-    // 返回乘法逆元; 不可逆时断言失败, 合数模下不能直接用费马小定理。
+
+    // 返回 x=val() 的逆元; 素数模要求 x != 0, 合数模要求 gcd(x, MOD)=1
+    // 素数模用小费马 + 快速幂: 时间 O(log MOD), 额外空间 O(1)
+    // 合数模用递归扩欧: 时间/额外空间 O(log(x+1)), 最坏均为 O(log MOD)
     constexpr ModLL inv() const
     {
         assert(x != 0);
@@ -97,7 +111,9 @@ public:
             return ModLL(s);
         }
     }
-    // 读合法十进制整数, 可带正负号; d 位耗时/临时空间 O(d), 输出标准余数。
+
+    // 读入可带正负号的任意位数整数, 归一化后存入 o
+    // 时间: O(d) | 空间: O(d), d 为输入位数
     friend istream& operator>>(istream& is, ModLL& o)
     {
         string s;
@@ -109,12 +125,17 @@ public:
         o = ModLL(neg ? MOD - r : r);
         return is;
     }
+
+    // 输出标准余数的十进制表示
+    // 时间: O(d) | 空间: O(1), d 为输出位数
     friend ostream& operator<<(ostream& os, const ModLL& o) { return os << o.x; }
-    // 素数模只填 fact/inv_fact, 合数模只填最小质因子 spf。
+
     static inline vector<ModLL> fact, inv_fact;
     static inline VI spf;
-    // 重建 [0,n] 的共享表, n>=0; 素数模另要求 n<MOD, 不支持跨模 Lucas。
-    // 素数模 O(n+log MOD), 合数模 O(n), 空间 O(n); 缩表保留 vector 容量。
+
+    // 预处理到 n, 覆盖同模数旧表; 要求 0 <= n < INT_MAX, 并能容纳对应表
+    // 素数模还须 n < MOD: 建 fact/inv_fact; 时间 O(n + log MOD), 空间 O(n)
+    // 合数模允许 n >= MOD: 只建 spf; 时间 O(n), 空间 O(n)
     static void init_fact(int n)
     {
         if constexpr (PRIME)
@@ -141,9 +162,10 @@ public:
             }
         }
     }
-    // C(n,k) mod MOD; n>=0 且已预处理到 n, k 越界返回 0。
-    // 素数模 O(1); 合数模逐因子相消, k'=min(k,n-k), O(k' log^2(n+1))。
-    // 合数模每次用 O(k' log(n+1)) 临时空间, 适合少量查询, 不作 O(1) 查表。
+
+    // 先 init_fact(N), 要求 0 <= n <= N; 返回 C(n,k) mod MOD, k < 0 或 k > n 返回 0
+    // 素数模查表: 时间/额外空间 O(1); n >= MOD 的情况需另用 Lucas 等算法
+    // 合数模逐次分解, 记 t=min(k,n-k): 时间 O(t log^2(n+1)), 额外空间 O(t log(n+1))
     static ModLL comb(int n, int k)
     {
         if (k < 0 || k > n) return ModLL(0);
@@ -209,16 +231,16 @@ using mint = ModLL<1000000007>;
 using mint12 = ModLL<12>;
 int main()
 {
-    mint a = -1, b = 3;
+    mint a = -1, b = 3; // 下面的运算均不需要 init_fact
     cout << a + b << ' ' << 5 - b << '\n'; // 2 2
     cout << b / 3 << ' ' << (3 == b) << '\n'; // 1 1
     cout << (b.pow(-2) * b * b).val() << '\n'; // 1
     static_assert(mint(6) / 3 == 2);
 
-    mint::init_fact(200000); // 素数模: 最大 n 必须小于 MOD
+    mint::init_fact(200000); // 然后才能查 comb/fact/inv_fact, 上限 200000 < MOD
     cout << mint::comb(10, 3) << ' ' << mint::fact[5] << '\n'; // 120 120
-    mint12::init_fact(100); // 合数模: 不除阶乘, 单次组合数查询较慢
+    mint12::init_fact(100); // 合数模上限可以超过 MOD, 供 comb 使用, 不生成阶乘表
     cout << mint12::comb(10, 3) << ' ' << mint12(5).inv() << '\n'; // 0 5
-    // cin >> a; // 可直接读取任意位数的合法十进制整数
+    // cin >> a;
 }
 */

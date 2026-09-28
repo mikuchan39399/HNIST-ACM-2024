@@ -1,10 +1,14 @@
 # 库里有什么
 
-这份库包含 C++20 算法模板，以及从写题、对拍到展开提交、打印手册的脚本。
+这份库包含算法模板，以及从写题、对拍到展开提交、打印手册的脚本；整库默认检查标准为 C++20。
 
-`utils.h` 公共底座另外兼容 GNU C++14，可用于旧 OJ；这不代表所有算法模板都支持旧标准。
+模板从 KMP 开始逐件兼容 C++11 及以上，优先直接采用简单的 C++11 写法，必要时才条件编译。当前 `kmp.h` 与 `utils.h` 已通过 GNU C++11/14/17/20/23 的展开编译及运行检查；其他模板尚未统一适配。
 
-[插件自动展开提交](../expand/README.md#插件提交时自动展开)：CPH 的 Codeforces/VJudge 提交和洛谷插件提交可直接生成展开后的代码，编辑器保留 include 写法；展开失败停止提交。VJudge 复用 Companion 拉题和 CPH 样例，用 Chrome 扩展优先选择 GNU C++20＋O2；没有 C++20 时自动选择最高可用 GNU C++，在提交前向 VS Code 提示实际版本。由可安装、检查、卸载的本地适配提供，插件升级后需核对并重新安装。
+[插件自动展开提交](../expand/README.md#插件提交时自动展开)：CPH 的 Codeforces/VJudge/AtCoder 提交和洛谷插件提交可直接生成展开后的代码，编辑器保留 include 写法；展开失败停止提交。VJudge / AtCoder 复用 Companion 拉题和 CPH 样例，用 Chrome 扩展优先选择 C++20＋O2，没有时自动选择最高可用 C++11+ 并提示实际版本。VJudge 统一处理各原 OJ 的语言列表，兼容 CSES 的 `C++20`、UVA 的 `C++11 5.3.0` 和标准别名；无标准标签仅作最后选择并提示未知，不从 GCC 版本推断标准。AtCoder 选普通 GNU 编译器，排除 IOI-Style，核对提交编号、题号和完整源码后打开详情，展开代码限 512 KiB。由可安装、检查、卸载的本地适配提供，插件升级后需核对并重新安装。
+
+[YOUKNOWWHO 题单链接](../expand/README.md#youknowwho-题单链接)：保留原题链接，只为其他题源补 VJudge 入口，CF / AtCoder / VJudge 不重复添加。蓝色 **VS Code** 按钮可导入题目、样例并生成代码文件；CF / AtCoder 走原站，其余走 VJudge。未知编号先按题名搜索，再由你选择正确结果。
+
+[右侧题面](../expand/README.md#右侧题面与一键导入)：安装独立的 ZOI 题面扩展后，在 Companion 导入的代码上按 **Ctrl+Alt+O**，右侧显示 CF / AtCoder / VJudge 题面，支持公式、PDF、AtCoder 双语和 VJudge 题面版本切换。已导入的题目再次点击只打开，保留源码和样例。
 
 [安装器快捷键](../setup/README.md)：默认提供 `Ctrl+Alt+Z` 展开、`Ctrl+Alt+R` 恢复 include、`Ctrl+Alt+T` 任务列表；`-LuoguShortcuts` 可加上 `Ctrl+Alt+P` 查看题目与 `Ctrl+Alt+Enter` 提交。保留已有用户绑定，重装补缺项，卸载撤回新增绑定。
 
@@ -24,7 +28,7 @@ AI 创建的一次性测试文件在使用完毕后清理；正式回归、极�
 | 数据结构 | 普通/动态/可持久化线段树、合并分裂，树状数组与二维树状数组，ST 表，并查集与带权并查集，左偏树与可持久化左偏树，单调队列与单调栈，AVL/Treap/FHQ/Splay/替罪羊树/跳表/笛卡尔树，线段树套 FHQ |
 | 树与图 | 图存储，SCC/边双/点双/圆方树，多种 LCA、树链剖分、虚树，树直径、中心与重心，欧拉路径、拓扑排序、线段树与树上倍增建图，最短路与负环检测 |
 | 动态规划 | 两种树上背包实现 |
-| 字符串 | Trie 与可持久化 Trie |
+| 字符串 | KMP、Trie 与可持久化 Trie |
 | 数学 | 模整数、高精度、欧拉筛、埃氏筛、区间筛、整数开方、除法上下取整、约数个数/和、Lucas 和多种组合数计算 |
 | 常用底座 | 类型别名、调试与常用头、整数开方/除法取整，快读快写、128 位整数、随机数、哈希防卡、离散化、Misra–Gries |
 
@@ -97,11 +101,16 @@ rw 自包含，支持原生整数及 i128/u128、浮点和文本；浮点固定�
 [Misra–Gries](../../algorithms/杂项/主元素问题/Misra-Gries.cpp) 返回真实频次严格超过 n/k 的值，需要二次计数，适合小 k；
 [utils](../../algorithms/杂项/utils/utils.cpp) 的 z_fill_n 从下标 0 起填至多 n+10 项，保持旧余量语义，不清空更远尾部。
 
+同一底座提供 `cmax(a, b)` / `cmin(a, b)`：用候选值更新 `a` 的最大/最小值，严格改善返回 `true`，相等时保留原值。两参须同类型并支持 `<` 与赋值；例如 `LL ans` 配 `cmax(ans, 5LL)`。C++11 起可用，数值类型的时间、空间均为 O(1)。
+
 目前 catalog 中的网络流（Dinic/MCMF）、AC 自动机、后缀数组/自动机、FFT、莫比乌斯反演、矩阵树定理、计算几何及多数 DP 条目登记为笔记，没有可直接 include 的跳板。不要把笔记、目录骨架当成已交付引擎。
 
 登记为代码只表示库里有这个实现。想知道测得怎样看 [口语概览](../verification/status.md), 具体 API、边界和运行证据看 [AI 明细](../verification/details.md); [测试资产表](../../rules/reliability.md) 只列模板与套件的静态关联; 待补与待裁决项看 [工作板](../../rules/sweep-board.md)。示例、插件和未维护代码等豁免项不列为现役跳板，仍可从 [源码目录](../../algorithms) 和 catalog 豁免行追溯。
 存量实现尚未全部统一防重、依赖和 Usage, 不能把跳板登记当作组合接口已验收;
 本轮逐项缺口见 [全库审查](../../records/tooling/repo-audit-20260906.md)。
+
+[KMP](../../algorithms/字符串/KMP/kmp.cpp) 提供 `kmp.h`：直接传普通字符串，`build` 重建模式及前缀函数 `pi[1..m]`，`find_first` 返回首次出现的 1-based 起点或 -1，`find_all` 返回全部起点并保留重叠。
+空模式匹配 `1..n+1` 的每个间隙；按字节匹配，输入长度小于 INT_MAX。建表 O(m)、查找 O(n)，全部结果另占 O(k) 空间；用法见源码 Usage，默认对拍覆盖穷举、随机、字节边界和百万长度复用。
 
 [普通 Trie](../../algorithms/字符串/字典树/字典树.cpp) 支持单词次数、前缀次数与非负整数最大异或；
 [可持久化 Trie](../../algorithms/字符串/字典树/可持久化字典树.cpp) 可从任意历史版本分叉，查询区间/树路径的根差、前缀计数、与某个单词的最长 LCP，以及多行多列异或值的第 k 大（重复计数）。
@@ -122,7 +131,9 @@ rw 自包含，支持原生整数及 i128/u128、浮点和文本；浮点固定�
 | 队友部署 | 用户默认值、九任务与无冲突快捷键; configure 补项目路径, doctor 诊断; 支持旧状态升级与撤销 | [安装与卸载](../setup/README.md) |
 | 短名跳板 | 用 seg.h、hld.h 等短名引用母版，定位和维护对应关系 | [展开与恢复](../expand/README.md) |
 | 展开提交 | 原地展开依赖、钻石去重、复制源码；再次展开可处理新 include | [展开与恢复](../expand/README.md) |
-| 插件自动提交 | CPH 的 CF/VJudge 与洛谷提交前自动展开快照；VJudge 优先 GNU C++20，自动回退时提示实际编译器 | [提交适配](../expand/README.md#插件提交时自动展开) |
+| 插件自动提交 | CPH 的 CF/VJudge/AtCoder 与洛谷提交前自动展开；Chrome 扩展动态选语言、提示回退并确认提交编号 | [提交适配](../expand/README.md#插件提交时自动展开) |
+| YOUKNOWWHO 题单链接 | 补 VJudge 入口和 VS Code 导入按钮；CF / AtCoder 读原站，其余走 VJudge | [题单链接](../expand/README.md#youknowwho-题单链接) |
+| 右侧题面 | Ctrl+Alt+O 查看当前 CPH 题目，支持公式、PDF 与版本切换 | [题面与导入](../expand/README.md#右侧题面与一键导入) |
 | 恢复与清理 | 恢复 include、保留块外题解修改；status 查看状态，forget 保留代码并解除管理 | [展开与恢复](../expand/README.md) |
 | 对拍与 CI | 回归、语法/警告、sanitizer、百万点/深链压力、栈边界报告及入口自检, push/PR 自动执行 | [测试说明](../../scripts/checks.md) |
 | 对拍现状 | 运行 run_checks.ps1 后自动更新两层表, 无需手填结果; 展示已测内容、缺口和环境 | [口语概览](../verification/status.md) / [使用说明](../verification/README.md) |

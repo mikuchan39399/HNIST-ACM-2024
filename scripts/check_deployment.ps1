@@ -126,8 +126,15 @@ try {
     foreach ($guide in @('docs/releases/README.md','docs/backups/README.md')) {
         Assert ($names -contains ('HNIST-ZOI/'+$guide)) ('Delivery guide missing: '+$guide)
     }
-    foreach ($script in @('submit_bridge.cjs','install_submit_bridge.cjs','check_submit_bridge.cjs','vjudge_bridge.cjs','check_vjudge_bridge.cjs','check_vjudge_chrome.cjs','vjudge-extension/manifest.json','vjudge-extension/background.js','vjudge-extension/handoff.js','vjudge-extension/page.js')) {
+    foreach ($script in @('submit_bridge.cjs','install_submit_bridge.cjs','check_submit_bridge.cjs','vjudge_bridge.cjs','check_vjudge_bridge.cjs','check_vjudge_chrome.cjs','atcoder_bridge.cjs','check_atcoder_bridge.cjs','check_atcoder_chrome.cjs','check_youknowwho_links.cjs','vjudge-extension/manifest.json','vjudge-extension/background.js','vjudge-extension/handoff.js','vjudge-extension/page.js','vjudge-extension/atcoder.js','vjudge-extension/youknowwho.js','vjudge-extension/youknowwho-data.js')) {
         Assert ($names -contains ('HNIST-ZOI/scripts/'+$script)) ('Submission dependency missing: '+$script)
+    }
+    foreach ($asset in @('check_statement.cjs','package_statement.py','vjudge-extension/statement.js','vjudge-extension/statement-handoff.js','statement-extension/package.json','statement-extension/package-lock.json','statement-extension/extension.cjs','statement-extension/core.cjs','statement-extension/renderer.js','statement-extension/style.css','statement-extension/vendor/sources.json','statement-extension/vendor/dompurify/dist/purify.min.js','statement-extension/vendor/markdown-it/dist/browser/markdown-it.umd.min.js','statement-extension/vendor/katex/dist/katex.min.js','statement-extension/vendor/katex/dist/katex.min.css','statement-extension/vendor/pdfjs-dist/build/pdf.min.mjs','statement-extension/vendor/pdfjs-dist/build/pdf.worker.min.mjs')) {
+        Assert ($names -contains ('HNIST-ZOI/scripts/'+$asset)) ('Statement dependency missing: '+$asset)
+    }
+    Assert (@($names | Where-Object { $_ -match '/node_modules/' }).Count -eq 0) 'Development dependencies leaked'
+    foreach ($part in @('fonts/*.woff2','cmaps/*.bcmap','standard_fonts/*','wasm/*.wasm')) {
+        Assert (@($names | Where-Object { $_ -like ('HNIST-ZOI/scripts/statement-extension/vendor/*/'+$part) }).Count -gt 0) ('Statement asset group missing: '+$part)
     }
 } finally { $archive.Dispose() }
 $delivered=Join-Path $fixture 'delivered'; [IO.Compression.ZipFile]::ExtractToDirectory($release[0].FullName,$delivered)

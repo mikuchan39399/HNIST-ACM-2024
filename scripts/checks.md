@@ -4,6 +4,8 @@
 
 目标是尽早发现会丢区域赛分数的错误。随机对拍、确定性边界、语法检查和 sanitizer 分工不同，不能互相替代。
 
+`./scripts/run_checks.ps1 -Filter kmp` 验证前缀函数、首次及全部重叠匹配：64897 对二元短串穷举、2000 组固定种子随机数据，逐字符独立暴力核对；另含空模式/空文本、完整字节域、string 子串、对象独立持有与自身引用重建。默认百万长度全同串、周期串、末尾长链回退与大—小—空—大重建使用闭式答案核对，自动进入普通及 sanitizer CI，无需额外参数。`node scripts/check_submit_bridge.cjs` 另将 KMP 完整对拍实际展开为提交快照，以 C++11/14/17/20/23 分别编译并运行同一套测试；使用 `-pedantic-errors -Wall -Wextra -Werror`，同时检查 utils 与 LOCAL 调试、旧标准不能直接引入现代头。不同 -std 的本机通过不等于所有历史编译器和远端 OJ 验证。
+
 生命周期专项覆盖完整 build/run 不先 init 的复用路径。`lifecycle_check` 每组 350 轮, 核对备用三份 LCA、连通性派生图重建、普通线段树旧懒标记以及必须保留的离线输入/重心点权/持久化版本; `segfhq_lifecycle_check` 用 350×100 独立数组操作与 20万-1-0-257-20万复用验证旧树套树新入口。既有图论和普通线段树套件也已迁移为直接 build/run, 两份新套件由普通及 sanitizer CI 自动发现。全部现役条目与例外见 [生命周期清单](../records/verification/lifecycle-20260909.md)。
 
 线段树常用插件用 `./scripts/run_checks.ps1 -Filter seg_plugins`。套件直接 include 七份插件，逐数组暴力检查全部维护量，普通/动态树各 64 轮×320 次；默认另跑每组 20万-1-257-20万复位、长短区间交错修改和查询。Binary/Linear 只验完整 build，其余五组另验 1e9 稀疏零域。`*_check.cpp` 自动发现，普通与 sanitizer CI 都执行，无需手动添加 suite 名。专题边界与证据见 [插件验证](../records/verification/seg-plugins-20260907.md)。
@@ -19,11 +21,23 @@
 ./scripts/zoi_check.ps1
 node scripts/check_submit_bridge.cjs
 node scripts/check_vjudge_bridge.cjs
+node scripts/check_atcoder_bridge.cjs
+node scripts/check_youknowwho_links.cjs
 ```
 
-VJudge 自检通过真实本机 HTTP 连接验证随机令牌、单次领取/许可、地址匹配、代码变动和超时；页面夹具检查 GNU C++20 优先、最高 GNU C++ 自动回退、旧标准顺序、禁用选项、比赛路由、CRLF/CR 到 LF 的编辑器规范化、原生提交成功/失败与真实源码改动的拒绝路径。Chrome worker 与 VS Code 宿主夹具检查先准备、许可时提示一次回退、最后提交的顺序，提示不等待确认；只填表检查也执行提交前校验。全程不向 OJ 提交，默认 CI 运行。提交适配自检另覆盖 utils 展开快照的 C++14/17/20 编译与运行、现代标准头启用边界、CPH 按钮/快捷键路由和洛谷 4.16/4.18 安装升级与卸载；实际 Chrome 登录、Companion 拉题和 OJ 评测需单独验收。
+VJudge 自检通过真实本机 HTTP 连接验证随机令牌、单次领取/许可、地址匹配、代码变动和超时；页面夹具检查 C++20 优先、最高标准自动回退、GNU 与无厂商标签混合排序、CSES-1753 单选项表单、UVA-455 真实语言列表、标准别名、编译器版本不冒充标准、未知标准提示、C++98/03 与非支持编译器拒绝、禁用选项、比赛路由、CRLF/CR 到 LF 的编辑器规范化、原生提交成功/失败与真实源码改动的拒绝路径。Chrome worker 与 VS Code 宿主夹具检查先准备、许可时提示一次回退、最后提交的顺序，提示不等待确认；只填表检查也执行提交前校验。全程不向 OJ 提交，默认 CI 运行。提交适配自检另覆盖上述 utils/KMP 多标准检查、CPH 按钮/快捷键路由和洛谷 4.16/4.18 安装升级与卸载；实际 Chrome 登录、Companion 拉题和 OJ 评测需单独验收。
 
 加载本地 Chrome 扩展后运行 `node scripts/check_vjudge_chrome.cjs` 做真实表单检查，不发送 OJ 提交；也可传入一个 VJudge 题目 URL 检查自动回退。该交互检查不在 CI 中执行。
+
+2026-09-27 已用 Chrome 扩展 1.3.0 对 UVA-455 完成新开页面的真实只填表检查：自动选中 `C++11 5.3.0`，测试代码、O2 与非公开选项通过提交前校验，检查脚本返回 PASS；没有发送 OJ 提交。此结果验证表单和标准回退，不代表远端编译或题解评测通过。
+
+AtCoder 自检覆盖官方题目 URL、普通 GNU 标准排序与 IOI-Style/Clang 排除、Ace/纯文本、换行、原生表单字段、题号/语言/代码/表单地址变化、空验证字段、读取记录期间编辑、单次 POST、重定向失败、网络中断、旧记录/并发记录/源码或题号不符时拒报成功、512 KiB UTF-8 快照限制，以及 Chrome worker 和只填表模式。提交适配自检另验 CPH 按钮路由、旧 VJudge 补丁升级与卸载保留其他修复。三套检查接默认 CI，均不向 OJ 真实提交。真实页面只填表检查用 `node scripts/check_atcoder_chrome.cjs <AtCoder题目URL>`，需要 Chrome 已重载并允许 AtCoder 域名。
+
+YOUKNOWWHO 链接自检覆盖常见 OJ 地址、CF/Gym/Group、AtCoder 新旧网址、UVA 内部 ID 与 LightOJ slug 映射、VJudge 跳过、未知题号搜索与参数编码、恶意网址拒绝，以及仅处理题目表格、动态增删/改链接、去重和浏览器脚本加载。检查不访问网络，接默认 CI；实页验收需重载 Chrome 扩展并刷新题单。
+
+右侧题面自检使用独立 DOM 依赖；首次在 `scripts/statement-extension` 目录运行 `npm ci --ignore-scripts --no-audit --no-fund`，回到仓库根运行 `node scripts/check_statement.cjs`。覆盖 CPH 文件关联与题目别名、三站 HTML/Markdown/PDF 解析、公式清洗、AtCoder 英日双语及高亮样例换行、危险 HTML/链接拒绝、只读令牌会话、CPH 本机传输、题单导入路由和真实 MutationObserver 不循环；不向 OJ 提交。`python scripts/package_statement.py` 另验 VSIX 运行依赖完整性和开发依赖排除，两项接默认 CI；队友包交付依赖由 `check_deployment.ps1` 检查。
+
+2026-09-28 使用 Chrome 1.4.0 对 CF-1913B、AtCoder-abc001_1 与 VJudge-UVA11452 完成真实只读会话。PDF 原文和中文题面在本地 Webview 预览中显示，UVA11452 两个版本样例一致；KMP 题单显示 41 个 VS Code 按钮，CF 无重复入口。用户确认 VS Code 右侧题面已显示；ZOI 题面 1.0.1 的真实 URI → 题面 → CPH → C++ 文件链路已用 abc001_1 验证，三组多行样例逐字一致，重复打开既有题目未改变源码/样例。CPH 接收服务未启动与未配置默认语言分别会阻止接收、等待语言选择，不能将其误报为已完成。此处只代表已检查页面，不代表所有原 OJ、PDF 排版或远端评测都已验收。
 
 页面夹具还模拟 Bootstrap 先创建表单、延迟显示窗口的时序，检查显示前不填表、不重复打开、显示超时及用户关闭后不提交；网页错误提示覆盖 DOM 尚未就绪和连接中断，避免阻塞式弹窗。
 
@@ -173,6 +187,7 @@ runner 自动记录源码与依赖指纹、环境和运行结果, 并生成 [口
 默认包含 4000 个随机密钥/字节用例、百万字节输入、20 万容器操作及构造性同桶夹具；
 计时只打印本机样本，桶阈值只检查固定用例，不能用有限随机实验声称密码安全或最坏常数复杂度。
 `tool_core_check` 验 utils/i128/Dcr/Misra-Gries，含 128 位完整上下界、20 万流输入、20 万离散化与小 k 主元素；
+其中 `cmax/cmin` 用标准 `max/min` 核对 4225 对小整数和 LL 极值交叉，并覆盖 ULL、浮点、字符串、整数对与仅支持 `<` 的自定义对象，核对返回值、相等不赋值和自身引用。`check_submit_bridge.cjs` 另在 C++11/14/17/20/23 的真实展开快照中调用两个接口。
 `utils_local_check` 独立核对 LOCAL 调试文本，`rnd_check` 补所有整数类别、有限浮点极值与可复现引擎。
 这几份无参数套件均由普通/sanitizer CI 自动发现，原 misc 的组装回归保留。
 utils 与 i128 是公共依赖，改动后重跑受影响全体，不只跑新增用例；详细结果与哈希来源见 [专项记录](../records/verification/misc-20260908.md)。

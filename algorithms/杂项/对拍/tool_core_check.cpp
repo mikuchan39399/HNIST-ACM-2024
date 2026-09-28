@@ -78,8 +78,57 @@ static void i128_tests()
     assert(out.str() == text);
     assert(!(in >> value));
 }
+struct ExtremumProbe
+{
+    int value, assignments;
+    ExtremumProbe& operator=(const ExtremumProbe& other)
+    {
+        value = other.value;
+        assignments++;
+        return *this;
+    }
+    bool operator<(const ExtremumProbe& other) const { return value < other.value; }
+};
+
+static void extremum_tests()
+{
+    for (int x = -32; x <= 32; x++)
+        for (int y = -32; y <= 32; y++)
+        {
+            int hi = x, lo = x;
+            assert(cmax(hi, y) == (max(x, y) != x));
+            assert(cmin(lo, y) == (min(x, y) != x));
+            assert(hi == max(x, y) && lo == min(x, y));
+        }
+    for (LL x : {LLONG_MIN, -1LL, 0LL, 1LL, LLONG_MAX})
+        for (LL y : {LLONG_MIN, -1LL, 0LL, 1LL, LLONG_MAX})
+        {
+            LL hi = x, lo = x;
+            assert(cmax(hi, y) == (max(x, y) != x));
+            assert(cmin(lo, y) == (min(x, y) != x));
+            assert(hi == max(x, y) && lo == min(x, y));
+        }
+    ULL u = 0;
+    assert(cmax(u, ULLONG_MAX) && u == ULLONG_MAX);
+    assert(cmin(u, 0ULL) && u == 0);
+    double d = -numeric_limits<double>::infinity();
+    assert(cmax(d, 0.5) && d == 0.5);
+    assert(cmin(d, -0.5) && d == -0.5);
+    string word = "ab";
+    assert(cmax(word, string("abc")) && word == "abc");
+    assert(cmin(word, string("a")) && word == "a");
+    PII point{1, 9};
+    assert(cmax(point, PII{2, 0}) && point == PII(2, 0));
+    ExtremumProbe a{3, 0}, equal{3, 0}, bigger{4, 0}, smaller{2, 0};
+    assert(!cmax(a, equal) && !cmin(a, equal));
+    assert(!cmax(a, a) && !cmin(a, a) && a.assignments == 0);
+    assert(cmax(a, bigger) && a.value == 4 && a.assignments == 1);
+    assert(cmin(a, smaller) && a.value == 2 && a.assignments == 2);
+}
+
 static void utils_tests()
 {
+    extremum_tests();
     static_assert(is_same_v<LL, long long> && is_same_v<ULL, unsigned long long>);
     static_assert(is_same_v<VI, vector<int>> && is_same_v<PLL, pair<LL, LL>>);
     assert(inf == 0x3f3f3f3f && INF == 0x3f3f3f3f3f3f3f3fLL);

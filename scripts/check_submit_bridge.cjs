@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
-const { install, transform, specifications, cphVjudge, cphFrontend, luogu418 } = require('./install_submit_bridge.cjs');
+const { install, transform, specifications, cphVjudge, cphFrontend, cphBrowser, cphBrowserFrontend, luogu418 } = require('./install_submit_bridge.cjs');
 const bridge = require('./submit_bridge.cjs');
 const root = path.resolve(__dirname, '..');
 const parent = path.join(root, '.zoi-checks/codex-work');
@@ -34,6 +34,15 @@ async function utilsCompatibilityChecks() {
 #include ${header}
 int main() {
     fast_io();
+    int hi = 3, lo = 3;
+    assert(cmax(hi, 7) && hi == 7);
+    assert(cmin(lo, 1) && lo == 1);
+    assert(!cmax(hi, 7) && !cmin(lo, lo));
+    LL big = LLONG_MIN;
+    assert(cmax(big, LLONG_MAX) && big == LLONG_MAX);
+    assert(cmin(big, 0LL) && big == 0);
+    PII point(1, 9);
+    assert(cmax(point, PII(2, 0)) && point == PII(2, 0));
     for (int n : {200000, 0, 1, 257, 200000}) {
         VI a(n + 20, 7); VLL b(n + 1, 9); vector<bool> bits(n + 11, true);
         z_fill_n(n, 0, a, b, bits);
@@ -60,10 +69,14 @@ int main() {
     const src = path.join(dir, 'utils-compat.cpp'); fs.writeFileSync(src, input);
     const snapshot = await bridge.prepareDocument(vscode, { ...document, fileName: src, getText: () => input });
     const submission = path.join(dir, 'utils-submission.cpp'); fs.writeFileSync(submission, snapshot);
-    for (const std of ['c++14', 'c++17', 'c++20']) {
+    // 编译实际展开的完整 KMP 对拍, 同时验证旧标准语法、依赖展开和算法结果。
+    const kmpSource = path.join(root, 'algorithms/字符串/KMP/对拍/kmp_check.cpp');
+    const kmpSnapshot = await bridge.prepareDocument(vscode, { ...document, fileName: kmpSource, getText: () => fs.readFileSync(kmpSource, 'utf8') });
+    const kmpSubmission = path.join(dir, 'kmp-submission.cpp'); fs.writeFileSync(kmpSubmission, kmpSnapshot);
+    for (const std of ['c++11', 'c++14', 'c++17', 'c++20', 'c++23']) {
         const poison = path.join(dir, std); fs.mkdirSync(poison);
         // 拦截展开快照直接引入新标准头; 新版 libstdc++ 自己的内部依赖仍交回系统头
-        for (const name of std === 'c++14' ? ['string_view', 'bit', 'concepts'] : std === 'c++17' ? ['bit', 'concepts'] : []) {
+        for (const name of ['c++11', 'c++14'].includes(std) ? ['string_view', 'bit', 'concepts', 'ranges'] : std === 'c++17' ? ['bit', 'concepts', 'ranges'] : []) {
             fs.writeFileSync(path.join(poison, name), `#pragma GCC system_header\n#if __INCLUDE_LEVEL__ == 1\n#error unavailable standard header\n#endif\n#include_next <${name}>\n`);
         }
         const exe = path.join(dir, process.platform === 'win32' ? 'utils-compat.exe' : 'utils-compat');
@@ -71,6 +84,9 @@ int main() {
         assert.equal(execFileSync(exe, [], { cwd: dir, encoding: 'utf8' }), 'utils compatible');
         execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, path.join(root, 'algorithms/杂项/对拍/utils_local_check.cpp'), '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
         assert.match(execFileSync(exe, [], { cwd: dir, encoding: 'utf8' }), /utils_local_check passed/);
+        execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, kmpSubmission, '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
+        assert.match(execFileSync(exe, [], { cwd: dir, encoding: 'utf8' }), /kmp: PASS \(64897 exhaustive pairs, 2000 random cases, byte boundaries, million-length rebuilds\)/);
+        console.log(`PASS: ${std} utils + LOCAL + exported KMP full regression`);
     }
 }
 
@@ -92,7 +108,7 @@ async function main() {
         v: { getProblemName: () => '1A' }, p: { getLanguageId: () => 54 },
         URL, f: { isCodeforcesUrl: u => u.hostname === 'codeforces.com' },
         require: () => bridge };
-    vm.runInNewContext(transform(transform(cph, specifications[0].replacements), cphVjudge), context);
+    vm.runInNewContext(transform(transform(cph, specifications[0].replacements), cphBrowser), context);
     await exports.submitToCodeForces();
     assert.equal(context.S.sourceCode, expanded); assert.equal(messages.length, 1);
     text = '#include "missing.h"\n';
@@ -102,6 +118,14 @@ async function main() {
     context.require = () => ({ ...bridge, submitVjudge: async (_, problem) => { assert.equal(problem.url, 'https://vjudge.net/contest/123#problem/A'); vjCalls++; } });
     context.problem.url = 'https://vjudge.net/contest/123#problem/A';
     await exports.submitToCodeForces(); assert.equal(vjCalls, 1); assert.equal(messages.length, 1); assert.equal(context.S.empty, true);
+    let acCalls = 0;
+    context.require = () => ({ ...bridge, submitAtcoder: async (_, problem) => { assert.equal(problem.url, 'https://atcoder.jp/contests/abc477/tasks/abc477_a'); acCalls++; } });
+    context.problem.url = 'https://atcoder.jp/contests/abc477/tasks/abc477_a';
+    await exports.submitToCodeForces(); assert.equal(acCalls, 1); assert.equal(messages.length, 1);
+    const frontend = transform('result=e=>' + cphBrowserFrontend[0][0] + '"cph":"kattis":"other";', cphBrowserFrontend);
+    const frontendContext = {}; vm.runInNewContext(frontend, frontendContext);
+    for (const host of ['atcoder.jp', 'vjudge.net', 'vjudge.net.cn', 'codeforces.com']) assert.equal(frontendContext.result({ hostname: host }), 'cph');
+    assert.equal(frontendContext.result({ hostname: 'atcoder.jp.evil.test' }), 'other');
 
     let submitted = 0, body;
     const lg = { t: {}, o: vscode, document, require: () => bridge,
@@ -141,12 +165,23 @@ async function main() {
     fs.writeFileSync(path.join(extensionDir, 'plugin1/extension.js'), newLuogu);
     install(extensionDir); assert.ok(install(extensionDir, 'check').every(r => r.installed)); install(extensionDir, 'uninstall');
     assert.equal(fs.readFileSync(path.join(extensionDir, 'plugin1/extension.js'), 'utf8'), newLuogu);
+    // Upgrade the existing VJudge route/button without stacking patches; uninstall preserves unrelated fixes.
+    const oldBackend = transform(transform(cph, specifications[0].replacements), cphVjudge);
+    const oldFrontend = transform('const x=' + cphFrontend[0][0] + '1:2:3;', cphFrontend);
+    fs.writeFileSync(path.join(extensionDir, 'plugin0/extension.js'), oldBackend + '\n// unrelated patch');
+    fs.writeFileSync(path.join(extensionDir, 'plugin0/frontend.module.js'), oldFrontend);
+    assert.equal(install(extensionDir, 'check')[0].installed, false);
+    install(extensionDir); install(extensionDir);
+    assert.ok(install(extensionDir, 'check').every(r => r.installed));
+    install(extensionDir, 'uninstall');
+    assert.equal(fs.readFileSync(path.join(extensionDir, 'plugin0/extension.js'), 'utf8'), cph + '\n// unrelated patch');
+    assert.equal(fs.readFileSync(path.join(extensionDir, 'plugin0/frontend.module.js'), 'utf8'), 'const x=' + cphFrontend[0][0] + '1:2:3;');
     const changed = path.join(extensionDir, 'plugin1/extension.js'); fs.writeFileSync(changed, '// unknown version');
     assert.throws(() => install(extensionDir), /不匹配/);
-    assert.equal(fs.readFileSync(path.join(extensionDir, 'plugin0/extension.js'), 'utf8'), cph);
+    assert.equal(fs.readFileSync(path.join(extensionDir, 'plugin0/extension.js'), 'utf8'), cph + '\n// unrelated patch');
     assert.equal(fs.readFileSync(file, 'utf8'), original);
     assert.ok(!fs.readdirSync(dir).some(n => /zoi\.(state|pending)|\.lock$/.test(n)));
-    console.log('PASS: snapshot export + UTF-8 + utils C++14/17/20 compilation/runtime/old-header checks + CF/VJudge routing + Luogu 4.16/4.18 adapters + fail-closed + concurrent edit + install/idempotence/uninstall/version mismatch');
+    console.log('PASS: snapshot export + UTF-8 + utils/KMP C++11/14/17/20/23 compilation/runtime/old-header checks + CF/VJudge/AtCoder routing + Luogu 4.16/4.18 adapters + fail-closed + concurrent edit + install/idempotence/uninstall/version mismatch');
 }
 
 main().then(() => {

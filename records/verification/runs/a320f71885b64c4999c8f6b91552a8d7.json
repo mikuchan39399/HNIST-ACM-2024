@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "id": "a320f71885b64c4999c8f6b91552a8d7",
+  "startedUtc": "2026-09-26T08:08:07.5205775Z",
+  "finishedUtc": "2026-09-26T08:08:16.6560237Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/mint-call-contract-20260926/145e62ac492a46d7ad36a15ea19aa517/logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "f9d002e99c5208d456ee5eccd0f867922b7d70c016da16da6463ee89b50eedba",
+      "files": [
+        {
+          "path": "algorithms/数学/数论/mint.cpp",
+          "hash": "cf5f42572917bc92079ba534fbbcd9e2a2f5d25d16f11508c83742085c72ae67"
+        },
+        {
+          "path": "algorithms/数学/数论/mint.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数学/数论/对拍/mint_check.cpp",
+          "hash": "ba58942981496f1928722d486dd7a05b4e0787ffdf4fece5d84839234c79cf49"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "342625247499d16412e8ae49d19b8ace26baa1048990d4146381dbaac8c94acd"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "ba0226aafa9f52696d2a4c875f721c1097ba28e0e8bec6a27f260e027a82a1a4"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "3dfe235eccbaee82bf18aecac74c037907ae319da6bc273cfb872a2db0cef2d8"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数学/数论/mint.cpp",
+          "hash": "e4b606379bfd08e115f4d1fe143ee040d07798dbc136cf1883339a821b30376b",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数学/数论/对拍/mint_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 8.938
+    }
+  ]
+}

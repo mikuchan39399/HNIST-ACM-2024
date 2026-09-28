@@ -2,6 +2,24 @@
   "schema": 1,
   "coverage": [
     {
+      "template": "algorithms/字符串/KMP/kmp.cpp",
+      "suite": "algorithms/字符串/KMP/对拍/kmp_check.cpp",
+      "api": [
+        "KMP 构造/build, 自有 1-based 模式串 p 与前缀函数 pi, 重建覆盖旧结果",
+        "find_first/find_all, 1-based 起点/-1, 升序重叠匹配与空模式间隙, const 重复查询",
+        "C++11 const string& 接口, 子串/零字节/完整字节域, 输入不补位, 模式串独立持有及对象复制"
+      ],
+      "oracle": "小数据逐长度枚举真前后缀, 逐起点逐字符暴力匹配; 大数据全同/周期串/末尾唯一字符使用闭式前缀函数及匹配位置",
+      "cases": [
+        "二元文本长度 0..8 与模式长度 0..6 全枚举共 64897 对, 2000 组 mt19937(42) 随机数据",
+        "原 aaaab/aaab 失配反例, 单字符/空文本/空模式/模式长于文本/无解/整串/重叠/多级回退",
+        "空白/换行/内嵌零字节/全部 256 种字节, string 子串, 修改原输入/临时输入/复制后独立重建/自身子串及自身引用重建",
+        "1000000-1-0-257-1000000 连续复用, 百万长度全同/交替周期/末尾失配长链回退, 百万模式建表, 空模式 n+1 个结果与大量重叠输出"
+      ],
+      "limitations": "按字节精确匹配, 输入长度 < INT_MAX 且内存可容纳; 空模式匹配 1..n+1, find_all 的返回容器无占位; 不提供 Unicode 字符下标或在线修改模式串, pi/m/p 不得直接改写破坏一致性",
+      "summary": "首次/全部重叠匹配及前缀函数: 64897 对穷举、2000 组随机, 完整字节边界与百万长度大小切换复用"
+    },
+    {
       "template": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
       "suite": "algorithms/图论/优化建图/对拍/graphbuilder_check.cpp",
       "api": [
@@ -1403,15 +1421,17 @@
       "template": "algorithms/杂项/utils/utils.cpp",
       "suite": "algorithms/杂项/对拍/tool_core_check.cpp",
       "api": [
-        "类型别名/数值常量、dx4/dy4/dx8/dy8、z_fill_n、fast_io"
+        "类型别名/数值常量、dx4/dy4/dx8/dy8、z_fill_n、fast_io",
+        "cmax/cmin 同类型原地更新, bool 表示严格改善, 相等与自身引用不赋值"
       ],
-      "oracle": "类型断言、标准极值与枚举方向集合; 逐元素检查实际填充和未触及尾部, 标准流 tie 读回",
+      "oracle": "类型断言、标准极值与枚举方向集合; 逐元素检查实际填充和未触及尾部, 标准流 tie 读回; cmax/cmin 与标准 max/min 交叉核对, 自定义仅支持 < 的对象记录赋值次数",
       "cases": [
         "20万-0-1-257-20万, vector<int>/LL/bool/string 与空容器, 下标 0 和 n+10 余量边界",
-        "重复 include, fast_io 解除 cin/cout 绑定"
+        "重复 include, fast_io 解除 cin/cout 绑定",
+        "cmax/cmin: -32..32 全部 4225 对, LL 极值交叉与 ULL 全范围端点, 浮点/字符串/整数对, 相等/自身别名及无 > 运算符对象"
       ],
-      "limitations": "z_fill_n 保持从 0 填 min(n+10,size) 个元素, 不扩容也不清远端尾部; 每个容器 size>=n>=0; fast_io 在首次 IO 前调用且不混用其他标准流 IO; endl 宏不刷新",
-      "summary": "别名/常量/方向与 20 万填充边界已验, fast_io 改 inline, n+10 在 size_t 域计算"
+      "limitations": "z_fill_n 保持从 0 填 min(n+10,size) 个元素, 不扩容也不清远端尾部; 每个容器 size>=n>=0; fast_io 在首次 IO 前调用且不混用其他标准流 IO; endl 宏不刷新; cmax/cmin 两参同型且支持 < 和赋值, 浮点极值用途不包含 NaN",
+      "summary": "别名/常量/方向与 20 万填充边界; cmax/cmin 的严格更新、相等保留、数值极值与泛型比较已验"
     },
     {
       "template": "algorithms/杂项/utils/utils.cpp",

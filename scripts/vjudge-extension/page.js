@@ -22,20 +22,29 @@ async function zoiVjudgePage(job, stage) {
         // Bootstrap builds the editor in show.bs.modal, before the backdrop transition shows the modal.
         // Wait only during preparation; a subsequently closed form must still stop submission.
         if (stage === 'prepare') await wait(() => visible(modal), '提交表单未能显示，请检查网页提示后重试。');
-        const language = await wait(() => { const e = form.querySelector('#submit-language'); return e?.options.length > 1 && e; }, 'VJudge 未加载编译器列表。');
+        const language = await wait(() => { const e = form.querySelector('#submit-language'); return e && [...e.options].some(o => o.value && o.textContent.trim()) && e; }, 'VJudge 未加载编译器列表。');
         const inContest = expected.pathname.startsWith('/contest/');
         const formProblem = inContest ? form.querySelector('#contest-num')?.textContent.trim().split(/\s+-\s+/)[0] : form.querySelector('.problem-origin')?.textContent.replace(/\s+/g, '');
         const expectedProblem = inContest ? expected.hash.split('/')[1] : expected.pathname.split('/')[2];
         if (formProblem !== expectedProblem) throw Error('表单题号与 CPH 题目不一致，停止提交。');
-        const candidates = [...language.options].filter(o => o.value && !o.disabled && !o.parentElement?.disabled && /(?:[cg]\+\+|cpp)/i.test(o.textContent) && /gnu|gcc|g\+\+/i.test(o.textContent) && !/clang/i.test(o.textContent)).map(option => {
+        const candidates = [...language.options].flatMap(option => {
             const label = option.textContent.trim();
-            const version = label.match(/(?:[cg]\+\+|cpp)\s*(98|03|0x|11|1y|14|1z|17|2a|20|2b|23|2c|26)\b/i)?.[1].toLowerCase();
+            if (!option.value || option.disabled || option.parentElement?.disabled || /clang|msvc|visual|c\+\+\s*\/\s*cli|ioi/i.test(label)) return [];
+            const cpp = /\b(?:[cg]\+\+|gnu\+\+|cpp(?=\d|\b))/i.test(label);
+            const gnu = cpp && /\bgnu\b|\bgcc\b|\bg\+\+/i.test(label);
+            // CSES 的 C++20、UVA 的 C++11 5.3.0 等无厂商标签；不猜未知文字的含义。
+            const plain = /^(?:c\+\+|cpp)(?:\s*(?:98|03|0x|11|1y|14|1z|17|2a|20|2b|23|2c|26))?(?:\s+\d+(?:\.\d+)+)?(?:\s*\((?:32|64)(?:\s*-?\s*bit)?\))?$/i.test(label);
+            if (!gnu && !plain) return [];
+            // 11.2.0 是编译器版本, 不能把开头的 11 识别成 C++11。
+            const version = label.match(/\b(?:[cg]\+\+|gnu\+\+|cpp)\s*(98|03|0x|11|1y|14|1z|17|2a|20|2b|23|2c|26)(?![\w.])/i)?.[1].toLowerCase();
             const aliases = { '98': 1998, '03': 2003, '0x': 2011, '1y': 2014, '1z': 2017, '2a': 2020, '2b': 2023, '2c': 2026 };
-            // GCC 版本不是 C++ 标准版本; 未标明标准的 GNU C++ 只作为最后选择
-            return { option, label, standard: version ? (aliases[version] || 2000 + Number(version)) : 0, bits64: /\b64(?:\s*-?\s*bit)?\b|x86_64|amd64/i.test(label) };
+            const standard = version ? (aliases[version] || 2000 + Number(version)) : 0;
+            if (standard && standard < 2011) return [];
+            // 未标明标准的 C++ 只作为最后选择, 不承诺支持 C++11。
+            return [{ option, label, gnu, standard, bits64: /\b64(?:\s*-?\s*bit)?\b|x86_64|amd64/i.test(label) }];
         });
-        if (!candidates.length) throw Error('这道题的原 OJ 没有提供可用的 GNU C++ 编译器，未提交。');
-        candidates.sort((a, b) => Number(b.standard === 2020) - Number(a.standard === 2020) || b.standard - a.standard || Number(b.bits64) - Number(a.bits64));
+        if (!candidates.length) throw Error('这道题的原 OJ 没有提供可用的 C++ 编译器（需要 C++11 及以上；不支持 Clang/MSVC/CLI/IOI-Style），未提交。');
+        candidates.sort((a, b) => Number(b.standard === 2020) - Number(a.standard === 2020) || b.standard - a.standard || Number(b.gnu) - Number(a.gnu) || Number(b.bits64) - Number(a.bits64));
         const choice = candidates[0], selected = choice.option;
         const cm = await wait(() => form.querySelector('.CodeMirror')?.CodeMirror, 'VJudge 代码编辑器发生变化，请更新适配。');
         const defaultLabel = form.querySelector('label[for="submitter-type0"]');
@@ -56,7 +65,8 @@ async function zoiVjudgePage(job, stage) {
             privateCode.click(); submitter.click();
             cm.setValue(normalizeNewlines(job.code)); cm.save();
             if (job.mode !== 'check') await wait(accountReady, '此题无法使用 VJudge 公共账号。请先在网页“管理账号”绑定并选中可用的原 OJ 个人账号，再重新提交。', 8000);
-            return { prepared: true, language: choice.label, languageFallback: choice.standard !== 2020, warning: accountReady() ? '' : '当前题需要绑定可用的原 OJ 个人账号后才能提交。' };
+            const warning = [choice.standard ? '' : '此编译器未标明 C++ 标准，不能确认支持 C++11，请核对原 OJ 说明。', accountReady() ? '' : '当前题需要绑定可用的原 OJ 个人账号后才能提交。'].filter(Boolean).join(' ');
+            return { prepared: true, language: choice.label, languageFallback: choice.standard !== 2020, languageUnspecified: !choice.standard, warning };
         }
         if (job.mode === 'check' && stage !== 'verify') throw Error('连接检查不能发送提交。');
         verifyUrl();

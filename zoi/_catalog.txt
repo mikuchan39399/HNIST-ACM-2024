@@ -106,3 +106,4 @@ prefixGraph	algorithms/图论/优化建图/前缀优化建图.cpp
 graphBuilder	algorithms/图论/优化建图/建图上下文.cpp
 pbsPointer	algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp
 pbsRollback	algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp
+kmp	algorithms/字符串/KMP/kmp.cpp

@@ -65,7 +65,7 @@ function pageFixture(url = 'https://vjudge.net/problem/CodeForces-1A', showDelay
         addEventListener(_, fn) { this.callback = fn; }
         send() { this.status = status; this.responseText = JSON.stringify(response); this.callback(); }
     }
-    const button = { disabled: false, click() { clicks++; const req = new XHR(); req.open('POST', url.includes('/contest/') ? '/contest/submit/123/A' : '/problem/submit/CodeForces-1A'); req.send(); } };
+    const button = { disabled: false, click() { clicks++; const req = new XHR(); req.open('POST', url.includes('/contest/') ? '/contest/submit/123/A' : new URL(url).pathname.replace('/problem/', '/problem/submit/')); req.send(); } };
     const modal = { getClientRects: () => displayed ? [1] : [], querySelector: () => button };
     const document = { querySelectorAll: () => [trigger], querySelector: selector => selector === '#submit-form' && opened ? form : null };
     const context = { URL, Event, setTimeout, clearTimeout, Date, location: new URL(url), document, XMLHttpRequest: XHR };
@@ -107,19 +107,43 @@ async function pageChecks() {
         { labels: ['GNU C++17', 'GNU C++26'], selected: 'GNU C++26', fallback: true },
         { labels: ['C++ (gcc 8.3)', 'C (gcc 20.1)'], selected: 'C++ (gcc 8.3)', fallback: true },
         { labels: ['C++20 (clang 17)', 'GNU C++17'], selected: 'GNU C++17', fallback: true },
+        { labels: ['C++17', 'C++20', 'C++23'], selected: 'C++20', fallback: false },
+        { labels: ['C++17', 'C++23'], selected: 'C++23', fallback: true },
+        { labels: ['C++20', 'GNU G++20 13.2 (64 bit)'], selected: 'GNU G++20 13.2 (64 bit)', fallback: false },
+        { labels: ['GNU G++17', 'C++20'], selected: 'C++20', fallback: false },
+        { labels: ['C++20'], selected: 'C++20', fallback: false, noPlaceholder: true, url: 'https://vjudge.net/problem/CSES-1753', origin: 'CSES - 1753' },
+        // UVA-455 的真实表单: 标准后还带编译器版本, 不能拒绝 C++11 或误选旧 C++。
+        { labels: ['ANSI C 5.3.0', 'C++ 5.3.0', 'C++11 5.3.0', 'JAVA 1.8.0', 'PASCAL 3.0.0', 'PYTH3 3.5.1'], selected: 'C++11 5.3.0', fallback: true, url: 'https://vjudge.net/problem/UVA-455', origin: 'UVA - 455' },
+        { labels: ['GNU C++ 20.1.0', 'C++11 5.3.0'], selected: 'C++11 5.3.0', fallback: true },
+        { labels: ['C++ 11.2.0', 'C++0x'], selected: 'C++0x', fallback: true },
+        { labels: ['C++ 20.1.0', 'C++17'], selected: 'C++17', fallback: true },
+        { labels: ['G++', 'C++'], selected: 'G++', fallback: true, unknown: true },
+        { labels: ['C++ 5.3.0'], selected: 'C++ 5.3.0', fallback: true, unknown: true },
+        { labels: ['C++'], selected: 'C++', fallback: true, unknown: true },
+        { labels: ['GNU++17', 'GNU++20'], selected: 'GNU++20', fallback: false },
+        { labels: ['CPP14 (GCC 6.3)', 'CPP17 (GCC 7.3)'], selected: 'CPP17 (GCC 7.3)', fallback: true },
+        { labels: ['C++1y', 'C++1z'], selected: 'C++1z', fallback: true },
+        { labels: ['C++2b', 'C++2c'], selected: 'C++2c', fallback: true },
+        { labels: ['C++11', 'C++14'], selected: 'C++14', fallback: true },
+        { labels: ['C++20 (32 bit)', 'C++20 (64 bit)'], selected: 'C++20 (64 bit)', fallback: false },
+        { labels: ['C++ IOI-Style(GNU++20) (GCC 14.2.0)', 'C++23 (GCC 15.2.0)'], selected: 'C++23 (GCC 15.2.0)', fallback: true },
     ];
     for (const test of languageCases) {
-        const f = pageFixture();
-        f.lang.options = [{ value: '', textContent: '请选择' }, ...test.labels.map((textContent, index) => ({ value: String(index + 1), textContent }))];
+        const f = pageFixture(test.url);
+        if (test.origin) f.nodes['.problem-origin'].textContent = test.origin;
+        f.lang.options = [...(test.noPlaceholder ? [] : [{ value: '', textContent: '请选择' }]), ...test.labels.map((textContent, index) => ({ value: String(index + 1), textContent }))];
         const prepared = await f.run('prepare');
         assert.equal(prepared.language, test.selected); assert.equal(prepared.languageFallback, test.fallback);
+        if (test.unknown) assert.match(prepared.warning, /未标明 C\+\+ 标准/);
         assert.equal(f.lang.options.find(o => o.value === f.lang.value).textContent, test.selected);
         assert.equal(f.clicks(), 0); assert.equal((await f.run('submit')).ok, true); assert.equal(f.clicks(), 1);
     }
     const disabled = pageFixture(); disabled.lang.options[2].disabled = true; disabled.lang.options[3].parentElement = { disabled: true };
     assert.equal((await disabled.run('prepare')).language, 'GNU G++17 7.3.0');
-    const unsupported = pageFixture(); unsupported.lang.options = [{ value: '', textContent: '请选择' }, { value: '1', textContent: 'C++20 (clang 17)' }, { value: '2', textContent: 'C (gcc 8.3)' }];
-    assert.match((await unsupported.run('prepare')).error, /没有提供可用的 GNU C\+\+/); assert.equal(unsupported.clicks(), 0);
+    for (const label of ['C++20 (clang 17)', 'GNU C++20 (clang)', 'C++20 (MSVC)', 'Visual C++20', 'C++/CLI', 'C (gcc 8.3)', 'Python 3', 'C++20 experimental', 'GNU C++98', 'GNU C++03', 'C++98', 'C++ IOI-Style(GNU++20) (GCC 14.2.0)']) {
+        const unsupported = pageFixture(); unsupported.lang.options = [{ value: '', textContent: '请选择' }, { value: '1', textContent: label }];
+        assert.match((await unsupported.run('prepare')).error, /没有提供可用的.*C\+\+/); assert.equal(unsupported.clicks(), 0);
+    }
     for (const newline of ['\r\n', '\r']) {
         const f = pageFixture(); f.job.code = '#pragma GCC optimize("O2")' + newline + 'int main(){' + newline + 'return 0;' + newline + '}';
         assert.equal((await f.run('prepare')).prepared, true); assert.equal((await f.run('submit')).ok, true); assert.equal(f.clicks(), 1);
@@ -141,11 +165,11 @@ async function pageChecks() {
 async function workerChecks() {
     let listener;
     for (const mode of ['submit', 'check']) {
-    for (const languageFallback of [false, true]) {
-    const language = languageFallback ? 'C++14 (gcc 8.3)' : 'GNU G++20 13.2 (64 bit)';
+    for (const [languageFallback, languageUnspecified] of [[false, false], [true, false], [true, true]]) {
+    const language = languageUnspecified ? 'C++ 5.3.0' : languageFallback ? 'C++14 (gcc 8.3)' : 'GNU G++20 13.2 (64 bit)';
     const stages = [], session = await createSession({ url: 'https://vjudge.net/contest/123#problem/A', code: 'int main(){}', mode }, () => stages.push('validate'), { onFallback: actual => { assert.equal(actual, language); stages.push('notify'); } });
     try {
-        const chrome = { runtime: { onMessage: { addListener: fn => { listener = fn; } } }, scripting: { executeScript: async ({ args: [job, stage], world }) => { assert.equal(world, 'MAIN'); assert.equal(job.code, 'int main(){}'); stages.push(stage); return [{ result: stage === 'prepare' ? { prepared: true, language, languageFallback } : { ok: true, runId: '5678' } }]; } } };
+        const chrome = { runtime: { onMessage: { addListener: fn => { listener = fn; } } }, scripting: { executeScript: async ({ args: [job, stage], world }) => { assert.equal(world, 'MAIN'); assert.equal(job.code, 'int main(){}'); stages.push(stage); return [{ result: stage === 'prepare' ? { prepared: true, language, languageFallback, languageUnspecified } : { ok: true, runId: '5678' } }]; } } };
         vm.runInNewContext(fs.readFileSync(path.join(extension, 'background.js'), 'utf8'), { chrome, importScripts() {}, zoiVjudgePage, URL, fetch, AbortSignal });
         const result = await new Promise(resolve => listener({ type: 'zoi-vjudge-submit', port: session.port, token: session.token, url: 'https://vjudge.net/contest/123#problem/A' }, { tab: { id: 1 }, frameId: 0, url: 'https://vjudge.net/contest/123#problem/A' }, resolve));
         if (mode === 'submit') { assert.equal(result.runId, '5678'); assert.deepEqual(stages, ['validate', 'prepare', 'validate', ...(languageFallback ? ['notify'] : []), 'submit']); assert.equal((await session.done).ok, true); }
@@ -176,7 +200,7 @@ async function workerChecks() {
 }
 
 async function vscodeNoticeChecks() {
-    for (const languageFallback of [false, true]) {
+    for (const [languageFallback, languageUnspecified] of [[false, false], [true, false], [true, true]]) {
         let opened;
         const launched = new Promise(resolve => { opened = resolve; });
         const warnings = [], infos = [], errors = [];
@@ -197,9 +221,10 @@ async function vscodeNoticeChecks() {
         const post = (route, body = {}) => fetch(`http://127.0.0.1:${port}/${route}`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify({ url: url.href, ...body }) });
         try {
             const job = await (await post('claim')).json(); assert.ok(job.code.startsWith('#pragma GCC optimize("O2")\n'));
-            assert.equal((await post('permit', { languageFallback, language: languageFallback ? 'C++14 (gcc 8.3)' : 'GNU G++20' })).status, 200);
+            assert.equal((await post('permit', { languageFallback, languageUnspecified, language: languageUnspecified ? 'C++ 5.3.0' : languageFallback ? 'C++14 (gcc 8.3)' : 'GNU G++20' })).status, 200);
             assert.equal(warnings.length, languageFallback ? 1 : 0);
-            if (languageFallback) assert.match(warnings[0], /自动改用 C\+\+14 \(gcc 8\.3\).*O2/);
+            if (languageUnspecified) assert.match(warnings[0], /自动改用 C\+\+ 5\.3\.0.*未标明标准.*无法确认支持 C\+\+11/);
+            else if (languageFallback) assert.match(warnings[0], /自动改用 C\+\+14 \(gcc 8\.3\).*O2/);
             await post('report', { ok: true, runId: '6789' }); await pending;
             assert.deepEqual(errors, []); assert.ok(infos.some(message => message.includes('#6789')));
         } finally { await post('report', { ok: false }).catch(() => {}); }

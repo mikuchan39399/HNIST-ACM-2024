@@ -16,8 +16,9 @@
     const match = location.hash.match(/(?:^#|&)zoi-submit=(\d{1,5})\.([a-f0-9]{64})$/);
     if (!match) return;
     const url = location.href.slice(0, location.href.length - match[0].length);
+    const atcoder = location.hostname === 'atcoder.jp', name = atcoder ? 'AtCoder' : 'VJudge';
     history.replaceState(history.state, '', url);
-    chrome.runtime.sendMessage({ type: 'zoi-vjudge-submit', port: Number(match[1]), token: match[2], url }).then(result => {
-        if (result?.error) notify('ZOI VJudge：' + result.error);
-    }).catch(() => notify('ZOI VJudge 扩展连接中断，请先检查网页提交记录再重试。'));
+    chrome.runtime.sendMessage({ type: atcoder ? 'zoi-atcoder-submit' : 'zoi-vjudge-submit', port: Number(match[1]), token: match[2], url }).then(result => {
+        if (result?.error) notify('ZOI ' + name + '：' + result.error);
+    }).catch(() => notify('ZOI ' + name + ' 扩展连接中断，请先检查网页提交记录再重试。'));
 })();

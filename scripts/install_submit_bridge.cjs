@@ -35,9 +35,19 @@ const cphVjudge = [[
     '(0,f.isCodeforcesUrl)(i)?(await(0,c.storeSubmitProblem)(r),',
     'require("./zoi-submit-bridge.cjs").isVjudge(i)?await require("./zoi-submit-bridge.cjs").submitVjudge(u,r):(0,f.isCodeforcesUrl)(i)?(await(0,c.storeSubmitProblem)(r),',
 ]];
+const cphBrowser = [[cphVjudge[0][0],
+    'require("./zoi-submit-bridge.cjs").isAtcoder(i)?await require("./zoi-submit-bridge.cjs").submitAtcoder(u,r):' + cphVjudge[0][1],
+]];
 const frontendCondition = 'e.hostname.endsWith("codeforces.com")||"open.kattis.com"===e.hostname||e.hostname.endsWith("cses.fi")?e.hostname.endsWith("codeforces.com")?';
 const supported = '(e.hostname.endsWith("codeforces.com")||["vjudge.net","vjudge.net.cn"].includes(e.hostname))';
 const cphFrontend = [[frontendCondition, supported + '||"open.kattis.com"===e.hostname||e.hostname.endsWith("cses.fi")?' + supported + '?']];
+const browserSupported = '(e.hostname.endsWith("codeforces.com")||["vjudge.net","vjudge.net.cn","atcoder.jp"].includes(e.hostname))';
+const cphBrowserFrontend = [[frontendCondition, browserSupported + '||"open.kattis.com"===e.hostname||e.hostname.endsWith("cses.fi")?' + browserSupported + '?']];
+
+function removeKnown(source, versions) {
+    for (const replacements of versions) if (replacements.every(([, to]) => source.includes(to))) return transform(source, replacements, true);
+    return source;
+}
 
 function update(source, replacements, mode) {
     const patched = replacements.every(([, to]) => source.includes(to));
@@ -74,17 +84,19 @@ function install(directory, mode = 'install') {
         const replacements = spec.id === 'yltx.vscode-luogu' && luogu418.some(([from, to]) => source.includes(from) || source.includes(to)) ? luogu418 : spec.replacements;
         const extra = spec.id === specifications[0].id;
         // Remove our routing before restoring the old snapshot patch on uninstall.
-        const routing = extra && mode === 'uninstall' ? update(source, cphVjudge, mode) : null;
-        const basePatch = update(routing?.next ?? source, replacements, mode);
-        const finalPatch = extra && mode !== 'uninstall' ? update(basePatch.next, cphVjudge, mode) : basePatch;
-        const patched = basePatch.patched && (!extra || cphVjudge.every(([, to]) => source.includes(to)));
+        const routed = extra ? removeKnown(source, [cphBrowser, cphVjudge]) : source;
+        const basePatch = update(routed, replacements, mode);
+        const finalPatch = extra && mode !== 'uninstall' ? update(basePatch.next, cphBrowser, mode) : basePatch;
+        const patched = basePatch.patched && (!extra || cphBrowser.every(([, to]) => source.includes(to)));
         const assets = [{ file, source, next: finalPatch.next }];
         let frontendPatched = true;
         if (extra) {
             const frontend = path.join(path.dirname(file), 'frontend.module.js');
-            const patch = update(fs.readFileSync(frontend, 'utf8'), cphFrontend, mode);
-            assets.push({ file: frontend, source: patch.source, next: patch.next });
-            frontendPatched = patch.patched;
+            const source = fs.readFileSync(frontend, 'utf8');
+            const clean = removeKnown(source, [cphBrowserFrontend, cphFrontend]);
+            const next = mode === 'uninstall' ? clean : update(clean, cphBrowserFrontend, mode).next;
+            assets.push({ file: frontend, source, next });
+            frontendPatched = cphBrowserFrontend.every(([, to]) => source.includes(to));
         }
         const helper = path.join(path.dirname(file), 'zoi-submit-bridge.cjs');
         if (fs.existsSync(helper) && !fs.readFileSync(helper, 'utf8').startsWith('// Managed by ZOI submit bridge.\n')) {
@@ -122,4 +134,4 @@ if (require.main === module) {
     } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
 
-module.exports = { install, transform, specifications, luogu418, cphVjudge, cphFrontend };
+module.exports = { install, transform, specifications, luogu418, cphVjudge, cphFrontend, cphBrowser, cphBrowserFrontend };

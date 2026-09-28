@@ -11,15 +11,23 @@
 工具行为见 [使用文档](docs/README.md) 与 [维护流程](rules/workflow.md)。历史只供追溯，不与现行规则并行生效。
 临时文件位置与长期交接执行 [工作区与沉淀](rules/collab.md#工作区与沉淀), 不依赖会话记忆保存项目结论。
 工具交付须包含运行所需的配置依赖; 队友包与安装自检的现行范围见维护流程, 不只检查脚本文件存在。
-插件自动提交由 scripts/install_submit_bridge.cjs 适配 CPH Codeforces/VJudge 与洛谷提交入口;
+插件自动提交由 scripts/install_submit_bridge.cjs 适配 CPH Codeforces/VJudge/AtCoder 与洛谷提交入口;
   scripts/submit_bridge.cjs 调用 zoi.ps1 export 生成提交快照，不修改源码/管理状态，不自动迁移库目录;
   展开失败或编辑器版本变化必须停止提交。插件升级先核对入口，卸载只撤回本适配，保留其他补丁。
-  VJudge 拉题/建文件/样例复用 Competitive Companion 与 CPH，提交复用 Ctrl+Alt+S 和面板按钮；
-  scripts/vjudge-extension 是 Chrome MV3 扩展，只在主动提交时使用限时、单次授权的 loopback 快照，复用浏览器登录和原生表单；
-  动态选语言时优先 GNU C++20，否则选最高可用 GNU C++ 标准，同标准优先 64 位，未标明标准的 GNU C++ 仅作最后选择；
+  VJudge / AtCoder 拉题/建文件/样例复用 Competitive Companion 与 CPH，提交复用 Ctrl+Alt+S 和面板按钮；安装器兼容旧 VJudge 路由/按钮升级，卸载保留其他补丁；
+  scripts/vjudge-extension 是 Chrome MV3 扩展 ZOI Submit，目录名保留以兼容已有安装；只在主动提交时使用限时、单次授权的 loopback 快照，复用浏览器登录和原生表单；
+  动态选语言统一处理各原 OJ 的 GNU C++、纯标准名及 UVA 的 C++11 5.3.0 等版本后缀，不固定语言 ID，不把编译器版本当标准；识别 0x/1y/1z/2a/2b/2c 别名，拒绝明确 Clang/MSVC/Visual C++/CLI/IOI-Style 与 C++98/03；优先 C++20，否则选最高可用 C++11+，同标准先 GNU、再 64 位，无标准的 C++/G++ 仅作最后选择并提示无法确认 C++11；单个有效语言选项也视为加载完成；
   回退元数据随单次提交许可传回宿主，在提交前向 VS Code 提示实际编译器，无须确认；O2 仅在快照前加 GCC pragma，不改写语法；失败/未知结果不自动重试，验证码留给用户。
   网页编辑器校验仅统一 CRLF/CR/LF 换行，不忽略其他源码差异；连接检查复用提交前校验但不能取得提交许可。
   填表前等待原生窗口实际显示，不能把 DOM 创建当作显示完成；之后关闭窗口仍须拦截。网页错误用可关闭提示条，不阻塞页面。
+  AtCoder 仅接受官方具体题目 URL，转为同比赛 submit?taskScreenName=...；动态选普通 GNU C++20 或最高可用普通 GNU C++11+，识别标准别名，排除 Clang/IOI-Style；支持 Ace/纯文本，含 pragma 的 UTF-8 快照上限 512 KiB。
+  AtCoder 在原生表单校验/编辑器同步后发送一次同源 POST，不导出 Cookie/CSRF/验证码；新增个人提交编号须唯一且题号与完整源码相符才报告成功。失败或未知不重试，页面验证交用户；只填表检查不能取得提交许可。新回归接默认 CI，打包包含新增宿主、页面与检查脚本。
+  ZOI Submit 的独立 YOUKNOWWHO content script 只匹配 /topic-list*，按 Problem/Source 表头识别题目表格；保留原题名链接，CF/AtCoder/VJudge 不补重复入口，其他已识别题源补 VJudge，未知编号明确降级为题名搜索。题目旁另加 VS Code 导入按钮，CF/AtCoder 读原站，其余走 VJudge；搜索结果由用户核对选择，不猜题号。
+  题号转换离线进行，UVA 内部 ID 及 LightOJ 旧题号表带公开来源；不猜测内部 ID、不后台抓取题目，不更改原链接/进度。DOM 观察合并更新并去重，映射/DOM 回归接默认 CI，脚本和数据随队友包交付。
+右侧题面为独立 VS Code 扩展 scripts/statement-extension，Ctrl+Alt+O 按当前源码的 .cph 关联读取 CF/AtCoder/VJudge；package_statement.py 生成本地 VSIX，单独安装/卸载，不增加库安装器任务。
+  CF/AtCoder 优先直接读公开题面，必要时用 Chrome；VJudge 读取网页提供的题面版本，不要求配置原 OJ 提交账号。HTML/Markdown 经清洗后以本地 KaTeX 渲染公式，PDF 使用本地 PDF.js，拒绝远程脚本；读取通道与提交许可隔离。
+  YOUKNOWWHO 的 vscode URI 一键导入沿用 CPH 默认本机端口、首个工作区文件夹和原有模板；已有题目只打开，不覆写源码和样例。无法可靠提取样例时提示手动补充；未解析成功不生成文件，不重试未知结果。仅保证公开且当前账号可见、VJudge 已收录的内容，不扩张各原 OJ 的提交能力。
+  题面缓存有效期七天、至多一百条；公式/PDF/清洗依赖及许可证随 VSIX 和队友包交付，开发用 node_modules 排除。解析、样例、重复导入保护、只读通道与 DOM 更新回归接默认 CI，实页检查与模拟结果分别报告。
 部署工具须验证真实 ZIP 解压安装、旧状态升级、项目 includePath 覆盖与快捷键冲突;
   用户级默认值不等于项目实际生效, 用 zoi-configure/doctor 显式处理当前刷题目录, 不扫描其他项目。
   安装注册九任务及可用快捷键, 打包默认输出 docs/releases, 私人安装/展开状态不得进入版本控制或队友包。
@@ -87,7 +95,8 @@ CI 自动复验; 现行指南、专项证据和原文快照的导航边界见 [�
   禁 cache 评语/红线警告/"超预算触发 assert"复述(assert 行为全库统一)。
 - 括号: 函数/结构体的 { 换行; if 单语句不带括号; 缩进 4 空格。
 - 类型别名一律 using(utils 提供), 不用 #define 造类型。
-  泛型约束一律 C++20 concepts/requires, 禁 enable_if(全库 -std=c++20)。
+  新建或适配模板优先用简单的 C++11 写法；确有必要才按 __cplusplus 条件编译高版本特性，避免为兼容堆复杂包装。
+  存量 concepts/requires 等按模板逐件适配，不因这一约定宣称全库已支持 C++11。
 - endl 宏(#define endl '\n')和 LOCAL 包裹的 debug 宏都由 utils 自带,
   别的文件不要再定义。
 - 谓词参数按值传(方便传匿名 lambda), 不用 Pred&。
@@ -208,6 +217,9 @@ bigint/rw 属固定工具内核, 保留稳定接口与完整可运行 Usage, 不
   rw 按合法空白分隔 token 读写, 输入整数须在类型内; 浮点读入不设固定 token 长度, 输出固定六位且容纳最大有限 double。
   自含 read/write 支持 bool 的 0/1 和 i128/u128; 不混用其他标准流 IO, 正常结束刷写, 非交互输入方案。
   bigint_check/rw_check 默认回归之外, check_bigint_rw.py 用 Python int 验十万位与 100000!, 子进程核对 rw 析构刷写和两份 Usage, 自动进入独立普通/sanitizer CI。
+KMP: kmp.h 接普通字节串, 构造/build/find_first/find_all 均接 const string&, C++11 起可用, 不依赖 string_view 或条件编译; 内部 p/pi 为 1-based; build 自带复位, pi[i] 为前 i 个字符的最长相等真前后缀长度。
+  find_first 返回 1-based 起点或 -1, find_all 返回无占位的升序起点表并保留重叠; 空模式匹配 1..n+1, 输入长度 < INT_MAX。
+  固定引擎, 默认 kmp_check 独立穷举/随机及百万长度退化、重叠和大小重建, 自动进入普通与 sanitizer CI；check_submit_bridge 另验实际展开快照的 C++11/14/17/20/23 完整对拍及旧标准头边界。
 Trie 双件: 普通版提供单词/前缀计数及非负 LL 最大异或; 持久化版从任意根分叉, 支持多根差集、max LCP 和笛卡尔积异或第 k 大。
   字符串插入按路径循环复制, 不依赖串长递归栈; 多根计数中间值使用 LL。差集须逐值非负, 字符串/整数接口不混用。
   普通 cap 包含根, 持久化 cap 不含空哨兵且每次预算为串长+1或HB+2; clear 保留容量并使旧句柄失效。
@@ -218,6 +230,7 @@ Trie 双件: 普通版提供单词/前缀计数及非负 LL 最大异或; 持久
   i128 流输入在 u128 域累积并安全还原最小负数; rnd 支持 bool/字符与有限浮点端点, 可显式传引擎复现, MT 不作为安全随机源。
   Dcr 输入全体参与、排名 1-based, size/逆映射前 build, add 后旧排名失效, clear 保留容量; Misra-Gries 保留候选抵消与二次计数, 适合小 k。
   utils 的 z_fill_n 保持下标 0 起填 min(n+10,size) 个元素, n+10 在 size_t 域计算; fast_io 为 inline, LOCAL 调试宏仍只在 LOCAL 下定义。
+  cmax/cmin 用候选值原地更新第一参数, 严格改善才赋值并返回 true, 相等保留原对象; 两参同型且支持 < 与赋值, C++11 起可用, 数值类型时空 O(1)。
 禁做: 任何摊还结构 × 可持久化 = 禁(版本回放摧毁势能)——Splay/LCT/
   势能线段树/哈希表/桶的持久化版全灭。例外: 可持久化并查集(按秩合并+
   无路径压缩, 纯最坏 O(log n) 无摊还); 真正禁的是"带路径压缩的持久化"。
@@ -244,9 +257,10 @@ PersSegTree 红线: Tag 永久化只限加法类可交换标记; find_kth 只在
   第 k 小用例在外部建立 BIT 和 Dcr, val 为离散排名, 通过 d[ans[id]] 还原原值; 当前契约仍为静态单位计数, 不自动处理无解。
   保留裸事件循环、分流与递归: 回滚版扣减 k 并逐层撤销, 指针版保留原 k 并最终清空前缀; 不支持时间交错修改。
   Usage 含一维默认事件与二维自定义事件; parallel_binary_search_check 覆盖默认/自定义类型、两种 BIT 组合及外部状态复用, 自动进普通及 sanitizer CI。
-编译基线: 算法模板保持 C++20, requires/if constexpr/concepts/<bit> 随便用;
-  utils 公共底座单独兼容 GNU C++14, 现代头按标准启用, 旧标准方向数组为各翻译单元独立的可变数组, z_fill_n 保持相同填充契约;
-  存量 C++17 写法不回改。赛前确认评测机 GCC 版本号(-std 一样不代表
+编译兼容: 2026-09-27 用户要求从 KMP 开始逐件适配 C++11 及以上，能用 C++11 写清楚的直接使用，必要时才条件编译；
+  已适配 KMP 与 utils 公共底座，其他模板仍按各自实际特性要求选择标准，不自动批量降级；默认整库 runner 仍使用 C++20。
+  utils 现代头按标准启用，旧标准方向数组为各翻译单元独立的可变数组，z_fill_n 保持相同填充契约；
+  兼容项须验证真实展开代码在 C++11/14/17/20/23 下编译和运行。赛前确认评测机 GCC 版本号(-std 一样不代表
   库特性齐, z_fill_n 旧写法在老 GCC 直接报错就是教训)。
 递归深度: Tarjan/LCA/build 全递归, 1e6 深链 × 8MB 栈会爆。保持递归
   (手速优先), 赛前确认评测栈宽, 遇深栈题现场改手栈。

@@ -7,7 +7,9 @@
 | 库里有什么 | [功能总览](../docs/features/README.md) |
 | 安装、卸载、VS Code 任务 | [安装指南](../docs/setup/README.md) |
 | 展开、恢复、状态清理 | [刷题指南](../docs/expand/README.md) |
-| CPH／洛谷自动展开提交、VJudge Chrome 扩展 | [提交适配](../docs/expand/README.md#插件提交时自动展开) |
+| CPH／洛谷自动展开提交、VJudge / AtCoder Chrome 扩展 | [提交适配](../docs/expand/README.md#插件提交时自动展开) |
+| YOUKNOWWHO 题单链接与来源映射 | [题单链接](../docs/expand/README.md#youknowwho-题单链接) |
+| CF / AtCoder / VJudge 右侧题面与 VS Code 一键导入 | [题面扩展](../docs/expand/README.md#右侧题面与一键导入) |
 | 打印手册 | [手册指南](../docs/booklet/README.md) |
 | 脚本实现、跳板、事务、CI 与目录生成 | [工具维护说明](../docs/maintenance/README.md) |
 | 对拍现状、行为范围与运行证据 | [两层表使用与维护](../docs/verification/README.md) |
@@ -16,10 +18,11 @@
 修改工具时必须读对应使用契约和维护约定。迁移前原文保存在 records/tooling/docs-20260906-pass2，历史不作为并行规则。
 
 ## 10. 常用底座 (题目代码的地基, 不随题改)
-utils 母版(杂项\utils\utils.cpp): 别名全家 + 最值常量 + fast_io + 四个整数取整函数 +
-  debug/debug_array(LOCAL 包裹) + 方向数组(刻意非 const, C++17+ 为 inline, C++14 为各翻译单元独立的 static 数组)。
+utils 母版(杂项\utils\utils.cpp): 别名全家 + 最值常量 + fast_io + cmax/cmin + 四个整数取整函数 +
+  debug/debug_array(LOCAL 包裹) + 方向数组(刻意非 const, C++17+ 为 inline, C++11/14 为各翻译单元独立的 static 数组)。
   自带 using namespace std 和常用头, include 它一个就够。
-  底座兼容 GNU C++14, string_view 按 C++17 启用, bit/concepts 按 C++20 启用; z_fill_n 在 C++14 用参数包初始化列表保持原填充范围。
+  底座兼容 GNU C++11, string_view 按 C++17 启用, bit/concepts/ranges 按 C++20 启用; z_fill_n 在 C++11/14 用参数包初始化列表保持原填充范围。
+  cmax(a,b)/cmin(a,b) 原地更新 a 并返回是否严格改善, 相等不赋值; 两参同型, LL 常量使用 LL 后缀。
 快读快写(杂项\快读快写\快读快写.cpp, 跳板名 rw): fread/fwrite 手动
   缓冲的 read/write 全家, 析构自动冲刷, utils_int 概念覆盖 __int128
   。库内引擎不用, 刷题按需 include。

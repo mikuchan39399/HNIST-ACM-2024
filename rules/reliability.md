@@ -8,7 +8,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 
 更新：`./scripts/make_reliability.ps1`；只读检查：`./scripts/make_reliability.ps1 -Check`。普通回归不会改写本表。
 
-## A 类：有直接对拍引用的现役模板 [73]
+## A 类：有直接对拍引用的现役模板 [74]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
@@ -85,6 +85,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [graphBuilder - algorithms/图论/优化建图/建图上下文.cpp](<../algorithms/图论/优化建图/建图上下文.cpp>) | [algorithms/图论/优化建图/对拍/graphbuilder_check.cpp](<../algorithms/图论/优化建图/对拍/graphbuilder_check.cpp>) |
 | [pbsPointer - algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp](<../algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp>) | [algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp](<../algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp>) |
 | [pbsRollback - algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp](<../algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp>) | [algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp](<../algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp>) |
+| [kmp - algorithms/字符串/KMP/kmp.cpp](<../algorithms/字符串/KMP/kmp.cpp>) | [algorithms/字符串/KMP/对拍/kmp_check.cpp](<../algorithms/字符串/KMP/对拍/kmp_check.cpp>) |
 
 ## B 类：未发现直接对拍引用的现役模板 [9]
 
@@ -148,7 +149,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 | [algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 
-## 已发现的对拍套件 [39]
+## 已发现的对拍套件 [40]
 
 - [algorithms/图论/优化建图/对拍/graphbuilder_check.cpp](<../algorithms/图论/优化建图/对拍/graphbuilder_check.cpp>)
 - [algorithms/图论/优化建图/对拍/prefixgraph_check.cpp](<../algorithms/图论/优化建图/对拍/prefixgraph_check.cpp>)
@@ -167,6 +168,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 - [algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp](<../algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp>)
 - [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)
 - [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>)
+- [algorithms/字符串/KMP/对拍/kmp_check.cpp](<../algorithms/字符串/KMP/对拍/kmp_check.cpp>)
 - [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)
 - [algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>)
 - [algorithms/数学/数论/对拍/mint_check.cpp](<../algorithms/数学/数论/对拍/mint_check.cpp>)

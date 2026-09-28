@@ -38,6 +38,7 @@ Release/
 # Local regression logs and isolated test workspaces
 .zoi-checks/
 .ci-results/
+scripts/statement-extension/node_modules/
 scripts/.zoi-install-state.json*
 *.zoi-state
 *.zoi-tmp
