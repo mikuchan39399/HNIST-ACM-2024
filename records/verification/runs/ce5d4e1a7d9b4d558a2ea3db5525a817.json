@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "ce5d4e1a7d9b4d558a2ea3db5525a817",
+  "startedUtc": "2026-09-30T06:39:50.3451927Z",
+  "finishedUtc": "2026-09-30T06:39:56.3768546Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/booklet-profile/delivery-z",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "38df73f09afb3b6dc2f584c3df292a7a4b6d5b9b1f8c9510e7051ccafbe5489b",
+      "files": [
+        {
+          "path": "algorithms/字符串/Z函数/z_function.cpp",
+          "hash": "ace029cd390436918dc4cdddc46739afc64a3335371914319e65641372adf6b4"
+        },
+        {
+          "path": "algorithms/字符串/Z函数/对拍/z_function_check.cpp",
+          "hash": "4b3b85521ad02df2ff317d4385d06db58189b434179be804b05f6d0a17b10733"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/Z函数/z_function.cpp",
+          "hash": "7b37d829f8a731b267483a6839cd5e7a4ebd96b370d005fe7c3792ca78def7fb",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/Z函数/对拍/z_function_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.627
+    }
+  ]
+}

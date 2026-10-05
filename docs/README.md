@@ -18,7 +18,8 @@
 | 查专项验证依据或既有方案 | [专项验证索引](../records/verification/README.md) / [工具与发布历史](../records/tooling/README.md) |
 | 看待办、有效交接或查阅旧记录 | [当前工作板](../rules/sweep-board.md) / [清扫历史](../rules/sweep-history.md) |
 | 跑对拍、定位失败 | [测试说明](../scripts/checks.md) |
-| 打印比赛手册 | [生成 PDF](booklet/README.md) |
+| 打印比赛手册 | [一键生成与打印](booklet/README.md) |
+| 理解纸版与电子版的关系、维护自动生成机制 | [Booklet 系统说明](booklet/architecture.md) |
 | 改脚本、维护跳板或制作分享包 | [维护说明](maintenance/README.md) |
 | 自己移动目录、增加算法，了解自动与手动的边界 | [目录同步](maintenance/layout.md) |
 | 用 VS Code 任务生成队友 ZIP | [正式发布目录](releases/README.md) |

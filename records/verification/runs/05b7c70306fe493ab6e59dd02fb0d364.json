@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "05b7c70306fe493ab6e59dd02fb0d364",
+  "startedUtc": "2026-09-29T14:02:09.0837584Z",
+  "finishedUtc": "2026-09-29T14:02:14.2721851Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/7885889bbba046d9b36186c58af17d6e/logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "70b60efc3331200a1a468cb55a16b8e3f8aa1bbc323bffb6cca8f65c8a61a504",
+      "files": [
+        {
+          "path": "algorithms/字符串/Manacher/manacher.cpp",
+          "hash": "6a117f076520a7e319939a7cdfe08460dc2a1492e9c0f12f9fc262926835b3ec"
+        },
+        {
+          "path": "algorithms/字符串/Manacher/对拍/manacher_check.cpp",
+          "hash": "97614f20b79c5aeda832c2f5d35d2ca2b709f42c163689e9a23ab86f348063b4"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "35b02e4368d50096187814010cc64ccfb5572b4ddadea827244f57a17481dddf"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/Manacher/manacher.cpp",
+          "hash": "9c258bbe58714e3f0d0ac6baa6fea0d417588a47cb977f56463f0e30ed5aa5e2",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/Manacher/对拍/manacher_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.853
+    }
+  ]
+}

@@ -5,6 +5,7 @@
 **[库里有什么](docs/features/README.md)** · **[查算法和跳板](docs/features/catalog.md)** · **[使用指南](docs/README.md)** · **[学习进度](docs/progress/README.md)** · **[对拍现状](docs/verification/status.md)**
 
 初次使用：[安装](docs/setup/README.md) → include 所需模板并写题 → [展开提交](docs/expand/README.md)。
+纸质赛场：[一键生成 C++20 手册](docs/booklet/README.md) · [源码选择与构建机制](docs/booklet/architecture.md)。
 维护者：[对拍](scripts/checks.md) · [脚本维护](docs/maintenance/README.md) · [AI 入口](AGENTS.md)。
 
 笔记和待补内容不等于可用引擎；具体接口、内存预算看源码. [对拍现状](docs/verification/status.md) 用口语说明已测范围与缺口, [AI 明细](docs/verification/details.md) 保留 API 与运行证据, 两表由同一份登记和结果生成
@@ -24,7 +25,7 @@ HNIST-ACM-2024/
 │  ├─ progress/      本人的学习进度与模板整理状态
 │  ├─ setup/         队友安装与卸载
 │  ├─ expand/        展开提交、恢复及状态清理
-│  ├─ booklet/       打印指南；output/ 放 PDF 与排版源文件（不提交）
+│  ├─ booklet/       打印与系统说明；output/ 放分册和可读代码（不提交）
 │  ├─ maintenance/   修改脚本、维护目录和制作分享包
 │  ├─ releases/      本地生成的队友 ZIP（产物不提交）
 │  └─ backups/       个人恢复备份（备份不提交）

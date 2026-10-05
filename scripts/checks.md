@@ -1,10 +1,16 @@
 # 对拍怎么跑
 
+手册的完整生成、代码与 PDF 验收由 `./scripts/build_booklet.ps1` 统一执行；`make_booklet.ps1` 无参数调用进入同一流程。预览与独立检查见[手册自动检查](#手册自动检查)，选择协议与覆盖边界见 [Booklet 系统说明](../docs/booklet/architecture.md)。
+
 `python scripts/check_seg_snippet.py` 验证实际代码片段安装、重复安装、冲突保留及卸载，并从 `scripts/snippets/seg-add-sum.json` 提取真实 body 编译，使用普通/动态线段树对拍 300 组随机操作、20 万长度及操作、负增量与超 int 总和。`--shell powershell --install-only` 单验 Windows PowerShell 5.1 安装流程；默认 CI 在 Windows 双 shell 验安装，在 Linux 验完整组合。成功后清理本次临时目录，失败保留现场。
 
 目标是尽早发现会丢区域赛分数的错误。随机对拍、确定性边界、语法检查和 sanitizer 分工不同，不能互相替代。
 
-`./scripts/run_checks.ps1 -Filter kmp` 验证前缀函数、首次及全部重叠匹配：64897 对二元短串穷举、2000 组固定种子随机数据，逐字符独立暴力核对；另含空模式/空文本、完整字节域、string 子串、对象独立持有与自身引用重建。默认百万长度全同串、周期串、末尾长链回退与大—小—空—大重建使用闭式答案核对，自动进入普通及 sanitizer CI，无需额外参数。`node scripts/check_submit_bridge.cjs` 另将 KMP 完整对拍实际展开为提交快照，以 C++11/14/17/20/23 分别编译并运行同一套测试；使用 `-pedantic-errors -Wall -Wextra -Werror`，同时检查 utils 与 LOCAL 调试、旧标准不能直接引入现代头。不同 -std 的本机通过不等于所有历史编译器和远端 OJ 验证。
+`./scripts/run_checks.ps1 -Filter kmp` 验证C++11 单核心的前缀函数、首次及全部重叠匹配：64897 对二元短串穷举、2000 组固定种子随机数据，逐字符独立暴力核对；另含空模式/空文本、完整字节域、string 子串、对象独立持有与自身引用重建。新增空容器/仅占位和自身 pi/其子视图/空视图重建检查。另对 int/LL 序列各运行 64897 对穷举、2000 组随机，含极值、占位、pair/string 元素与 600 组差分匹配；C++20+ 增测 span 子视图、原生数组、const/静态长度和模式独立持有。字符串及整数序列默认百万长度全同串、周期串、末尾长链回退与大—小—空—大重建使用闭式答案核对，自动进入普通及 sanitizer CI，无需额外参数。`node scripts/check_submit_bridge.cjs` 另将 KMP 完整对拍实际展开为提交快照，以 C++11/14/17/20/23 分别编译并运行同一套测试；使用 `-pedantic-errors -Wall -Wextra -Werror`，同时检查 utils 与 LOCAL 调试、旧标准不能直接引入现代头。不同 -std 的本机通过不等于所有历史编译器和远端 OJ 验证。
+
+`./scripts/run_checks.ps1 -Filter z_function` 验证 Z 数组、空态及跨类型重建：string/int/LL 各 9841 个三值短序列穷举与 2000 组固定种子随机，逐起点直接比较前缀并独立核对所有周期。覆盖全字节、整数极值、占位、pair/string/bool 与不可复制且仅支持 `==` 的元素、旧 z 及其 span 输入；600 组模式拼接应用与百万规模全同/末尾单异/交替/全不同和大小复用，另用计数元素核对比较次数不超过 2n。E 数组接口 `extend(text, pattern)` 另验 64897 对穷举、string/int/LL 各 2000 随机，覆盖空模式/长模式/重叠/泛型元素与百万退化输入，独立逐元素比较 LCP 并核对比较次数不超过 2(n+m)；span 同时验证两参数的静态/const/空视图、600 随机片段及百万片段。C++20 增测 const/静态长度/原生数组、600 随机片段与百万片段；无参数进入普通和 sanitizer CI。`check_submit_bridge.cjs` 验证真实展开代码与 Usage 在 C++11/14/17/20/23 下运行，`check_booklet_code.py` 另编译实际纸面代码和 Usage。
+
+`./scripts/run_checks.ps1 -Filter manacher` 验证完整半径、全部合法区间判断、最左最长区间和 `LL` 出现次数：string/int/LL 分别 9841 个三值短序列穷举与 2000 组固定种子随机，参照为逐子段逐元素判回文。另含空态、占位、全字节、整数极值、负数分隔符碰撞、pair/string/bool 元素、不可复制且仅支持 `==` 的元素、输入生命周期与自身半径作输入。三种类型均以闭式答案验百万规模退化及百万—1—0—257—百万重建；字符串另验交替序列和 10 万区间查询，600 组差分应用以原数组镜像位置之和独立核对。C++20 起增测 span 的原生数组、const/静态长度、600 随机片段、零字节、自身视图及百万子片段；无参数进入普通和 sanitizer CI。提交展开检查覆盖 C++11/14/17/20/23，实际纸面代码检查也复用完整套件与 Usage。
 
 生命周期专项覆盖完整 build/run 不先 init 的复用路径。`lifecycle_check` 每组 350 轮, 核对备用三份 LCA、连通性派生图重建、普通线段树旧懒标记以及必须保留的离线输入/重心点权/持久化版本; `segfhq_lifecycle_check` 用 350×100 独立数组操作与 20万-1-0-257-20万复用验证旧树套树新入口。既有图论和普通线段树套件也已迁移为直接 build/run, 两份新套件由普通及 sanitizer CI 自动发现。全部现役条目与例外见 [生命周期清单](../records/verification/lifecycle-20260909.md)。
 
@@ -25,7 +31,7 @@ node scripts/check_atcoder_bridge.cjs
 node scripts/check_youknowwho_links.cjs
 ```
 
-VJudge 自检通过真实本机 HTTP 连接验证随机令牌、单次领取/许可、地址匹配、代码变动和超时；页面夹具检查 C++20 优先、最高标准自动回退、GNU 与无厂商标签混合排序、CSES-1753 单选项表单、UVA-455 真实语言列表、标准别名、编译器版本不冒充标准、未知标准提示、C++98/03 与非支持编译器拒绝、禁用选项、比赛路由、CRLF/CR 到 LF 的编辑器规范化、原生提交成功/失败与真实源码改动的拒绝路径。Chrome worker 与 VS Code 宿主夹具检查先准备、许可时提示一次回退、最后提交的顺序，提示不等待确认；只填表检查也执行提交前校验。全程不向 OJ 提交，默认 CI 运行。提交适配自检另覆盖上述 utils/KMP 多标准检查、CPH 按钮/快捷键路由和洛谷 4.16/4.18 安装升级与卸载；实际 Chrome 登录、Companion 拉题和 OJ 评测需单独验收。
+VJudge 自检通过真实本机 HTTP 连接验证随机令牌、单次领取/许可、地址匹配、代码变动和超时；页面夹具检查 C++20 优先、最高标准自动回退、GNU 与无厂商标签混合排序、CSES-1753 单选项表单、UVA-455 真实语言列表、标准别名、编译器版本不冒充标准、未知标准提示、C++98/03 与非支持编译器拒绝、禁用选项、比赛路由、CRLF/CR 到 LF 的编辑器规范化、原生提交成功/失败与真实源码改动的拒绝路径。Chrome worker 与 VS Code 宿主夹具检查先准备、许可时提示一次回退、最后提交的顺序，提示不等待确认；只填表检查也执行提交前校验。全程不向 OJ 提交，默认 CI 运行。提交适配自检另覆盖上述 utils/KMP/Manacher/ZFunction 多标准检查、CPH 按钮/快捷键路由和洛谷 4.16/4.18 安装升级与卸载；实际 Chrome 登录、Companion 拉题和 OJ 评测需单独验收。
 
 加载本地 Chrome 扩展后运行 `node scripts/check_vjudge_chrome.cjs` 做真实表单检查，不发送 OJ 提交；也可传入一个 VJudge 题目 URL 检查自动回退。该交互检查不在 CI 中执行。
 
@@ -36,6 +42,10 @@ AtCoder 自检覆盖官方题目 URL、普通 GNU 标准排序与 IOI-Style/Clan
 YOUKNOWWHO 链接自检覆盖常见 OJ 地址、CF/Gym/Group、AtCoder 新旧网址、UVA 内部 ID 与 LightOJ slug 映射、VJudge 跳过、未知题号搜索与参数编码、恶意网址拒绝，以及仅处理题目表格、动态增删/改链接、去重和浏览器脚本加载。检查不访问网络，接默认 CI；实页验收需重载 Chrome 扩展并刷新题单。
 
 右侧题面自检使用独立 DOM 依赖；首次在 `scripts/statement-extension` 目录运行 `npm ci --ignore-scripts --no-audit --no-fund`，回到仓库根运行 `node scripts/check_statement.cjs`。覆盖 CPH 文件关联与题目别名、三站 HTML/Markdown/PDF 解析、公式清洗、AtCoder 英日双语及高亮样例换行、危险 HTML/链接拒绝、只读令牌会话、CPH 本机传输、题单导入路由和真实 MutationObserver 不循环；不向 OJ 提交。`python scripts/package_statement.py` 另验 VSIX 运行依赖完整性和开发依赖排除，两项接默认 CI；队友包交付依赖由 `check_deployment.ps1` 检查。
+
+该入口同时运行 `check_gym_statement.cjs`：同场附件重定向后的令牌交接、原题号和 CPH URL 保留、VJudge 回退及失败后的原站 PDF、附件链接的题名搜索，以及 PDF 按题号分页。正式夹具 `fixtures/gym-100212-pdf.json` 来自 ASC 10 原 PDF 的标题/样例坐标，覆盖 A–K 页区间、B/K 跨页、C 双栏样例及 D/E/H/J 多组表格拒绝合并。离线测试不代表实际 Chrome 扩展已重载或 VS Code 已完成 CPH 导入。
+
+题目整理入口用 `node scripts/check_problem_trash.cjs` 验证。隔离夹具覆盖中文/空格/特殊字符文件名、选择与取消、未保存内容、CPH 样例路径和 MD5 文件名、完整撤回、同名冲突、文件变化、写入中断回退、目录联接、未完成展开事务和无关文件保留；接默认 CI，结束时清理本次夹具。
 
 2026-09-28 使用 Chrome 1.4.0 对 CF-1913B、AtCoder-abc001_1 与 VJudge-UVA11452 完成真实只读会话。PDF 原文和中文题面在本地 Webview 预览中显示，UVA11452 两个版本样例一致；KMP 题单显示 41 个 VS Code 按钮，CF 无重复入口。用户确认 VS Code 右侧题面已显示；ZOI 题面 1.0.1 的真实 URI → 题面 → CPH → C++ 文件链路已用 abc001_1 验证，三组多行样例逐字一致，重复打开既有题目未改变源码/样例。CPH 接收服务未启动与未配置默认语言分别会阻止接收、等待语言选择，不能将其误报为已完成。此处只代表已检查页面，不代表所有原 OJ、PDF 排版或远端评测都已验收。
 
@@ -56,6 +66,8 @@ YOUKNOWWHO 链接自检覆盖常见 OJ 地址、CF/Gym/Group、AtCoder 新旧网
   GitHub 上传日志保存 7 天。报告耗时仅用于定位慢测试，不作为 OJ 性能结论。
 
 `./scripts/run_checks.ps1 -Filter parallel_binary_search` 同时验证两份整体二分真实实现，长度 1..6 的三值数组穷举所有合法查询，600 组随机排序对照，以及五种 n=m=20 万的正序、倒序、全同、交替极值和随机数组。大数据按闭式答案或整段/短段排序独立核对，含单点、空询问和大—小—大调用，另核对外部离散表、插入位置与询问 id 的排列、按值接收不改原表及 move 转移；自动进入普通与 sanitizer CI。同时验证缺省 E=Event、自定义一维/二维 Event、pair 坐标及附加元数据；二维用逐矩形排序核对 2×2 三值矩阵穷举和 350 组随机矩阵，另以闭式答案核对正逆序 500×500 矩阵各 6 万次查询。同一外部 BIT 连续调用后逐格验证恢复为空，含单行、单列、单值域、空询问与大—小—大切换。只覆盖静态第 k 小，不代表带修改或任意统计回调已验证。
+
+`./scripts/run_checks.ps1 -Filter acam` 覆盖五种字符集各 1000 组随机字典、511 个二元文本穷举和全部状态的独立最长后缀/字符转移核对。默认同时运行百万长度链及大—小—空—大重建、456976 个四字母模式与百万周期文本、重复模式的 50 亿总计数，包含重叠、空模式/字典、精确点池、输入和复制对象独立性；无需压力参数，普通及 sanitizer CI 自动发现。日志给出构建/查询耗时与容器字节预算，不能直接当作远端 OJ 性能保证。`check_submit_bridge.cjs` 另在 C++11/14/17/20/23 下编译并运行实际展开的完整 ACAM 套件和 Usage，随既有入口进入 CI。
 
 ## 如何补测试
 
@@ -85,6 +97,8 @@ BigInt 和 rw 的原生套件分别用 `-Filter bigint`、`-Filter rw_check`；r
 运行 `./scripts/run_checks.ps1 -Filter mint_check` 即包含全部深测，普通与 sanitizer CI 自动发现，无需额外参数。合数模只测试少量大 k 查询，不承诺高频查询性能，见 [mint 验证](../records/verification/mint-20260907.md)。
 
 ## CI 与入口自检
+
+安装与部署入口分别用 `check_setup.ps1`、`check_deployment.ps1` 在 PowerShell 5.1 和 7 验证。除真实 ZIP 安装外，覆盖特殊字符路径、文件占用后的原子写入清理、并发锁、未知临时文件保留、安装/撤销中断恢复、重装后保留个人配置与改写任务、工作区幂等及空目录归属、旧工作区状态升级、目录联接拒绝和只读队友包清理。故障注入的预期 `[FAIL]` 必须被断言匹配，最终套件成功才代表通过；Windows Server CI 不等于所有 Win10/11 客户端实测。
 
 `graph_capacity_check` 对 25 份统一 Graph 体系模板补容量专项：对象一次构造、20 万原点容量、外置图零边预留、四组各 1000 轮小测，核对闭式答案、实际编号和高位工作区哨兵。`floyd_capacity_check` 调用旧 Floyd 的真实 main，独立 Dijkstra 核验 304 组非负无向图及 109-1-109-1 复用，检查本轮矩阵外的哨兵不被清空。两者默认被普通与 sanitizer CI 发现；这是容量专项，不代替各模板完整语义验收，也不把边扩容等同于点表自动扩容。
 
@@ -230,10 +244,16 @@ rw 原生套件含全部整数类型与 i128/u128 边界、bool、最大有限 d
 
 ## 手册自动检查
 
+`./scripts/build_booklet.ps1` 是完整构建与验收入口，`make_booklet.ps1` 无参数调用自动转入。支持 `-Python`、`-Compiler`、`-TypstPath` 和 `-OutDir`；默认优先使用 `.zoi-checks/booklet-tools/venv` 的 Python。实际打印代码检查覆盖 KMP、Manacher、Z/E 和 utils 的完整对拍与 Usage，所有 C++ 条目核对 `.code.md`、`.typ`、行数和指纹；覆盖边界见 [系统说明](../docs/booklet/architecture.md)。
+
+`./scripts/check_booklet_release.ps1 [-Python <路径>]` 使用隔离生成器和检查器，验证生成/代码/PDF 任一步失败均不覆盖旧产物、检查失败立即停止、成功发布带验证标记、撤下的旧册清理且无关文件保留。需要所选 Python 已安装 pypdf；不运行真实模板，也不操作正式 PDF。CI booklet 作业将它与真实完整构建一起执行。
+
+`python scripts/check_booklet_code.py <完整分册目录> [--compiler g++]` 可独立重验实际纸面代码。测试只引用 `.typ` 提取的实现，`booklet_test_adapter.h` 只将既有对拍输入转成 span；Usage 不经过适配器。源内选择夹具验证共享循环、任意函数命名、Usage、选择记录、不改变电子源码及非法分支拒绝，不按算法名登记转换规则。
+
 `./scripts/check_booklet.ps1 -AuditOnly` 使用真实 Typst 0.15.1 核对生产审计函数的原生参数传递、引号与反斜杠、中文输出和含空格/中文的路径，以及错误表达式退出状态。Windows setup CI 在 PS 5.1/7 分别执行；不需要额外字体。`-Render` 自动先跑同一检查，再跑原有构建样例，避免 SourceOnly 通过却漏掉原生调用错误。
 
 样例含七层嵌套目录；PDF 检查读取实际字号及位置，验证目录页和正文都逐层收敛、子级缩进正确且目录行不重叠。深目录也必须出现在目录页中，不能用截断深度掩盖样式问题。
 
-`./scripts/check_booklet.ps1` 在 PS 5.1/7 检查发现和 Markdown 转换，不要求 Typst；`-Render` 实际编译样例与 1200 行增长/奇数页场景。构建审计检查实现连同说明各占独立页段，PDF 检查逐项核对文件夹与源码的书签层级、纸面目录文本和起页。共 18 次构建包含新增/改名目录、纯空目录筛选、旧题记不再读取、同目录源码全部收录与逐实现起页、目录与唯一同名源码合用标题，README 主副标题、自动编号小节、公式标签、连续提示与 90 行长表跨栏，以及行内/独立/表格公式、分式/上下标/求和/伸缩括号和代码中的美元符号，以及未知命令、错误分组、未闭合公式、原始 Typst 注入的拒绝路径。诊断放 `.zoi-checks/booklet-test-*`，按现有工作区清理约定管理。
+`./scripts/check_booklet.ps1` 在 PS 5.1/7 检查发现和 Markdown 转换，不要求 Typst；`-Render` 实际编译样例与 1200 行增长/奇数页场景。构建审计检查实现连同说明各占独立页段，PDF 检查逐项核对文件夹与源码的书签层级、纸面目录文本和起页。23 次单册构建及默认分册检查包含新增/改名目录、纯空目录筛选、旧题记不再读取、同目录源码全部收录与逐实现起页、目录与唯一同名源码合用标题，README 主副标题、自动编号小节、公式标签、连续提示与 90 行长表跨页，以及行内/独立/表格公式、分式/上下标/求和/伸缩括号和代码中的美元符号，以及未知命令、错误分组、未闭合公式、原始 Typst 注入的拒绝路径。诊断放 `.zoi-checks/booklet-test-*`，按现有工作区清理约定管理。
 
-`python scripts/check_booklet_pdf.py <PDF> [--root <样例库根>]` 需 pypdf，独立将完整 PDF 的目录清单与实际算法目录树对账，核对目录/说明标题、编号正文、数学字体、增长行序与 MIKU 页脚。对样例 PDF 另读取实际绘制的主副标题、小节、公式标签和提示字号，核对字面量保留，并自动检查同目录 `long-manual.pdf` 的 90 行顺序和跨栏/页重复表头；构建另核对数学节点数量，视觉抽查负责确认符号含义与布局。CI booklet 作业每次自动完整生成并执行这些检查，成功附件是对应提交的手册；操作见 [手册指南](../docs/booklet/README.md)。
+`python scripts/check_booklet_pdf.py <PDF或分册目录> [--root <样例库根>]` 需 pypdf，检查每页为未旋转的 A4 竖版，单栏及字号契约；分册目录另核对整套一级章节无遗漏、重复或旧 PDF，并将每册目录清单与所属实际算法目录树对账，核对目录/说明标题、编号正文、数学字体、增长行序与 MIKU 页脚。对样例 PDF 另读取实际绘制的主副标题、小节、公式标签和提示字号，核对字面量保留，并自动检查同目录 `long-manual.pdf` 的 90 行顺序和跨页重复表头；构建另核对数学节点数量，视觉抽查负责确认符号含义与布局。CI booklet 作业每次自动生成全部分册并执行这些检查，成功附件是对应提交的手册；操作见 [手册指南](../docs/booklet/README.md)。

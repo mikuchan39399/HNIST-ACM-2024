@@ -8,7 +8,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 
 更新：`./scripts/make_reliability.ps1`；只读检查：`./scripts/make_reliability.ps1 -Check`。普通回归不会改写本表。
 
-## A 类：有直接对拍引用的现役模板 [74]
+## A 类：有直接对拍引用的现役模板 [77]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
@@ -64,6 +64,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [prim - algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp](<../algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp>) | [algorithms/图论/对拍/graph_capacity_check.cpp](<../algorithms/图论/对拍/graph_capacity_check.cpp>)<br>[algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp](<../algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp>) |
 | [trie - algorithms/字符串/字典树/字典树.cpp](<../algorithms/字符串/字典树/字典树.cpp>) | [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)<br>[algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>) |
 | [persistentTrie - algorithms/字符串/字典树/可持久化字典树.cpp](<../algorithms/字符串/字典树/可持久化字典树.cpp>) | [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)<br>[algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>) |
+| [acam - algorithms/字符串/AC自动机/acam.cpp](<../algorithms/字符串/AC自动机/acam.cpp>) | [algorithms/字符串/AC自动机/对拍/acam_check.cpp](<../algorithms/字符串/AC自动机/对拍/acam_check.cpp>) |
 | [mint - algorithms/数学/数论/mint.cpp](<../algorithms/数学/数论/mint.cpp>) | [algorithms/数学/数论/对拍/mint_check.cpp](<../algorithms/数学/数论/对拍/mint_check.cpp>) |
 | [eulerSieve - algorithms/数学/数论/质数筛/欧拉筛.cpp](<../algorithms/数学/数论/质数筛/欧拉筛.cpp>) | [algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
 | [eratosthenes - algorithms/数学/数论/质数筛/埃氏筛.cpp](<../algorithms/数学/数论/质数筛/埃氏筛.cpp>) | [algorithms/数学/数论/对拍/number_sieve_check.cpp](<../algorithms/数学/数论/对拍/number_sieve_check.cpp>) |
@@ -86,6 +87,8 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [pbsPointer - algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp](<../algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp>) | [algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp](<../algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp>) |
 | [pbsRollback - algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp](<../algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp>) | [algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp](<../algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp>) |
 | [kmp - algorithms/字符串/KMP/kmp.cpp](<../algorithms/字符串/KMP/kmp.cpp>) | [algorithms/字符串/KMP/对拍/kmp_check.cpp](<../algorithms/字符串/KMP/对拍/kmp_check.cpp>) |
+| [manacher - algorithms/字符串/Manacher/manacher.cpp](<../algorithms/字符串/Manacher/manacher.cpp>) | [algorithms/字符串/Manacher/对拍/manacher_check.cpp](<../algorithms/字符串/Manacher/对拍/manacher_check.cpp>) |
+| [zFunction - algorithms/字符串/Z函数/z_function.cpp](<../algorithms/字符串/Z函数/z_function.cpp>) | [algorithms/字符串/Z函数/对拍/z_function_check.cpp](<../algorithms/字符串/Z函数/对拍/z_function_check.cpp>) |
 
 ## B 类：未发现直接对拍引用的现役模板 [9]
 
@@ -101,7 +104,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [eulerPointUndirected - algorithms/图论/欧拉图/无向图欧拉点路径.cpp](<../algorithms/图论/欧拉图/无向图欧拉点路径.cpp>) | 未发现直接引用 |
 | [eulerPointDirected - algorithms/图论/欧拉图/有向图欧拉点路径.cpp](<../algorithms/图论/欧拉图/有向图欧拉点路径.cpp>) | 未发现直接引用 |
 
-## C 类：笔记条目（不参与编译） [17]
+## C 类：笔记条目（不参与编译） [16]
 
 | 模板或源文件 | 直接引用它的对拍文件 |
 |---|---|
@@ -113,7 +116,6 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [slopeOpt - algorithms/动态规划/优化技术/斜率优化.txt](<../algorithms/动态规划/优化技术/斜率优化.txt>) | 不适用（笔记） |
 | [dinic - algorithms/图论/网络流/最大流/Dinic.txt](<../algorithms/图论/网络流/最大流/Dinic.txt>) | 不适用（笔记） |
 | [mcmf - algorithms/图论/网络流/最小费用最大流/MCMF.txt](<../algorithms/图论/网络流/最小费用最大流/MCMF.txt>) | 不适用（笔记） |
-| [acam - algorithms/字符串/AC自动机/AC自动机.txt](<../algorithms/字符串/AC自动机/AC自动机.txt>) | 不适用（笔记） |
 | [sam - algorithms/字符串/后缀自动机/后缀自动机.txt](<../algorithms/字符串/后缀自动机/后缀自动机.txt>) | 不适用（笔记） |
 | [suffixArray - algorithms/字符串/后缀数组/后缀数组.txt](<../algorithms/字符串/后缀数组/后缀数组.txt>) | 不适用（笔记） |
 | [mobius - algorithms/数学/数论/莫比乌斯反演.txt](<../algorithms/数学/数论/莫比乌斯反演.txt>) | 不适用（笔记） |
@@ -149,7 +151,7 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 | [algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 | [algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp](<../algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp>) | [algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp](<../algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp>) |
 
-## 已发现的对拍套件 [40]
+## 已发现的对拍套件 [43]
 
 - [algorithms/图论/优化建图/对拍/graphbuilder_check.cpp](<../algorithms/图论/优化建图/对拍/graphbuilder_check.cpp>)
 - [algorithms/图论/优化建图/对拍/prefixgraph_check.cpp](<../algorithms/图论/优化建图/对拍/prefixgraph_check.cpp>)
@@ -168,7 +170,10 @@ A/B/C 只表示静态测试资产关系，不代表可靠程度或正确性。�
 - [algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp](<../algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp>)
 - [algorithms/图论/连通性相关/对拍/conn_bct_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_bct_check.cpp>)
 - [algorithms/图论/连通性相关/对拍/conn_check.cpp](<../algorithms/图论/连通性相关/对拍/conn_check.cpp>)
+- [algorithms/字符串/AC自动机/对拍/acam_check.cpp](<../algorithms/字符串/AC自动机/对拍/acam_check.cpp>)
 - [algorithms/字符串/KMP/对拍/kmp_check.cpp](<../algorithms/字符串/KMP/对拍/kmp_check.cpp>)
+- [algorithms/字符串/Manacher/对拍/manacher_check.cpp](<../algorithms/字符串/Manacher/对拍/manacher_check.cpp>)
+- [algorithms/字符串/Z函数/对拍/z_function_check.cpp](<../algorithms/字符串/Z函数/对拍/z_function_check.cpp>)
 - [algorithms/字符串/字典树/对拍/trie_capacity_check.cpp](<../algorithms/字符串/字典树/对拍/trie_capacity_check.cpp>)
 - [algorithms/字符串/字典树/对拍/trie_check.cpp](<../algorithms/字符串/字典树/对拍/trie_check.cpp>)
 - [algorithms/数学/数论/对拍/mint_check.cpp](<../algorithms/数学/数论/对拍/mint_check.cpp>)

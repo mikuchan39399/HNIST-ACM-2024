@@ -14,12 +14,14 @@
 | 插件自动展开提交 | 运行 node scripts/check_submit_bridge.cjs、node scripts/check_vjudge_bridge.cjs 与 node scripts/check_atcoder_bridge.cjs；改展开内核还需 zoi_check；用 install_submit_bridge.cjs --check 核对实际插件，重载后验证，不用真实提交代替模拟测试 |
 | YOUKNOWWHO 题单链接 | 运行 node scripts/check_youknowwho_links.cjs；核对来源编号与实际题目表格，重载 Chrome 扩展后验链接与动态渲染；打包含映射数据 |
 | 右侧题面与题单一键导入 | 按 scripts/checks.md 安装 DOM 测试依赖，运行 node scripts/check_statement.cjs 和 python scripts/package_statement.py；浏览器端改动兼验链接与提交回归；重载后分别核对真实页面读取、样例和 CPH 接收 |
+| 题目垃圾堆 | 运行 node scripts/check_problem_trash.cjs；验证取消、未保存内容、CPH 路径与哈希名、撤回、冲突、失败回退和链接边界；只用隔离题目，不移动用户的真实题解 |
 | 安装/卸载、工作区配置、打包、清理 | 运行 scripts/check_setup.ps1 与 scripts/check_deployment.ps1, PS5.1/PS7 各验, 使用隔离配置 |
 | 资产扫描/测试入口 | 运行 scripts/check_inventory_test.ps1 / scripts/check_runner.ps1 |
 | 分享队友包 | VS Code 的 zoi-package 或 scripts/make_team_package.ps1, 默认 docs/releases/时间戳 ZIP |
 
 功能细目由 make_features 复用 check_inventory 生成；-Check 只检查且过期失败。每次功能新增、修改或撤下均执行 [rule 双向同步要求](../../rule.md#适用范围与阅读顺序), 核对 LLM 规则与 docs/features/README.md 的用户说明, 不限于新增整个功能; 不手填生成数量或测试通过等级。
 make_features 同时收集 algorithms 下的 Markdown, 在算法目录末尾生成按方向排列的说明入口, 不只链接源码; 新增说明后要重新生成。
+Booklet 的完整构建、源码选择协议与验证边界统一维护在 [系统说明](../booklet/architecture.md)；使用与预览见 [打印指南](../booklet/README.md)。
 所有脚本放 scripts，库根从 PSScriptRoot 推导，不写本机绝对路径。打包收源码、受管文档、验证范围 JSON、自动运行证据及压力入口依赖的 .github 配置, 排除恢复备份、原始测试日志和已有发布包。
 队友包直接将受管文件写入 ZIP，不复制到嵌套临时目录；源文件读锁期间计算 SHA-256 并复制同一数据流，清单与交付字节一致，避免额外目录层级触发 Windows PowerShell 5.1 长路径限制。失败只清理本次创建的 `.partial`，保留原有同名输出。
 
@@ -29,17 +31,20 @@ ZOI 题面源码位于 `scripts/statement-extension`；`package_statement.py` �
 
 `youknowwho.js` 在隔离的 content script 中按表头识别题目列，刷新时断开观察器以避免自身插入触发循环；不要依赖 Chakra 生成类名。`youknowwho-data.js` 只包含公开编号：UVA 来源为 [uHunt API](https://uhunt.onlinejudge.org/api) 的 `/api/p`，取数组下标 0→1；LightOJ 来源为[官方旧题库](https://lightoj.com/problems/category/loj)，对应 `problemHandleStr`→`oldIdStr` 或可见 LOJ 编号。更新时保留来源与日期，未知条目走搜索，不把字符串 slug 或内部 ID 当成数字题号。仅重新生成页面链接，不触碰用户进度、筛选条件或浏览器登录。
 
-安装 v3 管理 settings/tasks/keybindings 三个文档, v2 原快照可升级, 重装检查并补缺项;
-卸载精确恢复原文或保留后续无关修改。未知旧状态仍保留, 不猜测归属。AdoptExistingTasks 是显式的手写任务迁移,
+安装 v3 管理 settings/tasks/keybindings 三个文档, v2 原快照可升级, 重装检查并补缺项；重装前通过原卸载计划合并快照，后加的用户内容不能变成工具所有。
+卸载精确恢复原文或保留后续修改，只删除与记录一致的受管任务和快捷键，改写内容不重新接管。未知旧状态仍保留, 不猜测归属。AdoptExistingTasks 是显式的手写任务迁移,
 只接管指向当前库相应脚本的已知任务, 保留原快照供卸载恢复, 不自动接管冲突命令。
 启用补全/错误提示时记录旧值; 不安装扩展, 不改编译器 PATH。项目显式 includePath 可能覆盖用户默认值,
-configure-zoi 只处理调用方指定的工作区, 多个 C/C++ 配置逐一补路径; 手动改过的局部配置不强制回滚。
+configure-zoi 只处理调用方指定的工作区, 多个 C/C++ 配置逐一补路径且重复运行不重复追加；工作区状态 v2 使用同一事务恢复流程，兼容 v1 快照。只清理由本工具创建且已空的目录，手动改过的局部配置不强制回滚。
+原子写入失败清理本次创建的临时文件，未知临时文件保留；恢复仅清理与事务目标一致的临时内容。配置与状态路径不能冲突，写入前拒绝符号链接/目录联接；PS5.1 对过长路径提前报错。占用、并发与特殊字符路径要有回归，真实配置不作卸载试验。
 快捷键冲突保留, 默认用 Ctrl+Alt+T / Ctrl+Alt+Z / Ctrl+Alt+R 提供任务列表、展开、恢复入口;
 install-zoi 的 -LuoguShortcuts 可选加入 Ctrl+Alt+P / Ctrl+Alt+Enter, 分别调用 luogu.searchProblem / luogu.sumbitCode（插件原命令含此拼写）。
 绑定沿用 v3 安装事务与 ownedKeys, 重装补缺、卸载保留用户原有或修改的绑定; 不篡改命令历史或抢占 Ctrl+Shift+P。
 打包排除规则必须相对库根计算, 不能因为库本身位于 .zoi-checks 或 releases 下就排空全部源码;
 拒绝跟随链接, 排除个人状态, 完成 ZIP 后再公布正式文件, 清理临时目录有有限重试。
 部署自检必须实际解压发布包并安装, 不能只检查 ZIP 名称。CI setup 作业自动跑两版 PowerShell 的部署自检。
+
+Gym 题面回退由 `core.cjs` 的题号/PDF 链接识别、Chrome 单次读取与 Webview 分页共同完成。重定向只接受原 Gym 单题的同源同场 `attachments` 页，令牌绑定的原题 URL 不变；不要为绕过跳转而放宽任意来源或混用提交通道。整场 PDF 须先识别明确的 `Problem X.` 标题范围，再提取样例；不按页序猜题号。`check_statement.cjs` 调用 Gym 专项检查，`scripts/fixtures/gym-100212-pdf.json` 保留原 PDF 的最小标题/样例坐标与来源，覆盖跨页、末题、未定位及多组表格拒绝。实际网页、原 PDF 解析和 VS Code 重载后的完整链路分开验收。
 
 ## 文档导航维护
 
@@ -114,39 +119,49 @@ scripts\zoi.ps1: expand <file.cpp> 原地展开并复制剪贴板; 再次 expand
 
 ## 手册生成约定
 
-正文 heading 与目录 outline.entry 共用 `chapter-style` 的深度样式规则，统一字号、字重与颜色；不再单独覆盖前两级而让深层回退。目录按 6 pt 递进缩进，保留条目间距；只钳制最小字号，不限制目录深度。样例含七层目录，PDF 检查从实际绘制文字读取字号和坐标，验证两处均按深度收敛、缩进保留且行不重叠。
+正文 heading 与目录 outline.entry 共用 `chapter-style` 的深度样式规则，统一字号、字重与颜色；不再单独覆盖前两级而让深层回退。目录按 10 pt 递进缩进，保留条目间距；只钳制最小字号，不限制目录深度。样例含七层目录，PDF 检查从实际绘制文字读取字号和坐标，验证两处均按深度收敛、缩进保留且行不重叠。
 
 使用步骤与版式见 [打印手册](../booklet/README.md)。路线和待建目标集中到 [路线图](../roadmaps/README.md)，源码同目录 README 仅为用户选定的使用说明，是否新写按 rule §3.1 执行。
 
 `make_booklet.ps1` 从 catalog 读取代码与 `^` 笔记，按完整源路径解析 include 并替换为跳板短名；LF 归一化、截断超长装饰线后计算 SHA256 前 8 位。指纹只对应转换后的代码/笔记，README 不混进代码指纹。代数插件自动发现、去重、按 zh-CN 路径排序，跳过含 main 的文件，回到实际所属目录打印。
 
+### C++20 打印选择与后续适配
+
+遵循 [Booklet 系统说明](../booklet/architecture.md)：电子接口默认启用，`ZOI_BOOKLET` 只选择源码中的纸版差异，循环共用；生成器不登记算法名，不匹配函数签名，不维护替换配方。新增适配由用户逐项提出，同时维护电子多标准验证和实际打印代码验证。
+
+完整入口 `build_booklet.ps1` 负责隔离生成、代码/PDF 检查及发布，`make_booklet.ps1` 的完整调用自动进入它，原 VS Code 任务继续可用。源码选择规则、输出清单和各脚本职责以系统说明为唯一正文，本节只保留排版维护细节。
+
+### 目录与排版
+
 `booklet_tree.ps1` 独立扫描 algorithms 的实际目录，排除 对拍 与隐藏工具目录；每个已建/待建目录都是章节。catalog 只提供源码身份、跳板名和已有家族排序优先级，新目录无需登记便可出现。按完整路径形成祖先/子目录关系；筛选支持纯空目录，保留祖先而不带入无关兄弟。
 
-每份源码、登记笔记和插件另起页，长内容跨栏续页，README 紧跟最后一个同目录实现；页段末尾留作补写。待建目录另起一段集中排，标题间留空，不占用上一实现的余页。遍历先缓冲祖先标题，等首个实现或空叶目录换页后再输出，避免父标题落单。唯一源码与目录同名时合用标题，其余源码均进入目录和 PDF 书签。插件也使用同一遍历，SoloMin 只额外要求长条目与方向从奇数页起排。
-页眉优先显示当页实现名；续页沿用该实现，待建目录页显示当前分类，避免首个实现被祖先标题遮住。
+每份源码、登记笔记和插件另起页，长内容跨页续排，README 紧跟最后一个同目录实现；页段末尾留作补写。待建目录另起一段集中排，标题间留空，不占用上一实现的余页。遍历先缓冲祖先标题，等首个实现或空叶目录换页后再输出，避免父标题落单。唯一源码与目录同名时合用标题，其余源码均进入目录和 PDF 书签。插件也使用同一遍历，SoloMin 只额外要求长条目与方向从奇数页起排。
+页眉优先显示当页实现名；续页沿用该实现，待建目录页显示当前分类，避免首个实现被祖先标题遮住。 页眉右侧“目录”链接返回首个目录页；目录页使用独立页眉和较浅疏点线，打印设置只放用户指南。PDF 元数据写入章节与书名，便于多个阅读器标签辨认。
 插件扫描在判断 main 前剥离注释和普通字符串/字符字面量，避免 Usage 注释中的完整 main 导致真实插件被排除；仍排除真正带 main 的题解，回归同时包含这两种样例。
 
 不维护或渲染分类短题记。待建空叶目录用 `.gitkeep` 保留到 Git；禁止用删除空目录或只保留本机空目录的方式整理路线。路线长文仍位于 docs/roadmaps，不与算法目录是否入册混淆。
 
-`booklet_markdown.ps1` 负责有限 Markdown 转换，统一实现用户确认的树中心样张样式，不按文件名硬编码版式。H1 为 12 pt 主标题，紧随的第一条引用行作 6.6 pt 副标题；H2 按每份说明自动编号为 01、02 等，8.5 pt；更深标题 7.5 pt。说明正文 7.1 pt，代码 6 pt，标题不入算法目录且与后文相连。配色为深绿 `#294f4b` 与灰阶，黑白可读。
+`booklet_markdown.ps1` 负责有限 Markdown 转换，统一实现用户确认的树中心样张样式，不按文件名硬编码版式。H1 为 16 pt 主标题，紧随的第一条引用行作 9 pt 副标题；H2 按每份说明自动编号为 01、02 等，12 pt；更深标题 11 pt。说明正文 10 pt，代码 9 pt，标题不入算法目录且与后文相连。配色为深绿 `#294f4b` 与灰阶，黑白可读。
 
-独立粗体行紧接独立公式时，作为 6.2 pt 框内标签；其他位置保持粗体正文。标题后的开头段落与下一块相连，避免标题和导语留在栏底而定义移到下一栏。连续引用行合成一个可跨栏提示框，列表使用原生 list/enum 悬挂缩进。表格等宽列、灰表头、仅细横线，必须显式关闭其余三边 stroke，跨栏/页重复表头。公式框保持一个公式与其标签相连，不把整篇或长表包进不可分页块。写法与作者示例只维护在 [说明排版约定](../booklet/README.md#说明怎么排版)。
+独立粗体行紧接独立公式时，作为 9 pt 框内标签；其他位置保持粗体正文。标题后的开头段落与下一块相连，避免标题和导语留在页底而定义移到下一页。连续引用行合成一个可跨页提示框，列表使用原生 list/enum 悬挂缩进。表格等宽列、灰表头、仅细横线，必须显式关闭其余三边 stroke，跨页重复表头。公式框保持一个公式与其标签相连，不把整篇或长表包进不可分页块。写法与作者示例只维护在 [说明排版约定](../booklet/README.md#说明怎么排版)。
 
-字符串引用和围栏代码均作为数据处理，行内代码允许换行；标题、副标题、标签与提示也必须走 `Typ-Inline` / `Typ-String`，避免 `<G>` 被吞成标签或 `#read(...)` 被执行。新增语法须扩展转换器与测试，不直接拼接原始内容作为 Typst。版式回归同时检查标题层级、编号、标签、连续引用、长表跨栏及原文保留。
+字符串引用和围栏代码均作为数据处理，行内代码允许换行；标题、副标题、标签与提示也必须走 `Typ-Inline` / `Typ-String`，避免 `<G>` 被吞成标签或 `#read(...)` 被执行。新增语法须扩展转换器与测试，不直接拼接原始内容作为 Typst。版式回归同时检查标题层级、编号、标签、连续引用、长表跨页及原文保留。
 
-入册 README 按 rule §3.1 保持赛场速查风格，验证/维护记录留在对应记录中。数学用 `$…$` 或 `$$…$$`，经白名单递归解析为 Typst 数学节点；不直接拼入原始数学输入。支持的 TeX 子集见打印指南，未知命令、分组和伸缩括号不匹配时失败。代码内美元符号不参与公式解析，表格切列也须识别数学中的绝对值符号。数学字体用 Typst 自带 New Computer Modern Math，独立公式 8 pt 浅灰底。
+入册 README 按 rule §3.1 保持赛场速查风格，验证/维护记录留在对应记录中。数学用 `$…$` 或 `$$…$$`，经白名单递归解析为 Typst 数学节点；不直接拼入原始数学输入。支持的 TeX 子集见打印指南，未知命令、分组和伸缩括号不匹配时失败。代码内美元符号不参与公式解析，表格切列也须识别数学中的绝对值符号。数学字体用 Typst 自带 New Computer Modern Math，独立公式 11 pt 浅灰底。
 
-编译后用 `typst eval` 检查每个预期算法锚点、每个目录和每份 README 元数据恰好出现一次，并核对实际数学节点数量与转换结果一致；不能只判断“查到过一个锚点”。`SoloMin > 0` 另核对所有大条目的奇数页。完整 PDF 保留第 39 页 MIKU，页码求值须区分目录与物理页。
+编译后用 `typst eval` 检查每个预期算法锚点、每个目录和每份 README 元数据恰好出现一次，并核对实际数学节点数量与转换结果一致；不能只判断“查到过一个锚点”。`SoloMin > 0` 另核对所有大条目的奇数页。每份分册 PDF 达到第 39 页时保留 MIKU，页码求值须区分目录与物理页。
 
-正式产物仅 `docs/booklet/output/zoi-booklet-print.pdf` 和同名 `.typ`，不提交 Git。预览写库内工作区；筛选或 `SourceOnly` 禁止覆盖正式文件。`SourceOnly` 供不装 Typst 的发现/转换测试使用，仍以 `.pdf` 参数决定同名 `.typ` 位置，不生成 PDF。
+封面只使用官方 ICPC Foundation 矢量标志、章节名、小号书名和三色细线，不放使用提示、数量统计、日期或页码。`docs/booklet/assets/icpc-foundation.svg` 保留原始素材，生成器按 UTF-8 读取并以 bytes 内嵌到 Typst；生成、离线编译与分册移动均不依赖网络或外置图片路径。隔离夹具复制同一素材，正文页码计数仍包含封面。 `assets/print.tmTheme` 为深色打印高亮主题，连同矢量图一并内嵌并由隔离夹具复制；注释保持深灰以改善黑白阅读。
 
-CI 的 setup 作业在 PS 5.1/7 运行 `check_booklet.ps1`；booklet 作业使用固定 Typst 0.15.1、中文字体和 pypdf，运行 `check_booklet.ps1 -Render`、完整构建及 `check_booklet_pdf.py`，上传当次 PDF/Typst 和诊断。18 次样例构建包括目录新增/改名/空目录筛选、旧题记不再读取、同名目录/源码合用标题、同目录多实现收录、共享/新增说明、祖先和路线长文排除、非法围栏、预览覆盖保护、数学正常/错误输入、90 行长表、1200 行源码增长与奇数页。构建查询正文标题和每个实现（含说明）的结束位置，要求页段互不占用；PDF 检查独立对照实际目录树，逐项核对目录/源码书签名称、层级、顺序及纸面目录文本，确认不同起页，并核对数学字体。视觉改动仍须渲染人工抽查。
+正式产物为 `docs/booklet/output/chapters/` 中按一级算法目录命名的 PDF、同名 `.typ`、`.code.md` 与 `chapters.json`，A4 竖版单栏，不提交 Git。默认按精确一级目录生成，先在隔离目录完成全部编译、打印代码验证与 PDF 审计，再更新输出；`check_booklet_pdf.py` 可传分册目录，独立核对整套章节集合及每册内容。预览写库内工作区；筛选或 `SourceOnly` 禁止覆盖正式分册。`SourceOnly` 供不装 Typst 的发现/转换测试使用，仍以 `.pdf` 参数决定同名 `.typ` 位置，不生成 PDF。
+
+CI 的 setup 作业在 PS 5.1/7 运行 `check_booklet.ps1`；booklet 作业使用固定 Typst 0.15.1、中文字体和 pypdf，运行 `check_booklet.ps1 -Render`、完整构建及 `check_booklet_pdf.py`，上传当次 PDF/Typst/可读代码、清单和诊断。23 次单册样例构建与默认分册检查包括目录新增/改名/空目录筛选、旧题记不再读取、同名目录/源码合用标题、同目录多实现收录、共享/新增说明、祖先和路线长文排除、非法围栏、预览覆盖保护、数学正常/错误输入、90 行长表、1200 行源码增长与奇数页。构建查询正文标题和每个实现（含说明）的结束位置，要求页段互不占用；PDF 检查独立对照实际目录树，逐项核对目录/源码书签名称、层级、顺序及纸面目录文本，确认不同起页，并核对数学字体、PDF 标题与条目页返回目录链接的真实目标。视觉改动仍须渲染人工抽查。
 
 PowerShell 脚本保持 ASCII，中文从路径/正文读入或用码点；代码与普通文字不得拼成可执行 Typst 标记。字体按实际安装情况挑选，缺中文字体直接报错，不能以乱码 PDF 假装成功。
 
 隔离构建可用 `-TypstPath <可执行文件路径>` 明确指定编译器，不修改系统 PATH 或复制大工具到每份样例。成功样例调用共用完成标记/清理机制，按 tooling 类保留最近三份；失败现场保留。
 
-Typst 审计通过 `ProcessStartInfo` 传参：现代 .NET 使用 ArgumentList，Windows PowerShell 5.1 的 .NET Framework 使用 CRT 引号转义；不能把包含字符串字面量的表达式直接交给旧版 PowerShell 的原生命令绑定器。标准输出/错误显式按 UTF-8 读取，并以实际进程 ExitCode 判定失败，不依赖旧的 LASTEXITCODE。`check_booklet.ps1 -AuditOnly` 提取生产审计函数，实际运行含引号、反斜杠、中文和空格路径的查询及错误表达式；setup CI 安装固定 Typst 后在 PS 5.1/7 执行，无需中文字体。`-Render` 也包含这些检查，再继续原有 18 次样例构建。
+Typst 审计通过 `ProcessStartInfo` 传参：现代 .NET 使用 ArgumentList，Windows PowerShell 5.1 的 .NET Framework 使用 CRT 引号转义；不能把包含字符串字面量的表达式直接交给旧版 PowerShell 的原生命令绑定器。标准输出/错误显式按 UTF-8 读取，并以实际进程 ExitCode 判定失败，不依赖旧的 LASTEXITCODE。`check_booklet.ps1 -AuditOnly` 提取生产审计函数，实际运行含引号、反斜杠、中文和空格路径的查询及错误表达式；setup CI 安装固定 Typst 后在 PS 5.1/7 执行，无需中文字体。`-Render` 也包含这些检查，再继续 23 次单册样例与分册检查。
 
 分类变更运行 `python scripts/check_design.py`，核对九方向明细与进度条目的对应、分类合计、catalog 覆盖和 README 角色；该检查随 CI 导航步骤自动执行，不修改学习状态。
 
@@ -190,4 +205,4 @@ run_checks/check_setup/zoi_check/check_runner/check_deployment/check_booklet 完
 跨 Windows/WSL 的绝对路径不同, 各环境只清理路径与自身一致的现场; 不把异平台路径猜映射后删除。
 人工工作区按已确认的归属和用途逐项清理，不把混有工具、交付物或他人文件的目录整体删除。一次性测试使用完毕即可清理，不要求为它另建归档或备份；确认只含本任务可删除产物的目录可在核实实际路径后一并清理。
 
-根目录只保留 README.md、AGENTS.md、rule.md 和 .gitignore 等必要入口。旧规则历史位于 records/tooling/rule_history.md；手册 PDF 及同名 .typ 默认生成到 docs/booklet/output，指定 OutFile 时两者跟随该路径，不能重新把默认生成物散落到根目录。打包排除手册 output，仍保留历史正文。
+根目录只保留 README.md、AGENTS.md、rule.md 和 .gitignore 等必要入口。旧规则历史位于 records/tooling/rule_history.md；手册按章 PDF、同名 .typ 及 chapters.json 默认生成到 docs/booklet/output/chapters，指定 OutFile 时预览文件跟随该路径，不能重新把默认生成物散落到根目录。打包排除手册 output，仍保留历史正文。

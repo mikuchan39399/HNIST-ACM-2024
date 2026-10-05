@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "e1f38010d1284980a2115216730df5b2",
+  "startedUtc": "2026-10-05T10:22:16.8291467Z",
+  "finishedUtc": "2026-10-05T10:22:24.8419939Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/f96643093fd5475c988adedb8a9670a5/logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "62f445320969dccd1a5519463754f4db3b30e9862a43bfdb30a5c9d4a62c0cf6",
+      "files": [
+        {
+          "path": "algorithms/字符串/AC自动机/acam.cpp",
+          "hash": "bc9e2d580b03ac3193805a0c6419da97d109b7f9e293b90955df3352718933fd"
+        },
+        {
+          "path": "algorithms/字符串/AC自动机/对拍/acam_check.cpp",
+          "hash": "41590b4d69bb26585446daa50d52ccdce9ae4e52eb5e3412dd4449e6d68236c8"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5fd090a5066fc0d8037d22b2c53a06c3b9818f2e6408b2e9e82efc4e4f66aaa5"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/AC自动机/acam.cpp",
+          "hash": "e69f28bf25a1cb6189dc2cb34206f01b1eb163dcb13893fb617bb00fa0a701c6",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/AC自动机/对拍/acam_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 7.75
+    }
+  ]
+}

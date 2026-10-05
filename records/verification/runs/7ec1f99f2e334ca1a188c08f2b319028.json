@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "id": "7ec1f99f2e334ca1a188c08f2b319028",
+  "startedUtc": "2026-09-29T05:40:20.4559140Z",
+  "finishedUtc": "2026-09-29T05:40:24.8862246Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/cb126234103f4061ad544833f1aee130/logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "4aaa08f7e192c52ab870ff09aa800eee46a98bf9f13f862a40b181a66acbd94f",
+      "files": [
+        {
+          "path": "algorithms/字符串/KMP/kmp.cpp",
+          "hash": "0f5c4046236c2089daa48e4a5532c1032ca6f8c671c78495fb02882810d5dfc4"
+        },
+        {
+          "path": "algorithms/字符串/KMP/kmp_legacy.h",
+          "hash": "2292074dd099c145bbace3fc956208cdc8f0cbc1bc97ba9fce6005c709e5c9fa"
+        },
+        {
+          "path": "algorithms/字符串/KMP/kmp_span.h",
+          "hash": "9daa1c96769f3cc61a3fea1718e1ed20af09ba1a62608fa393127261e83e77bc"
+        },
+        {
+          "path": "algorithms/字符串/KMP/对拍/kmp_check.cpp",
+          "hash": "2246a4f43b2c604394850888e5891cabc1ba31f4e0977af33c20608ba1d873b2"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "35b02e4368d50096187814010cc64ccfb5572b4ddadea827244f57a17481dddf"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/KMP/kmp.cpp",
+          "hash": "00752313dfe57d3bb08dfd43eb2051d393cfc817dd2474ffb58f0af3c73e4fa5",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/KMP/对拍/kmp_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.217
+    }
+  ]
+}

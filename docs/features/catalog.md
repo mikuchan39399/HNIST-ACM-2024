@@ -96,10 +96,12 @@
 |---|---|
 | [字典树 / 字典树](<../../algorithms/字符串/字典树/字典树.cpp>) | [trie.h](<../../zoi/trie.h>) |
 | [字典树 / 可持久化字典树](<../../algorithms/字符串/字典树/可持久化字典树.cpp>) | [persistentTrie.h](<../../zoi/persistentTrie.h>) |
-| [AC自动机 / AC自动机](<../../algorithms/字符串/AC自动机/AC自动机.txt>) | 笔记（无跳板） |
+| [AC自动机 / acam](<../../algorithms/字符串/AC自动机/acam.cpp>) | [acam.h](<../../zoi/acam.h>) |
 | [后缀自动机 / 后缀自动机](<../../algorithms/字符串/后缀自动机/后缀自动机.txt>) | 笔记（无跳板） |
 | [后缀数组 / 后缀数组](<../../algorithms/字符串/后缀数组/后缀数组.txt>) | 笔记（无跳板） |
 | [KMP / kmp](<../../algorithms/字符串/KMP/kmp.cpp>) | [kmp.h](<../../zoi/kmp.h>) |
+| [Manacher / manacher](<../../algorithms/字符串/Manacher/manacher.cpp>) | [manacher.h](<../../zoi/manacher.h>) |
+| [Z函数 / z_function](<../../algorithms/字符串/Z函数/z_function.cpp>) | [zFunction.h](<../../zoi/zFunction.h>) |
 
 ## 数学
 

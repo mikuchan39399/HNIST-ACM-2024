@@ -1,0 +1,3637 @@
+{
+  "schema": 1,
+  "id": "123575ce466e41c59d93ce81564bf654",
+  "startedUtc": "2026-09-29T15:37:48.5005707Z",
+  "finishedUtc": "2026-09-29T15:41:38.2796770Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/contest-comments/regression-logs",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "9102e86ac771c55c23076a5dcbfeeed7e650e6817a8cdfd648d2acbf9efcebf9",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/前缀优化建图.cpp",
+          "hash": "8b04dc3cd81c6c5126e07a5193b456731e5d4e2fc8537e05ea020572376e6a68"
+        },
+        {
+          "path": "algorithms/图论/优化建图/对拍/graphbuilder_check.cpp",
+          "hash": "19f2de59bc691c8f646fca88e6ceba336fb77aa83d91ed6284c9d8ecabe4a66a"
+        },
+        {
+          "path": "algorithms/图论/优化建图/建图上下文.cpp",
+          "hash": "a2a5077a7c135ba9918442a68b8d1fb87e65460b32fd6f733b26813c4e1f16a6"
+        },
+        {
+          "path": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "d1a8a85ea503de05e886cfa7e4a4b4e80a11a9fb854314050322693eccc79743"
+        },
+        {
+          "path": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "7cf9bba99c4748748119052b8b0c68fad1ccf39aed1246ab2cd5fafe93563eab"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "eb09d64c8291603acc64989c7cf2a5a1303c3df35a2e488a72e73dd394622362"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "47dd1fd5e2160fb7372e6a3e9e3f555b30307f17e6552b92c6c655569b78b055"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/优化建图/前缀优化建图.cpp",
+          "hash": "b95ffc5740c5961d4e9f3bc2eda4c83f8f6c51fb203ccc8312b30992b89c6341",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/优化建图/建图上下文.cpp",
+          "hash": "7076d32b4225027aa5c6741b2c41f23d2a318fb09a6092eb938d67741ba65ae3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "9b6af6f4a507ee0b90ddaa624f5175cf678567cbc5f68089f201ec28c5373db3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "fe1b25e2eb1d8dfe6496f317f831c444cc775b7a0623c59b1bd816bfc3f8bd9c",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/graphbuilder_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.802
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "c3a2d1a4760f9adae6fe81051df0fb06ed0378c4293ded12aa8ad8d3ccaef901",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/前缀优化建图.cpp",
+          "hash": "8b04dc3cd81c6c5126e07a5193b456731e5d4e2fc8537e05ea020572376e6a68"
+        },
+        {
+          "path": "algorithms/图论/优化建图/对拍/prefixgraph_check.cpp",
+          "hash": "85b8c4e8aff8babf11fb99db00cbc61829f65a0febe97904bd1c2e3157b5199a"
+        },
+        {
+          "path": "algorithms/图论/优化建图/建图上下文.cpp",
+          "hash": "a2a5077a7c135ba9918442a68b8d1fb87e65460b32fd6f733b26813c4e1f16a6"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "eb09d64c8291603acc64989c7cf2a5a1303c3df35a2e488a72e73dd394622362"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "47dd1fd5e2160fb7372e6a3e9e3f555b30307f17e6552b92c6c655569b78b055"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/优化建图/前缀优化建图.cpp",
+          "hash": "3e4bee57781179cc77d5f5529dde8c8c1db221ce99535ea68801087cc3c1a730",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/prefixgraph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.826
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "f9ddb42c7acb44df05f5ea96cc2ea75172355b0673e0008f3c07a6be7169eb35",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+          "hash": "60ae99e550134eaa68bc3577bb4690e0bd311dadde30f8977fbca373715d8ec7"
+        },
+        {
+          "path": "algorithms/图论/优化建图/建图上下文.cpp",
+          "hash": "a2a5077a7c135ba9918442a68b8d1fb87e65460b32fd6f733b26813c4e1f16a6"
+        },
+        {
+          "path": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "7cf9bba99c4748748119052b8b0c68fad1ccf39aed1246ab2cd5fafe93563eab"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "eb09d64c8291603acc64989c7cf2a5a1303c3df35a2e488a72e73dd394622362"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "47dd1fd5e2160fb7372e6a3e9e3f555b30307f17e6552b92c6c655569b78b055"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "601806f511de7b32dbf8e1016efd6946302a7438d2422feed149213d998d7fc9",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "a04e4c49ac63f21a42585055fd1a145f9fc95f0158a474d7a14880a31b252f08",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "399565823ddd9c3f7054d86a6d80ebfdd43c330761e3b675812ddd5ca8a8bd14",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/seggraph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.206
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "2940fce261eba028cf8fc2f908002742c49a07b6e7965db6e5fe78f4064ea80e",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/对拍/treegraph_check.cpp",
+          "hash": "deb36e019e44a36de70f1b27ab12f110f61d90a69d93e37982df2e5ea7c67e20"
+        },
+        {
+          "path": "algorithms/图论/优化建图/建图上下文.cpp",
+          "hash": "a2a5077a7c135ba9918442a68b8d1fb87e65460b32fd6f733b26813c4e1f16a6"
+        },
+        {
+          "path": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "d1a8a85ea503de05e886cfa7e4a4b4e80a11a9fb854314050322693eccc79743"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "eb09d64c8291603acc64989c7cf2a5a1303c3df35a2e488a72e73dd394622362"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "47b98f459d83ba8494b6b0f28829aa437b14c3887dc7fcf9238dc00977c09769"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "74505f6f44011af6c5d0eaa1b910dbbefc3cf6c806d9e4c42b9dae5aa6d202dd",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/优化建图/对拍/treegraph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.534
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "bc90ef7557dee57d80144dcf44ced624211105e433167ce942b5607dfe1f587c",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+          "hash": "36e3512a20a0891e35b68d62ecf5c39d44a339ed14537cace35492be8fafe56a"
+        },
+        {
+          "path": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+          "hash": "f32579eea3963db40a47a0590e007dcbf60b33c48b62fc1d98d6c8a480270e2d"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+          "hash": "25c1f550371dd8364da81995ffce8aa2b6bd339e0f0433147442703690816ce2"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+          "hash": "e7ecf78a2b69253ed8c79b8b60792cf6838d1f808ca5549786b9da78f7a745f8"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+          "hash": "222fa620326e1c64c093b772f448204f8eda344fe4c07e675a7f6d21e2cd2f0b"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "21ac9fda375f9b2e0d9b1ee2c3b7fe29817d57fa0e5019c61a3523c9dbf6c514"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "0d69211ff6a972d7f2171aa832f91b02ea37ce5838443d7446b2415665b230d7"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "4894fb415fe65b50a9e1015d23fd0ade52a8d432dc3cbe835f5f83a22111b310"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "47dd1fd5e2160fb7372e6a3e9e3f555b30307f17e6552b92c6c655569b78b055"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "113ed35f956737e4a6b79d63894f692bacd8a94e819f3c9a464348a7b0acccd6"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "0c2b24c650f85d557035535bc1b5a1200de5af4a85ae494d5374177c4a6fc9be"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "c6897288e19f28cb1cb9b9ba4d64d6e066517e4a03bdaabd16e7f74a945a4afd"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "64957b0fdc75d62bb73b95561de61b08ef1e27c92f0a7e93d3e2ab6d6c599e03",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+          "hash": "44d8f066212136205daaa85622b58ee8761d175ba3ac444c3d2619bb12c4d2eb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+          "hash": "535f1ac592b9d2fd404f7f25e7f8623130b52339ff7e5f01da52cd1f949153fb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+          "hash": "266ec78957c09510558a2b0fa8bcee96e4f378a1067bfb6a9bbfbdac367e7a0b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+          "hash": "6a14448f349becc2cb8174cbdb15dbfab9ac30bc22dfd1512de279389550ca09",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "9fe73d52e6b1935790b36e7400c62c4c3cf1ca9d22ad3a7850b589a0c39924e4",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "bc4a80aa3997e52fd706c73794eac417a2548e3ad159ca41fdf8bfc6bf518514",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "cdebd867994c33f1c2c764a3fd6dfead2bb0f7f626e2217768c56777fb2d950c",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "a69ebee5bd719cfe713d929842e50bac4d4435c0b3f9407dd8cfc9f8145baa0b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "b453b759a9063336418b1466226e6b95b33617b884f39192a67742e87553b1b3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "a0458e02ad5a9ea0f8ea623e015118d03df2db419fbe6acf8f82ed86548ebb16",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/对拍/completed_graph_stress_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 8.139
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "f7dca744afab2eb4b954dc696eef43bf2ad232ff81e5e3c074e3da13368c2699",
+      "files": [
+        {
+          "path": "algorithms/图论/对拍/floyd_capacity_check.cpp",
+          "hash": "427e04db33f9231d44e24cea50fffc4172788acee75a2fcc0dd98975b46e613f"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/全源最短路径/floyd.cpp",
+          "hash": "bf5d7271ff85a44be5bafb57482841233f9de08873f152a94cebfecc712ce254"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/最短路问题/全源最短路径/floyd.cpp",
+          "hash": "1293cff99ee6547fa51820c42df420c9954abd37f1cc3664431b01941837a511",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/对拍/floyd_capacity_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 1.758
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "afb4d96ddf89286f20e8566c0d45d2a85fc422b36c02a330b13adff87cb26389",
+      "files": [
+        {
+          "path": "algorithms/图论/优化建图/建图上下文.cpp",
+          "hash": "a2a5077a7c135ba9918442a68b8d1fb87e65460b32fd6f733b26813c4e1f16a6"
+        },
+        {
+          "path": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "d1a8a85ea503de05e886cfa7e4a4b4e80a11a9fb854314050322693eccc79743"
+        },
+        {
+          "path": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "7cf9bba99c4748748119052b8b0c68fad1ccf39aed1246ab2cd5fafe93563eab"
+        },
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/对拍/graph_capacity_check.cpp",
+          "hash": "59e878db01d5c9b82bcab82719b908dec2d4f8bac41d920de4e25304a0c067e4"
+        },
+        {
+          "path": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+          "hash": "f32579eea3963db40a47a0590e007dcbf60b33c48b62fc1d98d6c8a480270e2d"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
+          "hash": "05bfe23b6be5ab484114503f90fe487fe2af2aeefdeb0b2f6e248426a43ad08f"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
+          "hash": "6615aa32a3d30d6cd50925dae2df7dbb725f898bbcfb2221f5ab392d05623eaf"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
+          "hash": "a761573926440354bd2b1c76d5635d4b6850c71650ff4810bee9f895a1ea03e9"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
+          "hash": "870be039ecda98d6a008a9d27ac4474d584f66aa610fb01bc51830093fe6fb1f"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "eb09d64c8291603acc64989c7cf2a5a1303c3df35a2e488a72e73dd394622362"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
+          "hash": "eec2d4fcae88331198bcf0ac5d643926cc9e94b0447499b8212d22bda2a6c8e4"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "47b98f459d83ba8494b6b0f28829aa437b14c3887dc7fcf9238dc00977c09769"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "e1ded35a406f1fce851de7e229607c35a1963349f716d8425457381dd0e11efe"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+          "hash": "25c1f550371dd8364da81995ffce8aa2b6bd339e0f0433147442703690816ce2"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+          "hash": "e7ecf78a2b69253ed8c79b8b60792cf6838d1f808ca5549786b9da78f7a745f8"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+          "hash": "222fa620326e1c64c093b772f448204f8eda344fe4c07e675a7f6d21e2cd2f0b"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "21ac9fda375f9b2e0d9b1ee2c3b7fe29817d57fa0e5019c61a3523c9dbf6c514"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "0d69211ff6a972d7f2171aa832f91b02ea37ce5838443d7446b2415665b230d7"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+          "hash": "4275b613b163c935b6913f5e0ef9e2a69b594119bd2d9e61afe05382716120bc"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+          "hash": "771bd4754ad0008c35eed05bc7db44aa92976831c4059cbe843b242c3fd075c7"
+        },
+        {
+          "path": "algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp",
+          "hash": "aa8b852036f26f9194e365ef5de7b4d68297f21432d55711b843bc0d7cecff63"
+        },
+        {
+          "path": "algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp",
+          "hash": "e3d1ef970407c994d660a6d9448ed7842bdf3290493e2101ccdebe136be0165f"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "4894fb415fe65b50a9e1015d23fd0ade52a8d432dc3cbe835f5f83a22111b310"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "47dd1fd5e2160fb7372e6a3e9e3f555b30307f17e6552b92c6c655569b78b055"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "113ed35f956737e4a6b79d63894f692bacd8a94e819f3c9a464348a7b0acccd6"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "0c2b24c650f85d557035535bc1b5a1200de5af4a85ae494d5374177c4a6fc9be"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/DSU.cpp",
+          "hash": "1f6d3a5d973fa19c818c585e62cf484833959b6c5adb40385ef9d7028e57e739"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/dsu.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "c6897288e19f28cb1cb9b9ba4d64d6e066517e4a03bdaabd16e7f74a945a4afd"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "239a97d733ea7ac3407dcfa91fdfd159568cf41115de757bdd58b8eba077006b"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/优化建图/树上倍增优化建图.cpp",
+          "hash": "7358d05efd312c1b255ad478611e20123a5734beb55ce801e904377986ecf1fc",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/优化建图/线段树优化建图.cpp",
+          "hash": "1b990040e26fad3f078bf6b530c0a11f4c4b1b14aca370dd0b68b41d534fcc95",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "e940ce452ff9044057c80fd89f1bb123a43e2f674ae3e36506918030167c96db",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+          "hash": "1ab495c18bcfba2fe5de221a306403f89db7f2502b41218df84725714b8a5af2",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
+          "hash": "abe3c0c5b737aaf0f2c37ccb5a37df6988349a3bf4c8a5a65804245c2940f9e7",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
+          "hash": "78263b4ed7ee420063dc302a21aab51c6c8020eb1bec9b09b2a32f6b1ae3cd3f",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
+          "hash": "7496d3bd43043bfe235f0e4d197c8c47e17a31ab4422de95eeac7522102b3e89",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
+          "hash": "8a3d3154802f20d83a486f691fb7e458da2994334c355131ccee5da47d3e93b7",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "3beb6c917f5f039e821331b9eaecc5bb0b9fe4d9cb944b34551f8c53c3cf98ae",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
+          "hash": "3296c38420495d8383cc34a347e1ba7eeb3ce5fda1584a83d8a1d6239acfd387",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "b041e0f0de09b5dfbe445021cc929c2f749225796c18af279a5335329280872b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "0fea0357191b7d63eeebc4fc8211be5036c3029231ae79a0b0ea1a4b65ce0903",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+          "hash": "110024ed60488bccb45ebadb1fcac1de1d0a80e3016d42d263a1c01b5285f125",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+          "hash": "7bc7e63b9b6252dc08d566f2e9f0eac7b09e01bfd81e9a8e3f7680eb1e731c75",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+          "hash": "bd9992ca25450edd16007f83c0dddafd841d549766538c52f13f038fba34c0f2",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "a2f0d334cafea463a4c2c8d5f5925db4641042c923d16c41868df6a17cf1118f",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "b10dc948b8187372793a5ee6bdd141b2228dfd4b8318e4710212610f64a1a114",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+          "hash": "221615c5e2d30585757c5e5d13e5a6f73662c033510adbed3c161ffaecb555e9",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+          "hash": "c1bae5a5ebd3f89c6eea955213afcecb9f9aa1ac924023afd13261a99ce8de72",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp",
+          "hash": "39a7f174e1e1379b580b67f63f432d30ee0abf1667b00205411e8c9e37309949",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp",
+          "hash": "feba7e92f745dd5532c4c0a27f3c9a198c5a9f69b30e6d6d8b128af6e7607964",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "06caff09f84066455778ce74f4471f9a8005ed6307c93b92c474abe1430dd1e9",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "4b3a2472339200ced09f2537a84ec3ae26e31cccad950032990c42e1c65673e3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "050c6b4766dc8d3c05c32e44cb0702428ecb3403c705ca3c7ac33af61e66b1c4",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "cdb193810d4fd5f0aa10648404163ab64101d95960739c13c8e62a0341b9e147",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/对拍/graph_capacity_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.273
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "5032366038044c0c66ecf2e64f62a63b6b5a3163a3a5bab298845736b1c4e985",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/对拍/graph_check.cpp",
+          "hash": "1aa1f3ea526ffd8c0679dbec7d117a16478001833eddf9524ace4497fad75558"
+        },
+        {
+          "path": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+          "hash": "f32579eea3963db40a47a0590e007dcbf60b33c48b62fc1d98d6c8a480270e2d"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
+          "hash": "05bfe23b6be5ab484114503f90fe487fe2af2aeefdeb0b2f6e248426a43ad08f"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
+          "hash": "6615aa32a3d30d6cd50925dae2df7dbb725f898bbcfb2221f5ab392d05623eaf"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
+          "hash": "a761573926440354bd2b1c76d5635d4b6850c71650ff4810bee9f895a1ea03e9"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
+          "hash": "870be039ecda98d6a008a9d27ac4474d584f66aa610fb01bc51830093fe6fb1f"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "eb09d64c8291603acc64989c7cf2a5a1303c3df35a2e488a72e73dd394622362"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
+          "hash": "eec2d4fcae88331198bcf0ac5d643926cc9e94b0447499b8212d22bda2a6c8e4"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "47b98f459d83ba8494b6b0f28829aa437b14c3887dc7fcf9238dc00977c09769"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "e1ded35a406f1fce851de7e229607c35a1963349f716d8425457381dd0e11efe"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+          "hash": "e7ecf78a2b69253ed8c79b8b60792cf6838d1f808ca5549786b9da78f7a745f8"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+          "hash": "222fa620326e1c64c093b772f448204f8eda344fe4c07e675a7f6d21e2cd2f0b"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "21ac9fda375f9b2e0d9b1ee2c3b7fe29817d57fa0e5019c61a3523c9dbf6c514"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "239a97d733ea7ac3407dcfa91fdfd159568cf41115de757bdd58b8eba077006b"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "805197c75fce92d714d146cba0861e0475624797f23612712edfcc94fff74ec7",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/拓扑排序/拓扑排序.cpp",
+          "hash": "5b83670aa1c8d0d58ad8281131201eb83c09e5d1d366d54bd9e6f7ab1d35f3f2",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
+          "hash": "b662dc9d784bb99f12637e882b8a1555078a5f0373cac53f26a04055bbce3f5e",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
+          "hash": "247713c68ae3acdd4a9f6b56a0926a6ee811eeae57098b0253a61907ef11f430",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
+          "hash": "d06e2edcbbcf3b58e11ff48694c414826aef11afa42ea98313a59aba5f1ab8c0",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
+          "hash": "fe842fb79cde15f353f1366c414008c8257f18d80414936296f23b4aa7f356dc",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "1aeb00def01cac03f70a8ecf090584bb6535cc558ff9d8b1c66aa40dcb7b3c8f",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
+          "hash": "6c21c976e4e453163aead082ff549d5e62ba81bd300b5a2bbcbe39ba37403522",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "099a1cd630e696cb01c32a7ff4b1aecba64a8951e188f481a947ddede145a361",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "0fd98a2f54535fb82da7d4987dc3060137d8c885b41f965a08fd40a49c822966",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的直径/两次dfs.cpp",
+          "hash": "b31026808d841731ebd160c80b03f46b029048f8f9fd01473105814271a7e1cf",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的直径/树形dp法.cpp",
+          "hash": "cc5c0a9be42f64d85b46a7d466cf93d24aa7904996de16f5e6457634251d4ecb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "6d8c55b5335038859ad34dcd710e2d744a819984c2037d9841d1a315c51ebe97",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/对拍/graph_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 8.511
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "c8fb0fb4dcb45e9b07995e7bd84139ebb3061c39030553d4fc54471118fce506",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/对拍/graph_core_check.cpp",
+          "hash": "16637d832457df9c1b14d6c5216ea9a037229f6d77f003bccd9145ade06e360a"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "0885aaf925d73f5cca014d1d20c0e30f226750c8216cff4ff1c60ab2c1b292c9",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/对拍/graph_core_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 3.482
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "8215e2c4204be8a485461050144fda4a6456251f3494c63902c512827e9976f3",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/对拍/lifecycle_check.cpp",
+          "hash": "80228c0b14238271f721076caa5111c6579813f6f9c66e34093023dfde8b3b33"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
+          "hash": "05bfe23b6be5ab484114503f90fe487fe2af2aeefdeb0b2f6e248426a43ad08f"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
+          "hash": "6615aa32a3d30d6cd50925dae2df7dbb725f898bbcfb2221f5ab392d05623eaf"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
+          "hash": "a761573926440354bd2b1c76d5635d4b6850c71650ff4810bee9f895a1ea03e9"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
+          "hash": "870be039ecda98d6a008a9d27ac4474d584f66aa610fb01bc51830093fe6fb1f"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "eb09d64c8291603acc64989c7cf2a5a1303c3df35a2e488a72e73dd394622362"
+        },
+        {
+          "path": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
+          "hash": "eec2d4fcae88331198bcf0ac5d643926cc9e94b0447499b8212d22bda2a6c8e4"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "47b98f459d83ba8494b6b0f28829aa437b14c3887dc7fcf9238dc00977c09769"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "e1ded35a406f1fce851de7e229607c35a1963349f716d8425457381dd0e11efe"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/tarjan.cpp",
+          "hash": "d6d88a5853d2293d479eb17355dff10dc6b4aea9e6926e50281571c5150cba49"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/树上倍增LCA.cpp",
+          "hash": "29fed86746126a613bd67607915a17ca3920c56e4aebd4a4909a2fe0e6ee9490"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/欧拉序LCA.cpp",
+          "hash": "267c542ba1eae766e46329c10e2ee64703ae495a0448e2696d06104efb955c79"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "21ac9fda375f9b2e0d9b1ee2c3b7fe29817d57fa0e5019c61a3523c9dbf6c514"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "0d69211ff6a972d7f2171aa832f91b02ea37ce5838443d7446b2415665b230d7"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "4894fb415fe65b50a9e1015d23fd0ade52a8d432dc3cbe835f5f83a22111b310"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "47dd1fd5e2160fb7372e6a3e9e3f555b30307f17e6552b92c6c655569b78b055"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "113ed35f956737e4a6b79d63894f692bacd8a94e819f3c9a464348a7b0acccd6"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "0c2b24c650f85d557035535bc1b5a1200de5af4a85ae494d5374177c4a6fc9be"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/可持久化线段树/主席树.cpp",
+          "hash": "2b69e8d71fd0e1261950b2fe90fd3a49e0e1833a0226860f993b06a0d54ecd91"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp",
+          "hash": "89cb55eeacd9d6d5a34e02f4cc6fa5f827e22264b84e3040fb96120738e98a58"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "c6897288e19f28cb1cb9b9ba4d64d6e066517e4a03bdaabd16e7f74a945a4afd"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "239a97d733ea7ac3407dcfa91fdfd159568cf41115de757bdd58b8eba077006b"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/最短路问题/判断负环/bf_-ring.cpp",
+          "hash": "07aa8d280bb311bc39d313fe105f6803e59998e0559f9f55dec17e0cd0afea1c",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/判断负环/spfa_-ring.cpp",
+          "hash": "5a3e84f5b23f88d7351d49c6bf65fe72edc87835056bf4bec1fc8fe4197c36cb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/Bellman-Ford存图.cpp",
+          "hash": "c3380550854c95d2e53e3facde4fda5057597c203499b296c2f417a663b49568",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra.cpp",
+          "hash": "919eae322c35eb6676c65cef2467246c46fd2029fd0f502478ce84318e2a5004",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/dijkstra_heap.cpp",
+          "hash": "bb43edc64843189e5b57f439117d51935fd33b5dfbb91e27f85cefbcb2cafcb1",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/最短路问题/单源最短路径/spfa 存图.cpp",
+          "hash": "0e7a1d72fe260aff40aa4842bf94c2e4b1448a359d4bf5301c3af6ea3e78e9e5",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "5266436a2c0640cc0aef09e1de0fb7a59d243336f40c9b5c9774ca5d30590085",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "041dc717b77d293e0cf462cf11429df2f3c5ab4a6b2606c2f248eccfd21e1c7b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/tarjan.cpp",
+          "hash": "7f2c1142ff896644eeb9958b58dfc39d76d92ed48ee65790deb873908d5dcc7f",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/树上倍增LCA.cpp",
+          "hash": "0ce8cfa4346c46bb4e1b388ba8af39de5052804e2132a2608f57500384092901",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/欧拉序LCA.cpp",
+          "hash": "a5c0065d8687553ce9dee4d78798a156ff18a68d343d6331a3cf5a96dc34867d",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树的重心/树的重心.cpp",
+          "hash": "237817f4479fcae08d35c659ce810ee3f41cd64e0c2a7dde8d96e9ef2719135e",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "6911924156684a033b4284dce360f12444504e066308d7d491df3d7a3b4add45",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "7938892c9a411c6e025c155b136760b41b5472307e6592a9a75118add61a53b5",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "a457c8d5d7b8c44067caba637fecdf4f17a7be5fb741b2c121f6fffb2339273c",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "2791e73868170bd5baf92bed8dbedfc8b91a66a29067401b61ceadb08d519338",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "c6f21c495fd1f580af3a2999bcf0f469a49b926aad5743a96c2cf4bdc7194bfb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/线段树/可持久化线段树/主席树.cpp",
+          "hash": "3a1d9646abfbf0f74d51e00e56a03dfa7d42978c95ea1ae54948fc578e232de6",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "4d590e355e5f77316a2077ee03135aed034891df5126cfa8fd11a8cac5633d11",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/对拍/lifecycle_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.329
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "3b5fd0787092838fd78ffb241ef71f099199a7be69543010973a352d4590f8a1",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的中心/对拍/center_check.cpp",
+          "hash": "5eacf0f3c72a45ddd849e911a44d8c51f8f301b0f5a787279280a79f1415f659"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+          "hash": "25c1f550371dd8364da81995ffce8aa2b6bd339e0f0433147442703690816ce2"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/树上问题/树的中心/树的中心.cpp",
+          "hash": "850c4a094d428fbd4906142e46f63daa8880cb46d1b77b7e318bc31ad186762e",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/树上问题/树的中心/对拍/center_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 3.047
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "041bc3d9e2e1fc72f11d7a058a63031fc998be6b824d3c0196fb788f6e041cdc",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "0d69211ff6a972d7f2171aa832f91b02ea37ce5838443d7446b2415665b230d7"
+        },
+        {
+          "path": "algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp",
+          "hash": "d8bf4db818d5dd1f265f733d1af62c0ba01d20410f842078628a9e5eac3145b7"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "c6897288e19f28cb1cb9b9ba4d64d6e066517e4a03bdaabd16e7f74a945a4afd"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/树上问题/树链剖分/HLD.cpp",
+          "hash": "fb3a4a10b73debe8005a30fa6d58d5a03e3bcc1d824c366825c72877ab179096",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/树上问题/树链剖分/对拍/hld_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.134
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "3ea0f798f45f53ee9f39511d895ea771900428a53aae0002e4ec6de8e606bf9f",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "47b98f459d83ba8494b6b0f28829aa437b14c3887dc7fcf9238dc00977c09769"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "e1ded35a406f1fce851de7e229607c35a1963349f716d8425457381dd0e11efe"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+          "hash": "4275b613b163c935b6913f5e0ef9e2a69b594119bd2d9e61afe05382716120bc"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+          "hash": "771bd4754ad0008c35eed05bc7db44aa92976831c4059cbe843b242c3fd075c7"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+          "hash": "4d1e342af070e352f1847d8452d975da06b07d4a7c7239cba744d6c4fab8584b"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "afc37f911006c0a012ce9ef2d24a088de0a9ff07c6697fcc1d510b85677ca87c",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/最近公共祖先/HLD_LCA.cpp",
+          "hash": "42c2cb7a5e256984e29c64eb0a8a60d3bae0e73f866606b88f36e058d356a68b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+          "hash": "8c3e686cc650fcba6aa6a42ea1835e47fe6e173cf3cf7adf4929ab35448cc77b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+          "hash": "cb8a47a8fa37c397c98cfb43c289a9fd3ec88045d85cf82fe9aaa647ad72ddad",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/树上问题/虚树/对拍/lca_vt_stress_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 6.901
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "4e88fc302d7924278347441ec5cfef24c90c8089d65786eb389cde4725159d85",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/树上问题/最近公共祖先/DFN_LCA.cpp",
+          "hash": "47b98f459d83ba8494b6b0f28829aa437b14c3887dc7fcf9238dc00977c09769"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+          "hash": "4275b613b163c935b6913f5e0ef9e2a69b594119bd2d9e61afe05382716120bc"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+          "hash": "771bd4754ad0008c35eed05bc7db44aa92976831c4059cbe843b242c3fd075c7"
+        },
+        {
+          "path": "algorithms/图论/树上问题/虚树/对拍/vt_check.cpp",
+          "hash": "ca228424a6b526e43acd13bb5b6d9aa773c170b4e4a5fefa8d16f23386d28ca0"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/树上问题/虚树/二次排序.cpp",
+          "hash": "23800d113c17b4431b15459e619449cc1e2b1a97f52aca3367245ab70b051d10",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/树上问题/虚树/单调栈.cpp",
+          "hash": "d43032b59b92983d6835e4b4e764f4ba9e2cc316043f6ec23fe955b44006a5fb",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/树上问题/虚树/对拍/vt_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.249
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "e113519e1f4fd917ca07a549096d06c2f6ae728f324e5f942b399c8a2645f05e",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp",
+          "hash": "aa8b852036f26f9194e365ef5de7b4d68297f21432d55711b843bc0d7cecff63"
+        },
+        {
+          "path": "algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp",
+          "hash": "e3d1ef970407c994d660a6d9448ed7842bdf3290493e2101ccdebe136be0165f"
+        },
+        {
+          "path": "algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp",
+          "hash": "8b5a8097d255fe53a64a8fb14a45cb9e24388b778841236231c43b29b3c6fe83"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/DSU.cpp",
+          "hash": "1f6d3a5d973fa19c818c585e62cf484833959b6c5adb40385ef9d7028e57e739"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/dsu.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "239a97d733ea7ac3407dcfa91fdfd159568cf41115de757bdd58b8eba077006b"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/生成树问题/最小生成树/kruskal/Kruskal.cpp",
+          "hash": "d68916df15792caebbd8320bb8cb96c3e4bec2f8278a0046493f975ca331efb0",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/生成树问题/最小生成树/prim/Prim.cpp",
+          "hash": "f967bd8f813e14db2bad34334f95eb83943b0ec465cf38c4c5590e615a278ab5",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/生成树问题/最小生成树/对拍/mst_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 8.419
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "56e8b9e0879b946e45a5d5b55e978897e2be70ae2065e23507007604fb4ed867",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "4894fb415fe65b50a9e1015d23fd0ade52a8d432dc3cbe835f5f83a22111b310"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "47dd1fd5e2160fb7372e6a3e9e3f555b30307f17e6552b92c6c655569b78b055"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "113ed35f956737e4a6b79d63894f692bacd8a94e819f3c9a464348a7b0acccd6"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "0c2b24c650f85d557035535bc1b5a1200de5af4a85ae494d5374177c4a6fc9be"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/对拍/conn_bct_check.cpp",
+          "hash": "b7585e3290c908eccdc027eed5e98604126f2daae5377587222e142c4d1e3e47"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/对拍/conn_check.cpp",
+          "hash": "bdaf769a055c8e3d5015b7af8f630fe6200611060f5231fefa1b482884bf798e"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "ac5ffb6dae71fff209b187670ad2055a7b06205582823374ab54fe2a70269cb7",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/连通性相关/对拍/conn_bct_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 6.352
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "1878222e46074578edf2a48d76032c2f04efbe643b3315bf71681c52a1d51bd2",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "4894fb415fe65b50a9e1015d23fd0ade52a8d432dc3cbe835f5f83a22111b310"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "47dd1fd5e2160fb7372e6a3e9e3f555b30307f17e6552b92c6c655569b78b055"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "113ed35f956737e4a6b79d63894f692bacd8a94e819f3c9a464348a7b0acccd6"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/圆方树/BCT.cpp",
+          "hash": "0c2b24c650f85d557035535bc1b5a1200de5af4a85ae494d5374177c4a6fc9be"
+        },
+        {
+          "path": "algorithms/图论/连通性相关/对拍/conn_check.cpp",
+          "hash": "bdaf769a055c8e3d5015b7af8f630fe6200611060f5231fefa1b482884bf798e"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_EBCC.cpp",
+          "hash": "af6cf074d4dea7a4e9e71bf096accf33cd4e3126062288aa4428725ab19fcdea",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_SCC.cpp",
+          "hash": "5a203609f9b3623e9dbf51a9b5c78e584876ce1e67aa272e4fbfc3ab9ce7c1c9",
+          "stable": true
+        },
+        {
+          "template": "algorithms/图论/连通性相关/Tarjan_VBCC.cpp",
+          "hash": "435a1cd0605d57b4e5c0ddf1771aab442192cf720f9ed8b4686f793988895865",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/图论/连通性相关/对拍/conn_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 6.243
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "ab413e5b3dba3a618b886b072fea6d81bc63508d775a2685603f49c333d5e2bf",
+      "files": [
+        {
+          "path": "algorithms/字符串/KMP/kmp.cpp",
+          "hash": "10e6f434c9819fd9d52a8c2879dc24f1bb915c6fb7d1d74f69ce6535964a6ac5"
+        },
+        {
+          "path": "algorithms/字符串/KMP/对拍/kmp_check.cpp",
+          "hash": "f53f1805ab1ed649723aa53571887774980538514ce1c386a3b7001a7ed20f15"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/KMP/kmp.cpp",
+          "hash": "30cb5b704683d36a046fbb20d12c0dec0a99c3dea55acea97441ae7cc2c81530",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/KMP/对拍/kmp_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 6.627
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "2741397615b7d392967d1cec913cca28275decdec1e6f318aa5afc39efda9cc1",
+      "files": [
+        {
+          "path": "algorithms/字符串/Manacher/manacher.cpp",
+          "hash": "d93537b4cff8a4faa036285f0abe565a8df1dad7be52c10af2206e4cd82a8992"
+        },
+        {
+          "path": "algorithms/字符串/Manacher/对拍/manacher_check.cpp",
+          "hash": "97614f20b79c5aeda832c2f5d35d2ca2b709f42c163689e9a23ab86f348063b4"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/Manacher/manacher.cpp",
+          "hash": "9c258bbe58714e3f0d0ac6baa6fea0d417588a47cb977f56463f0e30ed5aa5e2",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/Manacher/对拍/manacher_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.091
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "c5472815da40a5b0713e686c4b9cd0d02be35aee1c81e6d10750fbd748a367fd",
+      "files": [
+        {
+          "path": "algorithms/字符串/Z函数/z_function.cpp",
+          "hash": "fe1190cabb537b38add6e9aa0dd66639cdae9cd1783ce8d77363bcab34a5a1a0"
+        },
+        {
+          "path": "algorithms/字符串/Z函数/对拍/z_function_check.cpp",
+          "hash": "ff27dc6b6ba59fbdedc3b46e6246ee6363eb5e38b49f5b8af8c41b9a8b16ad01"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/Z函数/z_function.cpp",
+          "hash": "040b177fe2229b78498c24c7966a0ad72d33665b75dd2be66fdcdbcc1977ab88",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/Z函数/对拍/z_function_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.496
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "3e1487bbc4811be4dbec93ed7e41a34f4804ada85371161b1ddbf14a6d897ab5",
+      "files": [
+        {
+          "path": "algorithms/字符串/字典树/可持久化字典树.cpp",
+          "hash": "8601b558d450ccb3398891bbaf8126af7eec0ace9b294cf1501a775b7099a4d5"
+        },
+        {
+          "path": "algorithms/字符串/字典树/字典树.cpp",
+          "hash": "c4623a9992806e95adc7d8c5c946608b15335362be5d2ba16763fb766379c363"
+        },
+        {
+          "path": "algorithms/字符串/字典树/对拍/trie_capacity_check.cpp",
+          "hash": "eac512204d0d3c4398845f3f4177e735c89cb6ae06137ce8032242bc9dbfb08b"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/字典树/可持久化字典树.cpp",
+          "hash": "10b8c5a13bb4219534673d16ecd9a1716d7b65551018408a67b94fc8ba811ef4",
+          "stable": true
+        },
+        {
+          "template": "algorithms/字符串/字典树/字典树.cpp",
+          "hash": "0d3fe4c8db3c042f412f7df77c311d43d024db98f6404ca76c379bd5935b8f7c",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/字典树/对拍/trie_capacity_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 9.191
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "c76feefdbee17b6112ef428eb02eb9e00e770bfc40c2c40a5b379b20b2735947",
+      "files": [
+        {
+          "path": "algorithms/字符串/字典树/可持久化字典树.cpp",
+          "hash": "8601b558d450ccb3398891bbaf8126af7eec0ace9b294cf1501a775b7099a4d5"
+        },
+        {
+          "path": "algorithms/字符串/字典树/字典树.cpp",
+          "hash": "c4623a9992806e95adc7d8c5c946608b15335362be5d2ba16763fb766379c363"
+        },
+        {
+          "path": "algorithms/字符串/字典树/对拍/trie_check.cpp",
+          "hash": "e31dda1ca5b1a7b9f27dd0446d3fc53fbf1fd457e619539c35613f2df02dd241"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/字典树/可持久化字典树.cpp",
+          "hash": "eaaf6c320860aa289218f56afd8aefe96cb547dac8b28bcad83035a5a2a22bee",
+          "stable": true
+        },
+        {
+          "template": "algorithms/字符串/字典树/字典树.cpp",
+          "hash": "223697794782b203e949b18ccd0012302256d6c6820e32fe2fa32438e38f6dc6",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/字典树/对拍/trie_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 6.997
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "845764412fc609192c4f224a9391fddd30e15abb9dbf1a75514c4ba7654f06d2",
+      "files": [
+        {
+          "path": "algorithms/数学/数论/mint.cpp",
+          "hash": "738cc48a9dcac3fede35aaf19ab35aa39f301a21f966fa3787daa1f5bcd42c8f"
+        },
+        {
+          "path": "algorithms/数学/数论/mint.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数学/数论/对拍/mint_check.cpp",
+          "hash": "ba58942981496f1928722d486dd7a05b4e0787ffdf4fece5d84839234c79cf49"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "239a97d733ea7ac3407dcfa91fdfd159568cf41115de757bdd58b8eba077006b"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数学/数论/mint.cpp",
+          "hash": "e4b606379bfd08e115f4d1fe143ee040d07798dbc136cf1883339a821b30376b",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数学/数论/对拍/mint_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 10.902
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "f89b85589eb08917096299602b44dab1c62075fbb124d4e91f5568092005e927",
+      "files": [
+        {
+          "path": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
+          "hash": "68c38597b7201a144bb37b6dcafde6cae6009b3c90bf8e478fc35d5128774007"
+        },
+        {
+          "path": "algorithms/数学/数论/约数/约数个数及约数和公式法.cpp",
+          "hash": "b42339df716e60a1223aaa173b67602ffc3836a00f4ba62e2de602f81600cdcf"
+        },
+        {
+          "path": "algorithms/数学/数论/质数筛/区间筛质数.cpp",
+          "hash": "6f8213e960c602d1456fc43afb5877a3072f9ea967e8ca5edf5f20419c636965"
+        },
+        {
+          "path": "algorithms/数学/数论/质数筛/埃氏筛.cpp",
+          "hash": "fe3f3e7af1ff0c63739ce831da28c3d94b4ab09cfbd3769e143e95daa7c66c2e"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数学/数论/约数/约数个数及约数和公式法.cpp",
+          "hash": "2962ab2a94b4590ffbe1a5d14fd35871ba6d5a4da8854d9461de5b36df7523a0",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数学/数论/质数筛/区间筛质数.cpp",
+          "hash": "0f2d66be04525e87a7f63c7573416f6fdc7be63193784b66a985ff1d0023ee5b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/utils/utils.cpp",
+          "hash": "7894f0644788e069295a60c3d6008ff62f2c78c527301d90952ce53a3a313f20",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数学/数论/对拍/number_boundary_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 2.273
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "f2d59f705c92bdd6ce6e07563a6d23843b505ba00933eebc49d8decb39028f77",
+      "files": [
+        {
+          "path": "algorithms/数学/数论/对拍/number_sieve_check.cpp",
+          "hash": "b7485ebef6815b473ad1bc23fe51eadc94744597f49854d30c2f63c21e205ccc"
+        },
+        {
+          "path": "algorithms/数学/数论/质数筛/区间筛质数.cpp",
+          "hash": "6f8213e960c602d1456fc43afb5877a3072f9ea967e8ca5edf5f20419c636965"
+        },
+        {
+          "path": "algorithms/数学/数论/质数筛/埃氏筛.cpp",
+          "hash": "fe3f3e7af1ff0c63739ce831da28c3d94b4ab09cfbd3769e143e95daa7c66c2e"
+        },
+        {
+          "path": "algorithms/数学/数论/质数筛/欧拉筛.cpp",
+          "hash": "42efe7f785dbb6d0a53c7fdf69e5220e3d48f084bbdea3035238c3613d6c3689"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数学/数论/质数筛/区间筛质数.cpp",
+          "hash": "143a4ce843d5d26b5f5965004c8a844f6d0723a8383963f13ff3b615db26482f",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数学/数论/质数筛/埃氏筛.cpp",
+          "hash": "edb3bf2c4a6f577b992ea781fc56cf390409615d53a40bcbaf00bb71099e80f3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数学/数论/质数筛/欧拉筛.cpp",
+          "hash": "7652d53cf1779287cd2e5f04d326631808ef8cf6f2e2d3eb4b634d7d3ce6959e",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数学/数论/对拍/number_sieve_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 2.473
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "60c203b0fae5028420e94ed611dfb4dcf91817fb875a2419e6e4aaec7e9988a7",
+      "files": [
+        {
+          "path": "algorithms/数学/组合数学/binomFactInv.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数学/组合数学/binomLoop.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数学/组合数学/binomPascal.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数学/组合数学/lucas.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数学/组合数学/卢卡斯定理求组合数.cpp",
+          "hash": "7f3748bdd2a7fa24175437324216a4e31d26483b57c159e50df4c3bc10db70fb"
+        },
+        {
+          "path": "algorithms/数学/组合数学/对拍/comb_check.cpp",
+          "hash": "c72042391cbb1cea79f6ba6758f2a79d00e203ac8f5f269dcdc0d56f50f08543"
+        },
+        {
+          "path": "algorithms/数学/组合数学/循环求组合数.cpp",
+          "hash": "41502ba7a192afdb9fc09c8f54acda3c403001a0ef1a696dc774e893295c14c8"
+        },
+        {
+          "path": "algorithms/数学/组合数学/打表杨辉三角求组合数.cpp",
+          "hash": "f078a9ca52d140a50686f96441e695d17f0a7d2c18223cc24c7a6df61dcdab91"
+        },
+        {
+          "path": "algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp",
+          "hash": "d11a760b8fe3b5e69a454739f66b74d10ae5ca1f3d4a8dac2ebc16d574a87ed5"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "239a97d733ea7ac3407dcfa91fdfd159568cf41115de757bdd58b8eba077006b"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数学/组合数学/卢卡斯定理求组合数.cpp",
+          "hash": "f3be37279bdd537944d27096ad136bd4703a8f18f121aaa4c2811287a76b59fd",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数学/组合数学/循环求组合数.cpp",
+          "hash": "aafc34ae3c5114b912c30e5cc60f6e7c115c600be1c63f361b5655a3fd08b8a3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数学/组合数学/打表杨辉三角求组合数.cpp",
+          "hash": "aef991479d00824e0795f3e3cb7fb69566c178254c007785769401f68b8a68a5",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数学/组合数学/阶乘表及阶乘逆元表求组合数.cpp",
+          "hash": "8a75ada51bdd3f1a4ab1e73c88fb777fe083009efa4850133030fd5c0e760169",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数学/组合数学/对拍/comb_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.804
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "77438cc7b1a92e33cb8fd0feacd3f8a322d7e7c35d45234c256fd8b8e93eb6c8",
+      "files": [
+        {
+          "path": "algorithms/数学/高精度计算/bigint.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数学/高精度计算/对拍/bigint_check.cpp",
+          "hash": "699330ed6aef5efe95e008f79619213e8dd77855cf8f2100c2d6fb1120d5d0dd"
+        },
+        {
+          "path": "algorithms/数学/高精度计算/高精度.cpp",
+          "hash": "bfccc311b1a45067524a9cee517dac11a01f1c1c39f2f1c8e8f155a6471258be"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "239a97d733ea7ac3407dcfa91fdfd159568cf41115de757bdd58b8eba077006b"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数学/高精度计算/高精度.cpp",
+          "hash": "2f9c521de17f9e99177987a46afd7564b2e00595a4c9729195c809544ae168d1",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数学/高精度计算/对拍/bigint_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.051
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "f208001b61dac7cc227c800f1c20656ea637f8cd2bb62df8a0cea76bb972f4d8",
+      "files": [
+        {
+          "path": "algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp",
+          "hash": "29995ff042ae7f15d6f990d91b06ed3ba4da7758a67dda2510c0c8f955f48e05"
+        },
+        {
+          "path": "algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp",
+          "hash": "afa87ae2ef5f670dec99740e06cad86da5ccbf47eb947230c85adaefe43228c4"
+        },
+        {
+          "path": "algorithms/数据结构/堆/左偏树/左偏树.cpp",
+          "hash": "325f5033c74a32cd1cbd7ff6916bbb5bfe835d1167ee709b1a77b51e841a280c"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/堆/左偏树/可持久化左偏树.cpp",
+          "hash": "1d9a0cf3bf15cc96fb3657a7866640c4572678f962d7b61842a424f02160383d",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/堆/左偏树/左偏树.cpp",
+          "hash": "284794541bdfa93eb499a9a4c363e3914463a2da993e6b1a6c96f7bda1c9e7a5",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/堆/左偏树/对拍/leftist_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 7.107
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "62147d2e76406d3d84fd369fb82b81376c1f6c68d692e5fe27526309448ab6c5",
+      "files": [
+        {
+          "path": "algorithms/数据结构/并查集/DSU.cpp",
+          "hash": "1f6d3a5d973fa19c818c585e62cf484833959b6c5adb40385ef9d7028e57e739"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/WDSU.cpp",
+          "hash": "08a8cfa21c3c276be2cd837cd4bd994e23c7d26ff4fa12f5a84c9b9ee1b2fe71"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/dsu.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/wdsu.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+          "hash": "d89f316df69a46900558fd2113af025ebe8450d719f0f63cf587d1de99458eb5"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/并查集/DSU.cpp",
+          "hash": "52d47540456abe61c28a1746e27a11549935160ec6803b50c904c9c309c9fe67",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/并查集/WDSU.cpp",
+          "hash": "6cfca597d8983e553a43501787a27662e306e10b2d99091c411fd3059ab8a857",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/并查集/对拍/dsu_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.21
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "07002a2939db3a83cb3634e556d9e9df07ffbf5cf263eb1d7bd50c7b0f5f85bf",
+      "files": [
+        {
+          "path": "algorithms/图论/图的存储/Graph.cpp",
+          "hash": "72f6beadc21a889371bbb5d1d23c3f5b85b0da841f4971edca34d6677adc4f31"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/AVL.cpp",
+          "hash": "d521b86db1b64245a215be6e014470cdea2490bd3717d89f56e04d96b01d6b4c"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/FHQ_Treap.cpp",
+          "hash": "b428f08fef2d9a27105ea29db008960769b01fab3460953a4d7e87a98529db6b"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/FHQ_Treap_序列.cpp",
+          "hash": "f25ca805bf37840be2295ca23b1cf50ad14759f34ef6c4b6cebd1cc966b0b05e"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/Splay.cpp",
+          "hash": "e6f3110f8ec234e274541d1e32d59d4705a29724eaf0a7beaae4d2139fd58b01"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/Treap.cpp",
+          "hash": "dc6ee97619bf6e36ac52b8eeaf4f111e7eb2effcb7818a53160fe208726964bf"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+          "hash": "6ebd824a66a09899b737ff2c57682ab867d633abfff7a4d2ce0d2d41306e6d25"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/替罪羊树.cpp",
+          "hash": "bb0ec142b46bc25e6b22669392bb4360f6c3d06405a6dc6fa1a0907390d61fa8"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp",
+          "hash": "207478cbc93d409d84ab26ed1db029fa1629a126f90f5537afa3c29d8fe519a7"
+        },
+        {
+          "path": "algorithms/数据结构/有序表与平衡树/跳表.cpp",
+          "hash": "112266ff77daa89429a8feaeea342a326f9244eda2be7201be9817f7c6ab4ed5"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/随机数/rnd.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/随机数/z_rnd.cpp",
+          "hash": "632ed5a5641eae72e65d02e0a68c024711c8fd1f508ba117f2041785fdee3322"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/有序表与平衡树/AVL.cpp",
+          "hash": "8ac7e63d9cb1fc10cca736eecadc96f739b66ad1e158b4f92403a05b9656f43f",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/有序表与平衡树/FHQ_Treap.cpp",
+          "hash": "f1d3ac9ed6388bf043f3cd55abd336f6870140f27e0947185a055d99f2f119f7",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/有序表与平衡树/FHQ_Treap_序列.cpp",
+          "hash": "cf16a76bb309b30350011be8ef1064228fab7164179972e436521f86cf2be681",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/有序表与平衡树/Splay.cpp",
+          "hash": "4344c251a7ad92723230c9b7af420d61ce85d0ba2de20c6302e6e2a0074afd65",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/有序表与平衡树/Treap.cpp",
+          "hash": "32f549ca211800683041509855fd92dbb6adeaa9daf985b20a5bb529cb6aa8dd",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/有序表与平衡树/替罪羊树.cpp",
+          "hash": "af7b41d598867d1f6b8bab53c8c0eff2a848a6080b24d739174e90c9de2ed748",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/有序表与平衡树/笛卡尔树.cpp",
+          "hash": "67c3d64381aa1a349d4af65a312f9c2a8480ef4fc2ed66cf3ae14837b9ca2b41",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/有序表与平衡树/跳表.cpp",
+          "hash": "fe1489d4f880718cfdf7a7072ab32234ba171a44fb9893a5d78a623466742298",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/有序表与平衡树/对拍/oset_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 10.684
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "bd54ccf14d3d0fee669abc3e8b1323ed1d2a1a1c3a187b7014303c07dc118b22",
+      "files": [
+        {
+          "path": "algorithms/数据结构/树套树/对拍/segfhq_lifecycle_check.cpp",
+          "hash": "3fb115036d72514fa8f0313e12809525a0e1cacc496b7328830a5f251be3146d"
+        },
+        {
+          "path": "algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp",
+          "hash": "16dcb9fabdc664cec0710185121d670cf1e86cc093563b930b1498b2742cbcbf"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/树套树/线段树套FHQ_Treap.cpp",
+          "hash": "f94e0a9d0e837011f77b2b192f1285a7fb5b7000f1c1aaa20be3a4bc050585b2",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/树套树/对拍/segfhq_lifecycle_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 2.483
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "7cf1504e1ef6fd55a345fdcb277ae7a2b51d7787d7b7f4251672f2f0e696b7d0",
+      "files": [
+        {
+          "path": "algorithms/数据结构/树状数组/二维树状数组.cpp",
+          "hash": "2af92d56e77fd0c0f67cbd5f0f1813b13b622ba71d818b8c641a5e2fabc8b2c5"
+        },
+        {
+          "path": "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
+          "hash": "6fc8dc97e8d91c41ee0aeb54ac1c005f67724b70f673259da6479b0aac777950"
+        },
+        {
+          "path": "algorithms/数据结构/树状数组/树状数组.cpp",
+          "hash": "d79dbbdcc9242be462482436b60059eebd0f5dfe2decdce22d721764df6ff326"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/树状数组/二维树状数组.cpp",
+          "hash": "b0af07d4fff765484134eb69feaeb4c6602e13d208e8f8a79b1c85f185478ca2",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/树状数组/树状数组.cpp",
+          "hash": "4f8e0f2b2fd895a6705a0b68ce8d3a131794330cde596a7ffb1ea1c315d4e6d8",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/树状数组/对拍/bit_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.345
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "77547495f97433a23004195bf92dcf17c0524368033eea7c33dae6504a5d6841",
+      "files": [
+        {
+          "path": "algorithms/数据结构/线段树/可持久化线段树/主席树.cpp",
+          "hash": "2b69e8d71fd0e1261950b2fe90fd3a49e0e1833a0226860f993b06a0d54ecd91"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/对拍/pst_check.cpp",
+          "hash": "5a31550c98cb5948a41adc4faac886fb08457c8bb2d032e2acc18cf897019c5b"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/线段树/可持久化线段树/主席树.cpp",
+          "hash": "743a36e3ae07e05ccb14d9ff779b7298a5082a60af6b15cc9bf98e90f68d3cfd",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/线段树/对拍/pst_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.197
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "4a17ee5526da93e866f2df082ee37e651ff1f425b4545f045f0ac32a0d22c9c8",
+      "files": [
+        {
+          "path": "algorithms/数据结构/ST表/ST表.cpp",
+          "hash": "11b66a6ad837d180a3ebb4082000adffadd4ac89974b0af82de310054c88967d"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/对拍/seg_check.cpp",
+          "hash": "f748d27d259b2b6f7870c13d8973dd54bbe2b93b62878ceac20273c350904182"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型动态线段树.cpp",
+          "hash": "13e5b0d31615be4872e93973955aabbcf10d502c2f5094c964d436fd5931a33a"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "c6897288e19f28cb1cb9b9ba4d64d6e066517e4a03bdaabd16e7f74a945a4afd"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/ST表/ST表.cpp",
+          "hash": "b57a987297a678bd0dffd8f7c3b3e647d9e6fb6d9d993b4c89279d84174f2654",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/线段树/泛型动态线段树.cpp",
+          "hash": "8f8482c3a840bbc1ab1ac23a8a83f41e4753c449d8c8329441b752b072608210",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "3364129b5a145cf974d1c1b725bc261bf7e090a84ce0b45fb41e4228e51c2d84",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/线段树/对拍/seg_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.656
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "6bd69c6806e47130952107897722a16bd30bbc684e414e21fb53e77db29bc52e",
+      "files": [
+        {
+          "path": "algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp",
+          "hash": "c9b85dbd0e38baf42403081cbfe417c703380e744e48a1887b979f44895a1b58"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型动态线段树.cpp",
+          "hash": "13e5b0d31615be4872e93973955aabbcf10d502c2f5094c964d436fd5931a33a"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间01赋值翻转与连续段.cpp",
+          "hash": "b0757de36e36664ac86f898c45808bee7b106a2d7073bd6a04c5807ca991ee87"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间仿射与平方和.cpp",
+          "hash": "99b211469e6065324306354ae5206eace62bc5fe29a5141f23db25552d1c6947"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间加区间和.cpp",
+          "hash": "89cb55eeacd9d6d5a34e02f4cc6fa5f827e22264b84e3040fb96120738e98a58"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间异或与按位计数.cpp",
+          "hash": "5739992ca45926d4352960459bcfa372e475dbb03aeac2d50b1406e4fad1e1fe"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间等差加法与区间和.cpp",
+          "hash": "ff63a068f9258c35bea87f3f092718f338f9eab194868cb53b2cb5c01d91bc1c"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间赋值与最大子段和.cpp",
+          "hash": "b46913ec7370eace1dc35d8a8df496d90da9209c307461b9144380765fa9baf1"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型插件/区间赋值加法与最值.cpp",
+          "hash": "58cb3c0cd120fcf9b47ab349ecd84b39a8043ba6d867600b07594e8718cc4371"
+        },
+        {
+          "path": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "c6897288e19f28cb1cb9b9ba4d64d6e066517e4a03bdaabd16e7f74a945a4afd"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/线段树/泛型动态线段树.cpp",
+          "hash": "ff18032cc7bedce889d9480ef67a97cfc756bec28b8e2811b90ce7aa70f58132",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/线段树/泛型线段树.cpp",
+          "hash": "3fce389fe13f39e8cb2c86e92942461cf4cf4e2e0ad2b9503f573cdb0b358178",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/数据结构/线段树/对拍/seg_plugins_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 7.057
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "dae77cd423eb56cf13ba0060eb3406fcdfb77d108e5d377b0c22f1be0571a831",
+      "files": [
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/对拍/hash_check.cpp",
+          "hash": "0a5b8819de978d3d7244b978c2a27525f69649fa2cc17dcffc7f7c8ab6b18245"
+        },
+        {
+          "path": "algorithms/杂项/对拍/reference/siphash/siphash.h",
+          "hash": "30d4269093e5886cb9e7ea826899ef02daddac682e73c335c53dd748b9e20bfb"
+        },
+        {
+          "path": "algorithms/杂项/对拍/reference/siphash/siphash_ref.h",
+          "hash": "1eb04356ed89dfe2c1b69e9d4a2844721e159457e9111bf484f934faae9c2c8f"
+        },
+        {
+          "path": "algorithms/杂项/对拍/reference/siphash/vectors64.h",
+          "hash": "296d54b53b0f449f5334b31f14ac76f7d06de0f01d400c829c9cf8071dd883cc"
+        },
+        {
+          "path": "algorithms/杂项/防卡/customHash.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/防卡/哈希防卡.cpp",
+          "hash": "91ba5b25b940763cc5ee262d35471bc9627162c936bc3d0d0493f5d88efa9b37"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/杂项/防卡/哈希防卡.cpp",
+          "hash": "524a48e9eba104c4d44d740041dd9ed501b5eb8947d9d218c39c014d29f3a2e3",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/hash_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 3.932
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "74db18794a9f4b8558ad11a85ab758803160c53fa44d165f54eb443c9657325c",
+      "files": [
+        {
+          "path": "algorithms/数据结构/单调栈/monoStack.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数据结构/单调栈/单调栈.cpp",
+          "hash": "4b2dcb7ab8df521212f45762244db09b04d163d19486fb16b695bd97c3f80bff"
+        },
+        {
+          "path": "algorithms/数据结构/单调队列/monoQueue.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/数据结构/单调队列/单调队列.cpp",
+          "hash": "522147ccebf8539a56b2c9b839a1ee4df35cef7cf3dc1cdbae23b0d4a6b2bc51"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/对拍/misc_check.cpp",
+          "hash": "cbeaef66eec6c810d75676f357878a7b17781a342e73265fa8c874b766a4ce50"
+        },
+        {
+          "path": "algorithms/杂项/快读快写/rw.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/快读快写/快读快写.cpp",
+          "hash": "101eee1caf1e17d4eb99a7172210ecfa14d695b1fce7f8d9db2ac20e2d64c172"
+        },
+        {
+          "path": "algorithms/杂项/离散化/discrete.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "e12a0a238754c675560739a1d18432c123300f7c85fb6c269e594810ec600e80"
+        },
+        {
+          "path": "algorithms/杂项/防卡/customHash.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/防卡/哈希防卡.cpp",
+          "hash": "91ba5b25b940763cc5ee262d35471bc9627162c936bc3d0d0493f5d88efa9b37"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/单调栈/单调栈.cpp",
+          "hash": "cceebf172e6b56cac7f88e96c6332b47154561cbf8ee63cd8693ffa377b7ecb2",
+          "stable": true
+        },
+        {
+          "template": "algorithms/数据结构/单调队列/单调队列.cpp",
+          "hash": "dd49b8905d994705f86f3e2271b80eccf58343917755b3ac5ac13bc3e5e97ad3",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/快读快写/快读快写.cpp",
+          "hash": "91a943f97197a365b93c6cdb8cdfcd3a90c6e528b57bbea5eb4b77e6217f60da",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "0e0d28effad3f7093562abdfcc7ef43ab3b32b0053ad80a918d9b1f4a0013264",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/防卡/哈希防卡.cpp",
+          "hash": "5e4c7320433d7930601624f0f0e9d5b30272e0388fa895d77badb141bd302020",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/misc_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.585
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "e050a1f66a02e983e49e7473bb73516a04c8740f05a256e9f44510b6db3faa3e",
+      "files": [
+        {
+          "path": "algorithms/杂项/对拍/rw_check.cpp",
+          "hash": "2b6f084399d6fd592c93cc649397ef2c4863a849bb5c5d70b8bbdce578825a0b"
+        },
+        {
+          "path": "algorithms/杂项/快读快写/rw.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/快读快写/快读快写.cpp",
+          "hash": "101eee1caf1e17d4eb99a7172210ecfa14d695b1fce7f8d9db2ac20e2d64c172"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/杂项/快读快写/快读快写.cpp",
+          "hash": "dba678f8bdfcd539fff4b2d727414a337c4767be99a894ebbecfd2e9fae7664e",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/rw_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 4.932
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "f2932835b2105a78a7b056f91efc44a24a92db1f366609eb95ee4aac9364f414",
+      "files": [
+        {
+          "path": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "239a97d733ea7ac3407dcfa91fdfd159568cf41115de757bdd58b8eba077006b"
+        },
+        {
+          "path": "algorithms/杂项/128位整数/i128.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/主元素问题/Misra-Gries.cpp",
+          "hash": "6702a755ecac7d9658b2a3910f4a70f8e6236b2e0fb9cb6d4db6220154ccf88d"
+        },
+        {
+          "path": "algorithms/杂项/主元素问题/misraGries.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/对拍/tool_core_check.cpp",
+          "hash": "46df70f321792b8b9e5f5b3153d0edc6007b4d10f70467fce109380dffa5e20e"
+        },
+        {
+          "path": "algorithms/杂项/离散化/discrete.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "e12a0a238754c675560739a1d18432c123300f7c85fb6c269e594810ec600e80"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/杂项/128位整数/128int.cpp",
+          "hash": "66a7505b1f119db33e61d154659e56477767f99d768b1c3683615f538538d86b",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/utils/utils.cpp",
+          "hash": "f685a3d416ba15569fc320808bf02d519e851405aa73180529f336b20c899f32",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/主元素问题/Misra-Gries.cpp",
+          "hash": "3ef3b852bbce939ace741285c478f3989fb82b148cc1c47188d785dd4def98cb",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "b418ea77d017e5f32aad8b10d5abdd5bfe30b8df02c5d0dffe8d9c5400a92c8b",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/tool_core_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 5.333
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "0c15b570f18539f1aadc02dca633003b53ed89864954045521dccd4bfdb1f2fd",
+      "files": [
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/对拍/utils_local_check.cpp",
+          "hash": "3a6a22a8fff3ae45e995d9227d1d81a7b8616e026024303ccda1cafab80ce067"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/杂项/utils/utils.cpp",
+          "hash": "0b1770b260d25688b9037f3b927fe36b65f2369874ff955045e83f133632a046",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/对拍/utils_local_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 1.563
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "4f8fc1f80415aa530f182197ca471a3591d5a5bbff606436a8abfb20f49c94cf",
+      "files": [
+        {
+          "path": "algorithms/数据结构/树状数组/二维树状数组.cpp",
+          "hash": "2af92d56e77fd0c0f67cbd5f0f1813b13b622ba71d818b8c641a5e2fabc8b2c5"
+        },
+        {
+          "path": "algorithms/数据结构/树状数组/树状数组.cpp",
+          "hash": "d79dbbdcc9242be462482436b60059eebd0f5dfe2decdce22d721764df6ff326"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离散化/discrete.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离散化/离散化.cpp",
+          "hash": "e12a0a238754c675560739a1d18432c123300f7c85fb6c269e594810ec600e80"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/bit.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/bit2d.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/discrete.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/pbsPointer.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/pbsRollback.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp",
+          "hash": "4a91031f51c2bd6617686bdfa45473f4640f249d3ed43f0c340c2b7dc313b1d8"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp",
+          "hash": "e416e3a12ac75d09ce34bf3c2b1477cea8f65a2d25407d5626bcf682ed07494a"
+        },
+        {
+          "path": "algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp",
+          "hash": "2e1725e25722fa0393213e4d45e9be9abc455fef40282b6b6f4201e12d1b22a3"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/数据结构/树状数组/二维树状数组.cpp",
+          "hash": "92c0a523e25203fbef3b1abcfea52b0f45ef3eeae481a4e4d41ee5b457f4f26c",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/离线算法/整体二分/整体二分_回滚.cpp",
+          "hash": "6e5d83cc21b5f7dac9be9a44a06c34ba91bd2055c6fcbc3f39b8a61df14c138c",
+          "stable": true
+        },
+        {
+          "template": "algorithms/杂项/离线算法/整体二分/整体二分_指针.cpp",
+          "hash": "c4159d69cf92e1fdbde1cf23d60168fd675995da1a912fb72eac987720be017d",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/离线算法/整体二分/对拍/parallel_binary_search_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 10.839
+    },
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "ca19d1919eab329e37104ec754aca01fa849bb4efee1e0bec477105db635ba9b",
+      "files": [
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/随机数/rnd.h",
+          "hash": "missing"
+        },
+        {
+          "path": "algorithms/杂项/随机数/z_rnd.cpp",
+          "hash": "632ed5a5641eae72e65d02e0a68c024711c8fd1f508ba117f2041785fdee3322"
+        },
+        {
+          "path": "algorithms/杂项/随机数/对拍/rnd_check.cpp",
+          "hash": "40ea90ea8c203046011ea03a1bfa0d3592cc96ccc9be6f6229051ccdc5f63876"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/杂项/随机数/z_rnd.cpp",
+          "hash": "36301de57d944dc4d4c71c3f15a8304d1e08a1cc3cc9eea6d980a83fe90e9ba5",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/杂项/随机数/对拍/rnd_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 1.976
+    }
+  ]
+}

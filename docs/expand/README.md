@@ -41,7 +41,7 @@ node scripts/install_submit_bridge.cjs --uninstall  # 仅在需要卸载时执�
 
 首次安装：先运行上面的 `node scripts/install_submit_bridge.cjs` 并重启 VS Code 扩展宿主；在 Chrome 打开 `chrome://extensions`，开启开发者模式，选择“加载已解压的扩展程序”，选中本库的 `scripts/vjudge-extension` 文件夹。扩展名是 **ZOI Submit**（原名 ZOI VJudge Submit）；为兼容已有安装，目录名保持不变。文件夹需要留在原处，更新后在扩展页面点“重新加载”。卸载时移除这个 Chrome 扩展，并运行上述 `--uninstall` 撤回 VS Code 补丁。
 
-当前版本为 **1.4.0**。扩展启用后，还需允许它自动访问 VJudge 两个域名、AtCoder、Codeforces（含 www、m1、m2）和 `http://127.0.0.1/*`；题单功能另需允许 `https://youkn0wwho.academy/*`，脚本只匹配 `/topic-list*` 页面。只显示“已启用”不代表网站权限已放行。从 1.0.x 升级需重新运行提交适配安装器并重启 VS Code 扩展宿主；已有版本重载 Chrome 扩展、允许新增网站并刷新题单。右侧题面另装下文的 ZOI 题面 VSIX，提交适配与题面扩展分别维护。
+当前版本为 **1.4.1**。扩展启用后，还需允许它自动访问 VJudge 两个域名、AtCoder、Codeforces（含 www、m1、m2）和 `http://127.0.0.1/*`；题单功能另需允许 `https://youkn0wwho.academy/*`，脚本只匹配 `/topic-list*` 页面。只显示“已启用”不代表网站权限已放行。从 1.0.x 升级需重新运行提交适配安装器并重启 VS Code 扩展宿主；已有版本重载 Chrome 扩展、允许新增网站并刷新题单。右侧题面另装下文的 ZOI 题面 VSIX，提交适配与题面扩展分别维护。
 
 装好后可运行 `node scripts/check_vjudge_chrome.cjs` 检查真实连接；它打开 CodeForces-1A 的 VJudge 表单，准备测试文本并执行编译器、代码内容与提交选项的提交前校验，但**不点击提交**。也可传入其他 VJudge 题目 URL 检查自动回退。看到 PASS 后取消该表单即可。
 
@@ -102,32 +102,44 @@ Chrome 扩展申请 VJudge 两个域名、AtCoder、Codeforces（含 www、m1、
 
 链接在新标签页打开，筛选、排序或页面动态更新后会自动补齐。只处理题目表格，不修改资源、收藏、做题进度或提交功能，也不会自动请求各 OJ。UVA 内部 ID 与正式题号、LightOJ 旧题库的 slug 与旧编号使用随扩展附带的公开映射表；新题不在表中时使用搜索入口。VJudge 对应题页是否可提交，仍取决于它对原 OJ 的支持状态。
 
-只用网页链接时，加载 Chrome 扩展即可；使用 **VS Code** 按钮还要安装下文的题面扩展与 CPH。两种功能均不要求安装 CPH 提交补丁。升级后刷新题单页；仍无按钮时检查 Chrome 扩展为 1.4.0 且已允许 YOUKNOWWHO 网站访问。
+只用网页链接时，加载 Chrome 扩展即可；使用 **VS Code** 按钮还要安装下文的题面扩展与 CPH。两种功能均不要求安装 CPH 提交补丁。升级后刷新题单页；仍无按钮时检查 Chrome 扩展为 1.4.1 且已允许 YOUKNOWWHO 网站访问。
 
 ## 右侧题面与一键导入
 
-安装独立的 **ZOI 题面 1.0.1** 扩展后，在 Companion 导入的代码文件上按 **Ctrl+Alt+O**，或运行命令 **ZOI: 在右侧查看当前 CPH 题面**。扩展从该文件的 `.cph` 数据读取题目链接，在右侧编辑器分栏显示正文；不是全站题库搜索侧栏。
+安装独立的 **ZOI 题面 1.1.1** 扩展后，在 Companion 导入的代码文件上按 **Ctrl+Alt+O**，或运行命令 **ZOI: 在右侧查看当前 CPH 题面**。扩展从该文件的 `.cph` 数据读取题目链接，在右侧编辑器分栏显示正文；不是全站题库搜索侧栏。
 
 首次安装或升级，在库根运行（需要 Python 3，运行扩展本身不需要 Python）：
 
 ```powershell
 python scripts/package_statement.py
-code --install-extension docs/releases/zoi-statement-1.0.1.vsix
+code --install-extension docs/releases/zoi-statement-1.1.1.vsix
 ```
 
-也可在 VS Code 扩展页选择“从 VSIX 安装”，打开生成的文件。安装后执行 **Developer: Reload Window**。Chrome 端使用上文的 ZOI Submit 1.4.0；CF、AtCoder 原题与 VJudge 三种链接均可使用。工作区须为受信任的本地文件夹。
+也可在 VS Code 扩展页选择“从 VSIX 安装”，打开生成的文件。安装后执行 **Developer: Reload Window**。Chrome 端使用上文的 ZOI Submit 1.4.1；CF、AtCoder 原题与 VJudge 三种链接均可使用。工作区须为受信任的本地文件夹。
 
 - **查看已导入题目**：用 Companion 绿色加号导入 → 打开代码 → Ctrl+Alt+O。面板支持公式、图片、样例、AtCoder 中提供的英日双语，以及 VJudge 原文/翻译版本切换；UVA 等 PDF 题面在面板内显示并可选中文字。
 - **从题单一键开始**：先在 VS Code 打开刷题文件夹，再点 YOUKNOWWHO 题目旁的 **VS Code**。首次使用时 Chrome 可能询问是否打开 VS Code。题面解析后通过 CPH 接收服务生成文件与样例，继续使用 CPH 的语言、模板配置。已有相同题目的文件会直接打开，保留代码和样例。
 - **刷新与网络**：题面缓存七天、最多一百条，面板“刷新”重新读取。CF / AtCoder 优先直接读取，遇到验证等情况改从 Chrome 读取；VJudge 从 Chrome 获取当前可见的题面版本。网页需要登录或验证时手动完成，再点“从 Chrome 读取”。
+- **Gym 只有整场 PDF**：单题跳到附件页时仍保留原题号，自动读取对应 `Gym-比赛号题号` 的 VJudge 版本；也可点“整场 PDF”查看原站文件。PDF 有明确 `Problem X.` 标题时只显示当前题的页，无法可靠定位时显示整份并提示补样例。CPH 文件关联和提交目标仍是原 CF 单题，不会因换题面来源生成另一份题目。
+- **题单链接只有附件或 PDF**：无法从整场链接确定单题时，VS Code 按钮改为 VJudge 的 Gym 题名搜索，由你选择正确题目，原题名链接保留。
 
 LightOJ、UVA、CSES、SPOJ 等来源统一读取 VJudge 提供的题面，不要求配置这些原 OJ 的提交账号；能否显示取决于 VJudge 的收录、当前网页权限和题面格式。未知来源的题名搜索不保证找到结果。样例支持常见 HTML 格式和上下排列的 PDF `Sample Input` / `Sample Output`；扫描件、并排多栏等无法可靠识别时提示在 CPH 手动补样例，不能把“显示题面”等同于“完整提取样例”。
+
+Gym PDF 另支持定位单题后，带 `Example` 和输入/输出列头的规则双栏单组样例；疑似多组样例分隔、跨栏正文或不明确的布局不会自动导入，避免把几组样例拼成一组。PDF 获取失败时保留原文链接并报告失败，不假装完成导入。
 
 CPH 接收端口使用默认 `27121`，文件生成到 CPH 所在窗口的首个工作区文件夹。多个 VS Code 窗口可能抢占接收端口；若提示已发送但未确认文件，先看 CPH 的语言/保存提示和实际接收窗口，避免重复导入。普通本地代码若没有 `.cph` 关联，应先用 Companion 导入题目。
 
 想省掉每次选择语言，在刷题工作区设置 **CPH: Default Language** 为 `cpp`。接收端口未启动时先执行 **Developer: Restart Extension Host** 并打开 CPH 面板；看到题面不代表 CPH 已建文件，以“已生成题目文件”提示和实际文件为准。
 
 卸载题面功能：在 VS Code 卸载 **ZOI 题面**，或运行 `code --uninstall-extension zoi-local.zoi-statement`。这不会删除题解或 CPH 样例。只卸载题面时，可继续保留 Chrome 扩展的提交和 VJudge 链接功能。
+
+## 把题目移入垃圾堆
+
+ZOI 题面 1.1.1 同时提供 **Ctrl+Alt+Shift+T**（macOS 为 Cmd+Alt+Shift+T），命令名为 **ZOI: 勾选题目移入垃圾堆**。在编辑器或文件列表中按快捷键，输入题名筛选、勾选复选框、回车移动；Esc 取消。仅列出当前工作区根目录的 `.cpp/.cc/.cxx/.c`，不扫描子目录、头文件或现有 `trash heap`，不预选任何题目。
+
+选中的源码移入该工作区的 `trash heap`；对应 CPH 样例一并移动，并更新源码路径和 CPH 文件名，使题目在垃圾堆中仍可打开样例与题面。也携带同名 `.exe/.out/.o` 和 ZOI 的 `.zoi.cpp/.zoi.sha/.zoi.state.json`。源码、样例内容和展开状态保留，完成提示中的 **撤回本次** 可恢复本次移动；目标已有同名文件或有未保存修改时整批停止，不覆盖内容。
+
+此功能支持默认的题目旁 `.cph`，配置了 CPH 自定义数据目录时会提示停止。遇到符号链接、未恢复的展开事务或无法读取的关联数据也保留现场。先完成全部目标副本再移除源文件，普通错误会尝试回退；若进程被强制终止，可能两处都留有文件，应先核对，不能直接覆盖重试。不会发送提交，也不会清空垃圾堆。
 
 ## 手动展开与恢复
 

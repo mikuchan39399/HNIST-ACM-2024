@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "id": "40c290ec7f9747738ae89fb70e4f9066",
+  "startedUtc": "2026-09-30T06:19:18.9594494Z",
+  "finishedUtc": "2026-09-30T06:19:22.1297757Z",
+  "os": "Windows",
+  "compilerVersion": "g++.exe (Rev8, Built by MSYS2 project) 15.2.0",
+  "flags": [
+    "-std=c++20",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-UNDEBUG",
+    "-O2"
+  ],
+  "sanitize": false,
+  "logs": ".zoi-checks/codex-work/booklet-profile/regression-manacher",
+  "results": [
+    {
+      "fingerprintVersion": 2,
+      "fingerprint": "74ef21d6a923924361580bb582316395efb27bb4dc18d35b80d8a80d15d18d17",
+      "files": [
+        {
+          "path": "algorithms/字符串/Manacher/manacher.cpp",
+          "hash": "fb6b4c496aaf7137c311c279b5f1ffbde385cf4857ad3d2b46e34023a912ce86"
+        },
+        {
+          "path": "algorithms/字符串/Manacher/对拍/manacher_check.cpp",
+          "hash": "97614f20b79c5aeda832c2f5d35d2ca2b709f42c163689e9a23ab86f348063b4"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.cpp",
+          "hash": "5d0863217c73ff9867aa378b77e78a809fe551a6cfc1f7ba8b6e4b97ed4120aa"
+        },
+        {
+          "path": "algorithms/杂项/utils/utils.h",
+          "hash": "missing"
+        },
+        {
+          "path": "scripts/check_inventory.ps1",
+          "hash": "ff3103d27bfa79acb84e54b0bf2b03525659e9530cfd86ce79915e7e300cad2f"
+        },
+        {
+          "path": "scripts/check_process.ps1",
+          "hash": "6cd7aa73fa1284b30f4a358049add38ee17cdafb28d76484e3acc793bf8ff44e"
+        },
+        {
+          "path": "scripts/check_verification.ps1",
+          "hash": "1325dd0a5aa1176ecc64359592d99a12e7fc981808344aa089b5964edc505460"
+        },
+        {
+          "path": "scripts/run_checks.ps1",
+          "hash": "a8cd7e603f423b08b93b21749817b663c4e2d436fb366c4f43e5ea99ef9eed5f"
+        },
+        {
+          "path": "scripts/sync_layout.ps1",
+          "hash": "dfc24aa00c192d853a32ede7da99d53f91518c84ba4eb17fa711f8e3c7088a5b"
+        }
+      ],
+      "scopes": [
+        {
+          "template": "algorithms/字符串/Manacher/manacher.cpp",
+          "hash": "9c258bbe58714e3f0d0ac6baa6fea0d417588a47cb977f56463f0e30ed5aa5e2",
+          "stable": true
+        }
+      ],
+      "stable": true,
+      "path": "algorithms/字符串/Manacher/对拍/manacher_check.cpp",
+      "phase": "regression",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 2.956
+    }
+  ]
+}
