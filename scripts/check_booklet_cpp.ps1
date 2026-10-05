@@ -59,7 +59,7 @@ foreach ($word in @('SHARED_CORE_KEEP','SPAN_ADAPTER_KEEP','VECTOR_USAGE_KEEP','
     Assert-Cpp (([regex]::Matches($out,$word)).Count -eq 1) ('Lost or duplicated shared engine text: ' + $word)
 }
 Assert-Cpp (-not $out.Contains('__cplusplus') -and ([regex]::Matches($out,'#endif')).Count -eq 1) 'Shared core projection damaged its guard'
-# This text must survive byte for byte, including apparent directives.
+# Preserve all text except the documented CRLF/CR to LF normalization.
 $literal = @'
 // #if __cplusplus < 199711L
 /*
@@ -83,7 +83,11 @@ KEEP
 ALSO_KEEP
 #endif
 '@
-Assert-Cpp ((Convert-BookletCpp20 $literal) -ceq $literal) 'Comment/literal/LOCAL text was changed'
+$literal = $literal.Replace("`r`n", "`n").Replace("`r", "`n")
+foreach ($newline in @("`n", "`r`n", "`r")) {
+    $inputText = $literal.Replace("`n", $newline)
+    Assert-Cpp ((Convert-BookletCpp20 $inputText) -ceq $literal) 'Comment/literal/LOCAL text was changed beyond newline normalization'
+}
 $trace = New-Object Collections.ArrayList
 $profile = @'
 #ifdef ZOI_BOOKLET

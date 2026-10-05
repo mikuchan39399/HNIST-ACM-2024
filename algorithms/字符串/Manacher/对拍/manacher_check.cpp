@@ -283,7 +283,7 @@ void span_checks()
     for (int n : {1000000, 1, 0, 257, 1000000})
     {
         VLL a(n + 2, LLONG_MIN);
-        a.front() = a.back() = LLONG_MAX;
+        a[0] = a[n + 1] = LLONG_MAX;
         man.build(span(a).subspan(1, n));
         assert(man.n == n && man.count() == 1LL * n * (n + 1) / 2);
         assert(man.longest() == (n ? PII(1, n) : PII(0, 0)));

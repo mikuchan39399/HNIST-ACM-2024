@@ -377,7 +377,7 @@ void span_checks()
     for (int n : {1000000, 1, 0, 257, 1000000})
     {
         VLL a(n + 2, LLONG_MIN);
-        a.front() = a.back() = LLONG_MAX;
+        a[0] = a[n + 1] = LLONG_MAX;
         zf.build(span(a).subspan(1, n));
         assert(zf.n == n && zf.z.size() == size_t(n + 1) && zf.z[0] == 0);
         for (int i = 1; i <= n; i++) assert(zf.z[i] == n - i + 1);
