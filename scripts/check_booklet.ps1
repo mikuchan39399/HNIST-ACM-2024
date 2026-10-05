@@ -3,6 +3,7 @@ $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'check_process.ps1')
 . (Join-Path $PSScriptRoot 'booklet_markdown.ps1')
+& (Join-Path $PSScriptRoot 'check_booklet_cpp.ps1')
 $fixture=Join-Path $root ('.zoi-checks/booklet-test-'+[Guid]::NewGuid().ToString('N'))
 $enc=New-Object Text.UTF8Encoding($false)
 function Put([string]$Rel,[string]$Text) {
@@ -12,7 +13,10 @@ function Put([string]$Rel,[string]$Text) {
 }
 function Assert([bool]$Ok,[string]$Message) { if (-not $Ok) { throw $Message } }
 Put 'scripts/placeholder' ''
-foreach ($name in @('make_booklet.ps1','booklet_markdown.ps1','booklet_tree.ps1')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $fixture ('scripts/'+$name)) }
+foreach ($name in @('make_booklet.ps1','booklet_markdown.ps1','booklet_tree.ps1','booklet_cpp.ps1')) { Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $fixture ('scripts/'+$name)) }
+[void][IO.Directory]::CreateDirectory((Join-Path $fixture 'docs/booklet/assets'))
+Copy-Item -LiteralPath (Join-Path $root 'docs/booklet/assets/icpc-foundation.svg') -Destination (Join-Path $fixture 'docs/booklet/assets/icpc-foundation.svg')
+Copy-Item -LiteralPath (Join-Path $root 'docs/booklet/assets/print.tmTheme') -Destination (Join-Path $fixture 'docs/booklet/assets/print.tmTheme')
 $compiler=(Get-Command typst -ErrorAction SilentlyContinue | Select-Object -First 1).Source
 if (-not $compiler -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'typst.exe'))) { $compiler=Join-Path $PSScriptRoot 'typst.exe' }
 if (($Render -or $AuditOnly) -and -not $compiler) { throw 'Render/audit tests require Typst' }
@@ -126,7 +130,16 @@ function Build([string]$Filter='',[int]$Expected=0,[int]$Solo=0,[string]$Output=
     Assert (-not $r.TimedOut -and $r.ExitCode -eq $Expected) ('Unexpected build result '+$script:calls+'; inspect '+$fixture)
     if ($Expected -eq 0) { return [IO.File]::ReadAllText((Join-Path $fixture ([IO.Path]::ChangeExtension($Output,'.typ'))),$enc) }
 }
+# Private implementation headers must print under their owning entry.
+Put 'algorithms/domain/family/private.h' "#ifndef PRIVATE_H`n#define PRIVATE_H`n#include `"../other/a.cpp`"`nint PRIVATE_HEADER_KEEP;`n#endif`n"
+$privateOwner=Join-Path $fixture 'algorithms/domain/family/a.cpp'
+[IO.File]::AppendAllText($privateOwner, "`n#include `"private.h`"`n", $enc)
+# Dead private includes must never be opened, even when absent or cyclic.
+[IO.File]::AppendAllText($privateOwner, "`n#if __cplusplus >= 202002L`nint CPP20_KEEP;`n#else`n#include `"missing-legacy.h`"`n#endif`n", $enc)
 $s=Build
+Assert ($s.Contains('CPP20_KEEP') -and -not $s.Contains('missing-legacy') -and -not $s.Contains('__cplusplus')) 'Private version selection failed'
+Assert ($s.Contains('flipped: false') -and $s.Contains('columns: 1') -and -not $s.Contains('#columns(3') -and $s.Contains('booklet-mono, size: 9pt')) 'Portrait single-column layout missing'
+Assert ($s.Contains('PRIVATE_HEADER_KEEP') -and -not $s.Contains('#include \"private.h\"')) 'Private implementation header lost from print'
 Assert (([regex]::Matches($s,'// manual: ')).Count -eq 1) 'Shared manual repeated or missing'
 Assert ($s.IndexOf('SOURCE_B') -lt $s.IndexOf('// manual: ') -and $s.IndexOf('// manual: ') -lt $s.IndexOf('SOURCE_C')) 'Manual detached from its source family'
 Assert (-not $s.Contains('MUST_NOT_PRINT')) 'Ancestor, descendant or roadmap leaked into booklet'
@@ -136,9 +149,9 @@ foreach ($marker in @('BOLD_KEEP','CODE_KEEP','LINK_KEEP','NUMBERED_ONE_KEEP','N
     Assert ($s.Contains($marker)) ('Markdown content lost: '+$marker)
 }
 Assert ($s.Contains('#table(') -and $s.Contains('#strong[')) 'Markdown formatting not rendered'
-Assert ($s.Contains('size: 12pt, weight: "bold", fill: manual-ink') -and $s.Contains('size: 6.6pt, fill: luma(90)')) 'Manual title/subtitle hierarchy lost'
-Assert ($s.Contains('luma(135), "01"') -and $s.Contains('luma(135), "02"') -and $s.Contains('size: 7.5pt, weight: "bold", fill: manual-ink')) 'Section numbering/subheading lost'
-Assert ($s.Contains('size: 6.2pt, fill: luma(90)') -and $s.Contains('left: none, right: none, top: none, bottom: 0.3pt')) 'Formula captions/table rules lost'
+Assert ($s.Contains('size: 16pt, weight: "bold", fill: manual-ink') -and $s.Contains('size: 9pt, fill: luma(90)')) 'Manual title/subtitle hierarchy lost'
+Assert ($s.Contains('luma(135), "01"') -and $s.Contains('luma(135), "02"') -and $s.Contains('size: 11pt, weight: "bold", fill: manual-ink')) 'Section numbering/subheading lost'
+Assert ($s.Contains('size: 9pt, fill: luma(90)') -and $s.Contains('left: none, right: none, top: none, bottom: 0.3pt')) 'Formula captions/table rules lost'
 Assert ($s.Contains('#enum(start: 1,') -and $s.Contains('#list(indent: 7pt,') -and $s.Contains('#text("NUMBERED_TWO_KEEP")')) 'Hanging lists lost items or numbering'
 Assert ($s.Contains('#text(" NOTE_BODY_KEEP")') -and $s.Contains('#text("NOTE_CONTINUATION_KEEP #read(\"private\") <not-a-label>")')) 'Note continuation interpreted as markup or dropped'
 Assert ($s.Contains('frac(') -and $s.Contains('lr(ceil.l') -and $s.Contains('sum _(i = 1) ^(n)') -and $s.Contains('"$literal$"')) 'Math structure or code isolation broken'
@@ -146,6 +159,26 @@ Assert ($s.Contains('// directory: algorithms/domain/empty') -and $s.Contains('/
 Assert (-not $s.Contains('outlined: false, "a"') -and $s.Contains('// entry: algorithms/domain/family/a.cpp') -and $s.Contains('// entry: algorithms/domain/family/b.cpp')) 'Sibling sources were hidden from contents'
 Assert ($s.IndexOf('#pagebreak(weak: true)', $s.IndexOf('SOURCE_A')) -lt $s.IndexOf('SOURCE_B')) 'Sibling entries lost independent page starts'
 Write-Host '[PASS] adjacent discovery / shared once after siblings / roadmap exclusion / Markdown content and structure'
+# Arbitrary source names and formatting need no generator registration.
+$originalB=[IO.File]::ReadAllText((Join-Path $fixture 'algorithms/domain/family/b.cpp'),$enc)
+$paperB="#ifdef ZOI_BOOKLET`nint RenamedEntry(auto view) {`n#else`nint old_entry(int* s) {`n#endif`nreturn SHARED_BODY_KEEP;`n}`n/* Usage`n#ifdef ZOI_BOOKLET`nPAPER_USAGE_KEEP`n#else`nTRAINING_USAGE_DROP`n#endif`n*/"
+Put 'algorithms/domain/family/b.cpp' $paperB
+$s=Build 'b'
+Assert ($s.Contains('RenamedEntry(auto view)') -and $s.Contains('SHARED_BODY_KEEP') -and $s.Contains('PAPER_USAGE_KEEP') -and -not $s.Contains('old_entry') -and -not $s.Contains('TRAINING_USAGE_DROP')) 'Source profile failed'
+Assert ([IO.File]::ReadAllText((Join-Path $fixture 'algorithms/domain/family/b.cpp'),$enc) -ceq $paperB) 'Projection mutated training source'
+$audit=[IO.File]::ReadAllText((Join-Path $fixture 'out/book.code.md'),$enc)
+Assert ($audit.Contains('RenamedEntry(auto view)') -and $audit.Contains('SHA256:') -and $audit.Contains('#ifdef ZOI_BOOKLET -> #ifdef ZOI_BOOKLET')) 'Readable code or decision trace missing'
+foreach ($bad in @(
+    "#ifdef ZOI_BOOKLET`nUNCLOSED",
+    "#ifdef ZOI_BOOKLET`nX`n#elif UNKNOWN`nY`n#endif",
+    "#define ZOI_BOOKLET 1",
+    "#if defined(ZOI_BOOKLET) || UNKNOWN`nX`n#endif"
+)) {
+    Put 'algorithms/domain/family/b.cpp' $bad
+    Build 'b' 1
+}
+Put 'algorithms/domain/family/b.cpp' $originalB
+Write-Host '[PASS] source profile / shared body / readable code and trace / unchanged source / rejection'
 # Long descriptions must flow across columns/pages, without a giant unbreakable box.
 $longManual=$manual+"`n`n## LONG_SECTION_KEEP`n`n| Long key | Long value |`n|---|---|`n"+((1..90 | ForEach-Object { '| ROW_'+$_+' | Long table text that wraps inside narrow booklet columns without dropping content. |' }) -join "`n")
 Put 'algorithms/domain/family/README.md' $longManual
@@ -188,5 +221,25 @@ $s=Build '' 0 90
 Assert ($s.Contains('GROWTH_1200') -and $s.IndexOf('GROWTH_1200') -lt $s.IndexOf('SOURCE_B') -and $s.Contains('#pagebreak(to: "odd"')) 'Growth truncated source or broke parity option'
 Assert (-not $s.Contains('NEW_MANUAL_AUTO')) 'Deleted manual remained in output'
 Write-Host '[PASS] new manual auto-discovery / malformed Markdown rejects / 1200-line growth / odd-page policy'
+# The default command exports one volume per real top-level directory.
+$splitArgs=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $fixture 'scripts/make_booklet.ps1'),'-GenerateOnly','-OutDir','out/chapters')
+if (-not $Render) { $splitArgs+='-SourceOnly' }
+elseif ($compiler) { $splitArgs+=@('-TypstPath',$compiler) }
+$r=@(Invoke-CheckProcess (Get-Process -Id $PID).Path $splitArgs $fixture 180 (Join-Path $fixture 'split'))[-1]
+Assert (-not $r.TimedOut -and $r.ExitCode -eq 0) 'Default chapter export failed'
+$index=Get-Content -LiteralPath (Join-Path $fixture 'out/chapters/chapters.json') -Raw | ConvertFrom-Json
+$domains=@(Get-ChildItem -LiteralPath (Join-Path $fixture 'algorithms') -Directory | Where-Object { -not $_.Name.StartsWith('.') })
+Assert ($index.cppStandard -eq 'c++20') 'Missing print language standard'
+Assert ($index.profile -eq 'contest') 'Missing contest profile'
+Assert ($index.chapters.Count -eq $domains.Count) 'Missing or duplicate split chapter'
+foreach ($part in $index.chapters) {
+    $src=[IO.File]::ReadAllText((Join-Path $fixture ('out/chapters/'+$part.source)),$enc)
+    Assert ([IO.File]::Exists((Join-Path $fixture ('out/chapters/'+$part.code)))) 'Readable chapter code missing'
+    Assert ($src.Contains('// chapter-scope: '+$part.chapter)) 'Chapter identity lost'
+    $otherDirs=@([regex]::Matches($src,'(?m)^// directory: algorithms/([^/\r\n]+)') | Where-Object { $_.Groups[1].Value -ne $part.chapter })
+    Assert ($otherDirs.Count -eq 0) 'Sibling directory leaked into chapter'
+    if ($Render) { Assert ([IO.File]::Exists((Join-Path $fixture ('out/chapters/'+$part.pdf)))) 'Split PDF missing' }
+}
+Write-Host '[PASS] default chapter export / empty-only chapter / isolated directory coverage / portrait layout'
 Write-Host ('Booklet self-test: '+$script:calls+' builds passed; render='+$Render+'; logs: '+$fixture)
 Complete-CheckWorkspace $fixture 'tooling'

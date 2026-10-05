@@ -99,14 +99,17 @@ jobs:
       - name: Compile fixtures including long source and shared manuals
         shell: pwsh
         run: ./scripts/check_booklet.ps1 -Render
-      - name: Rebuild the complete current booklet
+      - name: Build and verify the current chapter booklets
         shell: pwsh
-        run: ./scripts/make_booklet.ps1
+        run: |
+          $python = Join-Path $PWD '.zoi-checks/codex-work/booklet-tools/venv/bin/python'
+          ./scripts/check_booklet_release.ps1 -Python $python
+          ./scripts/build_booklet.ps1 -Python $python
       - name: Verify PDF contents, source pages, text and page-39 footer
         run: |
-          .zoi-checks/codex-work/booklet-tools/venv/bin/python scripts/check_booklet_pdf.py docs/booklet/output/zoi-booklet-print.pdf
           for fixture in .zoi-checks/booklet-test-*; do
             .zoi-checks/codex-work/booklet-tools/venv/bin/python scripts/check_booklet_pdf.py "$fixture/out/book.pdf" --root "$fixture"
+            .zoi-checks/codex-work/booklet-tools/venv/bin/python scripts/check_booklet_pdf.py "$fixture/out/chapters" --root "$fixture"
           done
       - name: Keep the current booklet and diagnostics
         if: ${{ !cancelled() }}
@@ -114,8 +117,10 @@ jobs:
         with:
           name: booklet-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            docs/booklet/output/zoi-booklet-print.pdf
-            docs/booklet/output/zoi-booklet-print.typ
+            docs/booklet/output/chapters/*.pdf
+            docs/booklet/output/chapters/*.typ
+            docs/booklet/output/chapters/*.code.md
+            docs/booklet/output/chapters/chapters.json
             .zoi-checks/booklet-test-*/*.log
           include-hidden-files: true
           retention-days: 7
@@ -185,6 +190,7 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           node scripts/check_statement.cjs
+          node scripts/check_problem_trash.cjs
           python3 scripts/package_statement.py
       - name: Full regression
         if: ${{ !cancelled() }}

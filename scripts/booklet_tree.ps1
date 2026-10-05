@@ -1,16 +1,18 @@
 # Directory discovery is independent of catalog membership.
 # Catalog controls printable source identities, not whether a chapter exists.
-function Get-BookletTree([string]$Root, $Entries, $Plugins, [string]$Filter) {
+function Get-BookletTree([string]$Root, $Entries, $Plugins, [string]$Filter, [string]$Chapter = '') {
     $nodes=@{}
     $testName=-join ([char]0x5BF9,[char]0x62CD)
     foreach ($d in Get-ChildItem -LiteralPath (Join-Path $Root 'algorithms') -Recurse -Directory) {
         $rel=$d.FullName.Substring($Root.Length+1).Replace('\','/')
         $parts=$rel -split '/'
+        if ($Chapter -and $parts[1] -ne $Chapter) { continue }
         if ($parts -contains $testName -or @($parts | Where-Object { $_.StartsWith('.') }).Count) { continue }
         $nodes[$rel]=[pscustomobject]@{Rel=$rel;Name=$d.Name;Depth=$parts.Count-1;Rank=[int]::MaxValue;Children=@();Entries=@();Selected=(!$Filter)}
     }
     $index=0
     foreach ($e in @($Entries)+@($Plugins)) {
+        if ($Chapter -and ($e.Rel -split '/')[1] -ne $Chapter) { continue }
         $dir=$e.Rel -replace '/[^/]+$',''
         if (-not $nodes.ContainsKey($dir)) { throw ('Printable source has no algorithm directory: '+$e.Rel) }
         $nodes[$dir].Entries+=,$e

@@ -132,7 +132,7 @@ function Convert-BookletMarkdown([string]$Text) {
     $out = New-Object Text.StringBuilder
     [void]$out.AppendLine('#block(above: 5pt, below: 2pt, breakable: true)[')
     [void]$out.AppendLine('#let manual-ink = rgb("#294f4b")')
-    [void]$out.AppendLine('#set text(size: 7.1pt)')
+    [void]$out.AppendLine('#set text(size: 10pt)')
     [void]$out.AppendLine('#set par(leading: 0.52em, spacing: 4pt, justify: false)')
     [void]$out.AppendLine('#show math.equation: set text(font: "New Computer Modern Math")')
     $section=0
@@ -171,29 +171,29 @@ function Convert-BookletMarkdown([string]$Text) {
             }
             [void]$out.AppendLine('#block(width: 100%, above: 4pt, below: 5pt, inset: (x: 6pt, y: 5pt), fill: luma(247), radius: 2pt)[')
             if ($formulaLabel) {
-                [void]$out.AppendLine('#text(size: 6.2pt, fill: luma(90))['+(Typ-Inline $formulaLabel)+'] #v(2pt)')
+                [void]$out.AppendLine('#text(size: 9pt, fill: luma(90))['+(Typ-Inline $formulaLabel)+'] #v(2pt)')
                 $formulaLabel=''
             }
-            [void]$out.AppendLine('#metadata("booklet-math")#align(center, text(size: 8pt)[$ ' + (Convert-BookletMath $formula) + ' $])]')
+            [void]$out.AppendLine('#metadata("booklet-math")#align(center, text(size: 11pt)[$ ' + (Convert-BookletMath $formula) + ' $])]')
         } elseif ($line -match '^\s*(#{1,6})\s+(.+)$') {
             $level=$Matches[1].Length; $title=$Matches[2]
             $leadParagraph=$level -eq 1
             if ($level -eq 1) {
                 $section=0
-                [void]$out.AppendLine('#block(sticky: true, above: 5pt, below: 5pt, width: 100%)[#text(size: 12pt, weight: "bold", fill: manual-ink)['+(Typ-Inline $title)+']')
+                [void]$out.AppendLine('#block(sticky: true, above: 5pt, below: 5pt, width: 100%)[#text(size: 16pt, weight: "bold", fill: manual-ink)['+(Typ-Inline $title)+']')
                 # One quoted line immediately below H1 is the optional subtitle.
                 $next=$i+1
                 while ($next -lt $lines.Count -and -not $lines[$next].Trim()) { $next++ }
                 if ($next -lt $lines.Count -and $lines[$next] -match '^\s*>\s?(.+)$') {
-                    [void]$out.AppendLine('#v(3pt) #text(size: 6.6pt, fill: luma(90))['+(Typ-Inline $Matches[1])+']')
+                    [void]$out.AppendLine('#v(3pt) #text(size: 9pt, fill: luma(90))['+(Typ-Inline $Matches[1])+']')
                     $i=$next
                 }
                 [void]$out.AppendLine('#v(5pt) #line(length: 100%, stroke: 1pt + manual-ink)]')
             } elseif ($level -eq 2) {
                 $section++
-                [void]$out.AppendLine('#block(sticky: true, above: 8pt, below: 3.5pt, width: 100%)[#grid(columns: (18pt, 1fr), align: horizon, text(size: 7pt, fill: luma(135), '+(Typ-String $section.ToString('00'))+'), text(size: 8.5pt, weight: "bold", fill: manual-ink)['+(Typ-Inline $title)+']) #v(2.5pt) #line(length: 100%, stroke: 0.35pt + luma(210))]')
+                [void]$out.AppendLine('#block(sticky: true, above: 8pt, below: 3.5pt, width: 100%)[#grid(columns: (18pt, 1fr), align: horizon, text(size: 10pt, fill: luma(135), '+(Typ-String $section.ToString('00'))+'), text(size: 12pt, weight: "bold", fill: manual-ink)['+(Typ-Inline $title)+']) #v(2.5pt) #line(length: 100%, stroke: 0.35pt + luma(210))]')
             } else {
-                [void]$out.AppendLine('#block(sticky: true, above: 5pt, below: 3pt)[#text(size: 7.5pt, weight: "bold", fill: manual-ink)['+(Typ-Inline $title)+']]')
+                [void]$out.AppendLine('#block(sticky: true, above: 5pt, below: 3pt)[#text(size: 11pt, weight: "bold", fill: manual-ink)['+(Typ-Inline $title)+']]')
             }
         } elseif ($line.Trim().StartsWith('|') -and $i+1 -lt $lines.Count -and $lines[$i+1] -match '^\s*\|?\s*:?-{3,}') {
             $leadParagraph=$false
@@ -214,7 +214,7 @@ function Convert-BookletMarkdown([string]$Text) {
             $numbered=[regex]::IsMatch($Matches[1],'^\d'); $start=1
             if ($numbered) { $start=[int]($Matches[1] -replace '\D','') }
             $kind=if ($numbered) { 'enum(start: '+$start+', ' } else { 'list(' }
-            [void]$out.AppendLine('#'+$kind+'indent: 7pt, body-indent: 3pt, spacing: 2pt,')
+            [void]$out.AppendLine('#'+$kind+'indent: 7pt, body-indent: 3pt, tight: false, spacing: 4pt,')
             do {
                 [void]$out.AppendLine('['+(Typ-Inline $Matches[2])+'],')
                 $i++
@@ -223,7 +223,7 @@ function Convert-BookletMarkdown([string]$Text) {
             [void]$out.AppendLine(')')
         } elseif ($line -match '^\s*>\s?(.*)$') {
             $leadParagraph=$false
-            [void]$out.AppendLine('#block(width: 100%, above: 5pt, below: 4pt, breakable: true, inset: (left: 6pt, right: 3pt, y: 3pt), stroke: (left: 1pt + manual-ink))[#show strong: it => text(size: 6.8pt, fill: manual-ink, it)')
+            [void]$out.AppendLine('#block(width: 100%, above: 5pt, below: 4pt, breakable: true, inset: (left: 6pt, right: 3pt, y: 3pt), stroke: (left: 1pt + manual-ink))[#show strong: it => text(size: 10pt, fill: manual-ink, it)')
             do {
                 [void]$out.AppendLine((Typ-Inline $Matches[1]))
                 $i++

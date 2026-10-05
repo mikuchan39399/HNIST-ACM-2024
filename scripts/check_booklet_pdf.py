@@ -19,6 +19,9 @@ def plain(text):
 
 def check(pdf, root):
     reader = PdfReader(pdf)
+    for i, page in enumerate(reader.pages, 1):
+        assert abs(float(page.mediabox.width) - 595.276) < 0.1 and abs(float(page.mediabox.height) - 841.89) < 0.1, f'Page {i} is not portrait A4'
+        assert int(page.get('/Rotate', 0)) % 360 == 0, f'Page {i} is rotated'
     pages = [p.extract_text() or '' for p in reader.pages]
     whole = compact('\n'.join(pages))
     miku = [i+1 for i, text in enumerate(pages) if 'MIKU' in text]
@@ -44,6 +47,15 @@ def check(pdf, root):
     assert entry_pages == sorted(set(entry_pages)), 'Source entries share their opening page'
     # Bookmarks alone are insufficient: each heading must also be printed in TOC.
     body_start = min(p for _, _, p in actual_outline)
+    assert reader.metadata.get('/Title'), 'PDF document title missing'
+    toc_page = reader.pages[1].indirect_reference
+    for page_index in entry_pages:
+        page = reader.pages[page_index]
+        header_links = [a.get_object() for a in page.get('/Annots', [])
+                        if a.get_object().get('/Subtype') == '/Link'
+                        and float(a.get_object()['/Rect'][1]) > float(page.mediabox.height) - 45]
+        destinations = [a['/Dest'].get_object() for a in header_links if '/Dest' in a]
+        assert any(dest[0] == toc_page for dest in destinations), f'Page {page_index+1} cannot return to contents'
     contents_text = compact('\n'.join(pages[1:body_start]))
     for _, title, _ in expected_outline:
         assert compact(title) in contents_text, f'Title missing from printed contents: {title}'
@@ -53,7 +65,7 @@ def check(pdf, root):
         page = reader.pages[actual_outline[i][2]]
         header = []
         def visit_header(text, cm, tm, font, size):
-            if size == 6 and cm[5] > float(page.mediabox.height) - 30:
+            if abs(size - 7.5) < 0.01 and cm[5] > float(page.mediabox.height) - 45:
                 header.append(text)
         page.extract_text(visitor_text=visit_header)
         assert compact(title) in compact(''.join(header)), f'Opening page header hides source title: {title}'
@@ -61,9 +73,13 @@ def check(pdf, root):
     manuals = re.findall(r'^// manual: (.+)$', typ, re.M)
     directories = re.findall(r'^// directory: (.+)$', typ, re.M)
     assert len(directories) == len(set(directories)), 'Repeated algorithm directory'
-    if '// directory-scope: all' in typ:
+    chapter_match = re.search(r'^// chapter-scope: (.+)$', typ, re.M)
+    chapter = chapter_match[1] if chapter_match else None
+    assert 'flipped: false' in typ and 'columns: 1' in typ and '#columns(3' not in typ, 'Wrong booklet layout'
+    if '// directory-scope: all' in typ or '// directory-scope: chapter' in typ:
         expected_dirs = {p.relative_to(root).as_posix() for p in (root / 'algorithms').rglob('*')
                          if p.is_dir() and '对拍' not in p.parts
+                         and (not chapter or p.relative_to(root / 'algorithms').parts[0] == chapter)
                          and not any(part.startswith('.') for part in p.relative_to(root).parts)}
         assert set(directories) == expected_dirs, f'Directory discovery mismatch: {set(directories) ^ expected_dirs}'
     for directory in directories:
@@ -75,7 +91,7 @@ def check(pdf, root):
         for page_index, page in enumerate(reader.pages):
             def visit(text, cm, tm, font, size):
                 match = re.fullmatch(r'DEPTHLEVEL([1-7])', text.strip())
-                if match and size > 6:  # Page headers are 6 pt, not chapter titles.
+                if match and page_index > 0 and size > 7.5:  # Ignore cover and running headers.
                     samples[int(match[1])].append((page_index, size, cm[4], cm[5]))
             page.extract_text(visitor_text=visit)
         assert all(len(v) == 2 for v in samples.values()), 'Deep chapter missing from contents or body'
@@ -131,10 +147,10 @@ def check(pdf, root):
         assert whole.index('SOURCE_B') < whole.index('SHARED_MANUAL') < whole.index('LAST_MANUAL_KEEP'), 'Detached manual'
     if 'SUBTITLE_KEEP' in typ:
         # Check painted text, not just the style strings in the generated source.
-        expected_sizes = {'SHARED_MANUAL': 12, 'SUBTITLE_KEEP': 6.6,
-                          'LIST_HEADING': 8.5, 'SECOND_SECTION_KEEP': 8.5,
-                          'SUBHEADING_KEEP': 7.5, 'FORMULA_CAPTION_KEEP': 6.2,
-                          'NOTE_LABEL_KEEP': 6.8}
+        expected_sizes = {'SHARED_MANUAL': 16, 'SUBTITLE_KEEP': 9,
+                          'LIST_HEADING': 12, 'SECOND_SECTION_KEEP': 12,
+                          'SUBHEADING_KEEP': 11, 'FORMULA_CAPTION_KEEP': 9,
+                          'NOTE_LABEL_KEEP': 10}
         painted = {marker: [] for marker in expected_sizes}
         for page in reader.pages:
             def visit_manual(text, cm, tm, font, size):
@@ -148,7 +164,7 @@ def check(pdf, root):
         for marker in ('TreeCenter<G>', 'NOTE_BODY_KEEP', 'NOTE_CONTINUATION_KEEP',
                        '#read("private")', '<not-a-label>'):
             assert marker in whole, f'Manual literal content lost: {marker}'
-        long_pdf = pdf.parent / 'long-manual.pdf'
+        long_pdf = root / 'out' / 'long-manual.pdf'
         assert long_pdf.is_file(), 'Long table render fixture missing'
         long_pages = [p.extract_text() or '' for p in PdfReader(long_pdf).pages]
         long_text = '\n'.join(long_pages)
@@ -156,7 +172,24 @@ def check(pdf, root):
         assert rows == list(range(1, 91)), 'Long table rows missing, repeated or reordered'
         assert compact(long_text).count('Longkey') >= 2, 'Long table header did not repeat across columns/pages'
         print('[PASS] PDF manual style: title/subtitle/sections/caption/note sizes; literals; 90-row table flow and repeated header')
-    print(f'[PASS] PDF: {len(pages)} pages, {len(directories)} directories, {len(manuals)} manuals, {equations} math equations, {checks} headings/list checks, MIKU={miku}')
+    print(f'[PASS] PDF: {pdf.name}: {len(pages)} pages, {len(directories)} directories, {len(manuals)} manuals, {equations} math equations, {checks} headings/list checks, MIKU={miku}')
+
+
+def check_set(directory, root):
+    import json
+    index = json.loads((directory / 'chapters.json').read_text(encoding='utf-8-sig'))
+    expected = {p.name for p in (root / 'algorithms').iterdir() if p.is_dir() and not p.name.startswith('.') and p.name != '对拍'}
+    names = [part['chapter'] for part in index['chapters']]
+    assert len(names) == len(set(names)) and set(names) == expected, 'Chapter set incomplete or duplicated'
+    assert {p.name for p in directory.glob('*.pdf')} == {part['pdf'] for part in index['chapters']}, 'Stale or missing chapter PDF'
+    for part in index['chapters']:
+        pdf = (directory / part['pdf']).resolve()
+        assert pdf.parent == directory.resolve(), 'Chapter path escaped output directory'
+        assert pdf.stem == part['chapter'], 'Chapter filename mismatch'
+        typ = pdf.with_suffix('.typ').read_text(encoding='utf-8-sig')
+        assert '// chapter-scope: ' + part['chapter'] + '\n' in typ, 'Chapter scope mismatch'
+        check(pdf, root)
+    print(f'[PASS] complete set: {len(names)} portrait A4 chapter PDFs')
 
 
 if __name__ == '__main__':
@@ -164,4 +197,7 @@ if __name__ == '__main__':
     parser.add_argument('pdf', type=Path)
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parent.parent)
     args = parser.parse_args()
-    check(args.pdf.resolve(), args.root.resolve())
+    if args.pdf.is_dir():
+        check_set(args.pdf.resolve(), args.root.resolve())
+    else:
+        check(args.pdf.resolve(), args.root.resolve())
