@@ -38,7 +38,7 @@ function Remove-ZoiPackage([string]$root) {
     }})
     foreach ($f in $ordered) {
         for ($attempt=0; ; $attempt++) {
-            try { Remove-Item -LiteralPath $f.FullName -ErrorAction Stop; break }
+            try { Remove-Item -LiteralPath $f.FullName -Force -ErrorAction Stop; break }
             catch {
                 if ($attempt -ge 9) { throw "Package file is still locked; close programs using it and rerun uninstall: $($f.FullName)" }
                 Start-Sleep -Milliseconds 200

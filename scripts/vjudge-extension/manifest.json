@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ZOI Submit",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "从 CPH 展开并提交到 VJudge / AtCoder；为 YOUKNOWWHO 题单补充原站或 VJudge 链接。",
   "permissions": ["scripting"],
   "host_permissions": ["https://vjudge.net/*", "https://vjudge.net.cn/*", "https://atcoder.jp/*", "https://codeforces.com/*", "https://www.codeforces.com/*", "https://m1.codeforces.com/*", "https://m2.codeforces.com/*", "http://127.0.0.1/*"],

@@ -107,6 +107,69 @@ Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$work,'-Undo') 
 Assert ((Setup-Read $cpp).Contains('later edit')) 'Workspace later edit lost'
 Write-Host '[PASS] explicit multi-config include paths / spaces and Unicode / repeat / undo / later edits preserved'
 
+# Fresh workspace ownership is distinct from an existing empty .vscode directory.
+foreach ($existingDir in @($false,$true)) {
+    $freshWork=Join-Path $fixture ('fresh-work-'+$existingDir)
+    [void][IO.Directory]::CreateDirectory($freshWork)
+    $freshConfig=Join-Path $freshWork '.vscode'
+    if ($existingDir) { [void][IO.Directory]::CreateDirectory($freshConfig) }
+    Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$freshWork)
+    $freshState=Join-Path $freshConfig '.zoi-workspace-state.json'
+    $saved=Setup-Read $freshState
+    Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$freshWork)
+    Assert ((Setup-Read $freshState) -ceq $saved) 'Repeat workspace configure changed snapshots'
+    $held=New-Object IO.FileStream(($freshState+'.lock'),[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None,1,[IO.FileOptions]::DeleteOnClose)
+    try {
+        Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$freshWork) 1
+        Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$freshWork,'-Undo') 1
+        Assert ((Setup-Read $freshState) -ceq $saved) 'Concurrent configure/undo changed state'
+    } finally { $held.Dispose() }
+    Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$freshWork,'-Undo')
+    Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$freshWork,'-Undo')
+    Assert ([IO.Directory]::Exists($freshConfig) -eq $existingDir) 'Workspace directory ownership was lost'
+    Assert (@(Get-ChildItem -LiteralPath $freshWork -Recurse -Force -File).Count -eq 0) 'Workspace setup left files behind'
+}
+foreach ($fault in @('file1','file2')) {
+    $faultWork=Join-Path $fixture ('workspace-'+$fault)
+    [void][IO.Directory]::CreateDirectory($faultWork)
+    $previousFault=$env:ZOI_SETUP_TEST_FAULT
+    try { $env:ZOI_SETUP_TEST_FAULT=$fault; Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$faultWork) 1 }
+    finally { $env:ZOI_SETUP_TEST_FAULT=$previousFault }
+    Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$faultWork)
+    try { $env:ZOI_SETUP_TEST_FAULT=$fault; Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$faultWork,'-Undo') 1 }
+    finally { $env:ZOI_SETUP_TEST_FAULT=$previousFault }
+    Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$faultWork,'-Undo')
+    Assert (@(Get-ChildItem -LiteralPath $faultWork -Force).Count -eq 0) 'Interrupted workspace transaction left residue'
+}
+$legacyWork=Join-Path $fixture 'legacy-workspace'
+[void][IO.Directory]::CreateDirectory((Join-Path $legacyWork '.vscode'))
+Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$legacyWork)
+$legacyState=Join-Path $legacyWork '.vscode/.zoi-workspace-state.json'
+$legacy=Setup-Read $legacyState | ConvertFrom-Json; $legacy.format=1
+Put $legacyState (Setup-Json $legacy)
+Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$legacyWork)
+Assert ((Setup-Read $legacyState | ConvertFrom-Json).format -eq 2) 'Legacy workspace state was not upgraded'
+Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$legacyWork,'-Undo')
+Assert ([IO.Directory]::Exists((Join-Path $legacyWork '.vscode'))) 'Legacy unknown directory ownership was guessed'
+Write-Host '[PASS] fresh workspace has no residue / original directory retained / concurrent lock / interrupted configure and undo / v1 upgrade'
+
+if ([IO.Path]::DirectorySeparatorChar -eq '\') {
+    $linkWork=Join-Path $fixture 'linked-workspace'; [void][IO.Directory]::CreateDirectory($linkWork)
+    $link=Join-Path $linkWork '.vscode'; $destination=Join-Path $fixture 'linked-target'
+    Put (Join-Path $destination 'settings.json') '{"keep":true}'
+    $null=New-Item -ItemType Junction -Path $link -Target $destination
+    try {
+        Run (Join-Path $PSScriptRoot 'configure-zoi.ps1') @('-Workspace',$linkWork) 1
+        Run (Join-Path $PSScriptRoot 'install-zoi.ps1') @('-SettingsFile',(Join-Path $link 'settings.json')) 1
+        Assert ((Setup-Read (Join-Path $destination 'settings.json')) -ceq '{"keep":true}') 'Linked target was edited'
+        Assert (@(Get-ChildItem -LiteralPath $destination -Force).Count -eq 1) 'Linked target received setup residue'
+    } finally {
+        Assert ((Get-Item -LiteralPath $link -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) 'Fixture link was replaced'
+        [IO.Directory]::Delete($link)
+    }
+    Write-Host '[PASS] linked configuration directories are refused without following or modifying them'
+}
+
 # Round-trip a real release, then inject the exact legacy-state failure into the isolated package.
 $zip=Join-Path $fixture 'first.zip'
 Run (Join-Path $PSScriptRoot 'make_team_package.ps1') @('-OutputPath',$zip)

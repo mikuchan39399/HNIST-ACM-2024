@@ -1,14 +1,14 @@
 param([string]$SettingsFile='', [string]$TasksFile='', [string]$KeybindingsFile='', [switch]$NoStubs,[switch]$AdoptExistingTasks,[switch]$LuoguShortcuts)
-# Win11 ships PS5.1; no administrator, Git, Node or plugin install required.
+# Windows 10/11 PowerShell 5.1 or 7; no administrator or global environment edits.
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'zoi_setup.ps1')
 $root=[IO.Path]::GetFullPath((Split-Path -Parent $PSScriptRoot))
 $paths=Setup-Paths $SettingsFile $TasksFile $KeybindingsFile
-$sp=$paths.state; $lock=$null; $oldState=$null
+$sp=$paths.state; $lock=$null; $oldState=$null; $newDirs=@()
 try {
     if ([IO.File]::Exists($sp)) {
-        $state=Setup-State $sp $root $paths
         $lock=New-Object IO.FileStream(($sp+'.lock'),[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None,1,[IO.FileOptions]::DeleteOnClose)
+        $state=Setup-State $sp $root $paths
         if ($state.phase -eq 'removing') { throw 'Uninstall is pending; run uninstall again first' }
         Setup-Recover $state $sp
         $oldState=Setup-State $sp $root $paths
@@ -63,6 +63,11 @@ try {
     $labels=@(); $hasDefault=$false
     # Assignment expands the decoded array, not the pipeline's array wrapper.
     $existing=JC-Value $rawTasks
+    $recordedLabels=@()
+    if ($oldState) {
+        $previousTasks=JC-Value (JC-Get $oldState.docs[1].after.text 'tasks')
+        $recordedLabels=@($previousTasks | ForEach-Object { $_.label })
+    }
     if ($AdoptExistingTasks -and -not $oldState) {
         $node=JC-Parse $rawTasks
         for ($i=$node.children.Count-1;$i -ge 0;$i--) {
@@ -88,7 +93,11 @@ try {
     )
     foreach ($def in $definitions) {
         if (@($existing | Where-Object { $_.label -ceq $def[0] }).Count) {
-            if ($oldState -and $oldState.labels -ccontains $def[0]) { $labels+=$def[0]; continue }
+            if ($oldState -and $recordedLabels -ccontains $def[0]) {
+                if ($oldState.labels -ccontains $def[0] -and (Setup-TaskUnchanged $oldState $rawTasks $def[0])) { $labels+=$def[0] }
+                else { Write-Host ('[NOTE] modified task preserved without reclaiming ownership: '+$def[0]) }
+                continue
+            }
             throw "Existing task label preserved: $($def[0]). Rename it or choose another profile."
         }
         $t=[ordered]@{label=$def[0]; detail=$def[3]; type='process'; command='powershell.exe';
@@ -104,7 +113,11 @@ try {
         @('zoi-clean-checks','clean_checks.ps1',@('-Apply'),'Remove older completed test workspaces; keep latest three per kind')
     )) {
         if (@($existing | Where-Object { $_.label -ceq $def[0] }).Count) {
-            if ($oldState -and $oldState.labels -ccontains $def[0]) { $labels+=$def[0]; continue }
+            if ($oldState -and $recordedLabels -ccontains $def[0]) {
+                if ($oldState.labels -ccontains $def[0] -and (Setup-TaskUnchanged $oldState $rawTasks $def[0])) { $labels+=$def[0] }
+                else { Write-Host ('[NOTE] modified task preserved without reclaiming ownership: '+$def[0]) }
+                continue
+            }
             throw "Existing task label preserved: $($def[0])"
         }
         $t=@{label=$def[0]; detail=$def[3]; type='process'; command='powershell.exe';
@@ -141,6 +154,7 @@ try {
         $d=Split-Path -Parent $p
         while (-not [IO.Directory]::Exists($d)) { if ($dirs -notcontains $d) { $dirs += $d }; $d=Split-Path -Parent $d; if (-not $d) { throw 'Invalid config directory' } }
     }
+    $newDirs=@($dirs)
     foreach ($d in @($dirs | Sort-Object Length)) { [void][IO.Directory]::CreateDirectory($d) }
     if ($null -eq $lock) {
         $lock=New-Object IO.FileStream(($sp+'.lock'),[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None,1,[IO.FileOptions]::DeleteOnClose)
@@ -151,7 +165,9 @@ try {
         if ($oldState.version -eq 3 -and @($docs | Where-Object { -not (Setup-Same $_.from $_.to) }).Count -eq 0) {
             Write-Host '[OK] already installed and checked; original snapshots retained'; exit 0
         }
-        for ($i=0;$i -lt $oldState.docs.Count;$i++) { $docs[$i].before=$oldState.docs[$i].before }
+        # Rebase rollback snapshots through the old uninstall plan, so reinstall
+        # cannot turn later user edits into installer-owned content.
+        for ($i=0;$i -lt $oldState.docs.Count;$i++) { $docs[$i].before=Setup-UninstallDocument $oldState $i $docs[$i].from }
         $dirs=@($oldState.dirs)+$dirs
         $incAdded=$incAdded -or $oldState.incAdded; $cphAdded=$cphAdded -or $oldState.cphAdded
     }
@@ -167,4 +183,7 @@ try {
     Write-Host '[KEY] Ctrl+Alt+Z expands; Ctrl+Alt+R restores includes; save the active .cpp first. Ctrl+Alt+T opens task zoi-. Existing shortcuts are preserved.'
     if ($LuoguShortcuts) { Write-Host '[KEY] Luogu: Ctrl+Alt+P opens problems; Ctrl+Alt+Enter submits. Requires the Luogu extension.' }
 } catch { Write-Host ('[FAIL] '+$_.Exception.Message); exit 1 }
-finally { if ($null -ne $lock) { $lock.Dispose() } }
+finally {
+    if ($null -ne $lock) { $lock.Dispose() }
+    if (-not [IO.File]::Exists($sp)) { Setup-CleanDirs $newDirs }
+}

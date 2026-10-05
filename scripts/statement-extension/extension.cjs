@@ -7,6 +7,9 @@ const core = require('./core.cjs');
 function activate(context) {
     const vscode = require('vscode');
     let current;
+    require('./trash.cjs').register(context, vscode, files => {
+        if (current?.problem.file && files.includes(current.problem.file)) current.panel.dispose();
+    });
     const cacheDir = path.join(context.globalStorageUri.fsPath, 'statements');
     function cacheFile(key) { return path.join(cacheDir, crypto.createHash('sha256').update(key).digest('hex') + '.json'); }
     function cached(key) {
@@ -22,13 +25,13 @@ function activate(context) {
         const panel = vscode.window.createWebviewPanel('zoi.statement', '题面 · ' + problem.name, { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true }, {
             enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [context.extensionUri],
         });
-        const state = { panel, problem, generation: 0, controller: null, session: null, choices: [], index: 0, busy: false, disposed: false, importing: false };
+        const state = { panel, problem, generation: 0, controller: null, session: null, choices: [], index: 0, busy: false, disposed: false, importing: false, gymPdfs: [] };
         const post = data => { if (!state.disposed) void panel.webview.postMessage(data); };
         const asset = p => panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, p)).toString();
         const nonce = crypto.randomBytes(20).toString('hex');
         const csp = panel.webview.cspSource;
         panel.webview.html = `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${csp} https: data: blob:; style-src ${csp} 'unsafe-inline'; font-src ${csp}; script-src 'nonce-${nonce}' ${csp}; worker-src ${csp} blob:; connect-src ${csp};"><link rel="stylesheet" href="${asset('style.css')}"><link rel="stylesheet" href="${asset('vendor/katex/dist/katex.min.css')}"><link rel="stylesheet" href="${asset('vendor/pdfjs-dist/web/pdf_viewer.css')}"></head><body>
-        <header><div class="eyebrow">ZOI · 题面</div><h1 id="title">正在读取题目信息…</h1><div id="limits"></div><nav><select id="versions" aria-label="题面版本" hidden></select><button id="refresh">刷新</button><button id="chrome">从 Chrome 读取</button><button id="original">原网页</button><button id="code">回到代码</button></nav><p id="status" role="status"></p></header>
+        <header><div class="eyebrow">ZOI · 题面</div><h1 id="title">正在读取题目信息…</h1><div id="limits"></div><nav><select id="versions" aria-label="题面版本" hidden></select><button id="refresh">刷新</button><button id="chrome">从 Chrome 读取</button><button id="gymPdf" hidden>整场 PDF</button><button id="original">原网页</button><button id="code">回到代码</button></nav><p id="status" role="status"></p></header>
         <main id="statement"></main><section id="samples" hidden><h2>CPH 样例</h2><div id="sample-list"></div></section>
         <script nonce="${nonce}" src="${asset('vendor/dompurify/dist/purify.min.js')}"></script><script nonce="${nonce}" src="${asset('vendor/markdown-it/dist/browser/markdown-it.umd.min.js')}"></script><script nonce="${nonce}" src="${asset('vendor/katex/dist/katex.min.js')}"></script><script nonce="${nonce}" src="${asset('vendor/katex/dist/contrib/auto-render.min.js')}"></script><script nonce="${nonce}" src="${asset('renderer.js')}"></script></body></html>`;
         const stop = () => { state.controller?.abort(); state.session?.cancel(); state.session = null; };
@@ -55,11 +58,16 @@ function activate(context) {
                 if (!existing && !tests.length) vscode.window.showWarningMessage('ZOI：题目文件已生成，但未能可靠提取样例，请在 CPH 手动补充。');
             } catch (e) { post({ type: 'error', text: e.message }); vscode.window.showErrorMessage('ZOI 导入：' + e.message); }
         }
-        async function browserRead() {
+        async function browserRead(url = problem.url, generation = state.generation) {
             post({ type: 'status', text: '正在从 Chrome 读取题面。若网页要求登录或验证，请在浏览器中完成；不会发送提交。' });
-            const session = await core.createSession(problem.url); state.session = session;
+            const session = await core.createSession(url);
+            if (state.disposed || generation !== state.generation) { session.cancel(); throw Error('已取消题面读取。'); }
+            state.session = session;
             try { await core.openChrome(session.url); const data = await session.done; if (data.error) throw Error(data.error); return data; }
             finally { session.cancel(); if (state.session === session) state.session = null; }
+        }
+        function showGymPdf(generation) {
+            post({ type: 'page', site: 'gym-pdf', html: '', base: problem.url, gymPdfs: state.gymPdfs, generation });
         }
         async function load(force = false, browser = false, choice = null) {
             stop(); const generation = ++state.generation;
@@ -70,18 +78,34 @@ function activate(context) {
                 const rootKey = problem.url;
                 let root = !force && cached(rootKey);
                 if (!root) {
-                    if (browser || problem.site === 'vj') root = await browserRead();
+                    if (browser || problem.site === 'vj') root = await browserRead(problem.url, generation);
                     else {
                         try {
                             const html = await core.download(problem.url, { signal });
-                            if (!(problem.site === 'cf' ? /class=["'][^"']*problem-statement/ : /id=["']task-statement/).test(html)) throw Error('未读到题面正文。');
+                            if (!(problem.site === 'cf' ? /class=["'][^"']*problem-statement/ : /id=["']task-statement/).test(html) && !core.gymPdfLinks(html, problem.url).length) throw Error('未读到题面正文。');
                             root = { html, base: problem.url };
-                        } catch (error) { if (signal.aborted) throw error; root = await browserRead(); }
+                        } catch (error) { if (signal.aborted) throw error; root = await browserRead(problem.url, generation); }
                     }
                 }
                 if (generation !== state.generation || state.disposed) return;
+                const gym = core.gymProblem(problem.url);
+                state.gymPdfs = root.gymPdfs || core.gymPdfLinks(root.html || '', problem.url);
+                post({ type: 'gymPdfAvailable', available: !!state.gymPdfs.length });
+                if (gym && state.gymPdfs.length && !root.choices) {
+                    post({ type: 'status', text: 'Gym 仅提供整场 PDF，正在读取对应的 VJudge 题面版本…' });
+                    const fallback = !force && cached(gym.vjudge);
+                    try {
+                        const result = fallback || await browserRead(gym.vjudge, generation);
+                        if (generation !== state.generation || state.disposed) return;
+                        root = { ...result, sourceUrl: gym.vjudge, gymPdfs: state.gymPdfs };
+                    } catch (error) {
+                        if (generation !== state.generation || state.disposed) return;
+                        showGymPdf(generation); return;
+                    }
+                }
                 if (root.choices) {
-                    state.choices = root.choices.map(c => ({ ...c, url: core.descriptionUrl(c.url, problem.url) }));
+                    const sourceUrl = root.sourceUrl === gym?.vjudge ? gym.vjudge : problem.url;
+                    state.choices = root.choices.map(c => ({ ...c, url: core.descriptionUrl(c.url, sourceUrl) }));
                     state.index = choice === null ? Math.max(0, state.choices.findIndex(c => c.selected)) : choice;
                     const selected = state.choices[state.index]; if (!selected) throw Error('题面版本不存在。');
                     const descKey = selected.url;
@@ -93,7 +117,7 @@ function activate(context) {
                     post({ type: 'page', ...detail, site: 'vj', choices: state.choices, selected: state.index, generation });
                 } else post({ type: 'page', ...root, site: problem.site, generation });
                 remember(rootKey, root);
-            } catch (error) { if (generation === state.generation && !state.disposed) post({ type: 'error', text: error.message }); }
+            } catch (error) { if (generation === state.generation && !state.disposed) { if (state.gymPdfs.length) showGymPdf(generation); else post({ type: 'error', text: error.message }); } }
             finally { if (generation === state.generation) state.busy = false; }
         }
         panel.webview.onDidReceiveMessage(async message => {
@@ -103,6 +127,7 @@ function activate(context) {
                     await load();
                 } else if (message.type === 'refresh') await load(true);
                 else if (message.type === 'chrome') await load(true, true);
+                else if (message.type === 'gymPdf' && state.gymPdfs.length) { stop(); state.controller = new AbortController(); showGymPdf(++state.generation); }
                 else if (message.type === 'choose' && Number.isInteger(message.index) && state.choices[message.index]) await load(false, false, message.index);
                 else if (message.type === 'original') await vscode.env.openExternal(vscode.Uri.parse(problem.url));
                 else if (message.type === 'code' && problem.file) await vscode.window.showTextDocument(vscode.Uri.file(problem.file), { viewColumn: vscode.ViewColumn.One });
@@ -110,12 +135,16 @@ function activate(context) {
                     const tests = message.tests.slice(0, 100).filter(t => typeof t.input === 'string' && typeof t.output === 'string' && t.input.length + t.output.length <= 1024 * 1024);
                     await importProblem(tests);
                 }
-                else if (message.type === 'parseError' && problem.importDirectory) post({ type: 'error', text: '题面解析未完成，尚未生成题目文件：' + message.text });
+                else if (message.type === 'parseError' && message.generation === state.generation && problem.importDirectory) post({ type: 'error', text: '题面解析未完成，尚未生成题目文件：' + message.text });
                 else if (message.type === 'link' && typeof message.url === 'string') {
                     const u = new URL(message.url); if (['https:', 'http:'].includes(u.protocol) && !u.username && !u.password) await vscode.env.openExternal(vscode.Uri.parse(u.href));
                 } else if (message.type === 'pdf' && message.generation === state.generation && Number.isInteger(message.id)) {
-                    const data = await core.download(core.pdfUrl(message.url), { kind: 'pdf', signal: state.controller.signal });
-                    if (message.generation === state.generation) post({ type: 'pdf', data, id: message.id, generation: state.generation });
+                    try {
+                        const data = await core.download(core.pdfUrl(message.url), { kind: 'pdf', signal: state.controller.signal });
+                        if (message.generation === state.generation) post({ type: 'pdf', data, id: message.id, generation: state.generation, epoch: message.epoch });
+                    } catch (error) {
+                        if (message.generation === state.generation) post({ type: 'pdfError', text: error.message, id: message.id, generation: state.generation, epoch: message.epoch });
+                    }
                 }
             } catch (e) { post({ type: 'error', text: e.message }); }
         }, null, context.subscriptions);

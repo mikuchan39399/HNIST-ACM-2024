@@ -8,7 +8,8 @@ function zoiYouknowwhoLink(href, title, source, numbers) {
     if (['vjudge.net', 'vjudge.net.cn'].includes(host) || /^vjudge$/i.test(source.trim())) return null;
     const original = label => ({ label, href: 'https://' + url.host + path, title: '打开 ' + label + ' 原题' });
     // Problem tables also contain EDU exercises and old Gym URLs; preserve their own route.
-    if (host === 'codeforces.com') return original('CF');
+    const cf = ['codeforces.com', 'm1.codeforces.com', 'm2.codeforces.com'].includes(host);
+    if (cf && /^\/(?:problemset\/(?:problem|gymProblem)\/\d+\/[A-Za-z0-9]+|problemsets\/acmsguru\/problem\/\d+\/\d+|(?:contest|gym)\/\d+\/problem\/[A-Za-z0-9]+|group\/[A-Za-z0-9]+\/contest\/\d+\/problem\/[A-Za-z0-9]+|edu\/course\/\d+\/lesson\/\d+\/\d+\/practice\/contest\/\d+\/problem\/[A-Za-z0-9]+)\/?$/.test(path)) return original('CF');
     if (host === 'atcoder.jp' && /^\/contests\/[\w-]+\/tasks\/[\w-]+\/?$/.test(path)) return original('AtCoder');
     const legacyAtcoder = host.match(/^([\w-]+)\.contest\.atcoder\.jp$/);
     if (legacyAtcoder && /^\/tasks\/[\w-]+\/?$/.test(path)) return { label: 'AtCoder', href: 'https://atcoder.jp/contests/' + legacyAtcoder[1] + path, title: '打开 AtCoder 原题' };
@@ -66,7 +67,7 @@ function zoiYouknowwhoLink(href, title, source, numbers) {
     const cleanTitle = title.replace(/^\s*\d+\s*[.、]\s*/, '').trim();
     if (!cleanTitle) return null;
     // VJudge stores list filters in the fragment; clear every filter to avoid inheriting a previous search.
-    const oj = ['onlinejudge.org', 'uva.onlinejudge.org'].includes(host) ? 'UVA' : host === 'lightoj.com' ? 'LightOJ' : 'All';
+    const oj = ['onlinejudge.org', 'uva.onlinejudge.org'].includes(host) ? 'UVA' : host === 'lightoj.com' ? 'LightOJ' : cf && /^\/gym\//.test(path) ? 'Gym' : 'All';
     return { label: 'VJudge 搜索', href: 'https://vjudge.net/problem#OJId=' + oj + '&probNum=&title=' + encodeURIComponent(cleanTitle) + '&source=&category=all', title: '尚无可靠题号映射，按题名在 VJudge 搜索（可能未收录）' };
 }
 

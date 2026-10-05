@@ -13,7 +13,7 @@ const links = require('./vjudge-extension/youknowwho.js');
 const numbers = require('./vjudge-extension/youknowwho-data.js');
 const { zoiStatementPage } = require('./vjudge-extension/statement.js');
 
-async function checkHost(work, html) {
+async function checkHost(work, html, options = {}) {
     const commands = {}, panels = [], sent = [], opened = [], errors = [];
     let handler;
     const uri = value => { const u = new URL(value); return { scheme: u.protocol.slice(0, -1), path: u.pathname, query: u.search.slice(1), toString: () => value }; };
@@ -34,24 +34,34 @@ async function checkHost(work, html) {
             },
         },
     };
-    const modifiedCore = { ...core, download: async () => html, sendToCph: async payload => {
+    const modifiedCore = { ...core, ...options.core, download: options.core?.download || (async () => html), sendToCph: async payload => {
         sent.push(payload); const file = path.join(work, 'imported.cpp');
         fs.writeFileSync(file, 'CPH template');
         fs.writeFileSync(path.join(work, '.cph/.imported.cpp_test.prob'), JSON.stringify({ ...payload, srcPath: file }));
     } };
-    const box = { module: { exports: {} }, require: name => name === 'vscode' ? vscode : name === './core.cjs' ? modifiedCore : require(name), AbortController, URL, URLSearchParams, setTimeout };
+    const box = { module: { exports: {} }, require: name => name === 'vscode' ? vscode : name === './core.cjs' ? modifiedCore : name === './trash.cjs' ? require('./statement-extension/trash.cjs') : require(name), AbortController, URL, URLSearchParams, setTimeout };
     vm.runInNewContext(fs.readFileSync(path.join(__dirname, 'statement-extension/extension.cjs'), 'utf8'), box);
     const context = { subscriptions: [], extensionUri: fileUri(path.join(__dirname, 'statement-extension')), globalStorageUri: fileUri(path.join(work, 'storage')) };
     box.module.exports.activate(context);
-    const link = uri('vscode://zoi-local.zoi-statement/import?url=https%3A%2F%2Fcodeforces.com%2Fcontest%2F9%2Fproblem%2FA&title=Test');
+    const url = options.url || 'https://codeforces.com/contest/9/problem/A';
+    const link = uri('vscode://zoi-local.zoi-statement/import?' + new URLSearchParams({ url, title: 'Test' }));
     await handler.handleUri(link);
     const panel = panels[0]; await panel.receive({ type: 'ready' });
     const page = panel.messages.find(m => m.type === 'page'); assert.ok(page);
+    if (options.site) assert.equal(page.site, options.site);
+    if (options.site === 'gym-pdf') assert.equal(page.gymPdfs.length, 1);
     const message = { type: 'parsed', generation: page.generation, tests: [{ input: '2\n', output: '3\n' }] };
     await panel.receive({ ...message, generation: page.generation - 1 }); assert.equal(sent.length, 0);
     await panel.receive({ ...message, pendingPdf: true }); assert.equal(sent.length, 0);
     await Promise.all([panel.receive(message), panel.receive(message)]);
     assert.equal(sent.length, 1); assert.deepEqual(sent[0].tests, message.tests);
+    assert.equal(sent[0].url, url);
+    if (options.site === 'vj') {
+        await panel.receive({ type: 'gymPdf' });
+        const last = panel.messages.filter(m => m.type === 'page').at(-1);
+        assert.equal(last.site, 'gym-pdf');
+        await panel.receive(message); assert.equal(sent.length, 1);
+    }
     const file = path.join(work, 'imported.cpp'); assert.ok(opened.includes(file));
     fs.writeFileSync(file, 'user solution');
     await handler.handleUri(link); assert.equal(sent.length, 1); assert.equal(fs.readFileSync(file, 'utf8'), 'user solution');
@@ -144,6 +154,7 @@ async function main() {
         dom.window.close(); readDom.window.close(); linkDom.window.close();
         assert.equal(fs.readFileSync(target, 'utf8'), 'user code');
         await checkHost(work, cf);
+        await require('./check_gym_statement.cjs').checkGym(work, checkHost);
         console.log('PASS statements: CPH association, URL validation, all three parsers, bilingual/MD/PDF, samples, HTML sanitization, one-time read session, CPH transport, YOUKNOWWHO routing and observer stability.');
     } finally {
         if (!path.resolve(work).startsWith(path.resolve(__dirname, '../.zoi-checks') + path.sep)) throw Error('Unexpected test cleanup directory');

@@ -8,6 +8,25 @@ const MAX_HTML = 8 * 1024 * 1024;
 const CF = ['codeforces.com', 'www.codeforces.com', 'm1.codeforces.com', 'm2.codeforces.com'];
 const VJ = ['vjudge.net', 'vjudge.net.cn'];
 
+function gymProblem(value) {
+    const u = new URL(value);
+    if (!['https:', 'http:'].includes(u.protocol) || !CF.includes(u.hostname) || u.port || u.username || u.password) return null;
+    const m = u.pathname.match(/^\/gym\/(\d+)\/problem\/([A-Za-z0-9]+)\/?$/) || u.pathname.match(/^\/problemset\/gymProblem\/(\d+)\/([A-Za-z0-9]+)\/?$/);
+    return m ? { contest: m[1], index: m[2].toUpperCase(), vjudge: 'https://vjudge.net/problem/Gym-' + m[1] + m[2].toUpperCase() } : null;
+}
+function gymPdfLinks(html, value) {
+    const gym = gymProblem(value);
+    if (!gym || /class=["'][^"']*\bproblem-statement\b/.test(html)) return [];
+    const links = [];
+    for (const match of html.matchAll(/<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']/gi)) {
+        try {
+            const u = new URL(match[1].replace(/&amp;/g, '&'), value);
+            if (u.protocol === 'https:' && CF.includes(u.hostname) && !u.port && !u.username && !u.password && u.pathname.startsWith('/gym/' + gym.contest + '/attachments/download/') && /\.pdf$/i.test(u.pathname)) links.push(u.href);
+        } catch {}
+    }
+    return [...new Set(links)].slice(0, 10);
+}
+
 function problemUrl(value) {
     const u = new URL(value);
     if (!['https:', 'http:'].includes(u.protocol) || u.username || u.password || u.port) throw Error('题目链接必须是受支持的 OJ 地址。');
@@ -66,7 +85,8 @@ function descriptionUrl(value, base) {
 }
 function pdfUrl(value) {
     const u = new URL(value);
-    if (u.protocol !== 'https:' || u.port || u.username || u.password || !['cdn.vjudge.net', 'cdn.vjudge.net.cn', 'onlinejudge.org', 'uva.onlinejudge.org'].includes(u.hostname)) throw Error('此 PDF 地址不在支持的题面站点中，请使用“原网页”查看。');
+    const gymPdf = CF.includes(u.hostname) && /^\/gym\/\d+\/attachments\/download\/\d+\/[^/]+\.pdf$/i.test(u.pathname);
+    if (u.protocol !== 'https:' || u.port || u.username || u.password || !(gymPdf || ['cdn.vjudge.net', 'cdn.vjudge.net.cn', 'onlinejudge.org', 'uva.onlinejudge.org'].includes(u.hostname))) throw Error('此 PDF 地址不在支持的题面站点中，请使用“原网页”查看。');
     return u.href;
 }
 
@@ -136,8 +156,9 @@ async function createSession(url, { timeout = 120000 } = {}) {
     });
     server.requestTimeout = 15000;
     await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
-    timer = setTimeout(() => finish({ error: 'Chrome 题面读取超时。请确认 ZOI Submit 已重载为 1.4.0，网页已完成登录或验证，再点击“从 Chrome 读取”。' }), timeout);
+    timer = setTimeout(() => finish({ error: 'Chrome 题面读取超时。请确认 ZOI Submit 已重载为最新版，网页已完成登录或验证，再点击“从 Chrome 读取”。' }), timeout);
     const target = new URL(job.url); target.hash += `${target.hash ? '&' : ''}zoi-statement=${server.address().port}.${token}`;
+    if (gymProblem(job.url)) target.hash += '&zoi-problem=' + encodeURIComponent(job.url);
     return { url: target.href, port: server.address().port, token, done, cancel: () => finish({ error: '已取消题面读取。' }) };
 }
 function openChrome(url) {
@@ -175,4 +196,4 @@ async function sendToCph(payload, port = 27121) {
         req.once('timeout', () => req.destroy(Error('连接 CPH 超时。'))); req.once('error', reject); req.end(data);
     });
 }
-module.exports = { MAX_HTML, problemUrl, problemKey, searchUrl, readProblem, descriptionUrl, pdfUrl, download, createSession, openChrome, findImported, companionPayload, sendToCph };
+module.exports = { MAX_HTML, gymProblem, gymPdfLinks, problemUrl, problemKey, searchUrl, readProblem, descriptionUrl, pdfUrl, download, createSession, openChrome, findImported, companionPayload, sendToCph };

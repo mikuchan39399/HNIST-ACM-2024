@@ -40,6 +40,18 @@ Assert (-not [IO.Directory]::Exists((Split-Path -Parent (File fresh)))) 'Fresh p
 Run uninstall fresh
 Pass 'fresh profile / repeat install / repeat uninstall / no state or directories left'
 
+$specialProfile='profile '+[char]0x8349+' & ! [test]'
+Run install $specialProfile
+$specialState=(File $specialProfile)+'.zoi-state'; $savedState=Setup-Read $specialState
+$held=New-Object IO.FileStream(($specialState+'.lock'),[IO.FileMode]::OpenOrCreate,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None,1,[IO.FileOptions]::DeleteOnClose)
+try {
+    Run install $specialProfile 1; Run uninstall $specialProfile 1
+    Assert ((Setup-Read $specialState) -ceq $savedState) 'Concurrent setup changed the installation state'
+} finally { $held.Dispose() }
+Run uninstall $specialProfile
+Assert (-not [IO.Directory]::Exists((Split-Path -Parent (File $specialProfile)))) 'Special-character profile left residue'
+Pass 'Unicode, spaces and metacharacters in profile paths / concurrent setup and uninstall'
+
 $settings=@'
 // keep this comment
 {
@@ -69,14 +81,67 @@ $raw=JC-Get $s 'C_Cpp.default.includePath'; $s=JC-Set $s 'C_Cpp.default.includeP
 $s=JC-Set $s 'editor.fontSize' '23'
 $v=JC-Value (JC-Get $s 'cph.language.cpp.Args'); $s=JC-Set $s 'cph.language.cpp.Args' (Setup-Json ($v+' -DNEW=1'))
 Put (File edited) $s
-$t=Setup-Read (Tasks edited); $t=JC-Set $t 'tasks' (JC-Append (JC-Get $t 'tasks') '{"label":"user-added","type":"shell","command":"echo keep"}')
+$t=Setup-Read (Tasks edited); $arr=JC-Get $t 'tasks'; $arr=JC-Cut $arr (JC-Parse $arr) 8
+$t=JC-Set $t 'tasks' (JC-Append $arr '{"label":"user-added","type":"shell","command":"echo keep"}')
 Put (Tasks edited) $t
+$editedKeys=Join-Path (Split-Path -Parent (File edited)) 'keybindings.json'
+Put $editedKeys (JC-Append (Setup-Read $editedKeys) '{"key":"ctrl+alt+u","command":"keep.user.binding"}')
+Run install edited
 Run uninstall edited; Clean edited
 $s=JC-Value (Setup-Read (File edited)); $t=JC-Value (Setup-Read (Tasks edited))
 Assert ($s.'C_Cpp.default.includePath'.Count -eq 2 -and $s.'C_Cpp.default.includePath'[1] -eq 'C:/new-user-path') 'User include addition lost'
 Assert ($s.'editor.fontSize' -eq 23 -and $s.'cph.language.cpp.Args' -eq '-O2 -DNEW=1') 'User settings edits lost'
 Assert ($t.tasks.Count -eq 1 -and $t.tasks[0].label -eq 'user-added') 'User task addition lost'
-Pass 'uninstall merges later settings, include flags and unrelated tasks'
+$remainingKeys=JC-Value (Setup-Read $editedKeys)
+Assert (@($remainingKeys).Count -eq 1 -and $remainingKeys[0].command -eq 'keep.user.binding') 'Reinstall lost a user shortcut'
+Pass 'repair then uninstall preserves later settings, include flags, tasks and shortcuts'
+
+Run install changed-task
+$t=Setup-Read (Tasks changed-task); $arr=JC-Get $t 'tasks'; $node=JC-Parse $arr
+$changed=JC-Set (JC-Raw $arr $node.children[0].value) 'command' '"my-replacement-command"'
+$arr=JC-Cut $arr $node 8; $node=JC-Parse $arr
+$arr=JC-Cut $arr $node 0; $arr=JC-Append $arr $changed
+Put (Tasks changed-task) (JC-Set $t 'tasks' $arr)
+Run install changed-task
+Run install changed-task
+Run uninstall changed-task; Clean changed-task
+$remaining=(JC-Value (Setup-Read (Tasks changed-task))).tasks
+Assert (@($remaining).Count -eq 1 -and $remaining[0].command -eq 'my-replacement-command') 'Modified same-label task was removed'
+Pass 'modified installer task is retained without retaining unchanged tasks'
+
+# A failed atomic replacement must not poison the next attempt or claim foreign temp files.
+$atomic=Join-Path $fixture 'atomic.json'; Put $atomic '{"before":1}'
+Put ($atomic+'.zoi-tmp') 'foreign-temp'
+$failed=$false
+try { Setup-Write $atomic '{"after":2}' } catch { $failed=$true }
+Assert ($failed -and (Setup-Read ($atomic+'.zoi-tmp')) -ceq 'foreign-temp' -and (Setup-Read $atomic) -ceq '{"before":1}') 'Foreign temp was consumed'
+[IO.File]::Delete($atomic+'.zoi-tmp')
+if ([IO.Path]::DirectorySeparatorChar -eq '\') {
+    $held=[IO.File]::Open($atomic,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
+    try {
+        $failed=$false
+        try { Setup-Write $atomic '{"after":2}' } catch { $failed=$true }
+        Assert ($failed -and -not [IO.File]::Exists($atomic+'.zoi-tmp')) 'Failed replacement leaked a temp file'
+        Assert ((Setup-Read $atomic) -ceq '{"before":1}') 'Locked original was changed'
+    } finally { $held.Dispose() }
+}
+Setup-Write $atomic '{"after":2}'
+Assert ((Setup-Read $atomic) -ceq '{"after":2}') 'Replacement could not be retried'
+$failed=$false
+try { $null=Setup-Paths (File overlap) ((File overlap)+'.zoi-state') '' } catch { $failed=$true }
+Assert $failed 'Config/state path overlap was accepted'
+if ([IO.Path]::DirectorySeparatorChar -eq '\' -and $PSVersionTable.PSVersion.Major -le 5) {
+    $failed=$false
+    try { $null=Setup-Paths (Join-Path $fixture (('x'*180)+'/settings.json')) '' '' } catch { $failed=$true }
+    Assert $failed 'PS5.1 long path did not fail before creating state'
+}
+Pass 'atomic failure cleanup / foreign temporary file preserved / retry / reserved-path collision'
+
+Run install user-comment
+Put (File user-comment) ((Setup-Read (File user-comment))+"`n// retain my note")
+Run uninstall user-comment; Clean user-comment
+Assert ((Setup-Read (File user-comment)).Contains('// retain my note')) 'User comment was deleted with an empty settings object'
+Pass 'comments added to a newly created configuration are retained'
 
 Put (File invalid) '{"a":1,"a":2}'
 Run install invalid 1; Clean invalid
@@ -100,18 +165,30 @@ foreach ($fault in @('file1','file2','file3')) {
 }
 Pass 'interrupted settings/task writes recover in install and uninstall'
 
+$old=$env:ZOI_SETUP_TEST_FAULT
+try { $env:ZOI_SETUP_TEST_FAULT='file1'; Run install unknown-temp 1 }
+finally { $env:ZOI_SETUP_TEST_FAULT=$old }
+$foreign=(Tasks unknown-temp)+'.zoi-tmp'; Put $foreign 'unrelated interrupted editor data'
+Run install unknown-temp 1
+Assert ((Setup-Read $foreign) -ceq 'unrelated interrupted editor data') 'Recovery deleted an unknown temporary file'
+[IO.File]::Delete($foreign)
+Run uninstall unknown-temp; Clean unknown-temp
+Pass 'recovery refuses an unknown temp file and remains uninstallable after resolving it'
+
 # Package deletion must not erase a user's changed or newly added file.
-$modes=@('clean','changed','extra')
-if ([IO.Path]::DirectorySeparatorChar -eq '\') { $modes+='cmd' }
+$modes=@('clean','readonly','changed','extra')
+if ([IO.Path]::DirectorySeparatorChar -eq '\') { $modes+=@('cmd','cmd-special') }
 foreach ($mode in $modes) {
     $pkg=Join-Path $fixture ('package-'+$mode)
+    if ($mode -eq 'cmd-special') { $pkg+=' '+[char]0x8349+' & ! (test)' }
     [void][IO.Directory]::CreateDirectory($pkg)
     Copy-Item -LiteralPath (Join-Path $lib 'scripts') -Destination (Join-Path $pkg 'scripts') -Recurse
     $entries=@(Get-ChildItem -LiteralPath $pkg -Recurse -File | ForEach-Object { @{path=$_.FullName.Substring($pkg.Length+1).Replace('\','/'); hash=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash} })
     Put (Join-Path $pkg '.zoi-package.json') (Setup-Json @{format=1; product='HNIST-ZOI-team-package'; files=$entries})
     if ($mode -eq 'changed') { [IO.File]::AppendAllText((Join-Path $pkg 'scripts/install-zoi.ps1'),"`n# keep edits",$enc) }
     if ($mode -eq 'extra') { Put (Join-Path $pkg 'my-solution.cpp') '// keep my code' }
-    if ($mode -eq 'cmd') {
+    if ($mode -eq 'readonly') { (Get-Item -LiteralPath (Join-Path $pkg 'scripts/install-zoi.ps1')).IsReadOnly=$true }
+    if ($mode -like 'cmd*') {
         $psi=New-Object Diagnostics.ProcessStartInfo
         $psi.FileName=$env:ComSpec
         $psi.Arguments='/d /s /c ""'+(Join-Path $pkg 'scripts/uninstall-zoi.cmd')+'" -SettingsFile "'+(File $mode)+'""'
@@ -128,7 +205,7 @@ foreach ($mode in $modes) {
         Assert ($process.ExitCode -eq 0 -and -not [IO.Directory]::Exists($pkg)) 'Self-deleting CMD failed'
         $process.Dispose(); $script:calls++
     }
-    elseif ($mode -eq 'clean') { Run uninstall $mode -Purge -Library $pkg; Assert (-not [IO.Directory]::Exists($pkg)) 'Clean package remained' }
+    elseif ($mode -in @('clean','readonly')) { Run uninstall $mode -Purge -Library $pkg; Assert (-not [IO.Directory]::Exists($pkg)) 'Clean package remained' }
     else { Run uninstall $mode 1 -Purge -Library $pkg; Assert ([IO.Directory]::Exists($pkg)) 'Modified package removed' }
 }
 Pass 'owned package deletion / modified or added files retained'

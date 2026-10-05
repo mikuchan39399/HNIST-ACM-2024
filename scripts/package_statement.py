@@ -14,7 +14,7 @@ def build(output=None):
     output = Path(output).resolve() if output else root / f'docs/releases/zoi-statement-{version}.vsix'
     output.parent.mkdir(parents=True, exist_ok=True)
     files = [p for p in source.rglob('*') if p.is_file() and not {'node_modules', '.git'}.intersection(p.relative_to(source).parts) and p.name != 'package-lock.json']
-    required = ['extension.cjs', 'core.cjs', 'renderer.js', 'style.css', 'vendor/dompurify/dist/purify.min.js', 'vendor/markdown-it/dist/browser/markdown-it.umd.min.js', 'vendor/katex/dist/katex.min.js', 'vendor/pdfjs-dist/build/pdf.min.mjs', 'vendor/pdfjs-dist/build/pdf.worker.min.mjs']
+    required = ['extension.cjs', 'core.cjs', 'trash.cjs', 'renderer.js', 'style.css', 'vendor/dompurify/dist/purify.min.js', 'vendor/markdown-it/dist/browser/markdown-it.umd.min.js', 'vendor/katex/dist/katex.min.js', 'vendor/pdfjs-dist/build/pdf.min.mjs', 'vendor/pdfjs-dist/build/pdf.worker.min.mjs']
     for name in required:
         if not (source / name).is_file():
             raise ValueError('Missing runtime asset: ' + name)

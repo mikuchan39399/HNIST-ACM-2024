@@ -48,7 +48,7 @@ function zoiHandleStatement(message, sender, reply) {
     (async () => {
         if (!sender.tab || sender.frameId !== 0 || !Number.isInteger(message.port) || message.port < 1024 || message.port > 65535 || !/^[a-f0-9]{64}$/.test(message.token)) throw Error('无效的题面读取请求。');
         const source = new URL(sender.url), url = new URL(message.url);
-        if (url.protocol !== 'https:' || !['codeforces.com', 'www.codeforces.com', 'm1.codeforces.com', 'm2.codeforces.com', 'atcoder.jp', 'vjudge.net', 'vjudge.net.cn'].includes(url.host) || source.origin !== url.origin || source.pathname !== url.pathname || source.search !== url.search) throw Error('题面页面不匹配。');
+        if (url.protocol !== 'https:' || !['codeforces.com', 'www.codeforces.com', 'm1.codeforces.com', 'm2.codeforces.com', 'atcoder.jp', 'vjudge.net', 'vjudge.net.cn'].includes(url.host) || url.username || url.password || !zoiStatementLocation(url.href, source.href)) throw Error('题面页面不匹配。');
         const request = async (route, data = {}) => {
             const response = await fetch(`http://127.0.0.1:${message.port}/${route}`, { method: 'POST', headers: { Authorization: `Bearer ${message.token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ url: message.url, ...data }), signal: AbortSignal.timeout(15000) });
             const result = await response.json(); if (!response.ok) throw Error(result.error || '本地题面连接失败。'); return result;
@@ -59,14 +59,14 @@ function zoiHandleStatement(message, sender, reply) {
             const existing = candidates.find(t => {
                 if (t.id === sender.tab.id || !t.url) return false;
                 const candidate = new URL(t.url);
-                return candidate.pathname === url.pathname && (!job.site.startsWith('vj') || !url.hash || candidate.hash === url.hash);
+                return zoiStatementLocation(url.href, candidate.href) && (!job.site.startsWith('vj') || !url.hash || candidate.hash === url.hash);
             });
             const [result] = await chrome.scripting.executeScript({ target: { tabId: existing?.id || sender.tab.id }, func: zoiStatementPage, args: [job] });
             if (!result?.result) throw Error('题面读取没有完成。');
             await request('report', result.result);
             // Only close the tab opened by our one-time handoff; never close a reused user tab.
             const tab = await chrome.tabs.get(sender.tab.id).catch(() => null);
-            if (tab && tab.url === message.url) await chrome.tabs.remove(sender.tab.id).catch(() => {});
+            if (tab && (tab.url === message.url || (source.pathname !== url.pathname && tab.url === source.href))) await chrome.tabs.remove(sender.tab.id).catch(() => {});
             return { ok: true };
         } catch (e) { await request('report', { error: e.message }).catch(() => {}); throw e; }
     })().then(reply, error => reply({ error: error.message }));

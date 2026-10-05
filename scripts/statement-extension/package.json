@@ -2,7 +2,7 @@
   "name": "zoi-statement",
   "displayName": "ZOI 题面",
   "description": "读取当前代码的 CPH 链接，在右侧查看 Codeforces、AtCoder、VJudge 题面、题面版本和样例。",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "publisher": "zoi-local",
   "license": "UNLICENSED",
   "engines": { "vscode": "^1.95.0" },
@@ -12,8 +12,14 @@
   "activationEvents": ["onUri"],
   "capabilities": { "untrustedWorkspaces": { "supported": false } },
   "contributes": {
-    "commands": [{ "command": "zoi.showStatement", "title": "ZOI: 在右侧查看当前 CPH 题面", "icon": "$(open-preview)" }],
-    "keybindings": [{ "command": "zoi.showStatement", "key": "ctrl+alt+o", "mac": "cmd+alt+o", "when": "editorTextFocus && resourceScheme == file" }],
+    "commands": [
+      { "command": "zoi.showStatement", "title": "ZOI: 在右侧查看当前 CPH 题面", "icon": "$(open-preview)" },
+      { "command": "zoi.trashProblems", "title": "ZOI: 勾选题目移入垃圾堆" }
+    ],
+    "keybindings": [
+      { "command": "zoi.showStatement", "key": "ctrl+alt+o", "mac": "cmd+alt+o", "when": "editorTextFocus && resourceScheme == file" },
+      { "command": "zoi.trashProblems", "key": "ctrl+alt+shift+t", "mac": "cmd+alt+shift+t", "when": "isWorkspaceTrusted && workspaceFolderCount > 0 && (editorTextFocus || filesExplorerFocus)" }
+    ],
     "menus": { "editor/title": [{ "command": "zoi.showStatement", "when": "resourceScheme == file && resourceExtname == .cpp", "group": "navigation" }] }
   }
 }

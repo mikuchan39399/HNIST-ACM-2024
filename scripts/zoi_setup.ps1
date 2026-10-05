@@ -117,26 +117,63 @@ function JC-Append([string]$raw,[string]$item) {
     return $raw.Insert($at,"`n"+$item+"`n")
 }
 function Setup-Write([string]$path,[string]$text) {
+    Setup-CheckPath $path
     $tmp=$path+'.zoi-tmp'
-    $fs=New-Object IO.FileStream($tmp,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
-    try { $bytes=$script:SetupEncoding.GetBytes($text); $fs.Write($bytes,0,$bytes.Length); $fs.Flush($true) }
-    finally { $fs.Dispose() }
-    if ([IO.File]::Exists($path)) { [IO.File]::Replace($tmp,$path,[NullString]::Value) }
-    else { [IO.File]::Move($tmp,$path) }
+    Setup-CheckPath $tmp
+    $fs=$null; $created=$false
+    try {
+        $fs=New-Object IO.FileStream($tmp,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
+        $created=$true
+        $bytes=$script:SetupEncoding.GetBytes($text); $fs.Write($bytes,0,$bytes.Length); $fs.Flush($true)
+        $fs.Dispose(); $fs=$null
+        if ([IO.File]::Exists($path)) { [IO.File]::Replace($tmp,$path,[NullString]::Value) }
+        else { [IO.File]::Move($tmp,$path) }
+    } finally {
+        if ($null -ne $fs) { $fs.Dispose() }
+        # Never remove a pre-existing temp file belonging to another operation.
+        if ($created -and [IO.File]::Exists($tmp)) { [IO.File]::Delete($tmp) }
+    }
+}
+function Setup-CheckPath([string]$path) {
+    $p=[IO.Path]::GetFullPath($path)
+    if ([IO.Path]::DirectorySeparatorChar -eq '\' -and $PSVersionTable.PSVersion.Major -le 5 -and $p.Length -ge 248) {
+        throw ('Path too long for Windows PowerShell 5.1; use a shorter path or PowerShell 7: '+$p)
+    }
+    while ($p) {
+        $item=Get-Item -LiteralPath $p -Force -ErrorAction SilentlyContinue
+        if ($item -and ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw ('Setup refuses a linked path; use its real location: '+$p) }
+        $parent=Split-Path -Parent $p
+        if ($parent -eq $p) { break }; $p=$parent
+    }
+}
+function Setup-CleanDirs($dirs) {
+    foreach ($dir in @($dirs | Select-Object -Unique | Sort-Object Length -Descending)) {
+        Setup-CheckPath $dir
+        if ([IO.Directory]::Exists($dir) -and @(Get-ChildItem -LiteralPath $dir -Force).Count -eq 0) { [IO.Directory]::Delete($dir) }
+    }
 }
 function Setup-Snapshot([string]$p) {
+    Setup-CheckPath $p
+    if ([IO.Directory]::Exists($p)) { throw ('Expected a configuration file, found a directory: '+$p) }
     if ([IO.File]::Exists($p)) { return @{exists=$true; text=(Setup-Read $p)} }
     return @{exists=$false; text=''}
 }
 function Setup-Same($a,$b) { return $a.exists -eq $b.exists -and $a.text -ceq $b.text }
 function Setup-Paths([string]$settings,[string]$tasks,[string]$keys='') {
-    if (-not $settings) { $settings=Join-Path $env:APPDATA 'Code/User/settings.json' }
+    if (-not $settings) {
+        if (-not $env:APPDATA) { throw 'APPDATA is unavailable; pass -SettingsFile for the intended VS Code profile' }
+        $settings=Join-Path $env:APPDATA 'Code/User/settings.json'
+    }
     $settings=[IO.Path]::GetFullPath($settings)
     if (-not $tasks) { $tasks=Join-Path (Split-Path -Parent $settings) 'tasks.json' }
     $tasks=[IO.Path]::GetFullPath($tasks)
     if (-not $keys) { $keys=Join-Path (Split-Path -Parent $settings) 'keybindings.json' }
     $keys=[IO.Path]::GetFullPath($keys)
     if ($settings -eq $tasks -or $keys -eq $settings -or $keys -eq $tasks) { throw 'Settings, tasks and keybindings must be different files' }
+    $reserved=@(($settings+'.zoi-state'),($settings+'.zoi-state.lock'),($settings+'.zoi-state.zoi-tmp'))
+    foreach ($p in @($settings,$tasks,$keys)) { $reserved+=($p+'.zoi-tmp') }
+    foreach ($p in @($settings,$tasks,$keys)+$reserved) { Setup-CheckPath $p }
+    foreach ($p in @($settings,$tasks,$keys)) { if ($reserved -contains $p) { throw 'Configuration paths overlap setup state/temp files' } }
     return @{settings=$settings; tasks=$tasks; keys=$keys; state=($settings+'.zoi-state')}
 }
 function Setup-State([string]$path,[string]$root,$paths) {
@@ -165,6 +202,8 @@ function Setup-Recover($state,[string]$sp) {
     foreach ($d in $state.docs) {
         $current=Setup-Snapshot $d.path
         if (-not (Setup-Same $current $d.from) -and -not (Setup-Same $current $d.to)) { throw "Config changed during interrupted setup; preserved: $($d.path)" }
+        $tmp=$d.path+'.zoi-tmp'; Setup-CheckPath $tmp
+        if ([IO.File]::Exists($tmp) -and (-not $d.to.exists -or (Setup-Read $tmp) -cne $d.to.text)) { throw ('Unknown/incomplete setup temp file preserved: '+$tmp) }
     }
     $i=0
     foreach ($d in $state.docs) {
@@ -182,9 +221,6 @@ function Setup-Recover($state,[string]$sp) {
         $state.phase='installed'; Setup-Write $sp (Setup-Json $state)
     } else {
         [IO.File]::Delete($sp)
-        foreach ($dir in @($state.dirs | Sort-Object Length -Descending)) {
-            if ([IO.Directory]::Exists($dir) -and @(Get-ChildItem -LiteralPath $dir -Force).Count -eq 0) { [IO.Directory]::Delete($dir) }
-        }
     }
 }
 function Setup-RestoreProperty([string]$current,[string]$before,[string]$after,[string]$key,[string]$owned) {
@@ -220,18 +256,59 @@ function Setup-RemoveTasks([string]$current,[string]$before,[string]$after,$labe
         $raw=JC-Raw $c $node.children[$i].value
         $task=JC-Value $raw
         if ($labels -ccontains $task.label) {
-            # The explicit uninstall removes these installer-created labels,
-            # including edits to their presentation; other labels stay intact.
-            $c=JC-Cut $c $node $i; $node=JC-Parse $c
+            $original=@((JC-Parse $a).children | Where-Object { (JC-Value (JC-Raw $a $_.value)).label -ceq $task.label })
+            if ($original.Count -eq 1 -and (JC-Normal $raw) -ceq (JC-Normal (JC-Raw $a $original[0].value))) {
+                $c=JC-Cut $c $node $i; $node=JC-Parse $c
+            } else { Write-Host ('[NOTE] modified task preserved: '+$task.label) }
         }
     }
     if ($null -ne $b) {
         $original=JC-Parse $b
         foreach ($item in $original.children) {
             $raw=JC-Raw $b $item.value
-            if ($labels -ccontains (JC-Value $raw).label) { $c=JC-Append $c $raw }
+            $label=(JC-Value $raw).label
+            if ($labels -ccontains $label -and @((JC-Value $c) | Where-Object { $_.label -ceq $label }).Count -eq 0) { $c=JC-Append $c $raw }
         }
     }
-    if ($node.children.Count -eq 0 -and $null -eq $b) { $c=$null }
+    if ((JC-Parse $c).children.Count -eq 0 -and $null -eq $b) { $c=$null }
     return JC-Set $current 'tasks' $c
+}
+function Setup-TaskUnchanged($state,[string]$current,[string]$label) {
+    $after=JC-Get $state.docs[1].after.text 'tasks'
+    $saved=@((JC-Parse $after).children | Where-Object { (JC-Value (JC-Raw $after $_.value)).label -ceq $label })
+    $now=@((JC-Parse $current).children | Where-Object { (JC-Value (JC-Raw $current $_.value)).label -ceq $label })
+    return $saved.Count -eq 1 -and $now.Count -eq 1 -and (JC-Normal (JC-Raw $after $saved[0].value)) -ceq (JC-Normal (JC-Raw $current $now[0].value))
+}
+function Setup-UninstallDocument($state,[int]$index,$now) {
+    $d=$state.docs[$index]
+    if (Setup-Same $now $d.after) { return $d.before }
+    if (-not $now.exists) { return $now }
+    $before='{}'; if ($d.before.exists) { $before=$d.before.text }
+    $next=$now.text
+    if ($index -eq 0) {
+        if ($state.incAdded) { $next=Setup-RestoreProperty $next $before $d.after.text 'C_Cpp.default.includePath' $state.zoi }
+        if ($state.cphAdded) { $next=Setup-RestoreProperty $next $before $d.after.text 'cph.language.cpp.Args' $state.flag }
+        foreach ($key in @($state.scalarKeys)) {
+            $current=JC-Get $next $key; $after=JC-Get $d.after.text $key
+            if ($null -ne $current -and $current -ceq $after) { $next=JC-Set $next $key (JC-Get $before $key) }
+        }
+    } elseif ($index -eq 1) {
+        $next=Setup-RemoveTasks $next $before $d.after.text $state.labels
+        $remaining=JC-Get $next 'tasks'
+        if ($null -eq (JC-Get $before 'version') -and (JC-Get $next 'version') -eq '"2.0.0"' -and
+            ($null -eq $remaining -or (JC-Parse $remaining).children.Count -eq 0)) { $next=JC-Set $next 'version' $null }
+    } else {
+        $node=JC-Parse $next
+        if ($node.kind -ne '[') { throw 'Edited keybindings must be an array; preserved' }
+        for ($j=$node.children.Count-1;$j -ge 0;$j--) {
+            $raw=JC-Raw $next $node.children[$j].value
+            foreach ($owned in @($state.ownedKeys)) {
+                if ((JC-Normal $raw) -ceq (JC-Normal $owned)) { $next=JC-Cut $next $node $j; $node=JC-Parse $next; break }
+            }
+        }
+    }
+    # Comments added after installation belong to the user too.
+    $hasComments=@([regex]::Matches($next,'"(?:\\.|[^"\\])*"|//[^\r\n]*|/\*[\s\S]*?\*/') | Where-Object { $_.Value.StartsWith('/') }).Count -gt 0
+    if (-not $d.before.exists -and (JC-Parse $next).children.Count -eq 0 -and -not $hasComments) { return @{exists=$false;text=''} }
+    return @{exists=$true;text=$next}
 }
