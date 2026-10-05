@@ -4,11 +4,9 @@
 
 #include "../../../杂项/utils/utils.cpp"
 
-// 可持久化线段树维护 [1, n], 根由调用方保存, 0 为初始零值树, 修改复制路径而不改变旧结点
-// 标记永久化只支持加法类可交换标记, Info.apply 须与合并相容; 虚区间由 Info{} 补 len 表示
-// 查询和 find 不分配结点; find 的 pred 等价于区间内存在合格点, 不累积前缀
-// 每结点含两个 int、Info 和 Tag 并按类型对齐; 计数代数 32 B/结点, 4e6 约 128 MB
-// 预算按累计新建计: 一次 build 用 2n-1, 每次点改至多 ceil(log2 n)+1, 范围改保守按 4ceil(log2 n)+1
+// 值域 [1,n], 根外置, 0 为全零树; Info{} 补 len, 仅支持加法类可交换 Tag
+// pred 表示区间内存在合格点; 查询/find 不开点
+// 池按累计新建计: build 2n-1, 每次点改至多 ceil(log2 n)+1, 区间改至多 4ceil(log2 n)+1
 template<class Info, class Tag>
 struct PersSegTree
 {
@@ -22,62 +20,53 @@ struct PersSegTree
     int tot = 0;
     int cap = 2;
     vector<Node> tr;
-    // 设置值域上界 max_n 并预留 max_nodes 个实结点, 根 0 表示全零版本
-    // 时间: O(1) | 空间: O(max_nodes) 预留
+    // 预留 max_nodes 个结点, 值域 [1,max_n]; 时间 O(1), 空间 O(max_nodes)
     PersSegTree(LL max_n = 1, int max_nodes = 4000010) : n(max_n)
     {
         cap = max_nodes + 1;
         tr.reserve(max_nodes + 1);
         tr.push_back(Node{});
     }
-    // 清空所有版本并恢复哨兵, 保留值域和池容量, 旧根失效
-    // 时间: O(tot) | 空间: O(1)
+    // 清空全部版本, 旧根失效; 时间 O(tot), 空间 O(1)
     void clear()
     {
         tot = 0;
         tr.clear();
         tr.push_back(Node{});
     }
-    // 只改值域上界为 _n, 不清池; 不再使用旧值域的根后才能改为不同值域
-    // 时间: O(1) | 空间: O(1)
+    // 只改值域, 改后停用旧根; 时间/空间 O(1)
     void set_n(LL _n) { n = _n; }
-    // 用非空 a[1..m] 新建一棵树并返回根, n 改为 m; 不清池, 同值域旧版本仍有效
-    // 时间: O(m) | 额外空间: O(m)
+    // 非空 a[1..m] 建新根, 设 n=m, 不清池; 时间/新增空间 O(m)
     int build(const vector<Info>& a)
     {
         assert((int)a.size() >= 2);
         n = (LL)a.size() - 1;
         return build(1, n, a);
     }
-    // 在 rt 的闭区间 [x, y] 应用增量 v 并返回新根, 旧版本不变, 单点传 x == y
-    // 时间: O(log V) | 额外空间: O(log V), V = n
+    // 修改 rt 的 [x,y], 返回新根; 时间/新增空间 O(log n)
     int modify(int rt, LL x, LL y, const Tag& v)
     {
         assert(1 <= x && x <= y && y <= n);
         return modify(rt, 1, n, x, y, v);
     }
-    // 返回 rt 在合法闭区间 [x, y] 的 Info, 加法代数可维护和或最值
-    // 时间: O(log V) | 额外空间: O(log V) 递归栈, 不开点
+    // 查询 rt 的 [x,y]; 时间/栈 O(log n)
     Info query(int rt, LL x, LL y) { return query(rt, 1, n, x, y, Tag{}); }
-    // 返回 rt 的 [start, n] 内符合 pred 的最左位置, 无解或 start 越界返回 -1
-    // 时间: O(log V) | 额外空间: O(log V) 递归栈, 不开点
+    // [start,n] 最左合格位置, 无解/越界 -1; 时间/栈 O(log n)
     template<class Pred>
     LL find_first(int rt, LL start, Pred pred)
     {
         if (start < 1 || start > n) return -1;
         return find_first(rt, 1, n, start, Tag{}, pred);
     }
-    // 返回 rt 的 [1, end] 内符合 pred 的最右位置, 无解或 end 越界返回 -1
-    // 时间: O(log V) | 额外空间: O(log V) 递归栈, 不开点
+    // [1,end] 最右合格位置, 无解/越界 -1; 时间/栈 O(log n)
     template<class Pred>
     LL find_last(int rt, LL end, Pred pred)
     {
         if (end < 1 || end > n) return -1;
         return find_last(rt, 1, n, end, Tag{}, pred);
     }
-    // 返回 Σplus - Σminus 的第 k 小值域下标, 不修改传入根表
-    // 仅用于点修改计数版本, Info 含 cnt; 每个位置的合成计数非负, 1 <= k <= 总计数
-    // 时间: O((|plus| + |minus|) * log V) | 额外空间: O(|plus| + |minus|), 不开点
+    // Σplus-Σminus 的第 k 小值域下标; 仅点改计数版本, 逐点差非负, k 合法
+    // R=根数; 时间 O(R log n), 额外空间 O(R)
     LL find_kth(VI plus, VI minus, LL k)
     {
         LL l = 1, r = n;
@@ -228,14 +217,14 @@ int main()
 {
     PersSegTree<Info, Tag> seg(5, 128);
     VI rt(5);
-    VI a = {0, 3, 1, 3, 5};          // 已映射到值域下标
+    VI a = {0, 3, 1, 3, 5};          // 值域下标
     for (int i = 1; i <= 4; i++)
         rt[i] = seg.modify(rt[i - 1], a[i], a[i], {1});
     cout << seg.find_kth({rt[4]}, {rt[1]}, 2) << "\n"; // 原数组 [2, 4] 第 2 小为 3
     // 树上路径第 k 小用 {rt[u], rt[v]} 减 {rt[lca], rt[parent_lca]}
-    int branch = seg.modify(rt[4], 2, 4, {2}); // 范围增量分支, 此根不再用于 find_kth
+    int branch = seg.modify(rt[4], 2, 4, {2}); // 此根不再用于 find_kth
     cout << seg.query(rt[4], 1, 5).cnt << " " << seg.query(branch, 1, 5).cnt << "\n"; // 4 10
-    auto pred = [](const Info& v) { return v.cnt > 0; }; // 此处逐点计数非负, 可作存在性判据
+    auto pred = [](const Info& v) { return v.cnt > 0; }; // 逐点计数非负
     cout << seg.find_first(rt[4], 2, pred) << " " << seg.find_last(rt[4], 4, pred) << "\n"; // 3 3
     seg.clear();                    // rt 和 branch 全部失效
     vector<Info> b = {{}, {1, 7}, {1, -2}};

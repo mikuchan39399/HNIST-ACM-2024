@@ -5,9 +5,8 @@
 #include "../../杂项/随机数/z_rnd.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-// 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继期望 O(log n)
-// 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
-// 内存: 每结点 24B; 预算 = 总插入次数(删除不回收), 4e6 结点 ≈ 96MB
+// LL 有序多重集合, 值域 (-INF,INF); 增删查、分裂合并期望时间/栈 O(log n)
+// 点池按累计插入次数预算, 删除不回收; 每点约 24B
 struct FHQ_Treap
 {
     struct node
@@ -17,8 +16,7 @@ struct FHQ_Treap
     };
     vector<node> tr;
     int idx, root, budget;
-    // 把以 p 为根的子树按值分裂, 值 <= v 的结点分给 x, 值 > v 的分给 y
-    // 时间: 期望 O(log n) | 空间: O(log n)
+    // 按值分裂: <=v 给 x, >v 给 y
     void split(int p, LL v, int& x, int& y)
     {
         if (!p)
@@ -38,8 +36,7 @@ struct FHQ_Treap
         }
         pushup(p);
     }
-    // 把子树 x 和 y 合并成一棵并返回新根, 要求 x 中所有值 <= y 中所有值
-    // 时间: 期望 O(log n) | 空间: O(log n)
+    // 合并并返回根, 要求 max(x)<=min(y)
     int merge(int x, int y)
     {
         if (!x || !y) return x + y;
@@ -53,24 +50,20 @@ struct FHQ_Treap
         pushup(y);
         return y;
     }
-    // 返回 x 子树中第 k 小的值, 要求 1 <= k <= tr[x].sz
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 子树第 k 小, 要求 1<=k<=子树大小
     LL kth_of(int x, int k)
     {
         if (tr[tr[x].lc].sz >= k) return kth_of(tr[x].lc, k);
         if (tr[tr[x].lc].sz + 1 == k) return tr[x].val;
         return kth_of(tr[x].rc, k - tr[tr[x].lc].sz - 1);
     }
-    // 构造: 预算 max_nodes 结点(按累计插入计, 删除不回收), 哨兵 0 号就位
-    // 时间: O(1) | 空间: O(预算)
+    // 预留 max_nodes 个点, 初始为空. 时间 O(1), 空间 O(max_nodes)
     FHQ_Treap(int max_nodes = 4000010) : idx(0), root(0), budget(max_nodes)
     {
         tr.reserve(budget + 1);
         tr.push_back(node());
     }
-    // 从升序 a[1..m] 笛卡尔树(右脊栈)线性建树, 替换现有集合 (a.size() = m + 1)
-    // 契约: a[1..m] 已升序(允许重复), 违约触发 assert
-    // 时间: O(m) | 额外空间: O(m), 栈容器按 m 预留
+    // 从升序 a[1..m] 重建, 允许重复. 时空 O(m)
     void build(const VLL& a)
     {
         clear();
@@ -94,16 +87,14 @@ struct FHQ_Treap
         root = stk.empty() ? 0 : stk[0];
         finish(root);
     }
-    // 插入 v (允许重复)
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 插入 v, 允许重复
     void insert(LL v)
     {
         int x, y;
         split(root, v, x, y);
         root = merge(merge(x, newnode(v)), y);
     }
-    // 删除一个 v, 返回是否存在并删除
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 删除一个 v, 返回是否成功
     bool erase(LL v)
     {
         int b = tr[root].sz;
@@ -114,8 +105,7 @@ struct FHQ_Treap
         root = merge(merge(x, y), z);
         return tr[root].sz < b;
     }
-    // 返回 < v 的元素个数 (含重复)
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 返回 <v 的元素数(含重复)
     int get_rank(LL v)
     {
         int x, y;
@@ -124,15 +114,13 @@ struct FHQ_Treap
         root = merge(x, y);
         return ret;
     }
-    // 返回第 k 小 (1-based 含重复), k 越界返回 INF
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 第 k 小(1-based), 越界返回 INF
     LL get_kth(int k)
     {
         if (k < 1 || k > tr[root].sz) return INF;
         return kth_of(root, k);
     }
-    // 返回 < v 的最大值, 无前驱返回 -INF
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 严格前驱, 无则 -INF
     LL get_pre(LL v)
     {
         int x, y;
@@ -141,8 +129,7 @@ struct FHQ_Treap
         root = merge(x, y);
         return ret;
     }
-    // 返回 > v 的最小值, 无后继返回 INF
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 严格后继, 无则 INF
     LL get_suf(LL v)
     {
         int x, y;
@@ -151,11 +138,9 @@ struct FHQ_Treap
         root = merge(x, y);
         return ret;
     }
-    // 返回元素个数 (含重复)
-    // 时间: O(1) | 空间: O(1)
+    // 元素数(含重复). O(1)
     int size() { return tr[root].sz; }
-    // 多测复位: 清全部元素, 容量保留
-    // 时间: O(idx) | 空间: O(1)
+    // 清空并保留容量. 时间 O(idx)
     void clear()
     {
         idx = 0;

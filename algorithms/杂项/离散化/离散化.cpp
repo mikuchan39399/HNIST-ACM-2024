@@ -4,8 +4,8 @@
 
 #include "../utils/utils.cpp"
 
-// 离散排名为 1-based, 输入 vector 的所有元素都参与, 不自动跳过下标 0
-// T 的 < 与 == 应一致, 不支持含 NaN 的浮点序列; 返回索引须能放入 int
+// 离散排名 1-based; 输入 vector 全部元素参与, 不跳过 [0]. 空间 O(n)
+// T 的 < 与 == 须一致, 浮点不能含 NaN
 template<class T>
 struct Dcr
 {
@@ -13,13 +13,13 @@ struct Dcr
     vector<T> v;
     bool built = true;
     Dcr(const vector<T>& _v) : v(_v) { build(); }
-    // 追加候选值, 使旧排名失效; 摊还 O(1), 容量不足时 O(n) 搬移
+    // 追加候选, 旧排名失效. 均摊 O(1)
     void add(const T& x) { v.push_back(x); built = false; }
-    // 只预留容量不添加值, 至多 O(n) 搬移, 按 T 的大小分配
+    // 仅预留容量. 至多 O(n) 搬移
     void reserve(size_t n) { v.reserve(n); }
-    // 清空全部值和排名, 保留容量; O(n) 析构, 旧引用失效
+    // 清空并保留容量. O(n) 析构
     void clear() { v.clear(); built = true; }
-    // 排序去重并重建全部排名, O(n log n) 时间; n 个 T 的存储加排序栈
+    // 排序去重并重建排名. 时间 O(n log n), 栈 O(log n)
     void build()
     {
         sort(v.begin(), v.end());
@@ -27,7 +27,7 @@ struct Dcr
         assert(v.size() <= INT_MAX);
         built = true;
     }
-    // 返回已添加值 x 的排名; 未 build 时先重建, 平时 O(log n)
+    // 已添加值 x 的排名; 未 build 会自动重建, 否则 O(log n)
     int operator()(const T& x)
     {
         if (!built) build();
@@ -35,9 +35,9 @@ struct Dcr
         assert(it != v.end() && *it == x);
         return it - v.begin() + 1;
     }
-    // 返回不同值数目, 要求已 build; O(1)
+    // 不同值数, 须先 build. O(1)
     int size() const { assert(built); return v.size(); }
-    // 按 1-based 排名还原原值, 要求已 build 且 1<=idx<=size; O(1)
+    // 按排名还原原值, 须先 build, 1<=idx<=size(). O(1)
     const T& operator[](int idx) const
     {
         assert(built && idx >= 1 && idx <= (int)v.size());

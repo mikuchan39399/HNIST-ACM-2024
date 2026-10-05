@@ -4,9 +4,8 @@
 
 #include "../utils/utils.cpp"
 
-// 至多 k-1 个候选, 满员遇到新值时全减一, 再按原序列计数排除假候选
-// 返回出现次数严格大于 floor(n/k) 的不同值, 顺序不保证; k<2 返回空, 所有输入元素参与
-// O(n min(k,n)) 时间, O(min(k,n)) 空间, n<=INT_MAX; 适合小 k, 不把候选计数当真实频次
+// 返回出现次数 >floor(n/k) 的不同值, 无序; 输入全参与, k<2 为空
+// 时间 O(n min(k,n)), 空间 O(min(k,n)), 适合小 k
 inline VI majority_element_k(const VI& nums, int k)
 {
     assert(nums.size() <= INT_MAX);
@@ -32,8 +31,8 @@ inline VI majority_element_k(const VI& nums, int k)
             continue;
         }
         for (auto& p : cands) p.second--;
-        cands.erase(remove_if(cands.begin(), cands.end(), 
-            [](const PII& p) { return p.second == 0; }), 
+        cands.erase(remove_if(cands.begin(), cands.end(),
+            [](const PII& p) { return p.second == 0; }),
             cands.end());
     }
     VI res;
@@ -59,7 +58,6 @@ int main()
     sort(ans.begin(), ans.end());
     for (int x : ans) cout << x << ' '; // 1 2
     cout << '\n';
-    // 按题修改阈值前先确认候选上限; 若只有流式单遍, 本实现的二次核验不可省略
-    // k 很大时改用排序计数等方法, 该向量候选实现不承诺对数时间
+
 }
 */

@@ -5,17 +5,15 @@
 #include "../../../图的存储/Graph.cpp"
 #include "../../../../数据结构/并查集/DSU.cpp"
 
-// 按边权合并连通块, 适合稀疏图; 接无向 Graph, 权值为 int/LL, n >= 1
-// weight 为森林总权, components 为分量数, edges 存选中边的偶数半边编号
-// 允许负权/重边/自环, 累加须在 LL 内; DSU 每点 8 B, 排序每边 4 B
+// 无向图最小生成森林, n>=1, int/LL 权; 可负权/重边/自环, 总权须在 LL 内
+// weight 为总权, components 为分量数, edges 为选中边的偶数半边号(图 clear 后失效)
 struct Kruskal
 {
     LL weight = 0;
     int components = 0;
     VI edges;
 
-    // 重建 1..n 的最小生成森林并保存结果, 返回是否连通, 不修改图
-    // 时间 O(n + m log(m+1) + m α(n)) | 额外空间 O(n+m), 图 clear 后旧边编号失效
+    // 重建结果, 连通返回 true. 时间 O(n+m log(m+1)+m alpha(n)), 额外空间 O(n+m)
     template <class G>
     bool build(G& g, int n)
     {

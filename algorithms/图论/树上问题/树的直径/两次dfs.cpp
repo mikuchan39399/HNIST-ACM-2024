@@ -5,10 +5,8 @@
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/utils/utils.cpp"
 
-// 两次 DFS 求直径端点与路径, 仅支持非负边权, 无权边按 1 计权
-// 输入为 n >= 1 的无向森林, 仅处理点 1 所在的树; pre 为第二次 DFS 的父表
-// len 为路径权和, path 按 end_u 到 end_v 排列, 同长路径取遍历中先遇到的一条
-// pre 每点 4 B, path 每点 4 B; n = 1e6 时有效元素合计至多约 8 MB, 递归栈另计
+// 两次 DFS 求直径, 仅非负边权(无权计 1); n>=1, 仅处理点 1 所在树
+// len 为长度, path 从 end_u 到 end_v, 同长取先遇到者; pre 为第二次 DFS 父表
 template <class G>
 struct TreeDiameter
 {
@@ -19,8 +17,7 @@ struct TreeDiameter
     LL len;
     int cur_far;
     LL cur_d;
-    // 重建 g 中点 1 所在树的状态, 将直径长度、端点和路径写入 len、end_u/end_v 和 path
-    // 时间 O(n) | 空间 O(n), 含递归栈
+    // 重建直径信息. 时空 O(n), 递归深度最坏 n
     void build(G& g, int _n)
     {
         n = _n;

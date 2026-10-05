@@ -2,8 +2,7 @@
 #define Z_OI_SEGASSIGNADD_PLUGIN
 #include "../../../杂项/utils/utils.cpp"
 
-// 区间赋值/加法, 查询和/最值; 中间值须在 LL 内
-// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 45 MB
+// 区间赋值/加法, 查询和/最值; 中间值在 LL 内. 合并/作用 O(1), 普通树空间 O(n)
 namespace SegAssignAdd
 {
 struct Tag
@@ -14,7 +13,7 @@ struct Tag
     static Tag increase(LL x) { return {0, x, false}; }
     void apply(const Tag& t)
     {
-        if (t.has_set) *this = t; // 新赋值抹掉旧操作
+        if (t.has_set) *this = t;
         else add += t.add;
     }
     void clear() { *this = {}; }

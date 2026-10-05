@@ -7,14 +7,13 @@
 using namespace std;
 using VPII = vector<PII>;
 
-// 组装: edges[u] 存 {邻居, 边ID}; used[id] 标记边已用; 1-based 加边后
-//       dfs(起点), ans 逆序即无向图欧拉路径边序列
+// edges[u] 存 {邻居, 边ID}, 无向边两次入表且共用 ID; 先分配 edges/used
+// 自行判存在性并选起点; dfs 后 ans 逆序为边序列, 邻接表被清空
 vector<VPII> edges;
 vector<bool> used;
 VI ans;
 
-// 回溯式剥边求欧拉路径边序列 (Hierholzer)
-// 时间: O(n + m) | 空间: O(n + m)
+// Hierholzer, 时空 O(n+m), 递归深度最坏 m
 void dfs(int u)
 {
     while (edges[u].size())
@@ -30,4 +29,4 @@ void dfs(int u)
 }
 #endif
 
-/* 要字典序: 每个 edges[u] 按邻居编号从大到小排序; ans 逆序输出 */
+// 要字典序则邻接按邻居降序排序

@@ -4,9 +4,8 @@
 
 #include "../../杂项/utils/utils.cpp"
 
-// 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继 O(log n)
-// 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
-// 内存: 每结点 32B; 预算 = 总插入次数(删除不回收), 4e6 结点 ≈ 128MB
+// LL 有序多重集合, 值域 (-INF,INF); 增删查时间/栈 O(log n)
+// 点池按累计新建点数预算, 删除不回收; 每点约 32B
 struct AVL
 {
     struct node
@@ -16,60 +15,51 @@ struct AVL
     };
     vector<node> tr;
     int idx, root, budget;
-    // 构造: 预算 max_nodes 结点(按累计插入计, 删除不回收), 哨兵 0 号就位
-    // 时间: O(1) | 空间: O(预算)
+    // 预留 max_nodes 个点, 初始为空. 时间 O(1), 空间 O(max_nodes)
     AVL(int max_nodes = 4000010) : idx(0), root(0), budget(max_nodes)
     {
         tr.reserve(budget + 1);
         tr.push_back(node());
     }
-    // 插入 v (允许重复)
-    // 时间: O(log n) | 额外空间: O(log n)
+    // 插入 v, 允许重复
     void insert(LL v)
     {
         insert(root, v);
     }
-    // 删除一个 v, 返回是否存在并删除
-    // 时间: O(log n) | 额外空间: O(log n)
+    // 删除一个 v, 返回是否成功
     bool erase(LL v)
     {
         int b = tr[root].sz;
         erase(root, v);
         return tr[root].sz < b;
     }
-    // 返回 < v 的元素个数 (含重复)
-    // 时间: O(log n) | 额外空间: O(log n)
+    // 返回 <v 的元素数(含重复)
     int get_rank(LL v)
     {
         return rank_of(root, v);
     }
-    // 返回第 k 小 (1-based 含重复), k 越界返回 INF
-    // 时间: O(log n) | 额外空间: O(log n)
+    // 第 k 小(1-based), 越界返回 INF
     LL get_kth(int k)
     {
         if (k < 1 || k > tr[root].sz) return INF;
         return kth_of(root, k);
     }
-    // 返回 < v 的最大值, 无前驱返回 -INF
-    // 时间: O(log n) | 额外空间: O(log n)
+    // 严格前驱, 无则 -INF
     LL get_pre(LL v)
     {
         return pre_of(root, v);
     }
-    // 返回 > v 的最小值, 无后继返回 INF
-    // 时间: O(log n) | 额外空间: O(log n)
+    // 严格后继, 无则 INF
     LL get_suf(LL v)
     {
         return suf_of(root, v);
     }
-    // 返回元素个数 (含重复)
-    // 时间: O(1) | 空间: O(1)
+    // 元素数(含重复). O(1)
     int size()
     {
         return tr[root].sz;
     }
-    // 多测复位: 清全部元素, 容量保留
-    // 时间: O(idx) | 空间: O(1)
+    // 清空并保留容量. 时间 O(idx)
     void clear()
     {
         idx = 0;

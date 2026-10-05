@@ -4,19 +4,18 @@
 
 #include "阶乘表及阶乘逆元表求组合数.cpp"
 
-// 素数模下 C(n,k) 等于各 p 进位组合数的乘积, 任一位 k_i>n_i 即为 0
-// 适合 n/k 很大而素数 p 可建表的场景; 复用 PrimeComb, 有效表数据共 16p B
+// Lucas, 素数模 p; 按 p 建表, 须容纳 O(p) 空间
 struct Lucas
 {
     PrimeComb table;
 
-    // 按素数 p 重建 [0,p-1] 阶乘表, p>=2; O(p) 时间/空间, 非扩展 Lucas
+    // 先 init(p), p>=2 为素数. 时间/空间 O(p)
     void init(int p)
     {
         assert(p >= 2);
         table.init(p - 1, p);
     }
-    // 返回 C(n,k) mod p, k 越界返回 0; 0<=n<=LLONG_MAX, O(1+log_p(n+1)) 时间
+    // C(n,k) mod p, n>=0, k 越界为 0. 时间 O(1+log_p(n+1)), 空间 O(1)
     LL comb(LL n, LL k) const
     {
         assert(n >= 0 && table.mod >= 2);
@@ -52,6 +51,6 @@ int main()
     }
     c.init(2);                         // 多测换模数, 2 同样合法
     cout << c.comb(8, 1) << '\n';        // 0
-    // 即使 p 是素数, p=1e9+7 也不适合整张表; 大 n 小 k 可选 binom_loop
+
 }
 */

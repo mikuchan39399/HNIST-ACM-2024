@@ -105,7 +105,15 @@ void test_lca_engines()
         }
         hl.build(g, n, -1);
         dfn.build(g, n);
-        for (int u = 1; u <= n; u++) assert(dfn.sz[u] == br.sub_sz(u));
+        const LCA& ro = dfn;
+        for (int u = 1; u <= n; u++)
+        {
+            assert(dfn.sz[u] == br.sub_sz(u));
+            for (int step = 0; step <= br.dep[u]; step++)
+                assert(ro.jump_up(u, step) == br.climb(u, step));
+            assert(ro.lca(u, u) == u && ro.lca(VI{u}) == u);
+            assert(ro.dist(u, u) == 0 && ro.jump(u, u, 1) == u);
+        }
         for (int t = 0; t < 40; t++)
         {
             int u = 1 + rng() % n, v = 1 + rng() % n;

@@ -4,8 +4,8 @@
 
 #include "../../杂项/128位整数/128int.cpp"
 
-// 返回 C(n,k) mod p, k 越界返回 0; n>=0, p 为素数, k'=min(k,n-k)<p
-// O(k'+log p) 时间, O(1) 空间; n/p 可至 LL 上界, 不预处理到 n, 适合大 n 小 k
+// C(n,k) mod p, n>=0, p 为素数, k 越界为 0; 须 min(k,n-k)<p
+// 无需预处理, 时间 O(min(k,n-k)+log p), 空间 O(1)
 inline LL binom_loop(LL n, LL k, LL p)
 {
     assert(n >= 0 && p >= 2);
@@ -35,7 +35,6 @@ int main()
     cout << binom_loop(n, k, p) << '\n'; // 24503500
     cout << binom_loop(8, 1, 7) << '\n'; // 1, n 可以达到或超过 p
     cout << binom_loop(8, 7, 7) << '\n'; // 1, 对称后只循环 1 次
-    // 每次重新循环; n 可预处理且查询很多时, 用 mint::comb 或 PrimeComb
-    // 若 min(k,n-k)>=p, 分母可能含 p 因子, 不能调用此函数, 改用 Lucas 等方法
+
 }
 */

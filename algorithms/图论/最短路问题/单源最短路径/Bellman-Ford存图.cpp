@@ -5,25 +5,21 @@
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/utils/utils.cpp"
 
-// 每轮原地松弛全部可达边, 允许负整数边权; 源点可达部分须无负环
-// dist 不可达为 INF, 有限距离 < INF, 所有候选加法在 LL 内; 原地更新的轮数不是路径边数上限
-// 每点 8 B, 20 万点约 1.6 MB, 不含 Graph
+// 可负整数权最短路, 1-based; 源点可达部分不能有负环
+// dist 不可达为 INF, 有限距离<INF, 候选加法在 LL 内; 松弛轮数不是边数限制. 空间 O(n)
 struct BellmanFord
 {
     int n;
     VLL dist;
-    // 分配 max_n 个点的工作表, 点编号为 1..n, n >= 1
-    // 时间 O(max_n) | 空间 O(max_n)
+    // 预留 max_n 个点. 时空 O(max_n)
     BellmanFord(int max_n = 0) : n(0), dist(max_n + 10, INF) {}
-    // 在构造容量内设为 n 个点并清空距离, run 内部自动调用
-    // 时间 O(n) | 额外空间 O(1)
+    // 清空 n<=容量 个点的距离; run 自动调用. 时间 O(n)
     void init(int _n)
     {
         n = _n;
         z_fill_n(_n, INF, dist);
     }
-    // 重算本轮 _n 点中从 s 出发的最短路并写入 dist, 自动复位且不修改图
-    // 最坏时间 O(n(n+m)) | 额外空间 O(1)
+    // 从 s 重算 dist, 自动复位. 最坏时间 O(n(n+m)), 额外空间 O(1)
     template <class G>
     void run(int s, G& g, int _n)
     {

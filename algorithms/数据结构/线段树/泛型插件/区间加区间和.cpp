@@ -2,8 +2,7 @@
 #define Z_OI_SEGADD_PLUGIN
 #include "../../../杂项/utils/utils.cpp"
 
-// 区间加, 查询和/最小值/最大值; 所有中间值须在 LL 内
-// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 32 MB
+// 区间加, 查询和/最小/最大; 中间值在 LL 内. 合并/作用 O(1), 普通树空间 O(n)
 namespace SegAdd
 {
 struct Tag

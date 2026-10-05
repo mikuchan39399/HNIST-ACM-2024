@@ -4,8 +4,8 @@
 
 #include "../utils/utils.cpp"
 
-// 整数双闭 [lo,hi], 浮点有限半开 [lo,hi), 两端相等返回该值; 上界在前
-// 原生至多 64 位整数含 bool/字符, 浮点支持有限端点; 期望 O(1), O(1) 额外空间
+// 上界在前; 整数 [lo,hi], 浮点 [lo,hi), 相等返回端点, lo<=hi
+// 支持 <=64 位整数及有限浮点端点. 期望时间 O(1), 空间 O(1)
 template <class T, uniform_random_bit_generator G>
     requires ((integral<T> && sizeof(T) <= 8) || floating_point<T>)
 T z_rnd(T hi, T lo, G& rng)
@@ -21,11 +21,11 @@ T z_rnd(T hi, T lo, G& rng)
         assert(isfinite(lo) && isfinite(hi));
         if (lo == hi) return lo;
         T u = generate_canonical<T, numeric_limits<T>::digits>(rng);
-        T x = lerp(lo, hi, u); // 不直接计算 hi-lo, 避免相反大端点溢出
+        T x = lerp(lo, hi, u);
         return x < hi ? x : nextafter(hi, lo);
     }
 }
-// 缺省下界为 0, 按类型复用 mt19937_64; 仅用于算法随机化, 不生成安全密钥
+// 默认下界 0, 按类型复用 mt19937_64
 template <class T = int> requires ((integral<T> && sizeof(T) <= 8) || floating_point<T>)
 T z_rnd(T hi, T lo = 0)
 {
@@ -45,7 +45,7 @@ int main()
     cout << (0 <= a && a <= 10) << ' ' << (0 <= c && c < 1) << '\n'; // 1 1
     cout << (b >= LLONG_MIN) << '\n';   // 1
     mt19937_64 fixed(42);
-    int d = z_rnd(9, 0, fixed);         // 自传引擎可复现, 不改变默认引擎的状态
-    cout << (0 <= d && d <= 9) << '\n'; // 1, 不承诺不同标准库的分布输出序列相同
+    int d = z_rnd(9, 0, fixed);         // 自传引擎
+    cout << (0 <= d && d <= 9) << '\n'; // 1
 }
 */

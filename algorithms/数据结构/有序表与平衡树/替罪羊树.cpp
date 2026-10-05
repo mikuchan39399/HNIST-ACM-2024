@@ -4,12 +4,8 @@
 
 #include "../../杂项/utils/utils.cpp"
 
-// 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继均摊 O(log n)
-// 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
-// 平衡机制: α = 0.75, 条件 4*max(lc.sz, rc.sz) > 3*sz 触发子树原位重建
-//   (插入/删除回溯均检查, 删小侧同样可触发); 重建 = 中序拍平 + 完美平衡二分,
-//   原位复用结点 id; 高度 O(log n)
-// 内存: 每结点 24B; 预算 = 峰值存活(删除/重建均回收), 1e6 ≈ 24MB
+// LL 有序多重集合, 值域 (-INF,INF); 增删均摊 O(log n), 查询 O(log n)
+// 点池按峰值存活数预算, 删除回收; 每点约 24B, 重建额外 O(n) 空间
 struct SGTree
 {
     struct node
@@ -21,27 +17,23 @@ struct SGTree
     VI seq;
     VI rub;
     int idx, root, budget;
-    // 构造: 预算 max_nodes 结点(按峰值存活计), 哨兵 0 号就位
-    // 时间: O(1) | 空间: O(预算)
+    // 预留 max_nodes 个点, 初始为空. 时间 O(1), 空间 O(max_nodes)
     SGTree(int max_nodes = 1000010) : idx(0), root(0), budget(max_nodes)
     {
         tr.reserve(budget + 1);
         tr.push_back(node());
         rub.reserve(budget);
     }
-    // 插入 v (允许重复)
-    // 时间: 均摊 O(log n) | 额外空间: O(n), 重建时展开子树
+    // 插入 v, 允许重复
     void insert(LL v) { root = insert_at(root, v); }
-    // 删除一个 v, 返回是否存在并删除
-    // 时间: 均摊 O(log n) | 额外空间: O(n), 重建时展开子树
+    // 删除一个 v, 返回是否成功
     bool erase(LL v)
     {
         bool ok = false;
         root = erase_at(root, v, ok);
         return ok;
     }
-    // 返回 < v 的元素个数 (含重复)
-    // 时间: O(log n) | 空间: O(1)
+    // 返回 <v 的元素数(含重复)
     int get_rank(LL v)
     {
         int ret = 0, p = root;
@@ -56,8 +48,7 @@ struct SGTree
         }
         return ret;
     }
-    // 返回第 k 小 (1-based 含重复), k 越界返回 INF
-    // 时间: O(log n) | 空间: O(1)
+    // 第 k 小(1-based), 越界返回 INF
     LL get_kth(int k)
     {
         if (k < 1 || k > tr[root].sz) return INF;
@@ -74,8 +65,7 @@ struct SGTree
             }
         }
     }
-    // 返回 < v 的最大值 (严格前驱), 无解返回 -INF
-    // 时间: O(log n) | 空间: O(1)
+    // 严格前驱, 无则 -INF
     LL get_pre(LL v)
     {
         LL ret = -INF;
@@ -91,8 +81,7 @@ struct SGTree
         }
         return ret;
     }
-    // 返回 > v 的最小值 (严格后继), 无解返回 INF
-    // 时间: O(log n) | 空间: O(1)
+    // 严格后继, 无则 INF
     LL get_suf(LL v)
     {
         LL ret = INF;
@@ -108,11 +97,9 @@ struct SGTree
         }
         return ret;
     }
-    // 返回元素个数 (含重复)
-    // 时间: O(1) | 空间: O(1)
+    // 元素数(含重复). O(1)
     int size() { return tr[root].sz; }
-    // 多测复位
-    // 时间: O(idx) | 空间: O(1)
+    // 清空并保留容量. 时间 O(idx)
     void clear()
     {
         idx = 0;
@@ -197,7 +184,7 @@ private:
                 rub.push_back(p);
                 return ret;
             }
-            int q = tr[p].rc;               // 两子: 后继值顶替, 右子树删后继
+            int q = tr[p].rc;
             while (tr[q].lc) q = tr[q].lc;
             tr[p].val = tr[q].val;
             bool dummy = false;

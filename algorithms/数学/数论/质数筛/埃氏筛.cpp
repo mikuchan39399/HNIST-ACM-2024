@@ -4,16 +4,14 @@
 
 #include "../../../杂项/utils/utils.cpp"
 
-// 埃氏筛, prime[x] 标记质数, primes 按升序从下标 0 存; 不保存最小质因子
-// 0<=n<INT_MAX 且表能放下; 位压缩标记约 (n+1)/8+4*pi(n) B, n=1e7 约 3.9MB 有效数据
+// 埃氏筛; prime[x] 判质数, primes 为升序质数表(0-based)
 struct Eratosthenes
 {
     int n = 0;
     vector<bool> prime;
     VI primes;
     Eratosthenes(int n = 0) { init(n); }
-    // 重建 [0,n] 的质数标记和质数表, 覆盖旧结果; 不做增量续筛
-    // 时间: O(n log log n) | 空间: O(n), 缩表保留已分配容量
+    // 重建 [0,n], 0<=n<INT_MAX. 时间 O(n log log n), 空间 O(n)
     void init(int limit)
     {
         assert(limit >= 0 && limit < INT_MAX);
@@ -28,8 +26,7 @@ struct Eratosthenes
         for (int i = 2; i <= n; ++i)
             if (prime[i]) primes.push_back(i);
     }
-    // 查询 [0,n] 内 x 是否为质数, 0 和 1 返回 false
-    // 时间: O(1) | 空间: O(1)
+    // x 是否质数, 0<=x<=n. O(1)
     bool is_prime(int x) const { return prime[x]; }
 };
 #endif

@@ -27,8 +27,8 @@ struct LCA
         rt.assign(n + 10, 0);
     }
 
-    // 从绑定的前向星重建 1.._n 森林, 自动复位 rt, _n 不超过构造容量
-    // 时间 O(_n log _n) | 递归栈 O(h), 固定倍增层数仅覆盖小于 2^21 的点数
+    // 从绑定的前向星重建 1..n 森林, n<=容量且 n<2^21
+    // 时间 O(n log n), 表空间 O(n log n), 栈 O(树高)
     void build(int _n)
     {
         n = _n;
@@ -99,7 +99,7 @@ int main()
     lc.build(2);
     cout << lc.lca(1, 2) << '\n'; // 1
     head[1] = head[2] = 0;
-    lc.build(2); // 修改绑定的前向星后直接重建, 不使用旧 rt
+    lc.build(2); // 重建会清旧状态
     cout << (lc.lca(1, 2) == inf) << '\n'; // 1, 两点断连
 }
 */

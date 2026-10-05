@@ -2,9 +2,8 @@
 #define Z_OI_SEGBINARY_PLUGIN
 #include "../../../杂项/utils/utils.cpp"
 
-// 01 赋值/翻转, 查询 1 个数与最长连续 0/1; 左右信息不可交换
-// 必须 build; 全零段的 pre/suf/best[0] 等于 len, 不能只补 len
-// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 32 MB
+// 01 赋值/翻转, 查询 1 数与最长连续 0/1; 合并不可交换
+// 须 build, 全零段也不能只补 len. 合并/作用 O(1), 普通树空间 O(n)
 namespace SegBinary
 {
 struct Tag

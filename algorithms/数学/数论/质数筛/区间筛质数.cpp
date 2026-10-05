@@ -5,10 +5,8 @@
 #include "../../../杂项/utils/utils.cpp"
 #include "埃氏筛.cpp"
 
-// 返回闭区间 [l,r] 内的全部质数, 按从小到大排列; 空区间返回空 vector
-// 时间: O((sqrt(r)+r-l+1) log log r) | 空间: O(sqrt(r)+r-l+1)
-// sqrt(r)<INT_MAX 且两张表能放下; 位标记约 (sqrt(r)+r-l+2)/8 B, 基础质数4B/数, 返回8B/数
-// 大 r 短区间仍需筛到 sqrt(r); 不适合直接处理 LLONG_MAX 附近的区间
+// 返回 [l,r] 的升序质数, 空区间为空; 需容纳 sqrt(r) 及区间长度两张表, sqrt(r)<INT_MAX
+// 时间 O((sqrt(r)+r-l+1)log log r), 空间 O(sqrt(r)+r-l+1)
 inline vector<LL> segmented_sieve(LL l, LL r)
 {
     l = max(l, 2LL);

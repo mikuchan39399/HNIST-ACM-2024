@@ -4,10 +4,8 @@
 
 #include "../../杂项/utils/utils.cpp"
 
-// 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继均摊 O(log n)
-// 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
-// 查询伸展最后访问结点, 有答案时再伸展答案; 无解查询也调整树形以维持均摊复杂度
-// 内存: 每结点 24B, 预算 = 总插入次数(删除不回收), 4e6 ≈ 96MB
+// LL 有序多重集合, 值域 (-INF,INF); 增删查均摊 O(log n), 额外空间 O(1)
+// 点池按累计新建点数预算, 删除不回收; 每点约 24B
 struct Splay
 {
     struct node
@@ -18,15 +16,13 @@ struct Splay
     };
     vector<node> tr;
     int idx, root, budget;
-    // 预留 max_nodes 个实结点, 按累计新建结点预算
-    // 时间: O(1) | 空间: O(max_nodes) 预留
+    // 预留 max_nodes 个点, 初始为空. 时间 O(1), 空间 O(max_nodes)
     Splay(int max_nodes = 4000010) : idx(0), root(0), budget(max_nodes)
     {
         tr.reserve(budget + 1);
         tr.push_back(node());
     }
-    // 插入 v (允许重复)
-    // 时间: 均摊 O(log n) | 空间: O(1)
+    // 插入 v, 允许重复
     void insert(LL v)
     {
         int cur = root, f = 0;
@@ -41,8 +37,7 @@ struct Splay
         else root = x;
         splay(x);
     }
-    // 删除一个 v, 返回是否存在并删除
-    // 时间: 均摊 O(log n) | 空间: O(1)
+    // 删除一个 v, 返回是否成功
     bool erase(LL v)
     {
         int x = find_val(v);
@@ -64,8 +59,7 @@ struct Splay
         pushup(p);
         return true;
     }
-    // 返回 < v 的元素个数 (含重复)
-    // 时间: 均摊 O(log n) | 空间: O(1)
+    // 返回 <v 的元素数(含重复)
     int get_rank(LL v)
     {
         int cur = root, last = 0, ret = 0;
@@ -82,8 +76,7 @@ struct Splay
         if (last) splay(last);
         return ret;
     }
-    // 返回第 k 小 (1-based 含重复), k 越界返回 INF
-    // 时间: 均摊 O(log n) | 空间: O(1)
+    // 第 k 小(1-based), 越界返回 INF
     LL get_kth(int k)
     {
         if (k < 1 || k > tr[root].sz) return INF;
@@ -91,8 +84,7 @@ struct Splay
         splay(x);
         return tr[x].val;
     }
-    // 返回 < v 的最大值, 无前驱返回 -INF
-    // 时间: 均摊 O(log n) | 空间: O(1)
+    // 严格前驱, 无则 -INF
     LL get_pre(LL v)
     {
         int cur = root, hit = 0, last = 0;
@@ -107,8 +99,7 @@ struct Splay
         splay(hit);
         return tr[hit].val;
     }
-    // 返回 > v 的最小值, 无后继返回 INF
-    // 时间: 均摊 O(log n) | 空间: O(1)
+    // 严格后继, 无则 INF
     LL get_suf(LL v)
     {
         int cur = root, hit = 0, last = 0;
@@ -123,12 +114,9 @@ struct Splay
         splay(hit);
         return tr[hit].val;
     }
-    // 返回元素个数 (含重复)
-    // 时间: O(1) | 空间: O(1)
+    // 元素数(含重复). O(1)
     int size() { return tr[root].sz; }
-    // 从升序 a[1..m] 完美平衡二分建树, 替换现有集合 (a.size() = m + 1)
-    // 契约: a[1..m] 已升序(允许重复), 违约触发 assert
-    // 时间: O(m) | 空间: 递归栈 O(log m)
+    // 从升序 a[1..m] 重建, 允许重复. 时间 O(m), 栈 O(log m)
     void build(const VLL& a)
     {
         clear();
@@ -136,8 +124,7 @@ struct Splay
         for (int i = 2; i <= m; i++) assert(a[i - 1] <= a[i]);
         root = build_range(a, 1, m, 0);
     }
-    // 多测复位: 清全部元素, 容量保留
-    // 时间: O(idx) | 空间: O(1)
+    // 清空并保留容量. 时间 O(idx)
     void clear()
     {
         idx = 0;

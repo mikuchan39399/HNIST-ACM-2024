@@ -4,25 +4,21 @@
 
 #include "../../杂项/utils/utils.cpp"
 
-// ST 表按二次幂长度预存静态区间最值, 查询用两段覆盖; max/min 重复合并不改变结果
-// build 后修改原数组不影响表; max/min 同时查询需两个实例, query 要求 1 <= l <= r <= n
-// 每点 8 * (floor(log2 n) + 1) + 4 B, n=2e5 约 29.6 MB; 缩小重建保留原容量
+// 静态区间最值; 先 build, query 要求合法非空区间. 空间 O(n log n)
 struct ST
 {
     int n;
     bool is_max;
-    VVLL st;   // st[k][i] = [i, i + 2^k) 的最值
-    VI lg;     // lg[x] = floor(log2 x)
-    // 预分配 max_n 点所需的表, build 更大数组时自动扩容
-    // 时间: O(max_n log max_n) | 空间: O(max_n log max_n)
+    VVLL st;
+    VI lg;
+    // 预留 max_n, build 可自动扩容. 时空 O(max_n log max_n)
     ST(int max_n = 0) : n(0), is_max(true)
     {
         int lv = max_n > 1 ? __lg(max_n) + 1 : 1;
         st.assign(lv, VLL(max_n + 10, 0));
         lg.assign(max_n + 10, 0);
     }
-    // 用非空 a[1..m] 替换旧表, max_mode 为 true 求最大值, false 求最小值
-    // 时间: O(m log m) | 空间: O(m log m), 原容量足够时复用
+    // 用 1-based 非空数组构建, true 最大 / false 最小. 时空 O(n log n)
     void build(const VLL& a, bool max_mode = true)
     {
         n = (int)a.size() - 1;
@@ -38,8 +34,7 @@ struct ST
                 st[k][i] = is_max ? max(st[k - 1][i], st[k - 1][i + (1 << (k - 1))])
                                   : min(st[k - 1][i], st[k - 1][i + (1 << (k - 1))]);
     }
-    // 返回 [l, r] 的最值
-    // 时间: O(1) | 空间: O(1)
+    // 查询 [l,r] 最值. O(1)
     LL query(int l, int r)
     {
         assert(1 <= l && l <= r && r <= n);

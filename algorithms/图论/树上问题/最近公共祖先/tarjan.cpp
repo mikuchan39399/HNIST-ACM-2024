@@ -71,8 +71,8 @@ struct TarjanLCA
         q_head[u] = q_cnt;
     }
 
-    // 保留已添加树边和询问, 自动复位并查集与访问状态后重算答案
-    // 时间 O((n+m) alpha(n)) | 递归栈 O(h), 查询两点须属于同一棵树
+    // 用已添加的树边和询问重算 ans, 自动清计算状态; 询问两点须同树
+    // 时间 O((n+m) alpha(n)), 空间 O(n+m), 栈 O(树高)
     void build()
     {
         fill(vis.begin(), vis.begin() + n + 1, 0);

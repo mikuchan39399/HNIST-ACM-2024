@@ -2,8 +2,8 @@
 #define Z_OI_SEGXOR_PLUGIN
 #include "../../../杂项/utils/utils.cpp"
 
-// 区间异或, 查询和/异或和/各位 1 个数; 数据及 mask 在 [0, 2^Bits), len <= INT_MAX
-// 合并/作用 O(Bits); 普通树 O(n * Bits) 空间, Bits = 20 且 n = 2e5 约 87 MB
+// 区间异或, 查询和/异或和/各位 1 数; 数据和 mask 在 [0,2^Bits), len<=INT_MAX
+// 合并/作用 O(Bits), 普通树空间 O(n*Bits)
 namespace SegXor
 {
 struct Tag

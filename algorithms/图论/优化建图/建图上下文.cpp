@@ -4,38 +4,33 @@
 
 #include "../图的存储/Graph.cpp"
 
-// 共享最终图和编号, 1 .. n 为初始状态点, 后续骨架及中继都从 new_node 分配
-// 上下文须比所有结构活得久, 结构存在时不移动上下文; init 后所有旧结构和入口失效
-// 点表约 16V B, 每边 Empty/int/LL 为 8/12/16 B, 下游与结构索引另计; W() 为零权
+// 共享有向图与编号; 1..n 为初始点, 辅助点均由 new_node 分配, W() 为零权
+// 结构使用期间不销毁/移动上下文; init 使旧结构及入口失效
 template <class W = Empty>
 struct GraphBuilder
 {
     Graph<true, W> g;
     int n = 0, tot = 0;
-    // max_n 为整图点数上限 = 初始状态点 + 所有骨架点 + 中继点, 取够用的上界, 固定不扩容
-    // max_m 预留全图边数(含骨架边), 可省略为 0, 不足自动扩容; 构造后 init(n), 默认零点容量不可申请点
-    // 时间 O(max_n) | 空间 O(max_n + max_m)
+    // 点容量 max_n=初始点+骨架点+中继点, 固定; max_m 为边预留, 可扩容
+    // 构造后先 init(n). 时间 O(max_n), 空间 O(max_n+max_m)
     GraphBuilder(int max_n = 0, int max_m = 0) : g(max_n, max_m), cap(max_n) {}
-    // 清空整张图并保留 1 .. _n 状态点, 0 <= _n <= max_n
-    // 时间 O(上轮触碰点数 + 上轮边数) | 额外空间 O(1)
+    // 清图并保留 1..n, n<=容量. 时间 O(旧触碰点数+旧边数)
     void init(int _n)
     {
         assert(0 <= _n && _n <= cap);
         g.clear();
         n = tot = _n;
     }
-    // 申请一个孤立图点并返回全局编号, 消耗一个点容量
-    // 时间 O(1) | 额外空间 O(1)
+    // 申请并返回新点号, 消耗 1 点容量. O(1)
     int new_node()
     {
         assert(tot < cap);
         return ++tot;
     }
-    // 添加 u 到 v 的边, 0 表示空入口, 任一端为 0 时不加边
-    // 均摊时间 O(1) | 新增至多 1 条边
+    // 加 u->v, 任一端为 0 则忽略. 均摊 O(1), 至多 1 边
     void add(int u, int v, W w = W()) { if (u && v) g.add(u, v, w); }
-    // 将汇集覆盖 src 全连接到分发覆盖 dst, 忽略 0, 任一侧仅一个入口时直接连边
-    // 均摊时间 O(|src| + |dst|) | 至多 1 个中继, 至多 |src| + |dst| 条边
+    // src 汇集出口到 dst 分发入口全连接, 忽略 0; 须同一上下文
+    // 均摊 O(|src|+|dst|), 至多 1 中继点、|src|+|dst| 条边
     template <class S, class D>
     void link(const S& src, const D& dst, W w = W())
     {

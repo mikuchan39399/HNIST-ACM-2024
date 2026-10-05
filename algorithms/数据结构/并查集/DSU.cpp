@@ -4,21 +4,19 @@
 
 #include "../../杂项/utils/utils.cpp"
 
-// 定向合并并查集, fa 存父亲, sz 仅在根处有效; 每点约 8B, 20 万点约 1.6MB
+// 并查集, 1..n; 定向合并, sz 仅根有效. 空间 O(n); h=查根路径长, 最坏 n
 struct DSU
 {
     int n;
     VI fa, sz;
-    // 分配 max_n 个点, 初始每个点自成集合, 编号为 1..max_n
-    // 时间: O(max_n) | 空间: O(max_n)
+    // 预留 max_n 个点并初始化. 时空 O(max_n)
     DSU(int max_n = 0) :
         n(max_n), fa(max_n + 10), sz(max_n + 10, 1)
     {
         for (int i = 0; i <= n; i++)
             fa[i] = i;
     }
-    // 在构造容量内重置为 n 个单点集合, n 可为 0
-    // 时间: O(n) | 额外空间: O(1)
+    // 重置为 n 个单点集合, n<=容量. 时间 O(n)
     void init(int _n)
     {
         n = _n;
@@ -28,8 +26,7 @@ struct DSU
             sz[i] = 1;
         }
     }
-    // 返回 x 的根, 并把沿途各点直接接到根
-    // 时间: O(路径长度), 单次最坏 O(n) | 额外空间: O(1)
+    // 查根并压缩路径. 时间 O(h)
     int find(int x)
     {
         int r = x;
@@ -42,8 +39,7 @@ struct DSU
         }
         return r;
     }
-    // 把 v 的根挂到 u 的根, 成功返回 true, 已连通返回 false
-    // 时间: O(两条查根路径长度), 单次最坏 O(n) | 额外空间: O(1)
+    // 将 v 的根接到 u 的根, 返回是否发生合并. 时间 O(h)
     bool merge(int u, int v)
     {
         int fu = find(u);
@@ -53,11 +49,9 @@ struct DSU
         sz[fu] += sz[fv];
         return true;
     }
-    // 返回 u 和 v 是否属于同一个集合
-    // 时间: O(两条查根路径长度), 单次最坏 O(n) | 额外空间: O(1)
+    // 是否同属一个集合. 时间 O(h)
     bool same(int u, int v) { return find(u) == find(v); }
-    // 返回 x 所在集合的点数
-    // 时间: O(查根路径长度), 单次最坏 O(n) | 额外空间: O(1)
+    // 所在集合大小. 时间 O(h)
     int size(int x) { return sz[find(x)]; }
 };
 #endif

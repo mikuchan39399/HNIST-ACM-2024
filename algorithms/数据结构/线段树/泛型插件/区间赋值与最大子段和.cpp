@@ -2,9 +2,8 @@
 #define Z_OI_SEGMAXSUBARRAY_PLUGIN
 #include "../../../杂项/utils/utils.cpp"
 
-// 区间赋值, 查询非空最大子段和/前缀和/后缀和; 不支持区间加
-// 全负取最大元素; Info{} 仅为空单位元; 中间值须在 LL 内
-// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 45 MB
+// 区间赋值, 查询非空最大子段/前缀/后缀和; 不支持区间加, 中间值在 LL 内
+// 全负取最大元素, Info{} 为空单位元. 合并/作用 O(1), 普通树空间 O(n)
 namespace SegMaxSubarray
 {
 struct Tag

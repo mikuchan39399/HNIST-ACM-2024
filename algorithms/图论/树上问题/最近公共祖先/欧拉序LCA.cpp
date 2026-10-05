@@ -25,8 +25,8 @@ struct LCA
         pre.assign(n + 1, 0);
         rmq.assign(2 * n + 1, VI(floor(log2(2 * n)) + 10, 0));
     }
-    // 从绑定的前向星重建 _n 点树, root 必须显式传入, _n 不超过构造容量
-    // 时间 O(_n log _n) | 递归栈 O(h), 查询点须在 root 所在树内
+    // 从绑定的前向星重建 n 点树, n<=容量; 查询点须在 root 所在树
+    // 时间/表空间 O(n log n), 栈 O(树高)
     void build(int _n, int root)
     {
         n = _n;

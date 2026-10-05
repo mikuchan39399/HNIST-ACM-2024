@@ -5,23 +5,19 @@
 #include "../../图论/图的存储/Graph.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-// 笛卡尔树线性建树, 下标控制中序次序, a[i] 决定堆序, 右脊栈不下降建小根堆, 不上升建大根堆
-// 等权点保留原顺序; 小根堆中区间最小值等于两端点 LCA 的权值, 大根堆对偶
-// tree 为无向图, 总点数用 n, 单点时 Graph::node_cnt() 为 0; key/orig 仅在最近调用 build_bst 后有效
-// 图边每半边 8 B, 点表约 12n B, 临时栈 4n B; build_bst 的映射和排序数组另计 O(n)
+// 笛卡尔树, 等权时先出现的点优先; 区间最值=两端点 LCA 的权值
+// tree 存无向边, 总点数取 n(不能取 node_cnt); 空树根为 0. 空间 O(n)
 struct Cartesian
 {
     int n, rt;
     Graph<false> tree;
-    VLL key;   // build_bst 后: 节点 r 的键(第 r 小的值)
-    VI orig;   // build_bst 后: 节点 r 的原数组下标(插入时间)
-    // 预分配 max_n 点的图容器, build 可自动扩容
-    // 时间: O(max_n) | 空间: O(max_n)
+    VLL key;   // build_bst 后, 结点 r 的原键
+    VI orig;   // build_bst 后, 结点 r 的原下标
+    // 预留 max_n 个点, build 可扩容. 时空 O(max_n)
     Cartesian(int max_n = 0) : n(0), rt(0), tree(max_n, max_n)
     {}
-    // 用 a[1..n] 建笛卡尔树, min_heap 为 true 建小根堆, 返回根, n=0 返回 0
-    // 树存 tree(无向边), 孩子方向看编号: 孩子 < 父 = 左子
-    // 时间: O(n) | 空间: 右脊栈 O(n)
+    // 用 a[1..n] 建树并返回根, true 小根 / false 大根. 时间 O(n), 栈 O(n)
+    // 孩子编号小于父亲为左子, 大于父亲为右子
     int build(const VLL& a, bool min_heap = true)
     {
         n = (int)a.size() - 1;
@@ -47,9 +43,8 @@ struct Cartesian
         for (size_t k = 1; k < stk.size(); k++) tree.add(stk[k - 1], stk[k]);
         return rt;
     }
-    // a[1..n] 顺序插入空 BST 的拓扑: 值当中序, 插入时间当小根堆
-    // EqLeft 路由等值去向: false 往右插(先插者居左), true 往左插;
-    // 时间: O(n log n) | 空间: O(n)
+    // 构建按 a[1..n] 顺序插入的 BST, 结点按键排序编号. 时间 O(n log n), 空间 O(n)
+    // EqLeft=false 时等值向右插, true 时向左插; key/orig 仅本接口有效
     template <bool EqLeft = false>
     int build_bst(const VLL& a)
     {

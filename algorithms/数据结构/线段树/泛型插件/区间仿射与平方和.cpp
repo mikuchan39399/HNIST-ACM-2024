@@ -2,9 +2,8 @@
 #define Z_OI_SEGAFFINE_PLUGIN
 #include "../../../杂项/utils/utils.cpp"
 
-// x <- mul * x + add, 查询和/平方和; Mod 在 [2, INT_MAX], 无须素数
-// Tag(m, a) 表示乘 m 加 a, m = 0 即赋值; 构造归一化负数
-// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 32 MB
+// x <- mul*x+add, 查询和/平方和; 2<=Mod<=INT_MAX, 可合数, 自动归一化负数
+// Tag(m,a) 表示乘 m 加 a, m=0 即赋值. 合并/作用 O(1), 普通树空间 O(n)
 namespace SegAffine
 {
 template<int Mod = 998244353>
@@ -13,7 +12,7 @@ struct Tag
     static_assert(Mod >= 2);
     LL mul, add;
     Tag(LL m = 1, LL a = 0) : mul((m % Mod + Mod) % Mod), add((a % Mod + Mod) % Mod) {}
-    void apply(const Tag& t) // 先旧后新: t.mul * (mul * x + add) + t.add
+    void apply(const Tag& t)
     {
         mul = mul * t.mul % Mod;
         add = (add * t.mul + t.add) % Mod;
@@ -34,7 +33,7 @@ struct Info
         LL a = sq * t.mul % Mod * t.mul % Mod;
         LL b = 2 * t.mul % Mod * t.add % Mod * sum % Mod;
         LL c = t.add * t.add % Mod * (len % Mod) % Mod;
-        sq = (a + b + c) % Mod; // 先用旧 sum 更新平方和
+        sq = (a + b + c) % Mod;
         sum = (sum * t.mul + t.add * (len % Mod)) % Mod;
     }
     friend Info operator+(const Info& a, const Info& b)

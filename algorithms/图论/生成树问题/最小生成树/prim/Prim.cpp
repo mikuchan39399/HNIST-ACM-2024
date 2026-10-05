@@ -4,17 +4,15 @@
 
 #include "../../../图的存储/Graph.cpp"
 
-// 逐点扫描选连向森林的最轻边, 适合稠密图; 接无向 Graph, 权值为 int/LL, n >= 1
-// weight 为森林总权, components 为分量数, edges 存选中边的偶数半边编号
-// 允许负权/重边/自环, 累加须在 LL 内; 工作表每点 16 B, 不含图与返回边
+// 无向图最小生成森林, n>=1, int/LL 权; 可负权/重边/自环, 总权须在 LL 内
+// weight 为总权, components 为分量数, edges 为选中边的偶数半边号(图 clear 后失效)
 struct Prim
 {
     LL weight = 0;
     int components = 0;
     VI edges;
 
-    // 重建 1..n 的最小生成森林并保存结果, 返回是否连通, 不修改图
-    // 时间 O(n^2 + m) | 额外空间 O(n), 图 clear 后旧边编号失效
+    // 重建结果, 连通返回 true. 时间 O(n²+m), 额外空间 O(n)
     template <class G>
     bool build(G& g, int n)
     {
@@ -28,7 +26,7 @@ struct Prim
             int t = 0;
             for (int j = 1; j <= n; j++)
                 if (!vis[j] && (!t || (from[j] != -1 && (from[t] == -1 || dis[j] < dis[t])))) t = j;
-            if (from[t] == -1) components++; // 当前分量已收完, 从未访问点开新分量
+            if (from[t] == -1) components++;
             else
             {
                 weight += dis[t];

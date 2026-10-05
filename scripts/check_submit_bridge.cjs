@@ -73,10 +73,31 @@ int main() {
     const kmpSource = path.join(root, 'algorithms/字符串/KMP/对拍/kmp_check.cpp');
     const kmpSnapshot = await bridge.prepareDocument(vscode, { ...document, fileName: kmpSource, getText: () => fs.readFileSync(kmpSource, 'utf8') });
     const kmpSubmission = path.join(dir, 'kmp-submission.cpp'); fs.writeFileSync(kmpSubmission, kmpSnapshot);
+    const manacherSource = path.join(root, 'algorithms/字符串/Manacher/对拍/manacher_check.cpp');
+    const manacherSnapshot = await bridge.prepareDocument(vscode, { ...document, fileName: manacherSource, getText: () => fs.readFileSync(manacherSource, 'utf8') });
+    const manacherSubmission = path.join(dir, 'manacher-submission.cpp'); fs.writeFileSync(manacherSubmission, manacherSnapshot);
+    const manacherTemplate = path.join(root, 'algorithms/字符串/Manacher/manacher.cpp');
+    const manacherUsage = fs.readFileSync(manacherTemplate, 'utf8').match(/\/\*\s*Usage\b([\s\S]*?)\*\//)[1];
+    const usageSnapshot = await bridge.prepareDocument(vscode, { ...document, fileName: manacherTemplate, getText: () => manacherUsage });
+    const usageSubmission = path.join(dir, 'manacher-usage.cpp'); fs.writeFileSync(usageSubmission, usageSnapshot);
+    const zSource = path.join(root, 'algorithms/字符串/Z函数/对拍/z_function_check.cpp');
+    const zSnapshot = await bridge.prepareDocument(vscode, { ...document, fileName: zSource, getText: () => fs.readFileSync(zSource, 'utf8') });
+    const zSubmission = path.join(dir, 'z-submission.cpp'); fs.writeFileSync(zSubmission, zSnapshot);
+    const zTemplate = path.join(root, 'algorithms/字符串/Z函数/z_function.cpp');
+    const zUsage = fs.readFileSync(zTemplate, 'utf8').match(/\/\*\s*Usage\b([\s\S]*?)\*\//)[1];
+    const zUsageSnapshot = await bridge.prepareDocument(vscode, { ...document, fileName: zTemplate, getText: () => zUsage });
+    const zUsageSubmission = path.join(dir, 'z-usage.cpp'); fs.writeFileSync(zUsageSubmission, zUsageSnapshot);
+    const acSource = path.join(root, 'algorithms/字符串/AC自动机/对拍/acam_check.cpp');
+    const acSnapshot = await bridge.prepareDocument(vscode, { ...document, fileName: acSource, getText: () => fs.readFileSync(acSource, 'utf8') });
+    const acSubmission = path.join(dir, 'acam-submission.cpp'); fs.writeFileSync(acSubmission, acSnapshot);
+    const acTemplate = path.join(root, 'algorithms/字符串/AC自动机/acam.cpp');
+    const acUsage = fs.readFileSync(acTemplate, 'utf8').match(/\/\*\s*Usage\b([\s\S]*?)\*\//)[1];
+    const acUsageSnapshot = await bridge.prepareDocument(vscode, { ...document, fileName: acTemplate, getText: () => acUsage });
+    const acUsageSubmission = path.join(dir, 'acam-usage.cpp'); fs.writeFileSync(acUsageSubmission, acUsageSnapshot);
     for (const std of ['c++11', 'c++14', 'c++17', 'c++20', 'c++23']) {
         const poison = path.join(dir, std); fs.mkdirSync(poison);
         // 拦截展开快照直接引入新标准头; 新版 libstdc++ 自己的内部依赖仍交回系统头
-        for (const name of ['c++11', 'c++14'].includes(std) ? ['string_view', 'bit', 'concepts', 'ranges'] : std === 'c++17' ? ['bit', 'concepts', 'ranges'] : []) {
+        for (const name of ['c++11', 'c++14'].includes(std) ? ['string_view', 'bit', 'concepts', 'ranges', 'span'] : std === 'c++17' ? ['bit', 'concepts', 'ranges', 'span'] : []) {
             fs.writeFileSync(path.join(poison, name), `#pragma GCC system_header\n#if __INCLUDE_LEVEL__ == 1\n#error unavailable standard header\n#endif\n#include_next <${name}>\n`);
         }
         const exe = path.join(dir, process.platform === 'win32' ? 'utils-compat.exe' : 'utils-compat');
@@ -85,8 +106,31 @@ int main() {
         execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, path.join(root, 'algorithms/杂项/对拍/utils_local_check.cpp'), '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
         assert.match(execFileSync(exe, [], { cwd: dir, encoding: 'utf8' }), /utils_local_check passed/);
         execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, kmpSubmission, '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
-        assert.match(execFileSync(exe, [], { cwd: dir, encoding: 'utf8' }), /kmp: PASS \(64897 exhaustive pairs, 2000 random cases, byte boundaries, million-length rebuilds\)/);
-        console.log(`PASS: ${std} utils + LOCAL + exported KMP full regression`);
+        const result = execFileSync(exe, [], { cwd: dir, encoding: 'utf8' });
+        assert.match(result, /kmp: PASS \(64897 exhaustive pairs, 2000 random cases, byte boundaries, million-length rebuilds\)/);
+        assert.match(result, /sequence kmp: PASS/);
+        if (['c++20', 'c++23'].includes(std)) assert.match(result, /span kmp: PASS/);
+        execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, manacherSubmission, '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
+        const manacherResult = execFileSync(exe, [], { cwd: dir, encoding: 'utf8' });
+        assert.match(manacherResult, /manacher: PASS/);
+        assert.match(manacherResult, /sequence manacher: PASS/);
+        if (['c++20', 'c++23'].includes(std)) assert.match(manacherResult, /span manacher: PASS/);
+        execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, usageSubmission, '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
+        const expectedUsage = '1 7\nabacaba\n1 0\n7 12\n4 6\n0 0 0\n1 4' + (['c++20', 'c++23'].includes(std) ? '\n1 3' : '');
+        assert.equal(execFileSync(exe, [], { cwd: dir, encoding: 'utf8' }).trim().replace(/\r/g, ''), expectedUsage);
+        execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, zSubmission, '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
+        const zResult = execFileSync(exe, [], { cwd: dir, encoding: 'utf8' });
+        assert.match(zResult, /z_function: PASS/);
+        assert.match(zResult, /extend: PASS/);
+        if (['c++20', 'c++23'].includes(std)) assert.match(zResult, /span z: PASS/);
+        execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, zUsageSubmission, '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
+        const expectedZUsage = '7 0 1 0 3 0 1 4 6 7 3 0 1 2 3 1 0 2 1 0' + (['c++20', 'c++23'].includes(std) ? ' 3 1' : '');
+        assert.equal(execFileSync(exe, [], { cwd: dir, encoding: 'utf8' }).trim().split(/\s+/).join(' '), expectedZUsage);
+        execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, acSubmission, '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
+        assert.match(execFileSync(exe, [], { cwd: dir, encoding: 'utf8' }), /ACAM PASS:/);
+        execFileSync('g++', ['-std=' + std, '-pedantic-errors', '-Wall', '-Wextra', '-Werror', '-O2', '-I', poison, acUsageSubmission, '-o', exe], { cwd: dir, env: { ...process.env, TEMP: dir, TMP: dir, TMPDIR: dir } });
+        assert.equal(execFileSync(exe, [], { cwd: dir, encoding: 'utf8' }).trim().split(/\s+/).join(' '), '3 2 3 4 0 2');
+        console.log(`PASS: ${std} utils + LOCAL + exported KMP/Manacher/Z/ACAM full regression and Manacher/Z/ACAM Usage`);
     }
 }
 
@@ -181,7 +225,7 @@ async function main() {
     assert.equal(fs.readFileSync(path.join(extensionDir, 'plugin0/extension.js'), 'utf8'), cph + '\n// unrelated patch');
     assert.equal(fs.readFileSync(file, 'utf8'), original);
     assert.ok(!fs.readdirSync(dir).some(n => /zoi\.(state|pending)|\.lock$/.test(n)));
-    console.log('PASS: snapshot export + UTF-8 + utils/KMP C++11/14/17/20/23 compilation/runtime/old-header checks + CF/VJudge/AtCoder routing + Luogu 4.16/4.18 adapters + fail-closed + concurrent edit + install/idempotence/uninstall/version mismatch');
+    console.log('PASS: snapshot export + UTF-8 + utils/KMP/Manacher/Z C++11/14/17/20/23 compilation/runtime/old-header checks + CF/VJudge/AtCoder routing + Luogu 4.16/4.18 adapters + fail-closed + concurrent edit + install/idempotence/uninstall/version mismatch');
 }
 
 main().then(() => {

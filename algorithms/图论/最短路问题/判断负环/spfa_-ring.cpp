@@ -5,22 +5,18 @@
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/128位整数/128int.cpp"
 
-// 全点以零距离入队, cnt 记录当前松弛路径的边数, 达到 n 即有负环, 不是累计入队次数
-// Graph 用 int/LL 整数权, dist 用库内 i128 避免负环反复降低距离时溢出, 可查任意分量
-// 工作表每点 24 B, 队列每项 4 B 且至多 n 项, 20 万点约 5.6 MB, 不含 Graph
+// 判断整图负环(含不连通分量), 1-based, int/LL 边权. 空间 O(n)
+// cnt 为松弛路径边数, dist 不作为最短路答案
 struct SPFARing
 {
     int n;
     vector<i128> dist;
     VI cnt, inq;
-    // 分配 max_n 个点的工作表, 点编号为 1..n, n >= 1
-    // 时间 O(max_n) | 空间 O(max_n)
+    // 预留 max_n 个点. 时空 O(max_n)
     SPFARing(int max_n = 0) : n(0), dist(max_n + 10, 0), cnt(max_n + 10, 0), inq(max_n + 10, 0) {}
-    // 在构造容量内设为 n 个点, 工作表由 run 清空
-    // 时间 O(1) | 额外空间 O(1)
+    // 设置 n<=容量, run 再清状态. O(1)
     void init(int _n) { n = _n; }
-    // 返回整图是否有负环, 每次自动清空工作表, 不修改图
-    // 最坏时间 O(nm+n) | 额外空间 O(n)
+    // 有负环返回 true, 自动复位. 最坏时间 O(nm+n), 队列空间 O(n)
     template <class G>
     bool run(G& g, int _n)
     {

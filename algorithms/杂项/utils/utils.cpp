@@ -27,6 +27,7 @@
 #include <bit>
 #include <concepts>
 #include <ranges>
+#include <span>
 #endif
 #include <cmath>
 #include <functional>
@@ -43,6 +44,7 @@
 using namespace std;
 
 using LL = long long;
+using ll = long long;
 using ULL = unsigned long long;
 using VI = vector<int>;
 using VLL = vector<LL>;
@@ -70,13 +72,8 @@ constexpr ULL MAX_ULL = ULLONG_MAX;
 constexpr double MAX_DBL = DBL_MAX;
 constexpr double MIN_DBL = -DBL_MAX;
 
-/* memset 速查:
- *   int a[N]; memset(a, 0x3f, sizeof a);   // 每元素 0x3f3f3f3f ≈ 1.06e9
- *   LL  d[N]; memset(d, 0x3f, sizeof d);   // 每元素 0x3f3f3f3f3f3f3f3f ≈ 4.6e18
- *   int p[N]; memset(p, -1, sizeof p);     // 每元素 -1
- *   ULL u[N]; memset(u, -1, sizeof u);     // 每元素 18446744073709551615
- *   double 不可 memset 造最值(重复字节非合法浮点), 用 fill/vll 赋值
- */
+// memset 0x3f: int=0x3f3f3f3f, LL=0x3f3f3f3f3f3f3f3f; -1: 整数各位为 1
+// 浮点最值用 fill, 不用 memset
 
 #if __cplusplus >= 201703L
 inline int dx4[4] = {0, 0, -1, 1};
@@ -84,15 +81,14 @@ inline int dy4[4] = {1, -1, 0, 0};
 inline int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
 inline int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 #else
-// C++14 不支持内联变量, 旧 OJ 的单文件提交使用各翻译单元独立的方向数组
+
 [[gnu::unused]] static int dx4[4] = {0, 0, -1, 1};
 [[gnu::unused]] static int dy4[4] = {1, -1, 0, 0};
 [[gnu::unused]] static int dx8[8] = {-1, -1, -1, 0, 1, 1, 1, 0};
 [[gnu::unused]] static int dy8[8] = {-1, 0, 1, 1, 1, 0, -1, -1};
 #endif
 
-// 用 b 更新 a 的最大/最小值, 更新返回 true, 否则返回 false; 相等时保留 a
-// 两参同型, 支持 < 和赋值; 各做一次比较, 至多一次赋值, 数值类型时空 O(1)
+// 用 b 更新 a 的最大/最小值, 更新返回 true; 相等保留 a, 两参同型. 数值型 O(1)
 template <class T>
 bool cmax(T& a, const T& b)
 {
@@ -115,8 +111,8 @@ bool cmin(T& a, const T& b)
     return false;
 }
 
-// 从下标 0 填到 min(n+10,size)-1, 含 1-based 哨兵与少量余量; 各容器 size>=n>=0
-// 时间为实际填充元素数之和, O(1) 额外空间; 不扩容, 不保证清空更远的旧数据
+// 填充各容器 [0,min(n+10,size)), size>=n>=0, 不扩容
+// 时间 O(实际填充量), 额外空间 O(1); 更远的旧数据不清空
 template <class V, typename... CS>
 void z_fill_n(int n, V val, CS&... cs)
 {
@@ -130,7 +126,7 @@ void z_fill_n(int n, V val, CS&... cs)
 #endif
 }
 
-// 在标准流第一次读写前调用; 后续不混用 scanf/printf 或 rw, O(1) 设置
+// 标准流首次读写前调用; 之后不混用 scanf/printf 或 rw. O(1)
 inline void fast_io()
 {
     ios::sync_with_stdio(false);
@@ -138,8 +134,7 @@ inline void fast_io()
     cout.tie(nullptr);
 }
 
-// 返回 sqrt(x) 向下取整的整数; x <= 0 时返回 0
-// 时间: O(1) | 空间: O(1)
+// sqrt(x) 向下取整, x<=0 返回 0. O(1)
 inline LL floor_isqrt(LL x)
 {
     if (x <= 0) return 0;
@@ -148,8 +143,7 @@ inline LL floor_isqrt(LL x)
     while (r > x / r) r--;
     return r;
 }
-// 返回 sqrt(x) 向上取整的整数; x <= 0 时返回 0
-// 时间: O(1) | 空间: O(1)
+// sqrt(x) 向上取整, x<=0 返回 0. O(1)
 inline LL ceil_isqrt(LL x)
 {
     if (x <= 0) return 0;
@@ -157,8 +151,7 @@ inline LL ceil_isqrt(LL x)
     return r + (r * r != x);
 }
 
-// 返回 a/b 向负无穷取整; b!=0 且不能是 LLONG_MIN/-1 (结果超出 LL)
-// 时间: O(1) | 空间: O(1)
+// a/b 向下取整; b!=0 且不能为 LLONG_MIN/-1. O(1)
 inline LL floor_div(LL a, LL b)
 {
     assert(b != 0 && !(a == LLONG_MIN && b == -1));
@@ -171,8 +164,7 @@ inline LL floor_div(LL a, LL b)
     return res;
 }
 
-// 返回 a/b 向正无穷取整; 契约同 floor_div, 支持正负分子和分母
-// 时间: O(1) | 空间: O(1)
+// a/b 向上取整, 限制同 floor_div. O(1)
 inline LL ceil_div(LL a, LL b)
 {
     assert(b != 0 && !(a == LLONG_MIN && b == -1));
@@ -221,8 +213,7 @@ int main()
     cout << floor_isqrt(10) << ' ' << ceil_isqrt(10) << '\n'; // 3 4
     cout << floor_div(-7, 3) << ' ' << ceil_div(-7, 3) << '\n'; // -3 -2
     cout << ceil_div(LLONG_MAX, 2) << '\n'; // 4611686018427387904
-    // 不用 (a+b-1)/b: 负数方向与中间溢出都会出错
-    // endl 在本库为 '\n', 不主动刷新; 交互题应显式 flush
+    // endl 在本库为 '\n', 不刷新; 交互题显式 flush.
 }
 */
 

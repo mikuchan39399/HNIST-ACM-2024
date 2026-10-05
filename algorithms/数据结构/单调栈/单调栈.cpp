@@ -4,9 +4,8 @@
 
 #include "../../杂项/utils/utils.cpp"
 
-// 单调栈存候选下标, 弹栈比较决定大小关系, 剩余栈顶给出左侧最近位置
-// 返回 a[1..n] 左侧最近满足关系的下标, 默认严格小于当前值, 不存在为 0
-// 时间 O(n), 空间 O(n), 比较视作 O(1)
+// 返回每个位置左侧最近的严格更小值下标, 无则 0; a 为 1-based
+// 比较 O(1) 时, 总时空 O(n). 改比较器可求其他关系
 template<class T, class Bad = greater_equal<T>>
 VI mono_stack(const vector<T>& a, Bad bad = {})
 {
@@ -15,7 +14,7 @@ VI mono_stack(const vector<T>& a, Bad bad = {})
     int tt = 0;
     for (int i = 1; i <= n; ++i)
     {
-        while (tt && bad(a[stk[tt]], a[i])) --tt; // 改弹栈关系, >= 弹同值而 > 留同值
+        while (tt && bad(a[stk[tt]], a[i])) --tt; // >= 弹出同值, > 保留同值
         ans[i] = tt ? stk[tt] : 0; // 先取答案再入栈, 排除自己
         stk[++tt] = i;
     }

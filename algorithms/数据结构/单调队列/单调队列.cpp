@@ -4,9 +4,8 @@
 
 #include "../../杂项/utils/utils.cpp"
 
-// 单调队列存候选下标, 队头控制有效范围, 队尾比较决定最值与平手取舍
-// 返回 a[1..n] 各完整 k 窗口的最值下标, 默认最小且同值取最右, 未满窗口为 0; k >= 1
-// 时间 O(n), 空间 O(n), 比较视作 O(1)
+// 滑窗最值下标, 默认最小值且同值取最右; a 为 1-based, k>=1
+// 返回 1..n 的窗口答案, 窗口不足 k 时为 0. 比较 O(1) 时, 总时空 O(n)
 template<class T, class Bad = greater_equal<T>>
 VI mono_window(const vector<T>& a, int k, Bad bad = {})
 {
@@ -15,16 +14,16 @@ VI mono_window(const vector<T>& a, int k, Bad bad = {})
     int hh = 1, tt = 0;
     for (int i = 1; i <= n; ++i)
     {
-        while (hh <= tt && q[hh] < i - k + 1) ++hh; // 改窗口左端点
-        while (hh <= tt && bad(a[q[tt]], a[i])) --tt; // 改支配关系, 含平手取舍
+        while (hh <= tt && q[hh] < i - k + 1) ++hh; // 窗口左边界
+        while (hh <= tt && bad(a[q[tt]], a[i])) --tt; // 弹出被支配项, >= 时同值取右
         q[++tt] = i;
-        if (i >= k) ans[i] = q[hh]; // 当前点也属于窗口, 先入队再取答案
+        if (i >= k) ans[i] = q[hh];
     }
     return ans;
 }
 
-// 计算 f[i] = cost[i] + min(f[j]), max(0, i-k) <= j < i, 返回 f[0..n] 且 f[0] = 0; k >= 1
-// 时间 O(n), 空间 O(n), cost 为 1-based 且所有加法在 LL 内
+// f[i]=cost[i]+min f[j], max(0,i-k)<=j<i; f[0]=0, k>=1
+// cost 为 1-based, 返回 f[0..n]; 加法不溢出 LL. 时空 O(n)
 VLL mono_dp(const VLL& cost, int k)
 {
     int n = (int)cost.size() - 1;
@@ -35,7 +34,7 @@ VLL mono_dp(const VLL& cost, int k)
     for (int i = 1; i <= n; ++i)
     {
         while (hh <= tt && q[hh] < i - k) ++hh;
-        f[i] = f[q[hh]] + cost[i]; // 改转移式, 必须在 i 入队前查询
+        f[i] = f[q[hh]] + cost[i]; // 先转移再入队, 排除 i 自身
         while (hh <= tt && f[q[tt]] >= f[i]) --tt;
         q[++tt] = i;
     }

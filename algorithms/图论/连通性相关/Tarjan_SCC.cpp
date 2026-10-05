@@ -5,17 +5,15 @@
 #include "../图的存储/Graph.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-// 强连通分量; bel[u] 为 1 .. scc_cnt, 跨分量边从大编号指向小编号, dag 恒无权
-// 原图外置, build 可接带权图 (含 SegGraph), 只读邻接中的 e.v; 递归深度最坏 n
+// 强连通分量, bel[u] 为 1..scc_cnt; 跨分量边从大编号到小编号
+// 原图外置, 权值忽略, dag 无权; 递归深度最坏 n
 struct SCC
 {
     int n;
     int dfn_idx, scc_cnt;
     Graph<true, Empty> dag;
     VI dfn, low, bel, in_stk, sta;
-    // N 取原图最大点数, M 取缩点后最多保留的有向边数 (直接取原图 m 即可)
-    // 64 位 GCC, int = 4 B 时预留约 36 * N + 8 * M B; N = M = 2e5 约 8.8 MB, 不含原图与递归栈
-    // 时间 O(N) | 空间 O(N + M)
+    // 预留 max_n 点、max_m 条缩点边(可取原图 m). 时间 O(max_n), 空间 O(max_n+max_m)
     SCC(int max_n = 0, int max_m = 0) : n(max_n), dfn_idx(0), scc_cnt(0),
         dag(max_n, max_m),
         dfn(max_n + 10, 0), low(max_n + 10, 0),
@@ -23,8 +21,7 @@ struct SCC
     {
         sta.reserve(max_n + 10);
     }
-    // 复位本轮结果与内部图; n 不超过构造时的 N, 原图需另行 clear()
-    // 时间 O(n + 上轮结果大小) | 额外空间 O(1)
+    // 清空结果, n<=容量; 原图另行 clear. 时间 O(n+旧结果大小)
     void init(int _n)
     {
         n = _n;
@@ -33,8 +30,7 @@ struct SCC
         dfn_idx = scc_cnt = 0;
         sta.clear();
     }
-    // 将 g 的 1 .. n 点划分到 bel; 自动复位旧结果, 不修改原图, 边权不参与计算
-    // 时间: O(n + m + 上轮结果大小) | 空间: O(n)
+    // 求 g[1..n] 的 SCC, 自动复位. 时间 O(n+m+旧结果大小), 额外空间 O(n)
     template <class G>
     void build(G& g, int _n)
     {
@@ -42,8 +38,7 @@ struct SCC
         for (int i = 1; i <= n; i++)
             if (!dfn[i]) tarjan(g, i);
     }
-    // 重建 dag 的跨分量边, 保留重边, 丢弃权值; 自动清掉旧 dag
-    // 时间 O(n + m) | 额外空间 O(m)
+    // build 后重建 dag, 保留重边. 时间 O(n+m), 额外空间 O(m)
     template <class G>
     void build_dag(G& g)
     {
@@ -57,8 +52,7 @@ struct SCC
             }
         }
     }
-    // 重建 dag 的去重跨分量边; 与 build_dag 二选一, 自动清掉旧 dag
-    // 时间 O(n + m log m) | 额外空间 O(m)
+    // build 后重建 dag, 去重边. 时间 O(n+m log m), 额外空间 O(m)
     template <class G>
     void build_dag_unique(G& g)
     {

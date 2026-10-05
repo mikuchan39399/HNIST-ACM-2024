@@ -8,12 +8,8 @@
 template <class T>
 concept Mintable = (is_integral_v<T> && sizeof(T) <= 8) || is_same_v<T, i128>;
 
-// 固定模数 1 < MOD < 2^62, PRIME 表示模数是否为素数
-// 构造接收至多 64 位整数及有符号 i128, 不要求小于 MOD, 自动归一化到 [0, MOD)
-// 无需 init_fact: 构造、val、四则、比较、pow、inv、流读写; 流输入须为合法十进制整数
-// 需先 init_fact(N): comb 及预处理表, 表下标范围 0..N, 单次查表时间/额外空间 O(1)
-// 素数模表: fact[i]=i! mod MOD, inv_fact[i] 为其逆元; 合数模只建最小质因子表 spf
-// 预处理表按模数共享, 最近一次 init_fact 决定可用范围, 缩表保留容量
+// 固定模数 1<MOD<2^62, PRIME 表示是否素数; 输入自动归一化, 不必小于 MOD
+// 仅 comb/fact/inv_fact/spf 须先 init_fact; 同模数共享表, 最近一次预处理决定范围
 template <LL MOD>
 class ModLL
 {
@@ -48,17 +44,14 @@ public:
         }
         return true;
     }();
-    // 构造标准余数, 默认值为 0
-    // 时间: O(1) | 空间: O(1)
+    // 构造余数, 默认 0; 支持 <=64 位整数及有符号 i128. O(1)
     constexpr ModLL() : x(0) {}
     constexpr ModLL(Mintable auto v) : x(norm(v)) {}
 
-    // 返回 [0, MOD) 内的整数值
-    // 时间: O(1) | 空间: O(1)
+    // 返回 [0,MOD) 的值. O(1)
     constexpr LL val() const { return x; }
 
-    // 模四则、复合赋值与取负; ==/!= 比较标准余数, 两侧均可混用整数; 除法调用除数的 inv()
-    // 加减乘/取负/比较: 时间与额外空间 O(1); 除法的条件及开销见 inv
+    // 加减乘/取负/比较 O(1), 可混用整数; 除法条件及开销同 inv
     constexpr ModLL& operator+=(const ModLL& r)
     {
         x += r.x - MOD;
@@ -81,8 +74,7 @@ public:
     friend constexpr bool operator==(const ModLL& l, const ModLL& r) { return l.x == r.x; }
     friend constexpr bool operator!=(const ModLL& l, const ModLL& r) { return l.x != r.x; }
 
-    // 返回当前值的 n 次幂, 指数支持完整 i128 范围, 不要求 n < MOD, 约定 0^0=1
-    // n >= 0: 时间 O(log(n+1)), 额外空间 O(1); n < 0: 先 inv(), 再求 |n| 次幂, 开销相加
+    // n 次幂, 0^0=1. 时间 O(log(|n|+1)), 空间 O(1); n<0 另需 inv
     constexpr ModLL pow(i128 n) const
     {
         ModLL r(1), a = *this;
@@ -96,9 +88,8 @@ public:
         return r;
     }
 
-    // 返回 x=val() 的逆元; 素数模要求 x != 0, 合数模要求 gcd(x, MOD)=1
-    // 素数模用小费马 + 快速幂: 时间 O(log MOD), 额外空间 O(1)
-    // 合数模用递归扩欧: 时间/额外空间 O(log(x+1)), 最坏均为 O(log MOD)
+    // 逆元: 素数模要求 x!=0, 小费马时间 O(log MOD), 空间 O(1)
+    // 合数模要求 gcd(x,MOD)=1, 扩欧时间/栈 O(log(x+1)), 最坏 O(log MOD)
     constexpr ModLL inv() const
     {
         assert(x != 0);
@@ -112,8 +103,7 @@ public:
         }
     }
 
-    // 读入可带正负号的任意位数整数, 归一化后存入 o
-    // 时间: O(d) | 空间: O(d), d 为输入位数
+    // 读任意位合法十进制整数, 可带正负号. 时空 O(位数)
     friend istream& operator>>(istream& is, ModLL& o)
     {
         string s;
@@ -126,16 +116,15 @@ public:
         return is;
     }
 
-    // 输出标准余数的十进制表示
-    // 时间: O(d) | 空间: O(1), d 为输出位数
+    // 输出标准余数. 时间 O(位数), 空间 O(1)
     friend ostream& operator<<(ostream& os, const ModLL& o) { return os << o.x; }
 
     static inline vector<ModLL> fact, inv_fact;
     static inline VI spf;
 
-    // 预处理到 n, 覆盖同模数旧表; 要求 0 <= n < INT_MAX, 并能容纳对应表
-    // 素数模还须 n < MOD: 建 fact/inv_fact; 时间 O(n + log MOD), 空间 O(n)
-    // 合数模允许 n >= MOD: 只建 spf; 时间 O(n), 空间 O(n)
+    // 重建 0..n 的表, 0<=n<INT_MAX
+    // 素数模须 n<MOD: fact[i]=i!, inv_fact[i]=1/i!, 时间 O(n+log MOD), 空间 O(n)
+    // 合数模可 n>=MOD: 仅建 spf 供 comb 用, 时空 O(n)
     static void init_fact(int n)
     {
         if constexpr (PRIME)
@@ -163,9 +152,8 @@ public:
         }
     }
 
-    // 先 init_fact(N), 要求 0 <= n <= N; 返回 C(n,k) mod MOD, k < 0 或 k > n 返回 0
-    // 素数模查表: 时间/额外空间 O(1); n >= MOD 的情况需另用 Lucas 等算法
-    // 合数模逐次分解, 记 t=min(k,n-k): 时间 O(t log^2(n+1)), 额外空间 O(t log(n+1))
+    // 先 init_fact(N), 0<=n<=N; 返回 C(n,k), k 越界为 0
+    // 素数模 O(1); 合数模 t=min(k,n-k), 时间 O(t log²(n+1)), 空间 O(t log(n+1))
     static ModLL comb(int n, int k)
     {
         if (k < 0 || k > n) return ModLL(0);
@@ -223,7 +211,6 @@ private:
 };
 #endif
 
-
 /* Usage:
 #include "mint.h"
 
@@ -237,9 +224,9 @@ int main()
     cout << (b.pow(-2) * b * b).val() << '\n'; // 1
     static_assert(mint(6) / 3 == 2);
 
-    mint::init_fact(200000); // 然后才能查 comb/fact/inv_fact, 上限 200000 < MOD
+    mint::init_fact(200000); // 先预处理, 上限<MOD
     cout << mint::comb(10, 3) << ' ' << mint::fact[5] << '\n'; // 120 120
-    mint12::init_fact(100); // 合数模上限可以超过 MOD, 供 comb 使用, 不生成阶乘表
+    mint12::init_fact(100); // 合数模只建 spf, 可超过 MOD
     cout << mint12::comb(10, 3) << ' ' << mint12(5).inv() << '\n'; // 0 5
     // cin >> a;
 }

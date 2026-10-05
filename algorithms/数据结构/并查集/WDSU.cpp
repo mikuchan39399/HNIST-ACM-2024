@@ -4,23 +4,20 @@
 
 #include "../../杂项/utils/utils.cpp"
 
-// 定向带权并查集, d[x] 存 x 到 fa[x] 的距离, 根处为 0
-// mod=0 存普通距离, mod>0 存 [0, mod) 的余数; 距离加减中间值须在 LL 内
-// 每点约 12B, 20 万点约 2.4MB
+// 带权并查集, 1..n; d[x]=x 到父亲的距离. 空间 O(n); h=查根路径长, 最坏 n
+// mod=0 为普通距离, mod>0 为模距离; 加减中间值须在 LL 内
 struct WDSU
 {
     static constexpr LL INF = ::INF;
     LL mod;
     VI fa;
     VLL d;
-    // 分配 n 个单点集合, 编号为 1..n, mod_ 须非负
-    // 时间: O(n) | 空间: O(n)
+    // 预留并初始化 n 个单点集合, mod>=0. 时空 O(n)
     WDSU(int n = 0, LL mod_ = 0) : fa(n + 1), d(n + 1)
     {
         init(n, mod_);
     }
-    // 在构造容量内重置为 n 个单点集合, 省略 mod_ 时切回普通距离模式
-    // 时间: O(n) | 额外空间: O(1)
+    // 重置 n 个点及模数(默认 0), n<=容量. 时间 O(n)
     void init(int n, LL mod_ = 0)
     {
         mod = mod_;
@@ -28,8 +25,7 @@ struct WDSU
         iota(fa.begin(), fa.begin() + n + 1, 0);
         fill(d.begin(), d.begin() + n + 1, 0);
     }
-    // 返回 x 的根并压缩整条路径, 更新 d[x] 为 x 到根的距离
-    // 时间: O(路径长度), 单次最坏 O(n) | 额外空间: O(1)
+    // 查根并压缩路径, d[x] 更新为到根的距离. 时间 O(h)
     int find(int x)
     {
         int r = x;
@@ -50,8 +46,7 @@ struct WDSU
         }
         return r;
     }
-    // 声明 x 到 y 的距离为 w, 把 y 的根挂到 x 的根; 已连通则忽略, 不判矛盾
-    // 时间: O(两条查根路径长度), 单次最坏 O(n) | 额外空间: O(1)
+    // 加入 x 到 y 距离为 w 的约束; 同集合时忽略, 不检查矛盾. 时间 O(h)
     void merge(int x, int y, LL w)
     {
         int fx = find(x), fy = find(y);
@@ -59,11 +54,9 @@ struct WDSU
         d[fy] = norm(d[x] - w - d[y]);
         fa[fy] = fx;
     }
-    // 返回 x 和 y 是否属于同一个集合
-    // 时间: O(两条查根路径长度), 单次最坏 O(n) | 额外空间: O(1)
+    // 是否连通. 时间 O(h)
     bool same(int x, int y) { return find(x) == find(y); }
-    // 返回 x 到 y 的距离, 未连通返回 INF; 合法距离也可能等于 INF, 用 same 区分
-    // 时间: O(两条查根路径长度), 单次最坏 O(n) | 额外空间: O(1)
+    // x 到 y 的距离, 不连通返回 INF; 可能与合法距离重合, 先 same. 时间 O(h)
     LL query(int x, int y)
     {
         if (find(x) != find(y)) return INF;

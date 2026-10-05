@@ -5,10 +5,9 @@
 #include "../../杂项/随机数/z_rnd.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-// 升序维护 LL 集合, 插/删/排名/第k小/前驱/后继期望 O(log n); 结点删除后回收复用
-// K = 层数上限, 需 >= log2(规模), 默认 20 支撑 1e6
-// 值域约定: 元素取值在 (-INF, INF) 内, 前驱/后继无解返回 ∓INF, 第k小越界返回 INF
-// 内存: 每结点 (16+8K)B, K=20 即 176B; 预算 = 峰值元素数, 1e6 ≈ 176MB
+// LL 有序集合, 去重; 增删查期望 O(log n), 额外空间 O(K)
+// 值域 (-INF,INF); K 为层数上限, 取 K>=log2(n), 默认 20
+// 点池按峰值元素数预算, 删除回收; 每点约 16+8K 字节
 template <int K = 20>
 struct SkipList
 {
@@ -28,16 +27,14 @@ struct SkipList
     int tot;
     int n;
     int budget;
-    // 构造: 预算 max_nodes 结点(回收复用), 哨兵 0 号就位
-    // 时间: O(1) | 空间: O(预算)
+    // 预留 max_nodes 个点, 初始为空. 时间 O(K), 空间 O(max_nodes*K)
     SkipList(int max_nodes = 1000010) : tot(0), n(0), budget(max_nodes)
     {
         buf.reserve(budget + 1);
         rub.reserve(budget);
         buf.push_back(node(-INF, K));
     }
-    // 插入 v (去重: 已存在不重复插), 返回该元素结点 id (>0)
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 插入 v, 返回结点 id; 已存在则返回原 id
     int insert(LL v)
     {
         int cur = 0;
@@ -51,7 +48,7 @@ struct SkipList
                 rnk[i] += buf[cur].span[i];
                 cur = buf[cur].nxt[i];
             }
-            if (buf[cur].nxt[i] != -1 && buf[buf[cur].nxt[i]].val == v) // 允许重复就删掉这个 if 块
+            if (buf[cur].nxt[i] != -1 && buf[buf[cur].nxt[i]].val == v)
                 return buf[cur].nxt[i];
             update[i] = cur;
         }
@@ -69,8 +66,7 @@ struct SkipList
         n++;
         return id;
     }
-    // 删除 v, 返回被删结点 id; 不存在返回 -1
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 删除 v, 返回可被复用的结点 id; 不存在为 -1
     int erase(LL v)
     {
         int cur = 0;
@@ -98,8 +94,7 @@ struct SkipList
         n--;
         return id;
     }
-    // 返回 < v 的最大值, 无前驱返回 -INF
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 严格前驱, 无则 -INF
     LL get_pre(LL v)
     {
         int cur = 0;
@@ -108,8 +103,7 @@ struct SkipList
                 cur = buf[cur].nxt[i];
         return buf[cur].val;
     }
-    // 返回 > v 的最小值, 无后继返回 INF
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 严格后继, 无则 INF
     LL get_suf(LL v)
     {
         int cur = 0;
@@ -119,8 +113,7 @@ struct SkipList
         if (buf[cur].nxt[0] == -1) return INF;
         return buf[buf[cur].nxt[0]].val;
     }
-    // 返回 < v 的元素个数
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 返回 <v 的元素数
     int get_rank(LL v)
     {
         int cur = 0;
@@ -135,8 +128,7 @@ struct SkipList
         }
         return ans;
     }
-    // 返回第 k 小 (1-based), k 越界返回 INF
-    // 时间: 期望 O(log n) | 空间: O(1)
+    // 第 k 小(1-based), 越界返回 INF
     LL get_kth(int k)
     {
         if (k < 1 || k > n) return INF;
@@ -151,14 +143,12 @@ struct SkipList
         }
         return buf[cur].val;
     }
-    // 返回元素个数
-    // 时间: O(1) | 空间: O(1)
+    // 元素数. O(1)
     int size()
     {
         return n;
     }
-    // 多测复位
-    // 时间: O(tot) | 空间: O(1)
+    // 清空并保留容量. 时间 O(tot)
     void clear()
     {
         tot = 0;

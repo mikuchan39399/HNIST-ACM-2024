@@ -5,14 +5,13 @@
 #include "../../杂项/随机数/z_rnd.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-// 隐式 FHQ 按中序位置维护序列, 随机优先级决定树形, 拆出区间后修改或查询再合并
-// sum/mx/mn 支持全部操作; 最大子段和只在建树/插删/覆盖/翻转/移动域保证有效, 区间须非空
-// 加/乘后不查询受影响数据的最大子段和, 全序列 assign 或重建可恢复, 不溢出须覆盖中间表达式
-// build 用 a[1..m], 批量 insert 用整个 vector; insert 的 pos 为新元素的位置, move 的 pos 按剩余序列计
-// 每结点 96 B, 预算按峰值存活数, 1e6 约 96 MB; 回收编号数组另预留 4 MB
+// 隐式 FHQ, 位置 1-based, 查询区间非空; 中间运算须不溢出 LL
+// 加/乘后最大子段和失效, 全覆盖或重建恢复; 和/最值仍有效
+// 未另标的区间操作、插入、分裂合并: 期望时间/栈 O(log n)
+// 点池按峰值存活数预算, 删除回收; 每点约 96B, 回收表另占 4B/点
 struct FHQ_Seq
 {
-    static constexpr LL NEG_INF = LLONG_MIN; // 空子树哨兵(不参与求和)
+    static constexpr LL NEG_INF = LLONG_MIN; // 空子树哨兵
     struct node
     {
         int lc = 0, rc = 0, sz = 0, rd = 0;
@@ -25,8 +24,7 @@ struct FHQ_Seq
     vector<node> tr;
     VI rub;
     int idx, root, budget;
-    // 把以 p 为根的子树按位置分裂, 中序前 k 个结点分给 x, 其余分给 y
-    // 时间: 期望 O(log n) | 空间: O(log n)
+    // 按中序前 k 个点分裂为 x, 其余给 y
     void split_rank(int p, int k, int& x, int& y)
     {
         if (!p)
@@ -47,8 +45,7 @@ struct FHQ_Seq
         }
         pushup(p);
     }
-    // 把子树 x 和 y 合并成一棵并返回新根, 要求 x 的结点都在 y 前面(与值无关)
-    // 时间: 期望 O(log n) | 空间: O(log n)
+    // 按 x 在前、y 在后合并, 返回根
     int merge(int x, int y)
     {
         if (!x || !y) return x + y;
@@ -64,8 +61,7 @@ struct FHQ_Seq
         pushup(y);
         return y;
     }
-    // 将 x 子树按中序追加到 out
-    // 时间: O(子树大小) | 额外空间: O(子树大小), 追加到 out
+    // 中序追加子树 x 到 out. 时空 O(子树大小)
     void walk(int x, VLL& out)
     {
         if (!x) return;
@@ -74,31 +70,27 @@ struct FHQ_Seq
         out.push_back(tr[x].val);
         walk(tr[x].rc, out);
     }
-    // 构造: 预算 max_nodes 结点(按峰值存活计, 回收复用), 空序列
-    // 时间: O(1) | 空间: O(预算)
+    // 预留 max_nodes 个点, 初始为空. 时间 O(1), 空间 O(max_nodes)
     FHQ_Seq(int max_nodes = 1000010) : idx(0), root(0), budget(max_nodes)
     {
         tr.reserve(budget + 1);
         rub.reserve(budget);
         tr.push_back(node());
     }
-    // 从 a[1..m] 线性建树, 替换现有序列 (a.size() = m + 1)
-    // 时间: O(m) | 额外空间: O(m), 栈容器按 m 预留
+    // 从 a[1..m] 重建. 时空 O(m)
     void build(const VLL& a)
     {
         clear();
         root = build_sub(a, 1, (int)a.size() - 1);
     }
-    // 在第 pos 位插入 v (pos ∈ [1, n+1])
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 在位置 pos 插入 v, 1<=pos<=n+1
     void insert(int pos, LL v)
     {
         int x, y;
         split_rank(root, pos - 1, x, y);
         root = merge(merge(x, newnode(v)), y);
     }
-    // 在第 pos 位批量插入 a[0..m-1]
-    // 时间: 期望 O(m + log n) | 额外空间: O(m + log n)
+    // 在位置 pos 插入整个 a[0..m-1]. 期望时空 O(m+log n)
     void insert(int pos, const VLL& a)
     {
         int sub = build_sub(a, 0, (int)a.size() - 1);
@@ -106,8 +98,7 @@ struct FHQ_Seq
         split_rank(root, pos - 1, x, y);
         root = merge(merge(x, sub), y);
     }
-    // 删除区间 [l, r], 结点回收
-    // 时间: 期望 O(log n + 区间长) | 额外空间: O(log n)
+    // 删除并回收 [l,r]. 期望时间 O(log n+区间长), 栈 O(log n)
     void erase(int l, int r)
     {
         int x, y, z;
@@ -116,8 +107,7 @@ struct FHQ_Seq
         recycle(y);
         root = merge(x, z);
     }
-    // 返回 [l, r] 区间和
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // [l,r] 的和
     LL get_sum(int l, int r)
     {
         int x, y, z;
@@ -127,8 +117,7 @@ struct FHQ_Seq
         root = merge(merge(x, y), z);
         return ret;
     }
-    // [l, r] 整体加 d (此后最大子段和失效, 见类头语义域)
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // [l,r] 加 d
     void modify(int l, int r, LL d)
     {
         int x, y, z;
@@ -137,8 +126,7 @@ struct FHQ_Seq
         aff(y, 1, d);
         root = merge(merge(x, y), z);
     }
-    // [l, r] 整体乘 m (此后最大子段和失效, 见类头语义域; m=0 即覆盖为 0)
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // [l,r] 乘 m; m=0 等价于覆盖为 0
     void mul(int l, int r, LL m)
     {
         int x, y, z;
@@ -147,8 +135,7 @@ struct FHQ_Seq
         aff(y, m, 0);
         root = merge(merge(x, y), z);
     }
-    // [l, r] 整体覆盖为 v (恢复最大子段和有效性)
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // [l,r] 覆盖为 v
     void assign(int l, int r, LL v)
     {
         int x, y, z;
@@ -157,8 +144,7 @@ struct FHQ_Seq
         aff(y, 0, v);
         root = merge(merge(x, y), z);
     }
-    // [l, r] 区间翻转
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 翻转 [l,r]
     void reverse(int l, int r)
     {
         int x, y, z;
@@ -167,8 +153,7 @@ struct FHQ_Seq
         rev_tag(y);
         root = merge(merge(x, y), z);
     }
-    // 把 [l, r] 切出移到剩余序列前 pos 个元素之后 (pos ∈ [0, n-区间长])
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // 切出 [l,r], 插到剩余序列前 pos 个点之后; 0<=pos<=剩余长度
     void move_interval(int l, int r, int pos)
     {
         int w, x, y, z;
@@ -178,11 +163,9 @@ struct FHQ_Seq
         split_rank(y, pos, w, z);
         root = merge(w, merge(x, z));
     }
-    // 返回全序列最大子段和 (非空段, 全负返回最大负值; 空序列无定义)
-    // 时间: O(1) | 空间: O(1)
+    // 全序列最大非空子段和, 要求序列非空. O(1)
     LL get_max_sum() { return tr[root].tmax; }
-    // 返回 [l, r] 最大子段和 (非空段; 语义域见类头)
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // [l,r] 的最大非空子段和
     LL get_max_sum(int l, int r)
     {
         int x, y, z;
@@ -192,11 +175,9 @@ struct FHQ_Seq
         root = merge(merge(x, y), z);
         return ret;
     }
-    // 返回全序列最大权值 (对含加/乘在内全部操作恒有效)
-    // 时间: O(1) | 空间: O(1)
+    // 全序列最大值. O(1)
     LL get_max() { return tr[root].mx; }
-    // 返回 [l, r] 最大权值 (对含加/乘在内全部操作恒有效)
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // [l,r] 最大值
     LL get_max(int l, int r)
     {
         int x, y, z;
@@ -206,11 +187,9 @@ struct FHQ_Seq
         root = merge(merge(x, y), z);
         return ret;
     }
-    // 返回全序列最小权值 (对含加/乘在内全部操作恒有效)
-    // 时间: O(1) | 空间: O(1)
+    // 全序列最小值. O(1)
     LL get_min() { return tr[root].mn; }
-    // 返回 [l, r] 最小权值 (对含加/乘在内全部操作恒有效)
-    // 时间: 期望 O(log n) | 额外空间: O(log n)
+    // [l,r] 最小值
     LL get_min(int l, int r)
     {
         int x, y, z;
@@ -220,14 +199,11 @@ struct FHQ_Seq
         root = merge(merge(x, y), z);
         return ret;
     }
-    // 中序收集整个序列, 追加到 out 尾部
-    // 时间: O(n) | 额外空间: O(n), 追加到 out
+    // 中序追加全序列到 out. 时空 O(n)
     void collect(VLL& out) { walk(root, out); }
-    // 返回序列长度
-    // 时间: O(1) | 空间: O(1)
+    // 序列长度. O(1)
     int size() { return tr[root].sz; }
-    // 多测复位: 清空序列, 容量保留
-    // 时间: O(idx) | 空间: O(1)
+    // 清空并保留容量. 时间 O(idx)
     void clear()
     {
         idx = 0;

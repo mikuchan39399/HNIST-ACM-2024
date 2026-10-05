@@ -4,11 +4,10 @@
 
 #include "../../utils/utils.cpp"
 
-// 整体二分静态第 k 小: 保留事件与值域递归, E 与 add/query 由调用方提供
+// 整体二分静态第 k 小, 回调用于维护外部计数
 namespace PBSRollback
 {
-// 一维默认事件, 未用字段填 0; 自定义 E 时 type/val/k/id 为内核固定字段名, 不可改名或省略
-// pos/l/r 仅供 add/query 定位, 可改名、替换或删除, 同步修改回调与事件初始化即可
+// type/val/k/id 为固定字段; 定位字段 pos/l/r 可改, 同步改回调
 struct Event
 {
     int type;           // 0: 插入, 1: 询问
@@ -16,12 +15,10 @@ struct Event
     int l, r, k, id;    // 原数组区间, 排名(递归中扣减), 询问编号
 };
 
-// 找计数首次达到 k 的答案坐标, 返回 ans[id]; 当前按静态第 k 小验证, k 须合法
-// n 为插入数, V 为答案上界, 均 >=1; q[0] 占位, 先 n 个插入后 m 个询问, 按值接收可 move
-// E 默认 Event, 须可默认构造/复制/赋值, 含 int type/val/k/id; val 在 1..V, 询问 id 为 1..m 的排列
-// add(e,+1/-1) 加入/撤销插入, query(e) 返回固定集合的计数; 不改事件, 外部统计初始及返回时均为空
-// 时间 O((n+m) log(V+1)*(1+A+C)), A/C 为 add/query 代价; 辅助空间 O(n+m+log(V+1))
-// 默认 Event, n=m=20万时工作数组约 25 MB; 另计调用方保留的 q 和外部统计
+// 返回离散答案 ans[id]; n,V>=1, q[0] 占位, 先 n 个插入后 m 个询问, k 须合法
+// 插入 val 在 1..V, 询问 id 为 1..m 的排列; q 按值接收, 可 move
+// add(e,+1/-1) 加入/撤销, query(e) 计数; 不改事件, 外部计数初始为空, 返回时恢复为空
+// 时间 O((n+m)log(V+1)*(1+A+C)), 空间 O(n+m+log(V+1)); A/C 为回调时间
 template<class E = Event, class Add, class Query>
 VI find_first(int n, int V, vector<E> q, Add add, Query query)
 {
@@ -38,7 +35,7 @@ VI find_first(int n, int V, vector<E> q, Add add, Query query)
             return;
         }
         int mid = L + (R - L) / 2;
-        // 每层进入时统计为空, 按事件顺序加入当前左半值域 [L,mid] 的贡献
+
         int left_cnt = 0;
         for (int i = ql; i <= qr; i++)
         {
@@ -52,14 +49,14 @@ VI find_first(int n, int V, vector<E> q, Add add, Query query)
             {
                 int cnt = query(as_const(e));
                 goLeft[i] = (e.k <= cnt);
-                if (!goLeft[i]) e.k -= cnt; // 排除当前左半后, 在右半找剩余排名
+                if (!goLeft[i]) e.k -= cnt; // 扣掉左半的数量
             }
             left_cnt += goLeft[i];
         }
-        // 必须在改排 q 之前撤销本层贡献, 子递归仍从空统计开始
+        // 先撤销, 再重排事件
         for (int i = ql; i <= qr; i++)
             if (q[i].type == 0 && goLeft[i]) add(as_const(q[i]), -1);
-        // 左右各自保序, 保留插入先于询问的关系
+
         int p = ql, t = ql + left_cnt;
         for (int i = ql; i <= qr; i++)
         {
@@ -113,8 +110,8 @@ int main()
 #include "discrete.h"
 struct Event
 {
-    int type, val, k, id; // 内核固定字段名, 不可改名或省略
-    int x1, y1, x2, y2;   // 自定义定位字段, 可改名; 插入时两角相同, 查询时为矩形两角
+    int type, val, k, id; // 固定字段
+    int x1, y1, x2, y2;   // 矩形定位字段
 };
 int main()
 {

@@ -6,19 +6,11 @@
 
 using namespace std;
 
-// 可持久化字典树: 每次插入返回新根, 旧版本仍可查询, 根句柄由调用方保存
-// 模板参数 K:
-//   - K = 2  : 01-Trie
-//   - K = 26 : 小写字母字符串
-//   - K = 62 : 大小写字母 + 数字
-// 模板参数 HB: 整数位深(最高位下标), 默认 63;
-//   值 < 2^31 时传 30, 结点数与 cap 近似减半
-// 预算按累计分配算: 整数插入次数*(HB+2), 字符串总长+插入次数, 删除版本不回收
-// 每结点 (4K+4)B; K=2 时 4e6 个结点约 48MB, 另留一个空根哨兵
-// 差集查询按出现次数相减, 每个值的剩余次数必须非负; 字符串须落在 K 对应字符集内
-// 整数 x 与所有查询参数均须非负且能放进 HB+1 位; 同一对象不混用字符串和整数接口
-// 单版本元素数 <= INT_MAX; 多根正/负侧计数和分别 <= LLONG_MAX, xs.size() <= INT_MAX
-// 支持重复值与空串, 不支持删除; clear 后所有旧根失效, 0 始终代表空版本
+// 可持久化 Trie, 根自行保存, 0=空版本; 可重复/空串, 不删除, clear 使旧根失效
+// K=26 小写 / 62 大小写及数字 / <=10 数字; 字符合法, 字符串与整数接口不混用
+// 整数接口仅 2<=K<=10, 非负 LL 且放入 HB+1 位; 单版本计数不超 int, 多根单侧和不超 LL
+// 差集按次数相减, 每个值的剩余次数须非负; 总数非负不够
+// 点池不回收, 每次整数插入 HB+2 点, 字符串 |s|+1 点; 每点 4K+4 字节, 另有空根
 template <int K = 2, int HB = 63>
 struct PersTrie
 {
@@ -31,31 +23,27 @@ struct PersTrie
     int cap;
     int tot = 0;
     vector<Node> tr;
-    // 预留 max_nodes 个可分配结点和一个空根, 初始没有任何版本内容
-    // 时间: O(1) | 空间: (max_nodes+1)*sizeof(Node) 字节预留
+    // 预留 max_nodes 个可分配点及空根. 时间 O(1), 空间 O(K*max_nodes)
     PersTrie(int max_nodes = 4000010) : cap(max_nodes)
     {
         assert(max_nodes >= 0);
         tr.reserve((size_t)max_nodes + 1);
         tr.push_back(Node{});
     }
-    // 多测清空, 复用已分配内存
-    // 时间: O(Used) 上界 | 空间: O(1); Node 析构平凡, 不逐个清零旧结点
+    // 清空并保留容量, 旧根全失效. 时间 O(已用点数) 上界
     void clear()
     {
         tot = 0;
         tr.clear();
         tr.push_back(Node{});
     }
-    // 在版本 rt 上插入非负整数 x, 返回新版本根句柄 —— 仅 K ∈ [2, 10] 编译
-    // 时间: O(HB + 1) | 空间: HB + 2 个新结点
+    // 在 rt 插入 x, 返回新根. 时间 O(HB+1), 新增 HB+2 点
     int insert(int rt, LL x)
     {
         static_assert(K >= 2 && K <= 10, "insert(数值) 仅 K <= 10 可用");
         return insert(rt, x, HB);
     }
-    // 在版本 rt 上插入单词 s, 返回新版本根句柄
-    // 时间: O(|s|) | 空间: |s| + 1 个新结点
+    // 在 rt 插入 s, 返回新根. 时间 O(|s|), 新增 |s|+1 点
     int insert(int rt, const string& s)
     {
         int root = fork(rt), p = root;
@@ -70,8 +58,7 @@ struct PersTrie
         }
         return root;
     }
-    // 版本 rt 中与 x 异或的最大值; 空版本返回 -1
-    // 时间: O(HB + 1) | 空间: O(1)
+    // rt 中与 x 异或的最大值, 空版本 -1. 时间 O(HB+1), 空间 O(1)
     LL max_xor(int rt, LL x) const
     {
         static_assert(K >= 2 && K <= 10, "max_xor 仅 K <= 10 可用");
@@ -87,8 +74,8 @@ struct PersTrie
         }
         return res;
     }
-    // 版本差集 (Σplus 并集 − Σminus 并集) 中与 x 异或的最大值; 空差集返回 -1
-    // 时间: O((|plus|+|minus|) * (HB + 1)) | 空间: O(|plus|+|minus|)
+    // 多根差集 sum(plus)-sum(minus) 的最大异或, 空集 -1
+    // 时间 O(R(HB+1)), 空间 O(R), R=两侧根数之和
     LL max_xor(VI plus, VI minus, LL x) const
     {
         static_assert(K >= 2 && K <= 10, "max_xor 仅 K <= 10 可用");
@@ -110,9 +97,8 @@ struct PersTrie
         }
         return res;
     }
-    // 版本差集 (p − q) 中, {xs 每个值与差集全体数的异或值} 的第 k 大(含重复);
-    // 差集空 / xs 空 / k 越界返回 -1 —— 仅 K ∈ [2, 10] 编译
-    // 时间: O(|xs| * (HB + 1)) | 空间: O(|xs|)
+    // xs 与差集 p-q 的所有配对异或值中第 k 大(含重复); 空集/空 xs/越界返回 -1
+    // 时间 O(|xs|(HB+1)), 空间 O(|xs|)
     LL kth_xor(int p, int q, const VLL& xs, LL k) const
     {
         static_assert(K >= 2 && K <= 10, "kth_xor 仅 K <= 10 可用");
@@ -141,8 +127,7 @@ struct PersTrie
         }
         return res;
     }
-    // 版本差集中以 s 为前缀的单词个数;
-    // 时间: O((|plus|+|minus|) * |s|) | 空间: O(|plus|+|minus|)
+    // 差集中前缀为 s 的单词数. 时间 O(R|s|), 空间 O(R)
     LL count_prefix(const VI& plus, const VI& minus, const string& s) const
     {
         VI p = plus, m = minus;
@@ -161,8 +146,7 @@ struct PersTrie
         for (int t : m) cw -= tr[t].cnt;
         return max(cw, 0LL);
     }
-    // 版本 rt 中以 s 为前缀的单词个数; 空版本返回 0
-    // 时间: O(|s|) | 空间: O(1)
+    // rt 中前缀为 s 的单词数. 时间 O(|s|), 空间 O(1)
     LL count_prefix(int rt, const string& s) const
     {
         for (char c : s)
@@ -172,8 +156,7 @@ struct PersTrie
         }
         return tr[rt].cnt;
     }
-    // max LCP(s,t), t 遍历差集中各单词; 不是所有单词共同的前缀, 空差集返回 -1
-    // 时间: O((|plus|+|minus|) * |s|) | 空间: O(|plus|+|minus|)
+    // s 与差集中某个单词的最大 LCP, 空差集 -1. 时间 O(R|s|), 空间 O(R)
     int lcp_len(const VI& plus, const VI& minus, const string& s) const
     {
         LL total = 0;
@@ -195,8 +178,7 @@ struct PersTrie
         }
         return len;
     }
-    // 返回版本 rt 中插入的元素个数, 重复整数或单词分别计数
-    // 时间: O(1) | 空间: O(1)
+    // 版本元素数, 含重复. O(1)
     int size(int rt) const { return tr[rt].cnt; }
 private:
     static int to_id(char c)
@@ -231,13 +213,11 @@ private:
 };
 #endif
 
-
 /* Usage
 #include <persistentTrie.h>
 int main()
 {
-    // 输入及查询数均 <2^31, 取 HB=30; 更大非负 LL 用默认 HB=63
-    // 预算不含哨兵: 插入次数*(HB+2), 每次连根一起复制; 不存 root 数组的内存
+    // 值<2^31 取 HB=30, 更大非负 LL 用默认 63
     PersTrie<2, 30> pt(4 * 32);
     VLL a{3, 5, 7};
     VI rt(4, 0);                          // rt[i] 是前 i 个数, rt[0]=空版本
@@ -247,15 +227,12 @@ int main()
     cout << pt.max_xor({rt[r]}, {rt[l - 1]}, 2) << '\n'; // 7, 区间 [2,3]
     int branch = pt.insert(rt[1], 0);      // 从历史版本分叉: {3,0}, 旧版本不变
     cout << pt.size(branch) << ' ' << pt.size(rt[3]) << '\n'; // 2 3
-    // 多根按重复次数相加减; 必须保证每个值的最终次数非负, 只看总数不够
+
     cout << pt.max_xor({rt[3], branch}, {rt[1]}, 2) << '\n'; // {3,5,7,0} -> 7
     VLL xs{0, 2};
     cout << pt.kth_xor(rt[3], rt[1], xs, 2) << '\n'; // {0^5,0^7,2^5,2^7} 第2大=7
     cout << pt.kth_xor(rt[3], rt[1], xs, 5) << '\n'; // -1, k 越界
-    // 树路径: 若 root[u] 存根到 u 的点值, 则 +root[u]+root[v]-root[lca]-root[fa(lca)]
-    // 根的父亲使用空版本 0; 建树和 LCA 由调用方完成, 重复点值仍按出现次数计算
-
-    // 字符串另建对象: 预算为总长度+插入次数, 空串也复制一个根
+    // 树路径点权差集: +root[u]+root[v]-root[lca]-root[fa(lca)], 根的父版本为 0.
     PersTrie<26> ps(1 + 4 + 4 + 2);
     int s0 = ps.insert(0, ""), s1 = ps.insert(s0, "abc");
     int s2 = ps.insert(s1, "abd"), sb = ps.insert(s0, "z");

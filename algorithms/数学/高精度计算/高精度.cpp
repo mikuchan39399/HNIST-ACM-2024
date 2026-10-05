@@ -16,17 +16,15 @@
 
 using namespace std;
 
-
 using u64 = unsigned long long;
 
 template <class T>
 concept Intable = (is_integral_v<T> && sizeof(T) <= 8) || is_same_v<T, i128>;
 
-// 有符号高精度整数, 合法十进制串可带单个正负号; 原生构造不接 u128
-// 除数非零, 商向零截断; sqrt 要求非负, pow 指数非负, mod 的模数为正 LL
-// 设 n/m 为 9 位十进制块数: 加减 O(n+m), 乘法最坏 O(nm), 大致等长时用 Karatsuba
-// 除法 O(nm), 单块除数 O(n); 每块通常 4 B, 10 万位有效数字约 44.5 KB, 临时量另计
-// to_LL/to_i128 要求结果在目标类型范围内; 大数对象不承诺可持久保存为 C++20 constexpr
+// 有符号大整数, 接合法十进制串/<=64 位整数/有符号 i128, 不接 u128
+// 除数非零, 商向零截断; sqrt 要求非负, pow 指数非负, mod 要求正 LL
+// n/m 为 9 位块数: 加减 O(n+m), 乘除最坏 O(nm), 单块除数 O(n); 存储 O(n)
+// to_LL/to_i128 须不溢出目标类型
 class BigInt
 {
     static_assert(sizeof(unsigned) >= 4, "肢体需至少 32 位");
@@ -62,7 +60,7 @@ class BigInt
         if (c) r.push_back(c);
         return r;
     }
-    static constexpr vector<limb> sub_mag(const vector<limb>& x, const vector<limb>& y) // 需 x >= y
+    static constexpr vector<limb> sub_mag(const vector<limb>& x, const vector<limb>& y)
     {
         vector<limb> r; r.reserve(x.size());
         int bor = 0;
@@ -86,7 +84,7 @@ class BigInt
             u64 c = 0;
             for (size_t j = 0; j < y.size(); j++)
             {
-                u64 t = (u64)x[i] * y[j] + r[i + j] + c;    // < B^2 + 2B < 2^63
+                u64 t = (u64)x[i] * y[j] + r[i + j] + c;
                 r[i + j] = (limb)(t % B);
                 c = t / B;
             }
@@ -119,7 +117,7 @@ class BigInt
             c = t / B;
         }
     }
-    static constexpr vector<limb> mul_small(const vector<limb>& x, limb m)   // x * 单肢
+    static constexpr vector<limb> mul_small(const vector<limb>& x, limb m)
     {
         if (x.empty() || m == 0) return {};
         vector<limb> r; r.reserve(x.size() + 1);
@@ -320,7 +318,7 @@ public:
     friend constexpr BigInt operator*(BigInt l, const BigInt& r) { return l *= r; }
     friend constexpr BigInt operator/(BigInt l, const BigInt& r) { return l /= r; }
     friend constexpr BigInt operator%(BigInt l, const BigInt& r) { return l %= r; }
-    // ==================== 幂 / 开方 / gcd ====================
+
     constexpr BigInt pow(Intable auto e) const    // 快速幂, 0^0 = 1
     {
         i128 k(e);
@@ -401,7 +399,7 @@ public:
         assert(v >= numeric_limits<LL>::min() && v <= numeric_limits<LL>::max() && "to_LL(): 溢出");
         return (LL)v;
     }
-    // ==================== 字符串 / IO ====================
+
     string str() const
     {
         if (a.empty()) return "0";
@@ -489,6 +487,6 @@ int main()
     i128 v = p.to_i128();                 // 支持完整有符号 i128 范围
     cout << (v == (i128(1) << 100)) << '\n';
     cout << BigInt::factorial(20) << '\n'; // 2432902008176640000, 0!=1
-    // 原生构造支持 <=64 位整数及有符号 i128; 更大的值或 u128 用十进制字符串
+
 }
 */

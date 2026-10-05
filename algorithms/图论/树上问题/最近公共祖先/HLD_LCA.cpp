@@ -9,31 +9,27 @@
 struct Empty {};
 #endif
 
-// 用重链跳转求 LCA, 输入为无向森林; fa 为父点, son 为重儿子, top 为链顶
-// dep 为跳数深度, dis 为根到点的权和, sz 为子树大小, dfn 为重链优先序, rt 为所在树根
-// 无权边按 1 计权; 每点约 36 B, max_n = 1e6 时约 36 MB
+// 无向森林 LCA; fa/son/top 为父点/重儿子/链顶, dfn 为重链序, sz 为子树大小
+// dep 为跳数, dis 为根路径权和, rt 为树根; 无权边计 1. 空间 O(n)
 struct HLD_LCA
 {
     int n, dfn_idx;
     VI fa, dep, sz, son, top, dfn, rt;
     VLL dis;
-    // 分配 max_n 个点的查询表, build 显式传本轮点数和根
-    // 时间 O(max_n) | 空间 O(max_n)
+    // 预留 max_n 个点. 时空 O(max_n)
     HLD_LCA(int max_n = 0) : n(max_n), dfn_idx(0),
         fa(max_n + 10, 0), dep(max_n + 10, 0), sz(max_n + 10, 0),
         son(max_n + 10, 0), top(max_n + 10, 0), dfn(max_n + 10, 0),
         rt(max_n + 10, 0), dis(max_n + 10, 0)
     {}
-    // 清空上次建树状态并设置本次点数 _n, _n 不超过构造容量
-    // 时间 O(_n) | 额外空间 O(1)
+    // 清空状态, n<=容量. 时间 O(n)
     void init(int _n)
     {
         n = _n;
         dfn_idx = 0;
         z_fill_n(n, 0, fa, dep, sz, son, top, dfn, rt, dis);
     }
-    // 按 root 建表, -1 表示每棵树取最小编号点为根, 指定根时仅处理所在树; 自动复位旧表, root 必须显式传入
-    // 时间 O(n) | 递归栈 O(h), h 为最大树高
+    // 建表并自动复位; root=-1 时各树取最小点号为根, 否则仅处理所在树. 时间 O(n), 栈 O(树高)
     template <class G>
     void build(G& g, int _n, int root)
     {
@@ -53,8 +49,7 @@ struct HLD_LCA
             }
         }
     }
-    // 返回已建表的 u 与 v 的最近公共祖先, 不连通返回 -1
-    // 时间 O(log n) | 空间 O(1)
+    // 已建表两点的 LCA, 不连通返回 -1. 时间 O(log n)
     int lca(int u, int v)
     {
         if (rt[u] != rt[v]) return -1;
@@ -66,8 +61,7 @@ struct HLD_LCA
         }
         return dep[u] < dep[v] ? u : v;
     }
-    // 返回整个 0-based 已建表点集 nodes 的最近公共祖先, 空集或跨树返回 -1
-    // 时间 O(nodes.size() + log n) | 空间 O(1)
+    // 整个 nodes 的 LCA, 空集/跨树返回 -1. 时间 O(nodes.size()+log n)
     int lca(const VI& nodes)
     {
         if (nodes.empty()) return -1;
@@ -81,8 +75,7 @@ struct HLD_LCA
         }
         return lca(min_node, max_node);
     }
-    // 返回已建表的 u 到 v 的路径权和, 不连通返回 -1; 负权下用 lca 判断连通性
-    // 时间 O(log n) | 空间 O(1)
+    // 路径权和, 不连通返回 -1; 负权时用 lca 判连通. 时间 O(log n)
     LL dist(int u, int v)
     {
         int l = lca(u, v);
@@ -108,7 +101,7 @@ private:
             }
             else
             {
-                dis[v] = dis[u] + e.w; // 针对自定义边权请修改这里
+                dis[v] = dis[u] + e.w; // 自定义边权改此处
             }
             dfs1(v, u, root, g);
             sz[u] += sz[v];

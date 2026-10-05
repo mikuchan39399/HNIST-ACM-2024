@@ -5,8 +5,8 @@
 #include "../图的存储/Graph.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-// 边双与桥森林; bel[u] 为 1 .. ebcc_cnt, ebcc_points[i] 存原图点, tree 点号为分量号
-// 原图外置, 需 g[u], id / rev / edges 半边接口; 允许重边与自环, 递归深度最坏 n
+// 边双与桥森林; bel[u] 为分量号, ebcc_points[i] 为成员表
+// 原图须有 g[u]/id/rev/edges 接口, 允许重边、自环; 递归深度最坏 n
 struct EBCC
 {
     int n;
@@ -14,10 +14,7 @@ struct EBCC
     Graph<false, Empty> tree;
     VI dfn, low, bel, sta;
     VVI ebcc_points;
-    // N 取原图最大点数; 内部桥森林已预留 N 点, N 条无向边, 原图另建 Graph(N, M)
-    // 64 位 GCC 基础预留约 44 * N B (N = 2e5 约 8.8 MB), 另加成员表 24 * C + 4 * S B
-    // C / S 为外层 / 各内层 vector 的容量总数; 不含原图, 分配器开销与递归栈
-    // 时间 O(N) | 空间 O(N)
+    // 预留 max_n 个原图点及桥森林. 时空 O(max_n)
     EBCC(int max_n = 0) : n(max_n), dfn_idx(0), ebcc_cnt(0),
         tree(max_n, max_n),
         dfn(max_n + 10, 0), low(max_n + 10, 0), bel(max_n + 10, 0),
@@ -25,8 +22,7 @@ struct EBCC
     {
         sta.reserve(max_n + 10);
     }
-    // 复位本轮结果与内部图; n 不超过构造时的 N, 原图需另行 clear()
-    // 时间 O(n + 上轮结果大小) | 额外空间 O(1)
+    // 清空结果, n<=容量; 原图另行 clear. 时间 O(n+旧结果大小)
     void init(int _n)
     {
         n = _n;
@@ -36,8 +32,7 @@ struct EBCC
         sta.clear();
         ebcc_points.assign(1, VI());
     }
-    // 求 1 .. n 的边双, 结果写入 bel 与 ebcc_points; 自动复位旧结果, 不修改原图
-    // 时间: O(n + m + 上轮结果大小) | 空间: O(n)
+    // 求 g[1..n] 的边双, 自动复位. 时间 O(n+m+旧结果大小), 额外空间 O(n)
     template <class G>
     void build(G& g, int _n)
     {
@@ -45,8 +40,7 @@ struct EBCC
         for (int i = 1; i <= n; i++)
             if (!dfn[i]) tarjan(g, i, -1);
     }
-    // 重建 tree 的桥森林, 点号为 bel; 每轮 build 后调用一次, 自动清掉旧 tree
-    // 时间 O(m) | 额外空间 O(n)
+    // build 后重建桥森林 tree, 点号为 bel. 时间 O(m), 额外空间 O(n)
     template <class G>
     void build_tree(G& g)
     {
@@ -58,8 +52,8 @@ struct EBCC
             if (bel[u] != bel[v]) tree.add(bel[u], bel[v]);
         }
     }
-    // 返回桥的偶数半边号 i(0-based, 不保证 DFS 方向); 端点为 edges[i].v 与 edges[i^1].v
-    // 按 i 递增, 空表表示无桥; 逻辑边号 i/2, 时间 O(m) | 额外空间 O(桥数)
+    // 返回桥的偶数半边号 i, 按 i 递增; 端点为 edges[i].v 和 edges[i^1].v
+    // 时间 O(m), 额外空间 O(桥数)
     template <class G>
     VI get_bridges(G& g)
     {

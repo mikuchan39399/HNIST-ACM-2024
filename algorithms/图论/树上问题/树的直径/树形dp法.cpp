@@ -5,17 +5,15 @@
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/utils/utils.cpp"
 
-// 树形 DP 求直径长度, 支持负边权, 无权边按 1 计权, 允许单点路径且长度为 0
-// 输入为 n >= 1 的无向森林, 仅处理点 1 所在的树; down 为从各点向下的最大路径权和
-// 每点 8 B; n = 1e6 时约 8 MB, 递归栈另计
+// 树形 DP 求直径, 可负权(无权计 1); n>=1, 仅处理点 1 所在树
+// 允许长度 0 的单点路径; down[u] 为向下最大路径权和
 template <class G>
 struct TreeDiameterDP
 {
     int n;
     LL len;
     VLL down;
-    // 重建 g 中点 1 所在树的状态并返回直径长度, 全负边权时返回 0
-    // 时间 O(n) | 空间 O(n), 含递归栈
+    // 重建并返回直径长度, 全负时为 0. 时空 O(n), 递归深度最坏 n
     LL build(G& g, int _n)
     {
         n = _n;

@@ -5,26 +5,23 @@
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/utils/utils.cpp"
 
-// 逐点扫描选最近点, 适合稠密图; 非负整数边权与有限距离 < INF, 候选加法在 LL 内
-// dist 不可达为 INF, st 标记已选点; 每点 12 B, 2000 点约 24 KB, 不含 Graph
+// 稠密图非负整数权最短路, 1-based; 边权及有限距离<INF, 候选加法在 LL 内
+// dist 不可达为 INF. 空间 O(n)
 struct DijkstraN
 {
     int n;
     VLL dist;
     VI st;
-    // 分配 max_n 个点的工作表, 点编号为 1..n
-    // 时间 O(max_n) | 空间 O(max_n)
+    // 预留 max_n 个点. 时空 O(max_n)
     DijkstraN(int max_n = 0) : n(0), dist(max_n + 10, INF), st(max_n + 10, 0) {}
-    // 在构造容量内设为 n 个点并清空距离与选点状态, run 内部自动调用
-    // 时间 O(n) | 额外空间 O(1)
+    // 清空 n<=容量 个点的状态; run 自动调用. 时间 O(n)
     void init(int _n)
     {
         n = _n;
         z_fill_n(_n, INF, dist);
         z_fill_n(_n, 0, st);
     }
-    // 重算本轮 _n 点中从 s 出发的最短路并写入 dist, 自动复位且不修改图
-    // 时间 O(n^2 + m) | 额外空间 O(1)
+    // 从 s 重算 dist, 自动复位. 时间 O(n²+m), 额外空间 O(1)
     template <class G>
     void run(int s, G& g, int _n)
     {
@@ -35,7 +32,7 @@ struct DijkstraN
             int t = 0;
             for (int j = 1; j <= n; j++)
                 if (!st[j] && dist[j] < dist[t]) t = j;
-            if (!t) break; // 其余点全不可达
+            if (!t) break;
             st[t] = true;
             for (auto& [v, nxt, w] : g[t])
                 dist[v] = min(dist[v], dist[t] + w);

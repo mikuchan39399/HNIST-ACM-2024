@@ -9,10 +9,8 @@
 struct Empty {};
 #endif
 
-// 用 DFS 序 RMQ 求 LCA, fa 存倍增祖先; 输入为无向森林, 每棵树以最小编号点为根
-// dep 为跳数深度, dis 为根到点的权和, rt 为所在树根, dfn/rnk 为 DFS 序正反表
-// sz 为子树大小, 子树 u 对应 [dfn[u], dfn[u] + sz[u] - 1]; 无权边按 1 计权
-// 每点约 8 * LOG + 28 B, LOG 为查询表层数; max_n = 1e6 时 LOG = 21, 约 196 MB
+// 无向森林 LCA, 各树以最小点号为根; 无权边计 1, dep 为跳数, dis 为根路径权和
+// rt 为树根, fa 为倍增祖先; dfn/rnk 为 DFS 序正反表, 子树区间 [dfn[u],dfn[u]+sz[u]-1]
 struct LCA
 {
     int n;
@@ -22,8 +20,7 @@ struct LCA
     VI dep, dfn, rnk, rt, sz;
     VLL dis;
     VVI rmq, fa;
-    // 分配 max_n 个点的查询表, build 显式传本轮点数
-    // 时间 O(max_n log max_n) | 空间 O(max_n log max_n)
+    // 预留 max_n 个点. 时空 O(max_n log max_n)
     LCA(int max_n = 0) : n(max_n), idx(0),
         max_bit(max_n == 0 ? 0 : __lg(max_n)),
         LOG(max_n <= 1 ? 2 : __lg(max_n) + 2),
@@ -33,8 +30,7 @@ struct LCA
         rmq.assign(LOG, VI(max_n + 10, 0));
         fa.assign(LOG, VI(max_n + 10, 0));
     }
-    // 清空上次建树状态并设置本次点数 _n, _n 不超过构造容量
-    // 时间 O(_n) | 额外空间 O(1)
+    // 清空状态, n<=容量. 时间 O(n)
     void init(int _n)
     {
         n = _n;
@@ -42,8 +38,7 @@ struct LCA
         max_bit = n == 0 ? 0 : __lg(n);
         z_fill_n(n, 0, dep, dfn, rt, sz, dis);
     }
-    // 为 g 中 1 到 n 的森林建表, 自动复位旧表, 不修改原图
-    // 时间 O(n log n) | 递归栈 O(h), h 为最大树高
+    // 为 g[1..n] 建表, 自动复位. 时间 O(n log n), 栈 O(树高)
     template <class G>
     void build(G& g, int _n)
     {
@@ -63,9 +58,8 @@ struct LCA
             for (int i = 1; i <= n; i++)
                 fa[k][i] = fa[k - 1][fa[k - 1][i]];
     }
-    // 返回 u 与 v 的最近公共祖先, 不连通返回 -1
-    // 时间 O(1) | 空间 O(1)
-    int lca(int u, int v)
+    // 两点 LCA, 不连通返回 -1. O(1)
+    int lca(int u, int v) const
     {
         if (rt[u] != rt[v]) return -1;
         if (u == v) return u;
@@ -78,9 +72,8 @@ struct LCA
         int w = dep[u_node] < dep[v_node] ? u_node : v_node;
         return fa[0][w];
     }
-    // 返回整个 0-based 点集 nodes 的最近公共祖先, 空集或跨树返回 -1
-    // 时间 O(nodes.size()) | 空间 O(1)
-    int lca(const VI& nodes)
+    // 整个 nodes 的 LCA, 空集/跨树返回 -1. 时间 O(nodes.size())
+    int lca(const VI& nodes) const
     {
         if (nodes.empty()) return -1;
         int min_node = nodes[0];
@@ -93,55 +86,33 @@ struct LCA
         }
         return lca(min_node, max_node);
     }
-    // 返回 u 到 v 的路径权和, 不连通返回 -1; 负权下用 lca 判断连通性
-    // 时间 O(1) | 空间 O(1)
-    LL dist(int u, int v)
+    // 路径权和, 不连通返回 -1; 负权时用 lca 判连通. O(1)
+    LL dist(int u, int v) const
     {
         int l = lca(u, v);
         if (l == -1) return -1;
         return dis[u] + dis[v] - 2 * dis[l];
     }
-    // 返回从 u 向 v 走 k 条边到达的点, k <= 0 直接返回 u, 否则不连通返回 -1, 超路长返回 v
-    // 时间 O(log n) | 空间 O(1)
-    int jump(int u, int v, int k)
+    // u 向上跳 step 步, 0<=step<=dep[u], step=dep[u] 返回 0. 时间 O(log n)
+    int jump_up(int u, int step) const
+    {
+        for (int i = 0; step > 0 && u > 0; i++, step >>= 1)
+        {
+            if (step & 1) u = fa[i][u];
+        }
+        return u;
+    }
+
+    // u 向 v 走 k 条边; k<=0 返回 u, 否则断连 -1, 超长返回 v. 时间 O(log n).
+    int jump(int u, int v, int k) const
     {
         if (k <= 0) return u;
         int l = lca(u, v);
         if (l == -1) return -1;
         int du = dep[u] - dep[l];
         int dv = dep[v] - dep[l];
-        if (du + dv < k) return v;
-        if (k <= du)
-        {
-            int x = u;
-            int step_bit = __lg(k);
-            for (int i = step_bit; i >= 0; i--)
-            {
-                if (k & (1 << i))
-                {
-                    x = fa[i][x];
-                    if (x == 0) break;
-                }
-            }
-            return x;
-        }
-        else
-        {
-            int remain = k - du;
-            int up_steps = dv - remain;
-            int x = v;
-            if (up_steps == 0) return x;
-            int step_bit = __lg(up_steps);
-            for (int i = step_bit; i >= 0; i--)
-            {
-                if (up_steps & (1 << i))
-                {
-                    x = fa[i][x];
-                    if (x == 0) break;
-                }
-            }
-            return x;
-        }
+        if (du + dv <= k) return v;
+        return k <= du ? jump_up(u, k) : jump_up(v, dv - (k - du));
     }
 private:
     template <class G>
@@ -161,7 +132,7 @@ private:
             if constexpr (is_same_v<decltype(e.w), Empty>)
                 dis[v] = dis[u] + 1;
             else
-                dis[v] = dis[u] + e.w; // 自定义边权请修改此处
+                dis[v] = dis[u] + e.w; // 自定义边权改此处
             dfs(v, u, root, g);
             sz[u] += sz[v];
         }
@@ -178,6 +149,7 @@ private:
  * lca.build(g, n);
  * lca.lca(u, v); // 不连通 -1; 多点: lca.lca({u, v, w})
  * lca.dist(u, v); // 真实距离, 边权图自动按 w 累计
+ * lca.jump_up(u, k); // 0<=k<=dep[u], 跳过根返回 0
  * lca.jump(u, v, k); // u 沿 u->v 方向 k 步; k<=0 返 u, 超路长返 v
  * // 直读: dep | dfn/rnk 时间戳正反 | rt 所在根 | sz 子树大小 | fa[k][u] 2^k 祖先
  * // 子树 u = dfn 区间 [dfn[u], dfn[u]+sz[u]-1]; 递归 build 依赖评测机栈宽

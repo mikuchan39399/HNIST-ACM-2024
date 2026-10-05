@@ -9,13 +9,9 @@
 struct Empty {};
 #endif
 
-// 链式前向星, 点编号 1-based, 半边编号 0-based, 邻接表按加边的逆序遍历
-// head 存首条半边, used 存触碰过的点, deg 存出度或无向度数, in_deg 仅有向图使用
-// 无向边存两条半边, 自环贡献 2 度; 孤立点不计入 node_cnt(), 点数由调用方保存
-// 每半边 Empty 为 8 B, LL 为 16 B; 预留半边数 = max_m * (Dir ? 1 : 2) + 10
-// 点表约 (Dir ? 16 : 12) * max_n B; 无向 LL 图 n = m = 2e5 时合计约 8.8 MB
-// max_m 仅作预留提示, 边数组可扩容且编号不变; 加边期间不持有边引用或遍历邻接表
-// 默认拷贝相互独立但不保证保留预留容量, 移动后源对象仅用于析构或重新赋值
+// 链式前向星; 点 1-based, 半边 0-based, 邻接按加边逆序遍历
+// 无向边占两条半边, 自环计 2 度; deg 为出度/无向度, in_deg 为有向入度
+// 点数自行保存; max_m 为预留逻辑边数, 可扩容. 加边时勿持有边引用或遍历邻接表
 template <bool Dir = false, class W = Empty>
 struct Graph
 {
@@ -28,8 +24,7 @@ struct Graph
     VI deg;
     VI in_deg;
     vector<Edge> edges;
-    // 分配 max_n 个点的状态表并预留 max_m 条逻辑边, 点编号须在 1 到 max_n 内
-    // 时间 O(max_n) | 空间 O(max_n + max_m)
+    // 预留 max_n 个点、max_m 条边, 点号须在 1..max_n. 时间 O(max_n), 空间 O(max_n+max_m)
     Graph(int max_n = 0, int max_m = 0) :
         head(max_n + 10, -1), deg(max_n + 10, 0)
     {
@@ -37,8 +32,7 @@ struct Graph
         used.reserve(max_n + 10);
         edges.reserve(max_m * (Dir ? 1 : 2) + 10);
     }
-    // 清空边和触碰过的点状态, 保留容器容量
-    // 时间 O(k + m) | 额外空间 O(1), k 为触碰点数, m 为半边数; 标量权值无需逐边析构
+    // 清空并保留容量. 时间 O(触碰点数+半边数), 额外空间 O(1)
     void clear()
     {
         for (size_t i = 0; i < used.size(); i++)
@@ -51,8 +45,7 @@ struct Graph
         used.clear();
         edges.clear();
     }
-    // 添加 u 到 v 的边并返回首条半边编号, 无向图同时添加反向边, 首编号为偶数
-    // 均摊时间 O(1) | 单次扩容时间和额外空间 O(m), m 为已有半边数, 权值复制按 O(1) 计
+    // 加边, 返回首条半边号(无向图为偶数). 均摊 O(1), 扩容时空 O(m)
     int add(int u, int v, const W& w = W())
     {
         auto mark = [&](int x)
@@ -76,17 +69,13 @@ struct Graph
         else in_deg[v]++;
         return idx;
     }
-    // 返回加边触碰过的点数, 不含孤立点
-    // 时间 O(1) | 空间 O(1)
+    // 触碰过的点数, 不含孤立点. O(1)
     int node_cnt() const { return used.size(); }
-    // 返回逻辑边数, 无向边的两条半边只计一次
-    // 时间 O(1) | 空间 O(1)
+    // 逻辑边数. O(1)
     int edge_cnt() const { return (int)edges.size() / (Dir ? 1 : 2); }
-    // 返回无向半边 i 的对偶编号, 仅用于无向图
-    // 时间 O(1) | 空间 O(1)
+    // 无向半边 i 的反向半边号. O(1)
     int rev(int i) const { return i ^ 1; }
-    // 返回当前图中边引用 e 的半边编号, 不能传边的副本
-    // 时间 O(1) | 空间 O(1)
+    // 边引用 e 的半边号, 不能传副本. O(1)
     int id(const Edge& e) const { return &e - edges.data(); }
     struct Iter
     {
@@ -102,8 +91,7 @@ struct Graph
         Iter begin() { return {g, g.head[u]}; }
         Iter end() { return {g, -1}; }
     };
-    // 返回 u 的邻接范围, 用 auto& e 遍历可读取或修改半边权值
-    // 时间 O(1), 遍历 O(deg[u]) | 空间 O(1)
+    // u 的邻接范围, auto& 可改权值; 遍历 O(deg[u]), 额外空间 O(1)
     Adj operator[](int u) { return {*this, u}; }
 };
 #endif

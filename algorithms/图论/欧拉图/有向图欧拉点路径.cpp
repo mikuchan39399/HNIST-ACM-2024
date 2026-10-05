@@ -4,12 +4,12 @@
 using namespace std;
 using VI = vector<int>;
 
-// 组装: edges[u] 存邻居; 1-based 加边后 dfs(起点), ans 逆序即欧拉路径点序列
+// edges[u] 存邻居; 先分配邻接表, 自行判存在性并选起点
+// dfs 后 ans 逆序为点序列, 邻接表被清空
 vector<VI> edges;
 VI ans;
 
-// 回溯式剥边求有向图欧拉路径点序列 (Hierholzer)
-// 时间: O(n + m) | 空间: O(n + m)
+// Hierholzer, 时空 O(n+m), 递归深度最坏 m
 void dfs(int u)
 {
     while (edges[u].size())
@@ -21,4 +21,4 @@ void dfs(int u)
     ans.push_back(u);
 }
 
-/* 要字典序: 每个 edges[u] 按邻居编号从大到小排序; ans 逆序输出 */
+// 要字典序则邻接按邻居降序排序

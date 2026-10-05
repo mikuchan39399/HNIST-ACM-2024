@@ -4,24 +4,18 @@
 
 #include "../../杂项/utils/utils.cpp"
 
-// ============ 二维树状数组 矩阵加 + 矩阵和 (差分四 BIT) ============
-// 1-based; 矩阵加走二维差分, 前缀和 pre(x,y) = Σ D[i][j]*(x+1-i)*(y+1-j)
-//   展开成 (x+1)(y+1)*D - (y+1)*D*i - (x+1)*D*j + D*i*j,
-//   t1/t2/t3/t4 四棵 BIT 分别维护 D / D*i / D*j / D*i*j
-// 内存: 四棵 LL BIT 共 32B/格; 预算 = n*m, 2000×2000 ≈ 128MB
-// 矩形合法非空; 增量取负、坐标乘积、表内累积与查询中间值均须在 LL 内
+// 二维区间加/区间和树状数组, 1-based, 合法非空矩形. 空间 O(nm)
+// 取负、坐标乘积及累加须在 LL 内; add/query 时间 O(log n log m)
 struct BIT2D
 {
     int n, m;
     vector<VLL> t1, t2, t3, t4;
-    // 创建 max_n 行 max_m 列的全零矩阵, 四张表的数据约占 32*(max_n+2)*(max_m+2) 字节
-    // 时间: O(max_n*max_m) | 空间: 32B/格
+    // 预留 max_n * max_m 并清零. 时空 O(max_n*max_m)
     BIT2D(int max_n = 0, int max_m = 0) : n(max_n), m(max_m),
         t1(max_n + 2, VLL(max_m + 2, 0)), t2(max_n + 2, VLL(max_m + 2, 0)),
         t3(max_n + 2, VLL(max_m + 2, 0)), t4(max_n + 2, VLL(max_m + 2, 0))
     {}
-    // 清空矩阵并设置本轮行列数, _n 和 _m 分别不能超过构造时的 max_n 和 max_m
-    // 时间: O(n*m) | 空间: O(1)
+    // 重置 n*m, 不得超过预留行列数. 时间 O(nm)
     void init(int _n, int _m)
     {
         n = _n;
@@ -34,8 +28,7 @@ struct BIT2D
             fill(t4[i].begin(), t4[i].begin() + m + 2, 0);
         }
     }
-    // 把矩形 [x1,x2] × [y1,y2] 整体加 k, 坐标在 1..n × 1..m 内
-    // 时间: O(log n·log m) | 空间: O(1)
+    // 给 [x1,x2] * [y1,y2] 加 v
     void add(int x1, int y1, int x2, int y2, LL k)
     {
         upd(x1, y1, k);
@@ -43,8 +36,7 @@ struct BIT2D
         upd(x2 + 1, y1, -k);
         upd(x2 + 1, y2 + 1, k);
     }
-    // 返回矩形 [x1,x2] × [y1,y2] 内的元素和
-    // 时间: O(log n·log m) | 空间: O(1)
+    // 查询 [x1,x2] * [y1,y2] 的和
     LL query(int x1, int y1, int x2, int y2)
     {
         return pre(x2, y2) - pre(x1 - 1, y2) - pre(x2, y1 - 1) + pre(x1 - 1, y1 - 1);

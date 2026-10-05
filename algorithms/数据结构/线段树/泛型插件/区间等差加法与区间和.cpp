@@ -2,15 +2,14 @@
 #define Z_OI_SEGLINEAR_PLUGIN
 #include "../../../杂项/utils/utils.cpp"
 
-// a[i] += k * i + b, 查询和; i 是建树时的绝对下标
-// 必须 build, 叶子 Info(value, index); 所有中间值须在 LL 内
-// 合并/作用 O(1); 普通树 O(n) 空间, n = 2e5 约 32 MB
+// a[i]+=k*i+b, 查询和; i 为建树绝对下标, 中间值在 LL 内
+// 须 build, 叶子 Info(value,index). 合并/作用 O(1), 普通树空间 O(n)
 namespace SegLinear
 {
 struct Tag
 {
     LL k = 0, b = 0;
-    // [l, r] 加首项 first、公差 step 的数列; 仍须 modify(l, r, ...)
+    // 生成首项 first、公差 step 的加法标记; 调用 modify(l,r,Tag::progression(l,first,step))
     static Tag progression(LL l, LL first, LL step) { return {step, first - step * l}; }
     void apply(const Tag& t) { k += t.k; b += t.b; }
     void clear() { *this = {}; }

@@ -2,13 +2,10 @@
 #ifndef Z_OI_RW
 #define Z_OI_RW
 
-// 快读快写: fread/fwrite 手动缓冲 read/write 全家 + utils_int/utils_unsigned
-// 自包含(不依赖 utils/128int); 库内引擎零使用, 刷题时题文件按需 include
-// 输入为 ASCII 空白分隔的合法 token; 整数须在目标类型范围内, double 支持十进制和科学计数法
-// read 在 token 前遇 EOF 返回 false 且不改参数; char 读一个非空白字符, bool 使用 0/1
-// write 默认追加换行, end=0 不追加; double 固定输出小数点后 6 位, 不是无损序列化
-// 每次按 token 长度线性处理, 输入/输出各 4 MiB 缓存; 浮点和字符串另用 O(token 长度) 空间
-// 同一标准流不混用 cin/cout、scanf/printf; 正常结束自动刷写, 交互题须手动 flush 并另选输入方式
+// 缓冲读写, 不与 cin/cout、scanf/printf 混用; 输入为 ASCII 空白分隔的合法 token
+// 整数须在目标类型内; char 读非空白字符, bool 用 0/1; token 前 EOF 返回 false 且不改参数
+// write 默认换行, end=0 不追加; double 固定 6 位小数. 正常退出自动 flush, 不用于交互输入
+// 时间 O(token 长度), 输入/输出缓存各 4MiB, 浮点/字符串另用 O(token 长度) 空间
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -175,7 +172,7 @@ void write(T x, char end = '\n')
 
 inline void write(double x, char end = '\n')
 {
-    char s[384]; // double 最大有限值的定点六位输出, 连同符号和结尾也不足 384 字节
+    char s[384];
     snprintf(s, sizeof s, "%.6f", x);
     for (char* p = s; *p; p++) utils_io::pc(*p);
     if (end) utils_io::pc(end);
@@ -228,6 +225,6 @@ int main()
     __int128 lo = -((__int128)1 << 126) - ((__int128)1 << 126);
     unsigned __int128 hi = ~(unsigned __int128)0;
     write(lo); write(hi);                 // 覆盖有/无符号 128 位整数全部范围
-    utils_io::flush_io();                 // 需要立即交付输出时调用; 普通题正常退出自动刷写
+    utils_io::flush_io();                 // 正常退出自动刷写
 }
 */

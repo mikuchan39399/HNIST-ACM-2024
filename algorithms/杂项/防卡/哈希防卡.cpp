@@ -4,15 +4,14 @@
 
 #include "../utils/utils.cpp"
 
-// SipHash-4-8, 128 位随机密钥与 64 位输出; 原算法 Aumasson/Bernstein, CC0
-// https://github.com/veorq/SipHash, 防哈希洪泛的保守轮数; 不承诺 unordered_map 最坏 O(1)
-// 整数 O(1), 字符串 O(长度), 整数对 O(1); 每个哈希对象 16 B, 默认种子来自 random_device
+// SipHash-4-8, Aumasson/Bernstein, CC0: https://github.com/veorq/SipHash
+// 整数/整数对 O(1), 字符串 O(长度), 额外空间 O(1); 不保证 unordered_map 最坏 O(1)
 struct custom_hash
 {
     static_assert(sizeof(size_t) == 8, "custom_hash requires a 64-bit target");
 
     custom_hash() : k0(seed()), k1(seed()) {}
-    // 固定密钥仅用于对拍复现, 赛场默认构造; 对象复制保持密钥, 不在存有元素时换密钥
+    // 默认随机密钥; 固定密钥用于复现, 容器非空时勿换密钥
     custom_hash(uint64_t a, uint64_t b) : k0(a), k1(b) {}
 
     template <integral T> requires (sizeof(T) <= 8)
@@ -30,7 +29,7 @@ struct custom_hash
         store(bytes + 8, (uint64_t)x.second);
         return (*this)(string_view(bytes, 16));
     }
-    // 字符串按原始字节取哈希, 包含内嵌 NUL; 支持 string/string_view, 不先压成 std::hash
+    // 字符串按原始字节哈希, 含内嵌 NUL
     size_t operator()(string_view s) const noexcept
     {
         uint64_t v0 = 0x736f6d6570736575ULL ^ k0, v1 = 0x646f72616e646f6dULL ^ k1;
@@ -92,7 +91,6 @@ int main()
     unordered_map<PII, LL, custom_hash> edge;
     edge[{1, 2}] = 7;
     cout << edge[{1, 2}] << '\n';       // 7, 两个整数按顺序编码
-    // 保持键和哈希密钥不变; 不把哈希值当成唯一 ID, 不同键仍可能碰撞
-    // 需要确定性的最坏复杂度时选 map/set 或离线排序, 而不是增加哈希轮数
+    // 哈希值可能碰撞, 不当作唯一 ID.
 }
 */

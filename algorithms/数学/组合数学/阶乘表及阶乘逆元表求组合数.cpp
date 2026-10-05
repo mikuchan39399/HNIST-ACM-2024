@@ -4,14 +4,13 @@
 
 #include "../../杂项/128位整数/128int.cpp"
 
-// 运行时素数模的阶乘/逆阶乘表, 每个对象独立; 固定模数通常直接用 ModLL::init_fact/comb
-// 两张表有效数据共 16(n+1) B, n=500 万约 80 MB; 重建缩表保留容量
+// 运行时素数模组合数表; fact[i]=i!, inv_fact[i]=1/i!, 每对象独立. 空间 O(n)
 struct PrimeComb
 {
     LL mod = 0;
     VLL fact, inv_fact;
 
-    // 重建 [0,n], p 为素数且 0<=n<p, n<INT_MAX; O(n+log p) 时间, O(n) 空间
+    // 先 init(n,p), p 为素数, 0<=n<p 且 n<INT_MAX. 时间 O(n+log p), 空间 O(n)
     void init(int n, LL p)
     {
         assert(n >= 0 && n < INT_MAX && p >= 2 && n < p);
@@ -26,7 +25,7 @@ struct PrimeComb
         inv_fact[n] = inv;
         for (int i = n; i; i--) inv_fact[i - 1] = (i128)inv_fact[i] * i % mod;
     }
-    // 返回 C(n,k) mod mod, k 越界返回 0; n 在已建范围内, O(1) 时间/额外空间
+    // C(n,k) mod p, n 在表内, k 越界为 0. O(1)
     LL comb(int n, int k) const
     {
         assert(n >= 0 && n < (int)fact.size());
@@ -55,6 +54,6 @@ int main()
     cout << c.fact[0] << ' ' << c.inv_fact[0] << '\n'; // 1 1
     c.init(4, 5);                           // 多测换模数, 旧表被覆盖
     cout << c.comb(4, 2) << '\n';            // 1
-    // 若 n>=p, 不能对 n! 求逆, 应改用 Lucas 等方法
+
 }
 */

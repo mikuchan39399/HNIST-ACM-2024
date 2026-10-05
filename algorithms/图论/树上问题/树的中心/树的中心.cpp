@@ -5,11 +5,9 @@
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/utils/utils.cpp"
 
-// 求到最远点距离最小的全部顶点, 输入为 n >= 1 的无向连通树
-// 无权边按 1 计权, 整数边权须非负且路径权和不溢出 LL; 零权下中心可能超过两个
-// ecc 为每点的最远距离, centers 按编号升序存中心, radius 为最小最远距离
-// end_u/end_v 为一条直径的端点, diameter 为其长度; build 自带复位
-// ecc 每点 8 B, 答案每点 4 B; n = 1e6 时有效元素合计至多约 12 MB, 递归栈另计
+// 求最小化最远距离的顶点; n>=1 的无向树, 非负整数边权(无权计 1), 路径和在 LL 内
+// ecc 为最远距离, centers 为升序中心, radius 为半径; 零权时可多于两个中心
+// end_u/end_v 为直径端点, diameter 为长度
 template <class G>
 struct TreeCenter
 {
@@ -18,8 +16,7 @@ struct TreeCenter
     int end_u, end_v, far;
     LL diameter, radius, far_dis;
 
-    // 重建 g 的中心信息并返回半径, 全部中心写入 centers, 单点树半径为 0
-    // 时间 O(n) | 空间 O(n), 含递归栈
+    // 重建中心信息并返回半径, 单点为 0. 时空 O(n), 递归深度最坏 n
     LL build(G& g, int n)
     {
         ecc.assign(n + 1, 0);

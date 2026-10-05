@@ -5,21 +5,16 @@
 #include "../../图的存储/Graph.cpp"
 #include "../../../杂项/128位整数/128int.cpp"
 
-// 全点以零距离起步, 第 n 轮仍能松弛即有负环, 可发现任意分量的负环
-// Graph 用 int/LL 整数权, dist 用库内 i128 避免负环反复降低距离时溢出, 不作最短路结果
-// 每点 16 B, 20 万点约 3.2 MB, 不含 Graph
+// 判断整图负环(含不连通分量), 1-based, int/LL 边权; dist 不作为最短路答案. 空间 O(n)
 struct BFRing
 {
     int n;
     vector<i128> dist;
-    // 分配 max_n 个点的工作表, 点编号为 1..n, n >= 1
-    // 时间 O(max_n) | 空间 O(max_n)
+    // 预留 max_n 个点. 时空 O(max_n)
     BFRing(int max_n = 0) : n(0), dist(max_n + 10, 0) {}
-    // 在构造容量内设为 n 个点, 工作表由 run 清空
-    // 时间 O(1) | 额外空间 O(1)
+    // 设置 n<=容量, run 再清状态. O(1)
     void init(int _n) { n = _n; }
-    // 返回整图是否有负环, 每次自动清空工作表, 不修改图
-    // 最坏时间 O(n(n+m)) | 额外空间 O(1)
+    // 有负环返回 true, 自动复位. 最坏时间 O(n(n+m)), 额外空间 O(1)
     template <class G>
     bool run(G& g, int _n)
     {
@@ -35,7 +30,7 @@ struct BFRing
                         dist[v] = dist[u] + w;
                         flag = true;
                     }
-            if (!flag) return false; // n 轮内收敛 = 无负环
+            if (!flag) return false;
         }
         return true;
     }

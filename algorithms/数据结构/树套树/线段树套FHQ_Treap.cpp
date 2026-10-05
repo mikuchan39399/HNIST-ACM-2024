@@ -6,26 +6,23 @@
 
 using namespace std;
 
-
 const int N = 2e5 + 10;
 const int inf = 2147483647;
-// 注意：如果题目值域不同，请务必修改这里的二分边界！
-const int MIN_VAL = -1; // 题目的最小值下界
-const int MAX_VAL = 1e8 + 1; // 题目的最大值上界
+// 线段树套 FHQ, a[1..n]; 值域须落在下面的二分边界内, 中间运算不溢出 int
+// 修改/排名/前驱/后继期望 O(log² n), kth 再乘 O(log 值域), 栈 O(log n)
+const int MIN_VAL = -1; // 二分下界
+const int MAX_VAL = 1e8 + 1; // 二分上界
 
 int n, m, a[N];
 
-// ==========================================
-// [内层：FHQ Treap 模板]
-// ==========================================
-int root[N << 2]; // 线段树每个节点对应的 Treap 根节点
-int idx; // Treap 节点总空间池指针
+int root[N << 2]; // 各区间的 Treap 根
+int idx;
 
 struct Node
 {
     int lc, rc;
     int val, rd, sz;
-} tr[40 * N]; // 预算 = 40N 结点
+} tr[40 * N]; // 不回收; 总用点 O((n+修改次数)log n), 须小于 40N
 
 mt19937 rnd{random_device{}()};
 
@@ -44,7 +41,7 @@ void pushup(int p)
     tr[p].sz = tr[tr[p].lc].sz + tr[tr[p].rc].sz + 1;
 }
 
-// 按值分裂：<= v 的在左树 x，> v 的在右树 y
+// 按值分为 <=v 和 >v 两棵树. 期望时间/栈 O(log n)
 void split(int p, int v, int& x, int& y)
 {
     if(!p)
@@ -65,7 +62,7 @@ void split(int p, int v, int& x, int& y)
     pushup(p);
 }
 
-// 合并：必须满足 x 树的所有值 <= y 树的所有值
+// 合并, 要求 max(x)<=min(y). 期望时间/栈 O(log n)
 int merge(int x, int y)
 {
     if(!x || !y) return x + y;
@@ -97,7 +94,7 @@ void erase(int& rt, int v)
     rt = merge(x, merge(y, z));
 }
 
-// 查询排名 (比 v 小的数的个数 + 1, 此处返回的是 < v 的个数，外层需要按需 +1)
+// 返回 <v 的元素个数
 int get_rank(int& rt, int v)
 {
     int x, y;
@@ -107,7 +104,7 @@ int get_rank(int& rt, int v)
     return ret;
 }
 
-// 查询第 k 小的值 (在单个 Treap 内)
+// 子树第 k 小, k 必须合法
 int get_val(int x, int k)
 {
     if(tr[tr[x].lc].sz >= k) return get_val(tr[x].lc, k);
@@ -115,7 +112,7 @@ int get_val(int x, int k)
     else return get_val(tr[x].rc, k - tr[tr[x].lc].sz - 1);
 }
 
-// 找前驱 (< v 的最大值)
+// 严格前驱, 无则 -inf
 int get_pre(int& rt, int v)
 {
     int x, y;
@@ -129,7 +126,7 @@ int get_pre(int& rt, int v)
     return ret;
 }
 
-// 找后继 (> v 的最小值)
+// 严格后继, 无则 inf
 int get_suf(int& rt, int v)
 {
     int x, y;
@@ -143,11 +140,6 @@ int get_suf(int& rt, int v)
     return ret;
 }
 
-
-// ==========================================
-// [外层：线段树 模板]
-// ==========================================
-
 void build_node(int p, int l, int r)
 {
     for(int i = l; i <= r; i++) insert(root[p], a[i]);
@@ -157,8 +149,7 @@ void build_node(int p, int l, int r)
     build_node(p << 1 | 1, mid + 1, r);
 }
 
-// 保留已填入的 a[1.._n], 清空旧根与结点池后重建, 0 <= _n < N
-// 期望时间 O(_n log^2 _n) | 使用结点 O(_n log _n), 后续修改的累计分配另计
+// 先填 a[1..n], 再重建并清空旧点池; 0<=n<N. 期望时间 O(n log² n), 用点 O(n log n)
 void build(int _n)
 {
     n = _n;
@@ -168,7 +159,7 @@ void build(int _n)
     if (n) build_node(1, 1, n);
 }
 
-// 单点修改 a[x] = k
+// 将位置 x 改为 k, 调用后再更新 a[x]=k
 void modify(int p, int l, int r, int x, int k)
 {
     erase(root[p], a[x]);
@@ -179,7 +170,7 @@ void modify(int p, int l, int r, int x, int k)
     else modify(p << 1 | 1, mid + 1, r, x, k);
 }
 
-// 区间查排名 (返回区间内 < k 的数量)
+// 返回 [x,y] 中 <k 的数量(排名需再 +1)
 int query_rank(int p, int l, int r, int x, int y, int k)
 {
     if(x <= l && r <= y) return get_rank(root[p], k);
@@ -189,10 +180,10 @@ int query_rank(int p, int l, int r, int x, int y, int k)
     return sum;
 }
 
-// 区间第 k 小 (通过二分答案转化为区间排名判定)
+// [x,y] 第 k 小, k 必须合法
 int query_kth(int x, int y, int k)
 {
-    int l = MIN_VAL - 1, r = MAX_VAL + 1; // 根据题意修改值域范围
+    int l = MIN_VAL - 1, r = MAX_VAL + 1;
     while(l + 1 != r)
     {
         int mid = l + (r - l) / 2;
@@ -202,7 +193,7 @@ int query_kth(int x, int y, int k)
     return l;
 }
 
-// 区间前驱
+// [x,y] 严格前驱, 无则 -inf
 int query_pre(int p, int l, int r, int x, int y, int k)
 {
     if(l >= x && r <= y) return get_pre(root[p], k);
@@ -213,7 +204,7 @@ int query_pre(int p, int l, int r, int x, int y, int k)
     return ret;
 }
 
-// 区间后继
+// [x,y] 严格后继, 无则 inf
 int query_suf(int p, int l, int r, int x, int y, int k)
 {
     if(l >= x && r <= y) return get_suf(root[p], k);
@@ -228,7 +219,7 @@ int query_suf(int p, int l, int r, int x, int y, int k)
 int main()
 {
     a[1] = 3; a[2] = 1; a[3] = 2;
-    build(3); // 每轮先填 a, build 自动清理旧树, 不再调用 build(1,1,n)
+    build(3); // 先填 a 再 build
     cout << query_kth(1, 3, 2) << '\n'; // 2
     modify(1, 1, n, 2, 7); a[2] = 7; // modify 使用旧 a[x], 随后维护原数组
     build(3); // 保留当前 a, 重新建立全部树

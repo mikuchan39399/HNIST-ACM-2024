@@ -26,30 +26,22 @@ VI chain(GraphBuilder<W>& b, const VI& id)
     return a;
 }
 }
-// 为 1-based id 建前缀汇集链, 返回 a[r] 可被 id[1..r] 到达, a[0] = 0
-// 时间 O(w) | 索引 O(w), 新增 max(w-1,0) 点和 2max(w-1,0) 边
+// 前缀汇集: id[1..r] -> a[r], a[0]=0. 时空 O(w), 新增 max(w-1,0) 点、两倍边
 template <class W>
 VI prefix_in(GraphBuilder<W>& b, const VI& id) { return z_graph_detail::chain<true, false>(b, id); }
-// 为 1-based id 建前缀分发链, 返回 a[r] 可到达 id[1..r], a[0] = 0
-// 时间 O(w) | 索引 O(w), 新增 max(w-1,0) 点和 2max(w-1,0) 边
+// 前缀分发: a[r] -> id[1..r], a[0]=0. 时空 O(w), 新增 max(w-1,0) 点、两倍边
 template <class W>
 VI prefix_out(GraphBuilder<W>& b, const VI& id) { return z_graph_detail::chain<false, false>(b, id); }
-// 为 1-based id 建后缀汇集链, 返回 a[l] 可被 id[l..w] 到达, a[w+1] = 0
-// 时间 O(w) | 索引 O(w), 新增 max(w-1,0) 点和 2max(w-1,0) 边
+// 后缀汇集: id[l..w] -> a[l], a[w+1]=0. 时空 O(w), 新增 max(w-1,0) 点、两倍边
 template <class W>
 VI suffix_in(GraphBuilder<W>& b, const VI& id) { return z_graph_detail::chain<true, true>(b, id); }
-// 为 1-based id 建后缀分发链, 返回 a[l] 可到达 id[l..w], a[w+1] = 0
-// 时间 O(w) | 索引 O(w), 新增 max(w-1,0) 点和 2max(w-1,0) 边
+// 后缀分发: a[l] -> id[l..w], a[w+1]=0. 时空 O(w), 新增 max(w-1,0) 点、两倍边
 template <class W>
 VI suffix_out(GraphBuilder<W>& b, const VI& id) { return z_graph_detail::chain<false, true>(b, id); }
 
-// 上述四个函数只追加骨架, id 必须为同一上下文的已有非零点, 可非连续或重复
-// 不改变状态编号, 不自动取反, 不建立正反配对; 输入与返回索引可销毁, 图中边保留
-// 空序列传 VI{0}, 所有入口为 0; 链深 O(w), 下游递归 SCC 需另行评估栈
-// 以下为旧单结构接口的兼容封装, 共用上面的建链内核, build 仍清空自己的整图
-// 单向骨架 3n-2 点/4n-4 边, 混合 5n-4 点/8n-8 边; 每方向索引约 8n B
-// N = max_n, Q = 实际中继预算; 图点表单向/混合约 48N/80N + 16Q B
-// 边 Empty/int/LL 为 8/12/16 B, 索引和下游另计; 前缀 r=0、后缀 l=n+1 表示空段, 对象不拷贝或移动
+// 上述函数: id 为 1-based 已有图点(可重复), 空序列 VI{0}; 只追加, 链深 O(w)
+// 下面封装独占整图, 不拷贝/移动; 单向骨架 3n-2 点/4n-4 边, 双向 5n-4 点/8n-8 边
+// 前缀 r=0、后缀 l=n+1 为空段; add 均摊 O(1), 至多 1 边, *2new 另耗 1 中继
 template <class W = LL, bool WithPrefix = true, bool WithSuffix = false>
 struct PrefixGraph
 {
@@ -58,10 +50,8 @@ struct PrefixGraph
     Graph<true, W>& g;
     int n = 0;
     int& tot;
-    // max_n 仅为原点数上限, 骨架自动计入; max_m 预留全图边数(含骨架边), 默认 0, 不足自动扩容
-    // max_extra 仅为中继上限, 每次 add_*2new 耗 1 个; 默认 -1 取 max_n, 不用中继传 0
-    // 两项点数上限取够用的上界即可, 固定不扩容; 构造后 build(n), 1 <= n <= max_n
-    // 时间 O(N + Q) | 空间 O(N + Q + max_m), N/Q 见类头
+    // N=max_n 为原点上限, Q=max_extra 为中继上限(-1 取 N); 两者固定, 骨架自动计入
+    // max_m 为边预留(可扩容); 构造后 build. 时间 O(N+Q), 空间 O(N+Q+max_m)
     PrefixGraph(int max_n = 0, int max_m = 0, int max_extra = -1) :
         b((1 + 2 * (WithPrefix + WithSuffix)) * max_n + (max_extra < 0 ? max_n : max_extra), max_m),
         g(b.g), tot(b.tot),
@@ -69,8 +59,7 @@ struct PrefixGraph
     {}
     PrefixGraph(const PrefixGraph&) = delete;
     PrefixGraph& operator=(const PrefixGraph&) = delete;
-    // 清图并为 1 .. _n 重建所选方向的双链, 1 <= _n <= max_n, 中继预算复位
-    // 时间 O(_n + 上轮清图开销) | 额外空间 O(_n), 单向/混合的点边数见类头
+    // 清图并重建 1..n, 1<=n<=max_n, 中继预算复位. 时间 O(n+旧图大小), 额外空间 O(n)
     void build(int _n)
     {
         assert(_n >= 1 && _n <= point_cap);
@@ -82,75 +71,63 @@ struct PrefixGraph
         if constexpr (WithSuffix) si = suffix_in(b, id), so = suffix_out(b, id);
         base = tot;
     }
-    // 添加 u 到 v 权为 w 的单向边
-    // 均摊时间 O(1) | 新增 1 条边
+    // u -> v, 权 w
     void add_p2p(int u, int v, W w = W()) { g.add(u, v, w); }
-    // 从 u 向 [1, r] 每个原点连权为 w 的边, r = 0 时不改图
-    // 均摊时间 O(1) | 新增至多 1 条边
+    // u -> [1,r], 权 w
     void add_p2pre(int u, int r, W w = W()) requires WithPrefix
     {
         if (r) g.add(u, out(r), w);
     }
-    // 从 [1, r] 每个原点向 v 连权为 w 的边, r = 0 时不改图
-    // 均摊时间 O(1) | 新增至多 1 条边
+    // [1,r] -> v, 权 w
     void add_pre2p(int r, int v, W w = W()) requires WithPrefix
     {
         if (r) g.add(in(r), v, w);
     }
-    // 从 [1, r1] 向 [1, r2] 全连接权为 w 的边, 任一前缀为空时不改图
-    // 均摊时间 O(1) | 新增至多 1 条边, 不新增中继点
+    // [1,r1] -> [1,r2] 全连接, 权 w
     void add_pre2pre(int r1, int r2, W w = W()) requires WithPrefix
     {
         if (r1 && r2) g.add(in(r1), out(r2), w);
     }
-    // 从 u 向 [l, n] 每个原点连权为 w 的边, l = n+1 时不改图
-    // 均摊时间 O(1) | 新增至多 1 条边
+    // u -> [l,n], 权 w
     void add_p2suf(int u, int l, W w = W()) requires WithSuffix
     {
         if (l <= n) g.add(u, out(n - l + 1, true), w);
     }
-    // 从 [l, n] 每个原点向 v 连权为 w 的边, l = n+1 时不改图
-    // 均摊时间 O(1) | 新增至多 1 条边
+    // [l,n] -> v, 权 w
     void add_suf2p(int l, int v, W w = W()) requires WithSuffix
     {
         if (l <= n) g.add(in(n - l + 1, true), v, w);
     }
-    // 从 [l1, n] 向 [l2, n] 全连接权为 w 的边, 任一后缀为空时不改图
-    // 均摊时间 O(1) | 新增至多 1 条边, 不新增中继点
+    // [l1,n] -> [l2,n] 全连接, 权 w
     void add_suf2suf(int l1, int l2, W w = W()) requires WithSuffix
     {
         if (l1 <= n && l2 <= n) g.add(in(n - l1 + 1, true), out(n - l2 + 1, true), w);
     }
-    // 从 [1, r] 向 [l, n] 全连接权为 w 的边, 任一段为空时不改图
-    // 均摊时间 O(1) | 新增至多 1 条边, 不新增中继点
+    // [1,r] -> [l,n] 全连接, 权 w
     void add_pre2suf(int r, int l, W w = W()) requires (WithPrefix && WithSuffix)
     {
         if (r && l <= n) g.add(in(r), out(n - l + 1, true), w);
     }
-    // 从 [l, n] 向 [1, r] 全连接权为 w 的边, 任一段为空时不改图
-    // 均摊时间 O(1) | 新增至多 1 条边, 不新增中继点
+    // [l,n] -> [1,r] 全连接, 权 w
     void add_suf2pre(int l, int r, W w = W()) requires (WithPrefix && WithSuffix)
     {
         if (l <= n && r) g.add(in(n - l + 1, true), out(r), w);
     }
-    // 新建中继点并从 u 连权为 w 的边进入, 返回中继编号
-    // 均摊时间 O(1) | 新增 1 点、1 边
+    // 新建中继并连 u -> 中继, 权 w; 返回新编号
     int add_p2new(int u, W w = W())
     {
         int p = new_point();
         add_p2p(u, p, w);
         return p;
     }
-    // 新建中继点并从 [1, r] 每个原点连权为 w 的边进入, r = 0 时仍返回新建的孤立点
-    // 均摊时间 O(1) | 新增 1 点、至多 1 条边, 空前缀也消耗中继预算
+    // 新建中继并连 [1,r] -> 中继, 权 w; 返回新编号, 空段仍耗点
     int add_pre2new(int r, W w = W()) requires WithPrefix
     {
         int p = new_point();
         add_pre2p(r, p, w);
         return p;
     }
-    // 新建中继点并从 [l, n] 每个原点连权为 w 的边进入, l = n+1 时仍返回新建的孤立点
-    // 均摊时间 O(1) | 新增 1 点、至多 1 条边, 空后缀也消耗中继预算
+    // 新建中继并连 [l,n] -> 中继, 权 w; 返回新编号, 空段仍耗点
     int add_suf2new(int l, W w = W()) requires WithSuffix
     {
         int p = new_point();
@@ -175,8 +152,7 @@ using PrefixSuffixGraph = PrefixGraph<W, true, true>;
 #endif
 
 /* Usage
-// 多组 2-SAT 优先使用 prefix_out/suffix_out, 下面先展示单结构兼容接口
-// 题目文件先 include prefixGraph.h 和 dij.h; 无权蕴含图使用 PrefixGraph<Empty>
+// include prefixGraph.h 和 dij.h; 无权图用 Empty
 int main()
 {
     PrefixGraph<LL> pg(5, 32, 2);

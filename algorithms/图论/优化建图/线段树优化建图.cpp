@@ -5,31 +5,24 @@
 #include "建图上下文.cpp"
 #include "../../杂项/utils/utils.cpp"
 
-// 映射序列的区间覆盖, In 汇集/Out 分发可独立开启, 同一结构也可传不同的源/目标映射
-// build 只追加共享图, 覆盖入口按全局编号返回, 索引不持有输入数组; 重建索引不删除旧图边
-// 每方向 w-1 个辅助点、2w-2 条零权边, 编号表约 8w B; 区间 l>r 表示空
-// 结构与覆盖必须属于同一未清空的上下文, 不保留路径条数或网络流容量语义
+// 区间优化建图; In 汇集 / Out 分发, 局部位置 1-based, l>r 为空段
+// 每方向新增 max(w-1,0) 点、两倍零权边; 空间 O(w); 只追加, 重建不删旧图
+// 覆盖入口须同属未清空的上下文, 不保留路径计数/网络流语义
 template <class W = LL, bool In = true, bool Out = true>
 struct SegLinks
 {
     static_assert(In || Out);
     GraphBuilder<W>& b;
     int n = 0;
-    // 绑定同权值类型的 builder, 不清图; builder 须先 init, 后续 build(id) 追加骨架
-    // w 为序列长, 每启用一个方向需在 builder 另留 max(w - 1, 0) 个点, 结构使用期间 builder 不销毁或移动
-    // 时间 O(1) | 空间 O(1)
+    // 绑定已 init 的 builder; 使用期间不销毁/移动 builder. O(1)
     SegLinks(GraphBuilder<W>& builder) : b(builder) {}
-    // 按 1-based id 追加区间骨架, 点编号均须已存在, 空序列传 VI{0}
-    // 时间 O(w) | 索引 O(w), 每启用方向新增 max(w-1,0) 点、2max(w-1,0) 边
+    // 按 1-based 已有点 id 追加骨架, 空序列 VI{0}. 时空 O(w)
     void build(const VI& id) { build_maps(id, id); }
-    // 按不同的 1-based 源/目标映射追加双向骨架, 两数组大小相同
-    // 时间 O(w) | 索引 O(w), 新增 2max(w-1,0) 点、4max(w-1,0) 边
+    // 按等长 1-based 源/目标映射追加双向骨架. 时空 O(w)
     void build(const VI& src, const VI& dst) requires (In && Out) { build_maps(src, dst); }
-    // 返回 [l,r] 的汇集出口, 下标为局部位置, 空段返回空容器
-    // 时间 O(log(w+1)) | 返回 O(log(w+1)) 个全局点编号
+    // [l,r] 汇集出口, 返回全局点号, 空段为空. 时空 O(log(w+1))
     VI in_cover(int l, int r) const requires In { return cover(l, r, in); }
-    // 返回 [l,r] 的分发入口, 下标为局部位置, 空段返回空容器
-    // 时间 O(log(w+1)) | 返回 O(log(w+1)) 个全局点编号
+    // [l,r] 分发入口, 返回全局点号, 空段为空. 时空 O(log(w+1))
     VI out_cover(int l, int r) const requires Out { return cover(l, r, out); }
 private:
     VI in, out;
@@ -74,10 +67,8 @@ private:
     }
 };
 
-// 单结构兼容封装, 内核复用 SegLinks, 原点 1..n, build 清图并重置中继预算
-// g/tot 提供给下游; N = max_n, Q = 实际中继预算
-// 骨架 3n-2 点/4n-4 边, 索引约 16n B, 图点表约 48N+16Q B, 边 Empty/int/LL 为 8/12/16 B
-// 区间满足 1<=l<=r<=n, 点参数可用原点或返回中继, W() 为零权; 对象不拷贝或移动
+// 独占整图的封装, 不拷贝/移动; 下游用 g/tot, 原点 1..n, W() 为零权
+// 骨架 3n-2 点/4n-4 边; 区间 1<=l<=r<=n, 点参数可用中继编号
 template <class W = LL>
 struct SegGraph
 {
@@ -86,10 +77,8 @@ struct SegGraph
     int n = 0;
     int& tot;
     SegLinks<W> ranges;
-    // max_n 仅为原点数上限, 骨架自动计入; max_m 预留全图边数(含骨架边), 默认 0, 不足自动扩容
-    // max_extra 仅为中继上限, add_r2r/add_r2new/add_p2new 各耗 1 个; 默认 -1 取 max_n, 不用中继传 0
-    // 两项点数上限取够用的上界即可, 固定不扩容; 构造后 build(n), 1 <= n <= max_n
-    // 时间 O(N + Q) | 空间 O(N + Q + max_m), N/Q 见类头
+    // N=max_n 为原点上限, Q=max_extra 为中继上限(-1 取 N); 两者固定, 骨架自动计入
+    // max_m 为边预留(可扩容); 构造后 build. 时间 O(N+Q), 空间 O(N+Q+max_m)
     SegGraph(int max_n = 0, int max_m = 0, int max_extra = -1) :
         b(3 * max_n + (max_extra < 0 ? max_n : max_extra) + 10, max_m),
         g(b.g), tot(b.tot), ranges(b),
@@ -97,8 +86,7 @@ struct SegGraph
     {}
     SegGraph(const SegGraph&) = delete;
     SegGraph& operator=(const SegGraph&) = delete;
-    // 清掉上轮图并为 1 .. _n 建骨架, 要求 1 <= _n <= max_n, 新增中继预算重新可用
-    // 时间 O(_n + 上轮清图开销) | 额外空间 O(_n), 骨架为 3 * _n - 2 点、4 * _n - 4 边
+    // 清图并重建 1..n, 1<=n<=max_n, 中继预算复位. 时间 O(n+旧图大小), 额外空间 O(n)
     void build(int _n)
     {
         assert(_n >= 1 && _n <= point_cap);
@@ -108,33 +96,27 @@ struct SegGraph
         iota(id.begin(), id.end(), 0);
         ranges.build(id);
     }
-    // 添加 u 到 v 的单向边, 权值为 w
-    // 时间 O(1) | 新增 1 条边
+    // u -> v, 权 w. 均摊 O(1), 新增 1 边
     void add_p2p(int u, int v, W w = W()) { g.add(u, v, w); }
-    // 让 u 向 [l, r] 内每个原点连权为 w 的边
-    // 时间 O(log n) | 新增 O(log n) 条边, 递归空间 O(log n)
+    // u -> [l,r], 权 w. 均摊时空/新增边 O(log n)
     void add_p2r(int u, int l, int r, W w = W()) { for (int v : ranges.out_cover(l, r)) b.add(u, v, w); }
-    // 让 [l, r] 内每个原点向 v 连权为 w 的边
-    // 时间 O(log n) | 新增 O(log n) 条边, 递归空间 O(log n)
+    // [l,r] -> v, 权 w. 均摊时空/新增边 O(log n)
     void add_r2p(int l, int r, int v, W w = W()) { for (int u : ranges.in_cover(l, r)) b.add(u, v, w); }
-    // 新建中继点并从 u 连权为 w 的边进入, 返回中继点编号
-    // 时间 O(1) | 新增 1 个中继点、1 条边
+    // 新建中继并连 u -> 中继, 权 w; 返回编号. 均摊 O(1), 新增 1 点 1 边
     int add_p2new(int u, W w = W())
     {
         int p = new_point();
         g.add(u, p, w);
         return p;
     }
-    // 新建中继点并从 [l, r] 每个原点连权为 w 的边进入, 返回中继点编号
-    // 时间 O(log n) | 新增 1 个中继点、O(log n) 条边, 递归空间 O(log n)
+    // 新建中继并连 [l,r] -> 中继, 权 w; 返回编号. 均摊时空 O(log n), 1 点 O(log n) 边
     int add_r2new(int l, int r, W w = W())
     {
         int p = new_point();
         for (int u : ranges.in_cover(l, r)) b.add(u, p, w);
         return p;
     }
-    // 让 [l1, r1] 每个原点向 [l2, r2] 每个原点连权为 w 的边, 两区间允许重叠
-    // 时间 O(log n) | 新增 1 个中继点、O(log n) 条边, 递归空间 O(log n)
+    // [l1,r1] -> [l2,r2] 全连接, 权 w, 可重叠. 均摊时空 O(log n), 1 点 O(log n) 边
     void add_r2r(int l1, int r1, int l2, int r2, W w = W())
     {
         int mid_node = add_r2new(l1, r1);
